@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 public class EntityInit {
 	public static void registerEntities() {
-		registerEntity("goblintd", EntityGoblinTD.class, ConfigHandler.getGoblinID(), 100, 29696, 255);
+		registerEntity("goblintd", EntityGoblinTD.class, ConfigHandler.getGoblinID(), 20, 29696, 255);
 	}
 
 	public static void registerEntityRenders() {

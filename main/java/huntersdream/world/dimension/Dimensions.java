@@ -1,4 +1,4 @@
-package huntersdream;
+package huntersdream.world.dimension;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

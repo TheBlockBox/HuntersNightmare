@@ -3,9 +3,9 @@ package huntersdream.init;
 import java.util.ArrayList;
 import java.util.List;
 
-import huntersdream.Dimensions;
 import huntersdream.objects.blocks.BlockBase;
 import huntersdream.objects.blocks.BlockOreBase;
+import huntersdream.world.dimension.Dimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 

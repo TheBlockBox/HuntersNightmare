@@ -1,7 +1,7 @@
 package huntersdream.objects.blocks;
 
-import huntersdream.Dimensions;
 import huntersdream.init.BlockInit;
+import huntersdream.world.dimension.Dimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.gen.feature.WorldGenMinable;
