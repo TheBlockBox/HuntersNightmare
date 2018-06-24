@@ -1,0 +1,3 @@
+To-Do:
+-make better values for silver armo(u)r, tools and ore generation
+-fix ToolAxe class

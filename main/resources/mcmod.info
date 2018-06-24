@@ -1,0 +1,16 @@
+[
+{
+  "modid": "huntersdream",
+  "name": "Hunter's Dream",
+  "description": "Hunter's Dream",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": [""],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
