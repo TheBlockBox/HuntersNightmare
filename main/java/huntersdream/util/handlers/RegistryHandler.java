@@ -1,5 +1,6 @@
 package huntersdream.util.handlers;
 
+import huntersdream.Main;
 import huntersdream.init.BlockInit;
 import huntersdream.init.EntityInit;
 import huntersdream.init.ItemInit;
@@ -47,6 +48,8 @@ public class RegistryHandler {
 				((IHasModel) block).registerModels();
 			}
 		}
+
+		RenderHandler.registerEntityRenders();
 	}
 
 	/**
@@ -58,15 +61,17 @@ public class RegistryHandler {
 	}
 
 	public static void preInitRegistries(FMLPreInitializationEvent event) {
+		Main.proxy.preInit();
 		EntityInit.registerEntities();
-		RenderHandler.registerEntityRenders();
 	}
 
 	public static void initRegistries(FMLInitializationEvent event) {
+		Main.proxy.init();
 		OreDictionaryCompat.registerOres();
 		CraftingHandler.registerSmelting();
 	}
 
 	public static void postInitRegistries(FMLPostInitializationEvent event) {
+		Main.proxy.postInit();
 	}
 }

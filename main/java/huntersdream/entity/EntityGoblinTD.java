@@ -4,6 +4,7 @@ import java.util.Random;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -37,6 +38,18 @@ public class EntityGoblinTD extends EntityVillager implements IEntityAdditionalS
 	@Override
 	protected SoundEvent getDeathSound() {
 		return super.getDeathSound();
+	}
+
+	@Override
+	protected void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+	}
+
+	@Override
+	public float getEyeHeight() {
+		return 1.2F;
 	}
 
 	@Override
