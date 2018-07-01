@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 public class EntityGoblinTD extends EntityVillager implements IEntityAdditionalSpawnData {
 	private int textureIndex;
 	/** The amount of textures available for the goblins */
-	public static final int TEXTURES = 2;
+	public static final int TEXTURES = 6;
 
 	public EntityGoblinTD(World worldIn) {
 		super(worldIn);

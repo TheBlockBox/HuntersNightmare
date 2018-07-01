@@ -2,16 +2,18 @@ package huntersdream.util.handlers;
 
 import huntersdream.Main;
 import huntersdream.init.BlockInit;
+import huntersdream.init.CapabilitiesInit;
 import huntersdream.init.EntityInit;
 import huntersdream.init.ItemInit;
 import huntersdream.util.compat.OreDictionaryCompat;
 import huntersdream.util.interfaces.IHasModel;
+import huntersdream.world.gen.WorldGenCustomEntitySpawn;
 import huntersdream.world.gen.WorldGenCustomOres;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -22,7 +24,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  * In this class everythings gets registered (items, blocks, entities, biomes,
  * ores etc.)
  */
-@EventBusSubscriber
+@Mod.EventBusSubscriber
 public class RegistryHandler {
 
 	@SubscribeEvent
@@ -63,12 +65,15 @@ public class RegistryHandler {
 	public static void preInitRegistries(FMLPreInitializationEvent event) {
 		Main.proxy.preInit();
 		EntityInit.registerEntities();
+		CapabilitiesInit.registerCapabilities();
+		WorldGenCustomEntitySpawn.registerEntitySpawns();
 	}
 
 	public static void initRegistries(FMLInitializationEvent event) {
 		Main.proxy.init();
 		OreDictionaryCompat.registerOres();
 		CraftingHandler.registerSmelting();
+		SoundsHandler.registerSounds();
 	}
 
 	public static void postInitRegistries(FMLPostInitializationEvent event) {

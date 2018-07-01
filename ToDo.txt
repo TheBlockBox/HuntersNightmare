@@ -1,4 +1,6 @@
 To-Do:
--make better values for silver armo(u)r, tools and ore generation
 -fix ToolAxe class
 -change goblin speed and AI
+-let iron golems attack you when in werewolf form
+-finish werewolf form
+-finish werewolf villager

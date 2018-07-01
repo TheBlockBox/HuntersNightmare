@@ -13,13 +13,13 @@
         "S":
         {
             "type": "forge:ore_dict",
-            "ore": "ingotSilver"
+            "ore": "ingotPureSilver"
         }
     },
     
     "result":
     {
-        "item": "huntersdream:leggings_silver",
+        "item": "huntersdream:leggings_pure_silver",
         "count": 1
     }
 }

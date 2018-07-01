@@ -1,0 +1,7 @@
+
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "huntersdream:items/axe_pure_silver"
+    }
+}

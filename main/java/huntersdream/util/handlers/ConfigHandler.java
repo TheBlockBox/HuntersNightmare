@@ -8,13 +8,10 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class ConfigHandler {
-	private static int goblinID = 130;
+	public static int goblinID = 130;
+	public static int villagerWerewolfID = 131;
 
 	public static Configuration config;
-
-	public static int getGoblinID() {
-		return goblinID;
-	}
 
 	public static void init(File file) {
 		config = new Configuration(file);
@@ -23,7 +20,9 @@ public class ConfigHandler {
 
 		category = "IDs";
 		config.addCustomCategoryComment(category, "Set IDs for entities, worlds etc.");
-		goblinID = config.getInt("Goblin ID", category, 130, 120, 300, "ID for the goblin");
+		goblinID = config.getInt("Goblin ID", category, 130, 120, Integer.MAX_VALUE, "ID for the goblin");
+		villagerWerewolfID = config.getInt("Werewolf Villager ID", category, 131, 120, Integer.MAX_VALUE,
+				"ID for werewolf villager");
 
 		config.save();
 	}

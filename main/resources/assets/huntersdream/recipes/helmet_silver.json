@@ -12,13 +12,13 @@
         "S":
         {
             "type": "forge:ore_dict",
-            "ore": "ingotSilver"
+            "ore": "ingotPureSilver"
         }
     },
     
     "result":
     {
-        "item": "huntersdream:helmet_silver",
+        "item": "huntersdream:helmet_pure_silver",
         "count": 1
     }
 }

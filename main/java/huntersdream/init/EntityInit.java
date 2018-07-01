@@ -2,7 +2,9 @@ package huntersdream.init;
 
 import huntersdream.Main;
 import huntersdream.entity.EntityGoblinTD;
+import huntersdream.entity.EntityVillagerWerewolf;
 import huntersdream.entity.renderer.RenderGoblinTD;
+import huntersdream.entity.renderer.RenderVillagerWerewolf;
 import huntersdream.util.Reference;
 import huntersdream.util.handlers.ConfigHandler;
 import net.minecraft.client.renderer.entity.Render;
@@ -15,7 +17,9 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 public class EntityInit {
 	public static void registerEntities() {
-		registerEntity("goblintd", EntityGoblinTD.class, ConfigHandler.getGoblinID(), 20, 29696, 255);
+		registerEntity("goblintd", EntityGoblinTD.class, ConfigHandler.goblinID, 20, 29696, 255);
+		registerEntity("villagerWerewolf", EntityVillagerWerewolf.class, ConfigHandler.villagerWerewolfID, 15, 41414,
+				5252); // TODO: Change egg colour
 	}
 
 	public static void registerEntityRenders() {
@@ -25,6 +29,14 @@ public class EntityInit {
 				return new RenderGoblinTD(manager);
 			}
 		});
+		RenderingRegistry.registerEntityRenderingHandler(EntityVillagerWerewolf.class,
+				new IRenderFactory<EntityVillagerWerewolf>() {
+
+					@Override
+					public Render<? super EntityVillagerWerewolf> createRenderFor(RenderManager manager) {
+						return new RenderVillagerWerewolf(manager);
+					}
+				});
 	}
 
 	/*
