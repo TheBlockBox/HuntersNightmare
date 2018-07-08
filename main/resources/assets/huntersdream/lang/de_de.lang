@@ -1,0 +1,22 @@
+item.helmet_pure_silver.name=Purer Silberhelm
+item.chestplate_pure_silver.name=Purer Silberharnisch
+item.leggings_pure_silver.name=Purer Silberbeinschutz
+item.boots_pure_silver.name=Pure Silberstiefel
+
+item.ingot_pure_silver.name=Purer Silberbarren
+item.sword_pure_silver.name=Pures Silberschwert
+item.pickaxe_pure_silver.name=Pure Silberspitzhacke
+item.shovel_pure_silver.name=Pure Silberschaufel
+item.hoe_pure_silver.name=Pure Silberhacke
+item.axe_pure_silver.name=Pure Silberaxt
+
+tile.block_pure_silver.name=Purer Silberblock
+
+entity.goblintd.name=Goblin
+entity.villagerWerewolf.name=Werewolf Dorfbewohner
+entity.villagerWerewolf.onClickMessage=<Einsamer Dorfbewohner> Los, renn so schnell wie du kannst! Ich bin verhext!
+
+itemGroup.huntersDreamToolsCombat=Hunter's Dream Kampf und Werkzeuge
+itemGroup.huntersDreamMisc=Hunter's Dream Sonstiges
+
+commandinvalid=Falsche Parameter
