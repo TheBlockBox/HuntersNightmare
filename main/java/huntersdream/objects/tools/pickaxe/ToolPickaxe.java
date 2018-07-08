@@ -1,9 +1,9 @@
 package huntersdream.objects.tools.pickaxe;
 
 import huntersdream.Main;
+import huntersdream.init.CreativeTabInit;
 import huntersdream.init.ItemInit;
 import huntersdream.util.interfaces.IHasModel;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemPickaxe;
 
 public class ToolPickaxe extends ItemPickaxe implements IHasModel {
@@ -12,7 +12,7 @@ public class ToolPickaxe extends ItemPickaxe implements IHasModel {
 		super(material);
 		setUnlocalizedName(name);
 		setRegistryName(name);
-		setCreativeTab(CreativeTabs.TOOLS);
+		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 
 		ItemInit.ITEMS.add(this);
 	}

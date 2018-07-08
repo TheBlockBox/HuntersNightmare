@@ -11,6 +11,9 @@ public class ConfigHandler {
 	public static int goblinID = 130;
 	public static int villagerWerewolfID = 131;
 
+	public static boolean customPlayerRender = true;
+	public static boolean renderXPBar = true;
+
 	public static Configuration config;
 
 	public static void init(File file) {
@@ -23,6 +26,13 @@ public class ConfigHandler {
 		goblinID = config.getInt("Goblin ID", category, 130, 120, Integer.MAX_VALUE, "ID for the goblin");
 		villagerWerewolfID = config.getInt("Werewolf Villager ID", category, 131, 120, Integer.MAX_VALUE,
 				"ID for werewolf villager");
+
+		category = "Rendering";
+		config.addCustomCategoryComment(category, "Activate/Deactivate render");
+		customPlayerRender = config.getBoolean("Custom player render", category, true,
+				"Use different player render when transformed");
+		renderXPBar = config.getBoolean("Render xp bar", category, true,
+				"Render the player's (werewolf/vampire etc.) xp bar");
 
 		config.save();
 	}

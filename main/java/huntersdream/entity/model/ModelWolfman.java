@@ -1,8 +1,11 @@
 package huntersdream.entity.model;
 
+import huntersdream.util.Reference;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * ModelWolfman - VampireRedEye Created using Tabula 7.0.0
@@ -21,6 +24,13 @@ public class ModelWolfman extends ModelBase {
 	public ModelRenderer tail;
 	public ModelRenderer legl2;
 	public ModelRenderer legr2;
+	public static final ResourceLocation TEXTURE_TRANSFORMED[] = new ResourceLocation[3];
+
+	static {
+		TEXTURE_TRANSFORMED[0] = new ResourceLocation(Reference.MODID, "textures/entity/werewolf_beta_black.png");
+		TEXTURE_TRANSFORMED[1] = new ResourceLocation(Reference.MODID, "textures/entity/werewolf_beta_brown.png");
+		TEXTURE_TRANSFORMED[2] = new ResourceLocation(Reference.MODID, "textures/entity/werewolf_beta_white.png");
+	}
 
 	public ModelWolfman() {
 		this.textureWidth = 64;
@@ -95,5 +105,16 @@ public class ModelWolfman extends ModelBase {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;
+	}
+
+	@Override
+	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch, float scaleFactor, Entity entityIn) {
+		this.head.rotateAngleX = headPitch * 0.017453292F;
+		this.head.rotateAngleY = netHeadYaw * 0.017453292F;
+		this.arml.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount / 2;
+		this.legl.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount / 2;
+		this.armr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount / 2;
+		this.legr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount / 2;
 	}
 }

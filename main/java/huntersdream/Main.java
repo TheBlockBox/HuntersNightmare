@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION)
 public class Main {
@@ -38,6 +39,11 @@ public class Main {
 	@EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
 		RegistryHandler.postInitRegistries(event);
+	}
+
+	@EventHandler
+	public static void serverInit(FMLServerStartingEvent event) {
+		RegistryHandler.serverRegistries(event);
 	}
 
 	public static File getConfig() {

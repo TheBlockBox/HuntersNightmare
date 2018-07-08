@@ -10,7 +10,6 @@ import huntersdream.objects.tools.pickaxe.ToolPickaxe;
 import huntersdream.objects.tools.shovel.ToolShovel;
 import huntersdream.objects.tools.sword.ToolSword;
 import huntersdream.util.Reference;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -23,9 +22,10 @@ public class ItemInit {
 	public static final List<Item> ITEMS = new ArrayList<>();
 
 	// Items
-	public static final Item INGOT_PURE_SILVER = new ItemBase("ingot_pure_silver", CreativeTabs.MATERIALS);
+	public static final Item INGOT_PURE_SILVER = new ItemBase("ingot_pure_silver", CreativeTabInit.HUNTERSDREAM_MISC);
 	// TODO: Add pure silver axe
-	public static final Item AXE_PURE_SILVER = new ItemBase("axe_pure_silver", CreativeTabs.MATERIALS);
+	public static final Item AXE_PURE_SILVER = new ItemBase("axe_pure_silver",
+			CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 
 	// Materials
 	public static final ToolMaterial TOOL_PURE_SILVER = EnumHelper.addToolMaterial("tool_pure_silver", 3, 60, 6.0F,

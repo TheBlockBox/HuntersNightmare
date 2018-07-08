@@ -1,9 +1,9 @@
 package huntersdream.objects.tools.sword;
 
 import huntersdream.Main;
+import huntersdream.init.CreativeTabInit;
 import huntersdream.init.ItemInit;
 import huntersdream.util.interfaces.IHasModel;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemSword;
 
 public class ToolSword extends ItemSword implements IHasModel {
@@ -12,7 +12,7 @@ public class ToolSword extends ItemSword implements IHasModel {
 		super(material);
 		setUnlocalizedName(name);
 		setRegistryName(name);
-		setCreativeTab(CreativeTabs.COMBAT);
+		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 
 		ItemInit.ITEMS.add(this);
 	}

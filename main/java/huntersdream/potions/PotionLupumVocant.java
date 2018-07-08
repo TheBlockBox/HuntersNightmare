@@ -18,6 +18,7 @@ public class PotionLupumVocant extends Potion {
 
 	@Override
 	public void performEffect(EntityLivingBase entityLivingBaseIn, int amplifier) {
+
 	}
 
 }

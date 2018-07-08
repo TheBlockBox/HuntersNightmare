@@ -1,7 +1,9 @@
 package huntersdream.tabs;
 
 import huntersdream.init.CreativeTabInit;
+import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class Tab extends CreativeTabs {
@@ -11,6 +13,14 @@ public class Tab extends CreativeTabs {
 		super(name);
 		this.TAB_ICON = tabIcon;
 		CreativeTabInit.TABS.add(this);
+	}
+
+	public Tab(String name, Item tabIcon) {
+		this(name, new ItemStack(tabIcon));
+	}
+
+	public Tab(String name, Block tabIcon) {
+		this(name, new ItemStack(tabIcon));
 	}
 
 	@Override

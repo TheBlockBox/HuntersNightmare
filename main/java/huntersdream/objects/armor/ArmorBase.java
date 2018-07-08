@@ -1,9 +1,9 @@
 package huntersdream.objects.armor;
 
 import huntersdream.Main;
+import huntersdream.init.CreativeTabInit;
 import huntersdream.init.ItemInit;
 import huntersdream.util.interfaces.IHasModel;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 
@@ -13,7 +13,7 @@ public class ArmorBase extends ItemArmor implements IHasModel {
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 		setUnlocalizedName(name);
 		setRegistryName(name);
-		setCreativeTab(CreativeTabs.COMBAT);
+		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 
 		ItemInit.ITEMS.add(this);
 	}

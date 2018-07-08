@@ -1,9 +1,9 @@
 package huntersdream.objects.tools.axe;
 
 import huntersdream.Main;
+import huntersdream.init.CreativeTabInit;
 import huntersdream.init.ItemInit;
 import huntersdream.util.interfaces.IHasModel;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemAxe;
 
 public class ToolAxe extends ItemAxe implements IHasModel {
@@ -12,7 +12,7 @@ public class ToolAxe extends ItemAxe implements IHasModel {
 		super(material);
 		setUnlocalizedName(name);
 		setRegistryName(name);
-		setCreativeTab(CreativeTabs.TOOLS);
+		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 		System.out.println("Caution! No creative tab set!");
 
 		ItemInit.ITEMS.add(this);

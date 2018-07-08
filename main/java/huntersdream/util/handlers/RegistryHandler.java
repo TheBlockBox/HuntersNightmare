@@ -1,6 +1,9 @@
 package huntersdream.util.handlers;
 
 import huntersdream.Main;
+import huntersdream.commands.CommandsMoonphase;
+import huntersdream.commands.CommandsTransformation;
+import huntersdream.commands.CommandsTransformationLevel;
 import huntersdream.init.BlockInit;
 import huntersdream.init.CapabilitiesInit;
 import huntersdream.init.EntityInit;
@@ -17,6 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -51,7 +55,7 @@ public class RegistryHandler {
 			}
 		}
 
-		RenderHandler.registerEntityRenders();
+		EntityInit.registerEntityRenders();
 	}
 
 	/**
@@ -74,9 +78,16 @@ public class RegistryHandler {
 		OreDictionaryCompat.registerOres();
 		CraftingHandler.registerSmelting();
 		SoundsHandler.registerSounds();
+		HuntersDreamPacketHandler.register();
 	}
 
 	public static void postInitRegistries(FMLPostInitializationEvent event) {
 		Main.proxy.postInit();
+	}
+
+	public static void serverRegistries(FMLServerStartingEvent event) {
+		event.registerServerCommand(new CommandsMoonphase());
+		event.registerServerCommand(new CommandsTransformationLevel());
+		event.registerServerCommand(new CommandsTransformation());
 	}
 }
