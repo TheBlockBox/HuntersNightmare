@@ -12,10 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
 import pixeleyestudios.huntersdream.objects.armor.ArmorBase;
 import pixeleyestudios.huntersdream.objects.items.ItemBase;
-import pixeleyestudios.huntersdream.objects.tools.hoe.ToolHoe;
-import pixeleyestudios.huntersdream.objects.tools.pickaxe.ToolPickaxe;
-import pixeleyestudios.huntersdream.objects.tools.shovel.ToolShovel;
-import pixeleyestudios.huntersdream.objects.tools.sword.ToolSword;
+import pixeleyestudios.huntersdream.objects.tools.hoe.ToolPureSilverHoe;
+import pixeleyestudios.huntersdream.objects.tools.pickaxe.ToolPureSilverPickaxe;
+import pixeleyestudios.huntersdream.objects.tools.shovel.ToolPureSilverShovel;
+import pixeleyestudios.huntersdream.objects.tools.sword.ToolPureSilverSword;
 import pixeleyestudios.huntersdream.util.Reference;
 
 public class ItemInit {
@@ -35,10 +35,10 @@ public class ItemInit {
 
 	// Tools
 	// public static final Item AXE_SILVER = new ToolAxe("axe_silver", TOOL_SILVER);
-	public static final Item HOE_PURE_SILVER = new ToolHoe("hoe_pure_silver", TOOL_PURE_SILVER);
-	public static final Item PICKAXE_PURE_SILVER = new ToolPickaxe("pickaxe_pure_silver", TOOL_PURE_SILVER);
-	public static final Item SHOVEL_PURE_SILVER = new ToolShovel("shovel_pure_silver", TOOL_PURE_SILVER);
-	public static final Item SWORD_PURE_SILVER = new ToolSword("sword_pure_silver", TOOL_PURE_SILVER);
+	public static final Item HOE_PURE_SILVER = new ToolPureSilverHoe();
+	public static final Item PICKAXE_PURE_SILVER = new ToolPureSilverPickaxe();
+	public static final Item SHOVEL_PURE_SILVER = new ToolPureSilverShovel();
+	public static final Item SWORD_PURE_SILVER = new ToolPureSilverSword();
 
 	// Armor
 	public static final Item HELMET_PURE_SILVER = new ArmorBase("helmet_pure_silver", ARMOR_PURE_SILVER, 1,

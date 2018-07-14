@@ -2,6 +2,7 @@ package pixeleyestudios.huntersdream.util.handlers;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -11,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import pixeleyestudios.huntersdream.Main;
 import pixeleyestudios.huntersdream.commands.CommandsMoonphase;
@@ -20,6 +22,7 @@ import pixeleyestudios.huntersdream.init.BlockInit;
 import pixeleyestudios.huntersdream.init.CapabilitiesInit;
 import pixeleyestudios.huntersdream.init.EntityInit;
 import pixeleyestudios.huntersdream.init.ItemInit;
+import pixeleyestudios.huntersdream.init.PotionInit;
 import pixeleyestudios.huntersdream.util.compat.OreDictionaryCompat;
 import pixeleyestudios.huntersdream.util.interfaces.IHasModel;
 import pixeleyestudios.huntersdream.world.gen.WorldGenCustomEntitySpawn;
@@ -40,6 +43,17 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
 		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
+	}
+
+	@SubscribeEvent
+	public static void onEntityRegister(RegistryEvent.Register<EntityEntry> event) {
+		EntityInit.registerEntities(event);
+		// TODO: Register everything properly
+	}
+
+	@SubscribeEvent
+	public static void onPotionRegister(RegistryEvent.Register<Potion> event) {
+		event.getRegistry().registerAll(PotionInit.POTIONS.toArray(new Potion[0]));
 	}
 
 	@SubscribeEvent
@@ -74,7 +88,6 @@ public class RegistryHandler {
 
 	public static void preInitRegistries(FMLPreInitializationEvent event) {
 		Main.proxy.preInit();
-		EntityInit.registerEntities();
 		CapabilitiesInit.registerCapabilities();
 		WorldGenCustomEntitySpawn.registerEntitySpawns();
 	}

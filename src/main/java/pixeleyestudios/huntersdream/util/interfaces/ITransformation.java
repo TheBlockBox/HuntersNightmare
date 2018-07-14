@@ -23,4 +23,6 @@ public interface ITransformation {
 	default public void setTransformation(TransformationHelper.Transformations transformation) {
 		setTransformationID(transformation.ID);
 	}
+
+	public int getTextureIndex();
 }

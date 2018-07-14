@@ -8,8 +8,8 @@
   "url": "https://github.com/TheGamingLord/HuntersDream",
   "updateUrl": "https://minecraft.curseforge.com/projects/hunters-dream",
   "authorList": ["VampireRedEye", "RedstoneTim"],
-  "credits": "Ideas, Models and Textures: VampireRedEye, Code: RedstoneTim, Help for the code: Snakefangox",
-  "logoFile": "",
+  "credits": "Ideas, Models and Textures: VampireRedEye, Code: RedstoneTim, Help for the code: Snakefangox and Mr. Random",
+  "logoFile": "assets/huntersdream/hunters_dream_logo.png",
   "screenshots": [],
   "dependencies": []
 }

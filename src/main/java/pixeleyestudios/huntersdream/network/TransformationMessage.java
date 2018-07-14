@@ -56,11 +56,13 @@ public class TransformationMessage implements IMessage {
 				Entity entity = Minecraft.getMinecraft().player.world.getEntityByID(message.entityID);
 				if (entity instanceof EntityPlayer) {
 					EntityPlayer player = (EntityPlayer) entity;
-					ITransformationPlayer cap = TransformationHelper.getCap(player);
-					cap.setXP(message.xp);
-					cap.setTransformed(message.transformed);
-					cap.setTransformationID(message.transformationID);
-					cap.setTextureIndex(message.textureIndex);
+					Minecraft.getMinecraft().addScheduledTask(() -> {
+						ITransformationPlayer cap = TransformationHelper.getCap(player);
+						cap.setXP(message.xp);
+						cap.setTransformed(message.transformed);
+						cap.setTransformationID(message.transformationID);
+						cap.setTextureIndex(message.textureIndex);
+					});
 				}
 			}
 			System.out.println("Transformation package received on side " + ctx.side.toString());

@@ -8,14 +8,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 
-public class TransformationTextureIndexMessage implements IMessage {
+public class SpawnWerewolfEntityMessage implements IMessage {
 
 	private int textureIndex;
 
-	public TransformationTextureIndexMessage() {
+	public SpawnWerewolfEntityMessage() {
 	}
 
-	public TransformationTextureIndexMessage(int textureIndex) {
+	public SpawnWerewolfEntityMessage(int textureIndex) {
 		this.textureIndex = textureIndex;
 	}
 
@@ -29,10 +29,10 @@ public class TransformationTextureIndexMessage implements IMessage {
 		buf.writeInt(textureIndex);
 	}
 
-	public static class MessageHandler implements IMessageHandler<TransformationTextureIndexMessage, IMessage> {
+	public static class MessageHandler implements IMessageHandler<SpawnWerewolfEntityMessage, IMessage> {
 
 		@Override
-		public IMessage onMessage(TransformationTextureIndexMessage message, MessageContext ctx) {
+		public IMessage onMessage(SpawnWerewolfEntityMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
 				EntityPlayerMP player = ctx.getServerHandler().player;
 				player.getServerWorld().addScheduledTask(() -> {

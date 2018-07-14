@@ -4,8 +4,10 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import pixeleyestudios.huntersdream.Main;
 import pixeleyestudios.huntersdream.entity.EntityGoblinTD;
@@ -18,12 +20,15 @@ import pixeleyestudios.huntersdream.util.Reference;
 import pixeleyestudios.huntersdream.util.handlers.ConfigHandler;
 
 public class EntityInit {
-	public static void registerEntities() {
+	// private static int networkID = 0;
+
+	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
 		registerEntity("goblintd", EntityGoblinTD.class, ConfigHandler.goblinID, 20, 29696, 255);
-		registerEntity("werewolfVillager", EntityWerewolfVillager.class, ConfigHandler.werewolfVillagerID, 15, 41414,
+		registerEntity("werewolfvillager", EntityWerewolfVillager.class, ConfigHandler.werewolfVillagerID, 15, 41414,
 				5252);
 		registerEntity("werewolf", EntityWerewolf.class, ConfigHandler.werewolfID, 15, 3155156, 166116);
 		// TODO: Change egg colour
+
 	}
 
 	public static void registerEntityRenders() {

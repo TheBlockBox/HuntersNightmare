@@ -47,7 +47,10 @@ public class TransformationEventHandler {
 				}
 
 				if (player.ticksExisted % 1200 == 0) {
-					if (WerewolfHelper.playerNotUnderBlock(player)) {
+					// every minute when the player is not under a block, transformed and a
+					// werewolf, one xp gets added
+					if (WerewolfHelper.playerNotUnderBlock(player) && cap.transformed()
+							&& cap.getTransformation() == Transformations.WEREWOLF) {
 						cap.incrementXP();
 					}
 					// this piece of code syncs the player data every five minutes, so basically you

@@ -3,6 +3,7 @@ package pixeleyestudios.huntersdream.entity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -13,25 +14,24 @@ import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
+import pixeleyestudios.huntersdream.util.helpers.WerewolfHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformation;
 
 /**
  * A werewolf
  */
 public class EntityWerewolf extends EntityZombie implements ITransformation, IEntityAdditionalSpawnData {
-
+	/** the werewolf texture to be used */
 	private int textureIndex;
+	/** name of the entity the werewolf was before transformation */
 	private String entityName;
-	public static final double SPEED = 0.20000000298023224D;
+	public static final double SPEED = 1.5D;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
@@ -44,7 +44,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 	}
 
 	public EntityWerewolf(World worldIn) {
-		this(worldIn, 0, "werewolf");
+		this(worldIn, 0, "werewolfvillager");
 	}
 
 	@Override
@@ -96,15 +96,24 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 		super.onEntityUpdate();
 		if (ticksExisted % 100 == 0) {
 			if (!world.isRemote) {
+				if (!WerewolfHelper.isWerewolfTime(this)) {
+					EntityLiving entity = null;
 
+					switch (entityName) {
+					case "werewolfvillager":
+						entity = new EntityWerewolfVillager(world, textureIndex);
+						break;
+
+					default:
+						throw new NullPointerException("Couldn't find entity \"" + entityName + "\"");
+					}
+
+					entity.setPosition(posX, posY, posZ);
+					world.spawnEntity(entity);
+					world.removeEntity(this);
+				}
 			}
 		}
-	}
-
-	// TODO: Add weakness for silver tools
-	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		return super.attackEntityFrom(source, amount);
 	}
 
 	@Override
@@ -127,6 +136,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 		// just does nothing
 	}
 
+	@Override
 	public int getTextureIndex() {
 		return textureIndex;
 	}
@@ -136,9 +146,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 		boolean flag = super.attackEntityAsMob(entityIn);
 
 		if (flag && this.getHeldItemMainhand().isEmpty() && entityIn instanceof EntityLivingBase) {
-			float f = this.world.getDifficultyForLocation(new BlockPos(this)).getAdditionalDifficulty();
-			((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(MobEffects.POISON, 140 * (int) f));
-			// TODO: Replace poison with lupum vocant
+			WerewolfHelper.infect((EntityLivingBase) entityIn);
 		}
 
 		return flag;
@@ -161,4 +169,10 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 		this.textureIndex = buffer.readInt();
 	}
 
+	/**
+	 * Returns the name of the werewolf's normal form
+	 */
+	public String getEntityName() {
+		return entityName;
+	}
 }

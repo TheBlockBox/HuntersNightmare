@@ -1,7 +1,5 @@
 package pixeleyestudios.huntersdream.entity;
 
-import java.util.Random;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.passive.EntityVillager;
@@ -9,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -34,7 +31,13 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	public EntityWerewolfVillager(World worldIn) {
 		super(worldIn);
 		setProfession(5);
-		textureIndex = (new Random()).nextInt(ModelWolfman.TEXTURE_TRANSFORMED.length);
+		textureIndex = rand.nextInt(ModelWolfman.TEXTURE_TRANSFORMED.length);
+	}
+
+	public EntityWerewolfVillager(World worldIn, int textureIndex) {
+		super(worldIn);
+		setProfession(5);
+		this.textureIndex = textureIndex;
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	@Override
 	public boolean processInteract(EntityPlayer player, EnumHand hand) {
 		if (player.world.isRemote) {
-			player.sendMessage(new TextComponentTranslation("entity.villagerWerewolf.onClickMessage", new Object[0]));
+			player.sendMessage(new TextComponentTranslation("entity.werewolfvillager.onClickMessage", new Object[0]));
 			world.playSound(player, getPos(), SoundEvents.ENTITY_VILLAGER_NO, SoundCategory.NEUTRAL, 10000, 1);
 			return true;
 		}
@@ -103,23 +106,13 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 		if (ticksExisted % 100 == 0) {
 			if (!world.isRemote) {
 				if (WerewolfHelper.isWerewolfTime(this)) {
-					if (getTransformation() == Transformations.WEREWOLF) {
-						setTransformed(true);
-					}
-				} else {
-					if ((getTransformation() == Transformations.WEREWOLF) && transformed()
-							&& (!WerewolfHelper.isWerewolfTime(this))) {
-						setTransformed(false);
-					}
+					EntityWerewolf werewolf = new EntityWerewolf(world, textureIndex, "werewolfvillager");
+					werewolf.setPosition(posX, posY, posZ);
+					world.removeEntity(this);
+					world.spawnEntity(werewolf);
 				}
 			}
 		}
-	}
-
-	// TODO: Add weakness for silver tools
-	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		return super.attackEntityFrom(source, amount);
 	}
 
 	@Override
@@ -163,6 +156,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 		this.textureIndex = additionalData.readInt();
 	}
 
+	@Override
 	public int getTextureIndex() {
 		return textureIndex;
 	}

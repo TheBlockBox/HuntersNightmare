@@ -10,11 +10,15 @@ item.shovel_pure_silver.name=Pure Silver Shovel
 item.hoe_pure_silver.name=Pure Silver Hoe
 item.axe_pure_silver.name=Pure Silver Axe
 
+effect.lupumvocant=Lupum Vocant
+effect.fear=Fear
+
 tile.block_pure_silver.name=Pure Silver Block
 
 entity.goblintd.name=Goblin
-entity.villagerWerewolf.name=Werewolf Villager
-entity.villagerWerewolf.onClickMessage=<Lone Villager> Please, run while you still can! I'm cursed!
+entity.werewolfvillager.name=Werewolf Villager
+entity.werewolf.name=Werewolf
+entity.werewolfvillager.onClickMessage=<Lone Villager> Please, run while you still can! I'm cursed!
 
 itemGroup.huntersDreamToolsCombat=Hunter's Dream Combat and Tools
 itemGroup.huntersDreamMisc=Hunter's Dream Miscellaneous
