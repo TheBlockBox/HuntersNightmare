@@ -13,7 +13,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import pixeleyestudios.huntersdream.entity.model.ModelWolfman;
 import pixeleyestudios.huntersdream.entity.renderer.RenderWerewolf;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 import pixeleyestudios.huntersdream.util.helpers.WerewolfHelper;
@@ -31,7 +30,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	public EntityWerewolfVillager(World worldIn) {
 		super(worldIn);
 		setProfession(5);
-		textureIndex = rand.nextInt(ModelWolfman.TEXTURE_TRANSFORMED.length);
+		textureIndex = rand.nextInt(Transformations.WEREWOLF.TEXTURES.length);
 	}
 
 	public EntityWerewolfVillager(World worldIn, int textureIndex) {

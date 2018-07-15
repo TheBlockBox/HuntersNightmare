@@ -11,59 +11,47 @@ import pixeleyestudios.huntersdream.util.helpers.PacketHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
-public class CommandsTransformationLevel extends CommandBase {
+public class CommandsTransformationTexture extends CommandBase {
 
 	@Override
 	public String getName() {
-		return "hdtransformationlevel";
+		return "hdtransformationtexture";
 	}
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "command.transformationXP.usage";
+		return "command.transformationtexture.usage";
 	}
 
 	@Override
 	public int getRequiredPermissionLevel() {
-		return 2;
+		return 0;
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		try {
 			EntityPlayer player;
-			if (args.length >= 3) {
-				player = sender.getEntityWorld().getPlayerEntityByName(args[2]);
+			if (args.length >= 2) {
+				player = server.getEntityWorld().getPlayerEntityByName(args[1]);
 			} else {
 				player = (EntityPlayer) sender;
 			}
-
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			Integer value = null;
 
-			switch (args[0]) {
-			case "set":
-				value = Integer.parseInt(args[1]);
-				break;
-
-			case "add":
-				value = Integer.parseInt(args[1]) + cap.getXP();
-				break;
-
-			case "remove":
-				value = cap.getXP() - Integer.parseInt(args[1]);
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid argument index one");
+			if (args[0].equals("get")) {
+				sender.sendMessage(new TextComponentTranslation("command.transformationtexture.get", player.getName(),
+						cap.getTextureIndex()));
+			} else {
+				int index = Integer.parseInt(args[0]);
+				if (index >= cap.getTransformation().TEXTURES.length) {
+					throw new IllegalArgumentException("Wrong texture length");
+				}
+				cap.setTextureIndex(index);
+				sender.sendMessage(new TextComponentTranslation("command.transformationtexture.set", player.getName(),
+						cap.getTextureIndex()));
+				PacketHelper.syncPlayerTransformationData(player);
 			}
-
-			if (value < 0) {
-				throw new IllegalArgumentException("Minus xp");
-			}
-
-			cap.setXP(value);
-			sender.sendMessage(new TextComponentTranslation("command.transformationXP.set", player.getName(), value));
-			PacketHelper.syncPlayerTransformationData(player);
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

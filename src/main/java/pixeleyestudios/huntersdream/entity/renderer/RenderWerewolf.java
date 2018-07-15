@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import pixeleyestudios.huntersdream.entity.EntityWerewolf;
 import pixeleyestudios.huntersdream.entity.model.ModelWolfman;
+import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 
 public class RenderWerewolf extends RenderLiving<EntityWerewolf> {
 
@@ -14,6 +15,6 @@ public class RenderWerewolf extends RenderLiving<EntityWerewolf> {
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityWerewolf entity) {
-		return ModelWolfman.TEXTURE_TRANSFORMED[entity.getTextureIndex()];
+		return Transformations.WEREWOLF.TEXTURES[entity.getTextureIndex()];
 	}
 }

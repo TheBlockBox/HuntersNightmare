@@ -18,6 +18,7 @@ import pixeleyestudios.huntersdream.Main;
 import pixeleyestudios.huntersdream.commands.CommandsMoonphase;
 import pixeleyestudios.huntersdream.commands.CommandsTransformation;
 import pixeleyestudios.huntersdream.commands.CommandsTransformationLevel;
+import pixeleyestudios.huntersdream.commands.CommandsTransformationTexture;
 import pixeleyestudios.huntersdream.init.BlockInit;
 import pixeleyestudios.huntersdream.init.CapabilitiesInit;
 import pixeleyestudios.huntersdream.init.EntityInit;
@@ -107,5 +108,6 @@ public class RegistryHandler {
 		event.registerServerCommand(new CommandsMoonphase());
 		event.registerServerCommand(new CommandsTransformationLevel());
 		event.registerServerCommand(new CommandsTransformation());
+		event.registerServerCommand(new CommandsTransformationTexture());
 	}
 }

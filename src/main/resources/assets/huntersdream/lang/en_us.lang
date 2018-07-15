@@ -1,26 +1,50 @@
+# Translated by: 
+
+# Armor
 item.helmet_pure_silver.name=Pure Silver Helmet
 item.chestplate_pure_silver.name=Pure Silver Chestplate
 item.leggings_pure_silver.name=Pure Silver Leggings
 item.boots_pure_silver.name=Pure Silver Boots
 
-item.ingot_pure_silver.name=Pure Silver Ingot
+# Weapons and Tools
 item.sword_pure_silver.name=Pure Silver Sword
 item.pickaxe_pure_silver.name=Pure Silver Pickaxe
 item.shovel_pure_silver.name=Pure Silver Shovel
 item.hoe_pure_silver.name=Pure Silver Hoe
 item.axe_pure_silver.name=Pure Silver Axe
 
+# Other items
+item.ingot_pure_silver.name=Pure Silver Ingot´
+
+# Potion effects
 effect.lupumvocant=Lupum Vocant
 effect.fear=Fear
 
+# Blocks
 tile.block_pure_silver.name=Pure Silver Block
 
+# Entities
 entity.goblintd.name=Goblin
 entity.werewolfvillager.name=Werewolf Villager
 entity.werewolf.name=Werewolf
-entity.werewolfvillager.onClickMessage=<Lone Villager> Please, run while you still can! I'm cursed!
 
+# Creative Tabs
 itemGroup.huntersDreamToolsCombat=Hunter's Dream Combat and Tools
 itemGroup.huntersDreamMisc=Hunter's Dream Miscellaneous
 
-commandinvalid=Invalid arguments
+# Command responses
+command.invalid=Invalid arguments
+command.transformationXP.usage=hdtransformationlevel <set|add|remove> <value> <player>
+command.transformationXP.set=%s's transformation xp was set to %s
+command.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
+command.moonphase.getCurrent=Current moonphase is %s
+command.moonphase.getSet=Moonphase is now %s
+command.transformation.usage=hdtransformation <transformation|get> <player>
+command.transformation.transformationSet=%s is now a %s
+command.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
+command.transformationtexture.get=%s's texture index is %s
+command.transformationtexture.set=%s's texture was set to %s
+
+# Other stuff
+entity.werewolfvillager.onClickMessage=<Lone Villager> Please, run while you still can! I'm cursed!
+transformations.onLevelUp=You feel that you're getting stronger... You're now level %s

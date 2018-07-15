@@ -5,7 +5,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import pixeleyestudios.huntersdream.util.helpers.CommandHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
@@ -14,12 +14,12 @@ public class CommandsTransformation extends CommandBase {
 
 	@Override
 	public String getName() {
-		return "transformation";
+		return "hdtransformation";
 	}
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "transformation <integer|get> <player>";
+		return "command.transformation.usage";
 	}
 
 	@Override
@@ -39,8 +39,11 @@ public class CommandsTransformation extends CommandBase {
 			int transformation = args[0].equals("get") ? TransformationHelper.getCap(player).getTransformationInt()
 					: Integer.parseInt(args[0]);
 			TransformationHelper.changeTransformation(player, Transformations.fromID(transformation));
-			sender.sendMessage(new TextComponentString(
-					player.getName() + " is now a " + Transformations.fromID(transformation).toString()));
+			// sender.sendMessage(new TextComponentString(
+			// player.getName() + " is now a " +
+			// Transformations.fromID(transformation).toString()));
+			sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
+					player.getName(), Transformations.fromID(transformation).toString()));
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

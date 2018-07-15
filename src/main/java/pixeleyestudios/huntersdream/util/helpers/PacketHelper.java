@@ -2,9 +2,14 @@ package pixeleyestudios.huntersdream.util.helpers;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.relauncher.Side;
+import pixeleyestudios.huntersdream.entity.EntityWerewolf;
 import pixeleyestudios.huntersdream.network.TransformationMessage;
 import pixeleyestudios.huntersdream.network.TransformationTextureIndexMessage;
+import pixeleyestudios.huntersdream.network.TransformationWerewolfNightOver;
+import pixeleyestudios.huntersdream.network.TransformationWerewolfNoControlMessage;
+import pixeleyestudios.huntersdream.network.TransformationXPMessage;
 import pixeleyestudios.huntersdream.util.handlers.HuntersDreamPacketHandler;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
@@ -16,6 +21,31 @@ public class PacketHelper {
 			HuntersDreamPacketHandler.INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
 					cap.getTransformationInt(), player.getEntityId(), cap.getTextureIndex()));
 			packetSentMessage(player, "Transformation");
+		}
+	}
+
+	public static void syncPlayerTransformationXP(EntityPlayer player) {
+		if (!player.world.isRemote) {
+			HuntersDreamPacketHandler.INSTANCE.sendToAll(
+					new TransformationXPMessage(TransformationHelper.getCap(player).getXP(), player.getEntityId()));
+			packetSentMessage(player, "Transformation xp");
+		}
+	}
+
+	public static void syncPlayerTransformationWerewolfNoControl(EntityPlayer player, EntityWerewolf werewolf) {
+		if (!player.world.isRemote) {
+			HuntersDreamPacketHandler.INSTANCE.sendTo(
+					new TransformationWerewolfNoControlMessage(player.getEntityId(), werewolf.getEntityId()),
+					(EntityPlayerMP) player);
+			packetSentMessage(player, "Transformation Player Werewolf No Control");
+		}
+	}
+
+	public static void syncPlayerTransformationWerewolfNightOver(EntityPlayer player) {
+		if (!player.world.isRemote) {
+			HuntersDreamPacketHandler.INSTANCE.sendTo(new TransformationWerewolfNightOver(player.getEntityId()),
+					(EntityPlayerMP) player);
+			packetSentMessage(player, "Transformation Werewolf Night Over");
 		}
 	}
 

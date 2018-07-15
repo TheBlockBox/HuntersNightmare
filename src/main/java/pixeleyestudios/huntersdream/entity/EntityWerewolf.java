@@ -99,17 +99,20 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 				if (!WerewolfHelper.isWerewolfTime(this)) {
 					EntityLiving entity = null;
 
-					switch (entityName) {
-					case "werewolfvillager":
-						entity = new EntityWerewolfVillager(world, textureIndex);
-						break;
+					if (!entityName.startsWith("player")) {
+						switch (entityName) {
+						case "werewolfvillager":
+							entity = new EntityWerewolfVillager(world, textureIndex);
+							break;
 
-					default:
-						throw new NullPointerException("Couldn't find entity \"" + entityName + "\"");
+						default:
+							throw new NullPointerException("Couldn't find entity \"" + entityName + "\"");
+						}
+
+						entity.setPosition(posX, posY, posZ);
+						world.spawnEntity(entity);
 					}
 
-					entity.setPosition(posX, posY, posZ);
-					world.spawnEntity(entity);
 					world.removeEntity(this);
 				}
 			}

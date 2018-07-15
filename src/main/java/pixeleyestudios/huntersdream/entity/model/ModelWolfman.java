@@ -1,11 +1,10 @@
 package pixeleyestudios.huntersdream.entity.model;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import pixeleyestudios.huntersdream.util.Reference;
 
 /**
  * ModelWolfman - VampireRedEye Created using Tabula 7.0.0
@@ -24,13 +23,9 @@ public class ModelWolfman extends ModelBase {
 	public ModelRenderer tail;
 	public ModelRenderer legl2;
 	public ModelRenderer legr2;
-	public static final ResourceLocation TEXTURE_TRANSFORMED[] = new ResourceLocation[3];
-
-	static {
-		TEXTURE_TRANSFORMED[0] = new ResourceLocation(Reference.MODID, "textures/entity/werewolf_beta_black.png");
-		TEXTURE_TRANSFORMED[1] = new ResourceLocation(Reference.MODID, "textures/entity/werewolf_beta_brown.png");
-		TEXTURE_TRANSFORMED[2] = new ResourceLocation(Reference.MODID, "textures/entity/werewolf_beta_white.png");
-	}
+	public boolean isSneak;
+	public ArmPose rightArmPose;
+	public ArmPose leftArmPose;
 
 	public ModelWolfman() {
 		this.textureWidth = 64;
@@ -60,22 +55,31 @@ public class ModelWolfman extends ModelBase {
 		this.arml = new ModelRenderer(this, 36, 18);
 		this.arml.setRotationPoint(5.0F, 0.0F, 0.0F);
 		this.arml.addBox(0.0F, -2.0F, -2.0F, 3, 14, 4, 0.0F);
+
 		this.legl = new ModelRenderer(this, 0, 42);
 		this.legl.setRotationPoint(3.0F, 11.0F, 0.0F);
 		this.legl.addBox(-2.0F, 0.0F, -2.0F, 4, 6, 4, 0.0F);
-		this.setRotateAngle(legl, -0.17453292519943295F, 0.0F, 0.0F);
+
+		this.setRotateAngle(legl, -0.17453292519943295F, -10.0F, 0.0F);
+
 		this.legr2 = new ModelRenderer(this, 14, 50);
 		this.legr2.setRotationPoint(0.5F, 0.0F, 0.0F);
 		this.legr2.addBox(-2.0F, 3.0F, -0.5F, 3, 10, 3, 0.0F);
-		this.setRotateAngle(legr2, 0.17453292519943295F, 0.0F, 0.0F);
+
+		this.setRotateAngle(legr2, 0.17453292519943295F, -10.0F, 0.0F);
+
 		this.legl2 = new ModelRenderer(this, 14, 50);
 		this.legl2.setRotationPoint(0.5F, 0.0F, 0.0F);
 		this.legl2.addBox(-2.0F, 3.0F, -0.5F, 3, 10, 3, 0.0F);
-		this.setRotateAngle(legl2, 0.17453292519943295F, 0.0F, 0.0F);
+
+		this.setRotateAngle(legl2, 0.17453292519943295F, -10.0F, 0.0F);
+
 		this.legr = new ModelRenderer(this, 0, 42);
 		this.legr.setRotationPoint(-3.0F, 11.0F, 0.0F);
 		this.legr.addBox(-2.0F, 0.0F, -2.0F, 4, 6, 4, 0.0F);
-		this.setRotateAngle(legr, -0.17453292519943295F, 0.0F, 0.0F);
+
+		this.setRotateAngle(legr, -0.17453292519943295F, -10.0F, 0.0F);
+
 		this.earl = new ModelRenderer(this, 24, 0);
 		this.earl.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.earl.addBox(1.0F, -8.0F, 0.0F, 2, 2, 1, 0.0F);

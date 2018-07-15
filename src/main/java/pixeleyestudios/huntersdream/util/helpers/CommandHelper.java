@@ -5,10 +5,14 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
 public class CommandHelper {
-	private static TextComponentTranslation commandInvalid = new TextComponentTranslation("commandinvalid",
+	public static final TextComponentTranslation COMMAND_INVALID = new TextComponentTranslation("command.invalid",
 			TextFormatting.RED);
 
+	static {
+		COMMAND_INVALID.getStyle().setColor(TextFormatting.RED);
+	}
+
 	public static void invalidCommand(ICommandSender sender) {
-		sender.sendMessage(commandInvalid);
+		sender.sendMessage(COMMAND_INVALID);
 	}
 }

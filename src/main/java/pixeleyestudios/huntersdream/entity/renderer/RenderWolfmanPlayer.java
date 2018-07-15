@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import pixeleyestudios.huntersdream.entity.model.ModelWolfman;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
+import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 
 public class RenderWolfmanPlayer extends RenderLivingBase<EntityPlayer> {
 
@@ -15,7 +16,7 @@ public class RenderWolfmanPlayer extends RenderLivingBase<EntityPlayer> {
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityPlayer entity) {
-		return ModelWolfman.TEXTURE_TRANSFORMED[TransformationHelper.getCap(entity).getTextureIndex()];
+		return Transformations.WEREWOLF.TEXTURES[TransformationHelper.getCap(entity).getTextureIndex()];
 	}
 
 	@Override

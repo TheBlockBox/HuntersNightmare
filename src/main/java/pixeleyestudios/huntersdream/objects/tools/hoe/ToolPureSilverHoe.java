@@ -1,6 +1,11 @@
 package pixeleyestudios.huntersdream.objects.tools.hoe;
 
+import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import pixeleyestudios.huntersdream.Main;
 import pixeleyestudios.huntersdream.init.CreativeTabInit;
 import pixeleyestudios.huntersdream.init.ItemInit;
@@ -22,6 +27,11 @@ public class ToolPureSilverHoe extends ItemHoe implements IHasModel, IEffectiveA
 	@Override
 	public void registerModels() {
 		Main.proxy.registerItemRenderer(this, 0, "inventory");
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+
 	}
 
 }

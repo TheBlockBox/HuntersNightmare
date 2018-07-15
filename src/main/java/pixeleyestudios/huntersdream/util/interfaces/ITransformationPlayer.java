@@ -24,7 +24,7 @@ public interface ITransformationPlayer extends ITransformation {
 		addXP(-1);
 	}
 
-	public int getTextureIndex();
+	// getTextureIndex() already defined in ITransformation
 
 	public void setTextureIndex(int textureIndex);
 }

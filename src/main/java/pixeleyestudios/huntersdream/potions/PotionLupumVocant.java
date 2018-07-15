@@ -41,7 +41,7 @@ public class PotionLupumVocant extends PotionBase {
 							// removes potion effect and reapplies it for another 30 seconds
 							player.removeActivePotionEffect(this);
 							player.removePotionEffect(this);
-							player.addPotionEffect(new PotionEffect(this, (30 * 20)));
+							player.addPotionEffect(new PotionEffect(new PotionLupumVocant(), (30 * 20)));
 						}
 					}
 				} else {

@@ -9,4 +9,4 @@ Please check out our [YouTube]("https://www.youtube.com/c/PixelEyeStudios"), [Mi
 
 ### Download
 Download our mod on [Curse]("https://minecraft.curseforge.com/projects/hunters-dream")!  
-(The mod is still W.I.P., so don't expect too much.
+(The mod is still W.I.P., so don't expect too much)
