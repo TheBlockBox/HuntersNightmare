@@ -6,8 +6,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
-import pixeleyestudios.huntersdream.capabilities.transformation.player.TransformationPlayerProvider;
+import pixeleyestudios.huntersdream.init.CapabilitiesInit;
 import pixeleyestudios.huntersdream.util.Reference;
+import pixeleyestudios.huntersdream.util.handlers.PacketHandler.Packets;
 import pixeleyestudios.huntersdream.util.interfaces.ICalculateLevel;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformation;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
@@ -60,6 +61,10 @@ public interface TransformationHelper {
 		public int getLevelFloor(EntityPlayer player) {
 			return MathHelper.floor(getLevel(player));
 		}
+
+		public double getPercentageToNextLevel(EntityPlayer player) {
+			return getLevel(player) - getLevelFloor(player);
+		}
 	}
 
 	/**
@@ -67,7 +72,7 @@ public interface TransformationHelper {
 	 * method)
 	 */
 	public static ITransformationPlayer getCap(EntityPlayer player) {
-		return player.getCapability(TransformationPlayerProvider.TRANSFORMATION_PLAYER_CAPABILITY, null);
+		return player.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER, null);
 	}
 
 	/**
@@ -80,7 +85,7 @@ public interface TransformationHelper {
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(0); // reset texture index (to avoid ArrayIndexOutOfBoundsExceptions)
-		PacketHelper.syncPlayerTransformationData(player); // sync data with client
+		Packets.TRANSFORMATION.sync(player); // sync data with client
 	}
 
 	public static void changeTransformationWhenPossible(EntityPlayerMP player, Transformations transformation) {
@@ -142,6 +147,6 @@ public interface TransformationHelper {
 		if (levelBefore < levelAfter) {
 			player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
 		}
-		PacketHelper.syncPlayerTransformationXP(player);
+		Packets.XP.sync(player);
 	}
 }

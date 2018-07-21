@@ -59,27 +59,20 @@ public class ModelWolfman extends ModelBase {
 		this.legl = new ModelRenderer(this, 0, 42);
 		this.legl.setRotationPoint(3.0F, 11.0F, 0.0F);
 		this.legl.addBox(-2.0F, 0.0F, -2.0F, 4, 6, 4, 0.0F);
-
-		this.setRotateAngle(legl, -0.17453292519943295F, -10.0F, 0.0F);
+		this.setRotateAngle(legl, -0.17453292519943295F, 0.0F, 0.0F);
+		this.legr = new ModelRenderer(this, 0, 42);
+		this.legr.setRotationPoint(-3.0F, 11.0F, 0.0F);
+		this.legr.addBox(-2.0F, 0.0F, -2.0F, 4, 6, 4, 0.0F);
+		this.setRotateAngle(legr, -0.17453292519943295F, 0.0F, 0.0F);
 
 		this.legr2 = new ModelRenderer(this, 14, 50);
 		this.legr2.setRotationPoint(0.5F, 0.0F, 0.0F);
 		this.legr2.addBox(-2.0F, 3.0F, -0.5F, 3, 10, 3, 0.0F);
-
-		this.setRotateAngle(legr2, 0.17453292519943295F, -10.0F, 0.0F);
-
+		this.setRotateAngle(legr2, 0.17453292519943295F, 0.0F, 0.0F);
 		this.legl2 = new ModelRenderer(this, 14, 50);
 		this.legl2.setRotationPoint(0.5F, 0.0F, 0.0F);
 		this.legl2.addBox(-2.0F, 3.0F, -0.5F, 3, 10, 3, 0.0F);
-
-		this.setRotateAngle(legl2, 0.17453292519943295F, -10.0F, 0.0F);
-
-		this.legr = new ModelRenderer(this, 0, 42);
-		this.legr.setRotationPoint(-3.0F, 11.0F, 0.0F);
-		this.legr.addBox(-2.0F, 0.0F, -2.0F, 4, 6, 4, 0.0F);
-
-		this.setRotateAngle(legr, -0.17453292519943295F, -10.0F, 0.0F);
-
+		this.setRotateAngle(legl2, 0.17453292519943295F, 0.0F, 0.0F);
 		this.earl = new ModelRenderer(this, 24, 0);
 		this.earl.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.earl.addBox(1.0F, -8.0F, 0.0F, 2, 2, 1, 0.0F);

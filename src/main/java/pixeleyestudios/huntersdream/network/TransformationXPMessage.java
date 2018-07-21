@@ -5,13 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
-public class TransformationXPMessage implements IMessage {
+public class TransformationXPMessage extends MessageBase<TransformationXPMessage> {
 
 	private int xp;
 	private int entityID;
@@ -36,23 +35,23 @@ public class TransformationXPMessage implements IMessage {
 		buf.writeInt(entityID);
 	}
 
-	public static class MessageHandler implements IMessageHandler<TransformationXPMessage, IMessage> {
-
-		@Override
-		public IMessage onMessage(TransformationXPMessage message, MessageContext ctx) {
-			if (ctx.side == Side.CLIENT) {
-				Entity entity = Minecraft.getMinecraft().player.world.getEntityByID(message.entityID);
-				if (entity instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) entity;
-					Minecraft.getMinecraft().addScheduledTask(() -> {
-						ITransformationPlayer cap = TransformationHelper.getCap(player);
-						cap.setXP(message.xp);
-					});
-				}
+	@Override
+	public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx) {
+		if (ctx.side == Side.CLIENT) {
+			Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.entityID);
+			if (entity instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entity;
+				Minecraft.getMinecraft().addScheduledTask(() -> {
+					ITransformationPlayer cap = TransformationHelper.getCap(player);
+					cap.setXP(message.xp);
+				});
 			}
-			System.out.println("Transformation xp package received on side " + ctx.side.toString());
-			return null;
 		}
+		return null;
+	}
 
+	@Override
+	public String getName() {
+		return "Transformation XP";
 	}
 }

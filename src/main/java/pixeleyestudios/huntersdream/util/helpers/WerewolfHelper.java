@@ -10,9 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.entity.EntityWerewolf;
-import pixeleyestudios.huntersdream.init.PotionInit;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
@@ -38,7 +36,7 @@ public class WerewolfHelper {
 	// TODO: Add rituals that affect levelling
 	public static double getWerewolfLevel(EntityPlayer player) {
 		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
-			double level = TransformationHelper.getCap(player).getXP() / 500;
+			double level = ((double) TransformationHelper.getCap(player).getXP()) / 500.0;
 
 			if (level >= 6) {
 				level = 5;
@@ -85,51 +83,25 @@ public class WerewolfHelper {
 		}
 	}
 
-	private static void addLupumVocant(EntityPlayer player) {
-		int timeUntilNextFullmoon = (168000) - ((int) player.world.getWorldTime() - 12500);
-		player.addPotionEffect(
-				new PotionEffect(PotionInit.POTION_LUPUM_VOCANT, timeUntilNextFullmoon, 0, false, false));
-		System.out.println("Adding lupum vocant effect to player " + player.getName() + " on side "
-				+ (player.world.isRemote ? Side.CLIENT : Side.SERVER).toString() + " with current time being "
-				+ player.world.getWorldTime());
-	}
-
-	// TODO: Add effect for other entities (e.g. villagers)
-	/**
-	 * Infects the given entity
-	 */
-	public static void addLupumVocant(EntityLivingBase entity) {
-		if (TransformationHelper.canChangeTransformation(entity)) {
-			if (entity instanceof EntityPlayer) {
-				addLupumVocant((EntityPlayer) entity);
-			}
-		}
-	}
-
-	/**
-	 * Does exactly the same as
-	 * {@link WerewolfHelper#addLupumVocant(EntityLivingBase)}
-	 */
+	// TODO: Make infection
 	public static void infect(EntityLivingBase entity) {
-		addLupumVocant(entity);
+		// addLupumVocant(entity);
 	}
 
-	public static boolean effectiveAgainstWerewolf(ItemStack item) {
-		return effectiveAgainstWerewolf(item.getItem());
-	}
-
-	public static boolean effectiveAgainstWerewolf(Item item) {
-		if (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.contains(item)) {
-			return true;
+	public static boolean effectiveAgainstWerewolf(Object object) {
+		if (object instanceof Entity) {
+			Entity entity = (Entity) object;
+			return (entity instanceof IEffectiveAgainstWerewolf
+					|| ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.contains(entity));
+		} else if (object instanceof Item) {
+			Item item = (Item) object;
+			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.contains(item));
+		} else if (object instanceof ItemStack) {
+			Item item = ((ItemStack) object).getItem();
+			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.contains(item));
+		} else {
+			return false;
 		}
-		return false;
-	}
-
-	public static boolean effectiveAgainstWerewolf(Entity entity) {
-		if (entity instanceof IEffectiveAgainstWerewolf || ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.contains(entity)) {
-			return true;
-		}
-		return false;
 	}
 
 	public static void addEffectiveAgainstWerewolf(EntityLivingBase entity) {
@@ -138,6 +110,31 @@ public class WerewolfHelper {
 
 	public static void addEffectiveAgainstWerewolf(Item item) {
 		ITEMS_EFFECTIVE_AGAINST_WEREWOLF.add(item);
+	}
+
+	public static int getEffectivenessAgainstWerewolf(Object object) {
+		if (effectiveAgainstWerewolf(object)) {
+			if (object instanceof IEffectiveAgainstWerewolf) {
+				return ((IEffectiveAgainstWerewolf) object).getEffectiveness();
+			} else {
+				return IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS;
+			}
+		} else {
+			return 1 / 20;
+		}
+	}
+
+	public static int getWerewolfStrengthMultiplier(EntityLivingBase entity) {
+		if ((TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)
+				&& TransformationHelper.getITransformation(entity).transformed()) {
+			if (entity instanceof EntityPlayer) {
+				return 8;
+			} else {
+				return 8;
+			}
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -180,8 +177,10 @@ public class WerewolfHelper {
 	/** Returns true when the player has control in the werewolf form */
 	public static boolean hasControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
-		return (cap.getTransformation().getLevelFloor(player) >= 4)
-				&& (cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed();
+		if (cap.getTransformation() != Transformations.WEREWOLF)
+			throw new IllegalArgumentException(
+					"Can't use this method on a non werewolf player (" + cap.getTransformation().toString() + ")");
+		return (cap.getTransformation().getLevelFloor(player) >= 0);
 	}
 
 	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {

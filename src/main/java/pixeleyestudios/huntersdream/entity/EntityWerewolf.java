@@ -31,7 +31,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
 	private String entityName;
-	public static final double SPEED = 1.5D;
+	public static final double SPEED = 0.45D;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
@@ -94,7 +94,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
-		if (ticksExisted % 100 == 0) {
+		if (ticksExisted % 40 == 0) {
 			if (!world.isRemote) {
 				if (!WerewolfHelper.isWerewolfTime(this)) {
 					EntityLiving entity = null;

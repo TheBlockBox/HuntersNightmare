@@ -97,7 +97,7 @@ public class RegistryHandler {
 		Main.proxy.init();
 		OreDictionaryCompat.registerOres();
 		CraftingHandler.registerSmelting();
-		HuntersDreamPacketHandler.register();
+		PacketHandler.register();
 	}
 
 	public static void postInitRegistries(FMLPostInitializationEvent event) {

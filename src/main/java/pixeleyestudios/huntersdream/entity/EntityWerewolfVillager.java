@@ -8,7 +8,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
@@ -58,7 +57,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	public boolean processInteract(EntityPlayer player, EnumHand hand) {
 		if (player.world.isRemote) {
 			player.sendMessage(new TextComponentTranslation("entity.werewolfvillager.onClickMessage", new Object[0]));
-			world.playSound(player, getPos(), SoundEvents.ENTITY_VILLAGER_NO, SoundCategory.NEUTRAL, 10000, 1);
+			playSound(SoundEvents.ENTITY_VILLAGER_NO, 10000, 1);
 			return true;
 		}
 		return false;
@@ -102,7 +101,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
-		if (ticksExisted % 100 == 0) {
+		if (ticksExisted % 40 == 0) {
 			if (!world.isRemote) {
 				if (WerewolfHelper.isWerewolfTime(this)) {
 					EntityWerewolf werewolf = new EntityWerewolf(world, textureIndex, "werewolfvillager");

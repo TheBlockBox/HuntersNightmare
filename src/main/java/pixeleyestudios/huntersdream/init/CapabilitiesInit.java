@@ -7,10 +7,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
 public class CapabilitiesInit {
+	@CapabilityInject(ITransformationPlayer.class)
+	public static final Capability<ITransformationPlayer> CAPABILITY_TRANSFORMATION_PLAYER = null;
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
@@ -25,7 +28,7 @@ public class CapabilitiesInit {
 
 	private static class TransformationPlayer implements ITransformationPlayer {
 		private boolean transformed = false;
-		private int transformInt = 0;
+		private int transformationInt = 0;
 		private int xp = 0;
 		private int textureIndex = 0;
 
@@ -41,12 +44,12 @@ public class CapabilitiesInit {
 
 		@Override
 		public int getTransformationInt() {
-			return transformInt;
+			return transformationInt;
 		}
 
 		@Override
 		public void setTransformationID(int id) {
-			this.transformInt = id;
+			this.transformationInt = id;
 		}
 
 		@Override

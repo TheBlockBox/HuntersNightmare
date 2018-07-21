@@ -14,9 +14,9 @@ item.hoe_pure_silver.name=Pure Silver Hoe
 item.axe_pure_silver.name=Pure Silver Axe
 
 # Other items
-item.ingot_pure_silver.name=Pure Silver Ingot´
+item.ingot_pure_silver.name=Pure Silver Ingot
 
-# Potion effects
+# Potions
 effect.lupumvocant=Lupum Vocant
 effect.fear=Fear
 
@@ -32,7 +32,7 @@ entity.werewolf.name=Werewolf
 itemGroup.huntersDreamToolsCombat=Hunter's Dream Combat and Tools
 itemGroup.huntersDreamMisc=Hunter's Dream Miscellaneous
 
-# Command responses
+# Commands
 command.invalid=Invalid arguments
 command.transformationXP.usage=hdtransformationlevel <set|add|remove> <value> <player>
 command.transformationXP.set=%s's transformation xp was set to %s
@@ -45,6 +45,8 @@ command.transformationtexture.usage=hdtransformationtexture <texture index|get> 
 command.transformationtexture.get=%s's texture index is %s
 command.transformationtexture.set=%s's texture was set to %s
 
-# Other stuff
+# Chat messages
 entity.werewolfvillager.onClickMessage=<Lone Villager> Please, run while you still can! I'm cursed!
 transformations.onLevelUp=You feel that you're getting stronger... You're now level %s
+
+# Other stuff

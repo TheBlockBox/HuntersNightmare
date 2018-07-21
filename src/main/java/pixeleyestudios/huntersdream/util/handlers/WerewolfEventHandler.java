@@ -8,7 +8,6 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import pixeleyestudios.huntersdream.entity.EntityWerewolf;
 import pixeleyestudios.huntersdream.util.helpers.ChanceHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
@@ -21,6 +20,7 @@ public class WerewolfEventHandler {
 	@SubscribeEvent
 	// use LivingDamage only for removing damage and LivingHurt for damage and
 	// damaged resources
+	// TODO: Fix some things here
 	public static void onEntityHurt(LivingHurtEvent event) {
 		EntityLivingBase entity = event.getEntityLiving();
 		Entity directAttacker = event.getSource().getImmediateSource();
@@ -29,44 +29,29 @@ public class WerewolfEventHandler {
 		// the attacker's transformation
 		ITransformation transformationAtt = TransformationHelper.getITransformation(attacker);
 
+		// when attacker is werewolf, multiply damage
 		if (transformationAtt != null) {
-			if ((transformationAtt.getTransformation() == Transformations.WEREWOLF)
-					&& transformationAtt.transformed()) {
-				event.setAmount(event.getAmount() * 8);
+			if (transformationAtt.transformed()
+					&& (transformationAtt.getTransformation() == Transformations.WEREWOLF)) {
+				event.setAmount(event.getAmount() * WerewolfHelper.getWerewolfStrengthMultiplier(attacker));
 				if (!attacker.world.isRemote) {
 					if (attacker instanceof EntityPlayer) {
 						TransformationHelper.addXP((EntityPlayerMP) attacker, 5);
-					}
-
-					if (attacker instanceof EntityWerewolf) {
-						EntityWerewolf werewolf = (EntityWerewolf) attacker;
-						if (werewolf.getEntityName().startsWith("player")) {
-							// (EntityPlayer) world
-							// .getPlayerEntityByName(entityName.substring(6, entityName.length()))
-							TransformationHelper.addXP((EntityPlayerMP) WerewolfHelper.getPlayer(werewolf), 5);
-						}
 					}
 				}
 			}
 		}
 
-		// 1 damage = 1/2 hearts
-		// deal more or less damage
+		// if the (attacked) entity is a werewolf
 		if (transformation != null) {
-			if ((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed()) {
+			if ((transformation.transformed()) && transformation.getTransformation() == Transformations.WEREWOLF) {
 
-				if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
-
-					if (WerewolfHelper.effectiveAgainstWerewolf(attacker.getHeldItemMainhand())
-							|| WerewolfHelper.effectiveAgainstWerewolf(attacker)
-							|| WerewolfHelper.effectiveAgainstWerewolf(directAttacker)
-							|| WerewolfHelper.effectiveAgainstWerewolf(event.getSource().getImmediateSource())) {
-						event.setAmount(event.getAmount() * 2); // multiply damage by 2
-						return;
-					}
+				// and the immediate damage source is effective against the werewolf
+				if (WerewolfHelper.effectiveAgainstWerewolf(directAttacker)) {
+					event.setAmount(event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(directAttacker));
+				} else {
+					event.setAmount(event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
 				}
-
-				event.setAmount(event.getAmount() / 20); // reduce damage by 20
 			}
 		}
 	}

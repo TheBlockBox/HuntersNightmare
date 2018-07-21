@@ -5,5 +5,10 @@ package pixeleyestudios.huntersdream.util.interfaces;
  * against werewolves (= deal more damage)
  */
 public interface IEffectiveAgainstWerewolf {
+	public static final int DEFAULT_EFFECTIVENESS = 8;
 
+	/** The damage multiplier when used against a werewolf */
+	default public int getEffectiveness() {
+		return DEFAULT_EFFECTIVENESS;
+	}
 }

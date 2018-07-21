@@ -5,13 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
-public class TransformationMessage implements IMessage {
+public class TransformationMessage extends MessageBase<TransformationMessage> {
 
 	private int xp;
 	private boolean transformed;
@@ -48,26 +47,26 @@ public class TransformationMessage implements IMessage {
 		buf.writeInt(textureIndex);
 	}
 
-	public static class MessageHandler implements IMessageHandler<TransformationMessage, IMessage> {
-
-		@Override
-		public IMessage onMessage(TransformationMessage message, MessageContext ctx) {
-			if (ctx.side == Side.CLIENT) {
-				Entity entity = Minecraft.getMinecraft().player.world.getEntityByID(message.entityID);
-				if (entity instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) entity;
-					Minecraft.getMinecraft().addScheduledTask(() -> {
-						ITransformationPlayer cap = TransformationHelper.getCap(player);
-						cap.setXP(message.xp);
-						cap.setTransformed(message.transformed);
-						cap.setTransformationID(message.transformationID);
-						cap.setTextureIndex(message.textureIndex);
-					});
-				}
+	@Override
+	public IMessage onMessageReceived(TransformationMessage message, MessageContext ctx) {
+		if (ctx.side == Side.CLIENT) {
+			Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.entityID);
+			if (entity instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entity;
+				Minecraft.getMinecraft().addScheduledTask(() -> {
+					ITransformationPlayer cap = TransformationHelper.getCap(player);
+					cap.setXP(message.xp);
+					cap.setTransformed(message.transformed);
+					cap.setTransformationID(message.transformationID);
+					cap.setTextureIndex(message.textureIndex);
+				});
 			}
-			System.out.println("Transformation package received on side " + ctx.side.toString());
-			return null;
 		}
+		return null;
+	}
 
+	@Override
+	public String getName() {
+		return "Transformation";
 	}
 }

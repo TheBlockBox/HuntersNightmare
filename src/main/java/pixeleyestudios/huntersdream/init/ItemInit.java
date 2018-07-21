@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
 import pixeleyestudios.huntersdream.objects.armor.ArmorBase;
 import pixeleyestudios.huntersdream.objects.items.ItemBase;
+import pixeleyestudios.huntersdream.objects.tools.axe.ToolPureSilverAxe;
 import pixeleyestudios.huntersdream.objects.tools.hoe.ToolPureSilverHoe;
 import pixeleyestudios.huntersdream.objects.tools.pickaxe.ToolPureSilverPickaxe;
 import pixeleyestudios.huntersdream.objects.tools.shovel.ToolPureSilverShovel;
@@ -23,9 +24,6 @@ public class ItemInit {
 
 	// Items
 	public static final Item INGOT_PURE_SILVER = new ItemBase("ingot_pure_silver", CreativeTabInit.HUNTERSDREAM_MISC);
-	// TODO: Add pure silver axe
-	public static final Item AXE_PURE_SILVER = new ItemBase("axe_pure_silver",
-			CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 
 	// Materials
 	public static final ToolMaterial TOOL_PURE_SILVER = EnumHelper.addToolMaterial("tool_pure_silver", 3, 60, 6.0F,
@@ -39,6 +37,7 @@ public class ItemInit {
 	public static final Item PICKAXE_PURE_SILVER = new ToolPureSilverPickaxe();
 	public static final Item SHOVEL_PURE_SILVER = new ToolPureSilverShovel();
 	public static final Item SWORD_PURE_SILVER = new ToolPureSilverSword();
+	public static final Item AXE_PURE_SILVER = new ToolPureSilverAxe();
 
 	// Armor
 	public static final Item HELMET_PURE_SILVER = new ArmorBase("helmet_pure_silver", ARMOR_PURE_SILVER, 1,
