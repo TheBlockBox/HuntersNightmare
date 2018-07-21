@@ -126,7 +126,7 @@ public class TransformationEventHandler {
 	@SideOnly(Side.CLIENT)
 	public static void onRenderPlayerHand(RenderHandEvent event) {
 		if (ConfigHandler.customPlayerRender) {
-
+			
 		}
 	}
 

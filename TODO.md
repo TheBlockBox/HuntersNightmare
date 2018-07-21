@@ -13,3 +13,4 @@
 - add events
 - create xp bar texture and make it showable
 - fix some stuff in WerewolfEventHandler
+- fix entity spawn

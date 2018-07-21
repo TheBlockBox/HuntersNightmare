@@ -26,7 +26,7 @@ public class PacketHandler {
 
 	public static void register() {
 		for (Packets packet : Packets.values()) {
-			INSTANCE.registerMessage(packet.getPacketClass(), packet.CLASS, id++, packet.SIDE);
+			INSTANCE.registerMessage(packet.getMessageClass(), packet.CLASS, id++, packet.SIDE);
 		}
 	}
 
@@ -46,6 +46,12 @@ public class PacketHandler {
 		private Packets(MessageBase<?> messageBase) {
 			this(messageBase, CLIENT);
 		}
+		
+		// I have literally no idea what this does but it works
+		@SuppressWarnings("unchecked")
+		public <T> Class<T> getMessageClass(){
+			return (Class<T>) this.CLASS;
+		}
 
 		// Remember: Don't trust the client
 		private Packets(MessageBase<?> messageBase, Side side) {
@@ -53,11 +59,6 @@ public class PacketHandler {
 			this.SIDE = side;
 			this.CLASS = messageBase.getClass();
 			this.NAME = messageBase.getName();
-		}
-
-		@SuppressWarnings("unchecked")
-		public <T> Class<T> getPacketClass() {
-			return (Class<T>) this.CLASS;
 		}
 
 		public void sync(EntityPlayer player, Object... args) {

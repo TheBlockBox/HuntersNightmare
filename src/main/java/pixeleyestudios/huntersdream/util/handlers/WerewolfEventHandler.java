@@ -22,6 +22,7 @@ public class WerewolfEventHandler {
 	// damaged resources
 	// TODO: Fix some things here
 	public static void onEntityHurt(LivingHurtEvent event) {
+
 		EntityLivingBase entity = event.getEntityLiving();
 		Entity directAttacker = event.getSource().getImmediateSource();
 		EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();

@@ -2,6 +2,8 @@ package pixeleyestudios.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,9 +33,12 @@ public class TransformationWerewolfNightOverMessage extends MessageBase<Transfor
 	public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx) {
 		if (ctx.side == Side.CLIENT) {
 			Minecraft mc = Minecraft.getMinecraft();
-			mc.addScheduledTask(() -> {
-				mc.setRenderViewEntity(mc.player);
-			});
+			Entity entity = mc.world.getEntityByID(entityID);
+			if (entity instanceof EntityPlayer) {
+				mc.addScheduledTask(() -> {
+					mc.setRenderViewEntity((EntityPlayer) entity);
+				});
+			}
 		}
 		return null;
 	}
