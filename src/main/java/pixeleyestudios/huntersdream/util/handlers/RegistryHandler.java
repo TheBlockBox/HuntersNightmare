@@ -96,7 +96,6 @@ public class RegistryHandler {
 	public static void initRegistries(FMLInitializationEvent event) {
 		Main.proxy.init();
 		OreDictionaryCompat.registerOres();
-		CraftingHandler.registerSmelting();
 		PacketHandler.register();
 	}
 

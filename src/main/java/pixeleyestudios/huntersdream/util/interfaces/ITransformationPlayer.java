@@ -1,28 +1,19 @@
 package pixeleyestudios.huntersdream.util.interfaces;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;;
+
 /**
  * ITransform for players (players can have xp)
  */
 public interface ITransformationPlayer extends ITransformation {
 	public int getXP();
 
+	/**
+	 * Use {@link TransformationHelper#setXP(EntityPlayerMP, int)} for automatic
+	 * packets and level up messages
+	 */
 	public void setXP(int xp);
-
-	default public void addXP(int xpToAdd) {
-		setXP(getXP() + xpToAdd);
-	}
-
-	default public void removeXP(int xpToRemove) {
-		setXP(getXP() - xpToRemove);
-	}
-
-	default public void incrementXP() {
-		addXP(1);
-	}
-
-	default public void decrementXP() {
-		addXP(-1);
-	}
 
 	// getTextureIndex() already defined in ITransformation
 

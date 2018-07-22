@@ -2,21 +2,19 @@ package pixeleyestudios.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class TransformationWerewolfNightOverMessage extends MessageBase<TransformationWerewolfNightOverMessage> {
-
-	private int entityID;
+public class TransformationWerewolfNightOverMessage extends PlayerMessageBase<TransformationWerewolfNightOverMessage> {
 
 	public TransformationWerewolfNightOverMessage() {
+		super(DEFAULT_ENTITY_ID);
 	}
 
 	public TransformationWerewolfNightOverMessage(int entityID) {
-		this.entityID = entityID;
+		super(entityID);
 	}
 
 	@Override
@@ -30,15 +28,13 @@ public class TransformationWerewolfNightOverMessage extends MessageBase<Transfor
 	}
 
 	@Override
-	public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx) {
+	public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx,
+			EntityPlayer player) {
 		if (ctx.side == Side.CLIENT) {
 			Minecraft mc = Minecraft.getMinecraft();
-			Entity entity = mc.world.getEntityByID(entityID);
-			if (entity instanceof EntityPlayer) {
-				mc.addScheduledTask(() -> {
-					mc.setRenderViewEntity((EntityPlayer) entity);
-				});
-			}
+			mc.addScheduledTask(() -> {
+				mc.setRenderViewEntity(player);
+			});
 		}
 		return null;
 	}

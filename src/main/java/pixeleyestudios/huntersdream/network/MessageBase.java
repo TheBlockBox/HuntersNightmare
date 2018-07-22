@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public abstract class MessageBase<T extends IMessage> implements IMessage, IMessageHandler<T, IMessage> {
 
 	@Override
-	public IMessage onMessage(T message, MessageContext ctx) {
+	public final IMessage onMessage(T message, MessageContext ctx) {
 		IMessage iMessage = onMessageReceived(message, ctx);
 		System.out.println(getName() + " packet received on side " + ctx.side.toString());
 		return iMessage;

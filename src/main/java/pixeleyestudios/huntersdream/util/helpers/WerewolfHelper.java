@@ -1,7 +1,5 @@
 package pixeleyestudios.huntersdream.util.helpers;
 
-import java.util.ArrayList;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,10 +12,12 @@ import pixeleyestudios.huntersdream.entity.EntityWerewolf;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
+import pixeleyestudios.huntersdream.util.twovalues.TwoValues;
+import pixeleyestudios.huntersdream.util.twovalues.TwoValuesList;
 
 public class WerewolfHelper {
-	private static final ArrayList<Entity> ENTITIES_EFFECTIVE_AGAINST_WEREWOLF = new ArrayList<>();
-	private static final ArrayList<Item> ITEMS_EFFECTIVE_AGAINST_WEREWOLF = new ArrayList<>();
+	private static final TwoValuesList<Class<? extends EntityLivingBase>, Integer> ENTITIES_EFFECTIVE_AGAINST_WEREWOLF = new TwoValuesList<>();
+	private static final TwoValuesList<Item, Integer> ITEMS_EFFECTIVE_AGAINST_WEREWOLF = new TwoValuesList<>();
 
 	/**
 	 * Returns true when a werewolf can transform in this world (Caution! This
@@ -44,12 +44,13 @@ public class WerewolfHelper {
 
 			return level;
 		} else {
-			return -1;
+			throw new IllegalArgumentException("Given player is not a werewolf");
 		}
 	}
 
 	public static void applyLevelBuffs(EntityPlayer player) {
-		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
+		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
+				&& TransformationHelper.getITransformation(player).transformed()) {
 			int level = TransformationHelper.getTransformation(player).getLevelFloor(player);
 
 			// Caution! Duration in ticks
@@ -80,36 +81,57 @@ public class WerewolfHelper {
 				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 600, 0, false, false));
 				break;
 			}
+		} else {
+			throw new IllegalArgumentException("The given player isn't a werewolf and/or transformed");
 		}
 	}
 
 	// TODO: Make infection
-	public static void infect(EntityLivingBase entity) {
-		// addLupumVocant(entity);
+	public static void infect(EntityLivingBase entityToBeInfected) {
+		if (TransformationHelper.canChangeTransformation(entityToBeInfected)) {
+
+		} else {
+			throw new IllegalArgumentException("Given entity can't be infected");
+		}
 	}
 
 	public static boolean effectiveAgainstWerewolf(Object object) {
 		if (object instanceof Entity) {
 			Entity entity = (Entity) object;
 			return (entity instanceof IEffectiveAgainstWerewolf
-					|| ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.contains(entity));
+					|| ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.has(entity.getClass()));
+		} else if (object instanceof Class<?>) {
+			return ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.has(object);
 		} else if (object instanceof Item) {
 			Item item = (Item) object;
-			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.contains(item));
+			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.has(item));
 		} else if (object instanceof ItemStack) {
 			Item item = ((ItemStack) object).getItem();
-			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.contains(item));
+			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.has(item));
+		} else if (object instanceof IEffectiveAgainstWerewolf) {
+			System.err.println(
+					"An object implements the IEffectiveAgainstWerewolf interface although the object is neither entity (class) nor item");
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public static void addEffectiveAgainstWerewolf(EntityLivingBase entity) {
-		ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.add(entity);
+	public static void addEffectiveAgainstWerewolf(Class<? extends EntityLivingBase> entity) {
+		addEffectiveAgainstWerewolf(entity, IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS);
+	}
+
+	public static void addEffectiveAgainstWerewolf(Class<? extends EntityLivingBase> entity, int damageMultiplier) {
+		ENTITIES_EFFECTIVE_AGAINST_WEREWOLF
+				.add(new TwoValues<Class<? extends EntityLivingBase>, Integer>(entity, damageMultiplier));
 	}
 
 	public static void addEffectiveAgainstWerewolf(Item item) {
-		ITEMS_EFFECTIVE_AGAINST_WEREWOLF.add(item);
+		addEffectiveAgainstWerewolf(item, IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS);
+	}
+
+	public static void addEffectiveAgainstWerewolf(Item item, int damageMultiplier) {
+		ITEMS_EFFECTIVE_AGAINST_WEREWOLF.add(new TwoValues<Item, Integer>(item, damageMultiplier));
 	}
 
 	public static int getEffectivenessAgainstWerewolf(Object object) {
@@ -120,10 +142,13 @@ public class WerewolfHelper {
 				return IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS;
 			}
 		} else {
-			return 1 / 20;
+			throw new IllegalArgumentException("The given object is not effective against a werewolf");
 		}
 	}
 
+	/**
+	 * Only for werewolves
+	 */
 	public static int getWerewolfStrengthMultiplier(EntityLivingBase entity) {
 		if ((TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)
 				&& TransformationHelper.getITransformation(entity).transformed()) {
@@ -132,8 +157,11 @@ public class WerewolfHelper {
 			} else {
 				return 8;
 			}
+		} else if (!TransformationHelper.getITransformation(entity).transformed()
+				&& (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)) {
+			return 1;
 		} else {
-			return 0;
+			throw new IllegalArgumentException("The given entity is not a werewolf");
 		}
 	}
 
@@ -167,19 +195,23 @@ public class WerewolfHelper {
 				return 100;
 			} else if (entity instanceof EntityLivingBase) {
 				return 25;
+			} else {
+				System.err.println("Found entity that can infect but has no infection percantage... Using 25%");
+				return 25;
 			}
+		} else {
+			throw new IllegalArgumentException("Given entity can't infect and therefore has no infection percantage");
 		}
-
-		return 0;
 	}
 
 	// TODO: Set min level to 8 (4 only because you can't level higher)
 	/** Returns true when the player has control in the werewolf form */
 	public static boolean hasControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
-		if (cap.getTransformation() != Transformations.WEREWOLF)
+		if (cap.getTransformation() != Transformations.WEREWOLF) {
 			throw new IllegalArgumentException(
 					"Can't use this method on a non werewolf player (" + cap.getTransformation().toString() + ")");
+		}
 		return (cap.getTransformation().getLevelFloor(player) >= 0);
 	}
 
@@ -188,7 +220,7 @@ public class WerewolfHelper {
 			return werewolf.world
 					.getPlayerEntityByName(werewolf.getEntityName().substring(6, werewolf.getEntityName().length()));
 		} else {
-			return null;
+			throw new IllegalArgumentException("Werewolf is not a player");
 		}
 	}
 }

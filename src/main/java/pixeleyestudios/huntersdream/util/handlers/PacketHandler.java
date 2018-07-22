@@ -36,7 +36,7 @@ public class PacketHandler {
 						new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()), TEXTURE_INDEX(
 								new TransformationTextureIndexMessage(), SERVER);
 
-		public final MessageBase<?> MESSAGE_BASE;
+		private final MessageBase<?> MESSAGE_BASE;
 		public final Class<? extends IMessage> CLASS;
 		/** Side that receives package */
 		public final Side SIDE;
@@ -46,10 +46,10 @@ public class PacketHandler {
 		private Packets(MessageBase<?> messageBase) {
 			this(messageBase, CLIENT);
 		}
-		
+
 		// I have literally no idea what this does but it works
 		@SuppressWarnings("unchecked")
-		public <T> Class<T> getMessageClass(){
+		public <T> Class<T> getMessageClass() {
 			return (Class<T>) this.CLASS;
 		}
 
@@ -65,7 +65,7 @@ public class PacketHandler {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			int id = player.getEntityId();
 			EntityPlayerMP playerMP = null;
-			if (!player.world.isRemote) {
+			if (player instanceof EntityPlayerMP) {
 				playerMP = (EntityPlayerMP) player;
 			}
 			// you can get the sp player through Minecraft.getMinecraft().player;
@@ -77,11 +77,11 @@ public class PacketHandler {
 				// Server
 				case TRANSFORMATION:
 					// could contain render changes
-					INSTANCE.sendToAllTracking(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformationInt(), id, cap.getTextureIndex()), playerMP);
+					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
+							cap.getTransformationInt(), id, cap.getTextureIndex()));
 					break;
 				case XP:
-					INSTANCE.sendToAllTracking(new TransformationXPMessage(cap.getXP(), id), playerMP);
+					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), id));
 					break;
 				case NIGHT_OVER:
 					// only changes player view
@@ -101,13 +101,16 @@ public class PacketHandler {
 					break;
 
 				default:
-					break;
+					throw new IllegalArgumentException("Illegal arguments: Couldn't find packet " + this.toString()
+							+ "\nAdditional info:\nWrong side? "
+							+ (player.world.isRemote ? (this.SIDE == SERVER) : (this.SIDE == CLIENT)) + "\nPlayer: "
+							+ player.getName() + "\nAdditional argument length: " + args.length);
 				}
 
 				System.out.println(this.MESSAGE_BASE.getName() + " packet sent on side "
 						+ (player.world.isRemote ? Side.CLIENT : Side.SERVER).toString());
 			} else {
-				throw new IllegalArgumentException("Packet " + this.NAME + " couldn't be sent: Side "
+				throw new UnsupportedOperationException("Packet " + this.NAME + " couldn't be sent: Side "
 						+ (player.world.isRemote ? CLIENT : SERVER).toString() + " can't send this packet!");
 			}
 		}

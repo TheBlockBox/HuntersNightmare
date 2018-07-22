@@ -2,23 +2,22 @@ package pixeleyestudios.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.entity.EntityWerewolf;
 
-public class TransformationWerewolfNoControlMessage extends MessageBase<TransformationWerewolfNoControlMessage> {
+public class TransformationWerewolfNoControlMessage extends PlayerMessageBase<TransformationWerewolfNoControlMessage> {
 
-	private int entityID;
 	private int werewolfEntityID;
 
 	public TransformationWerewolfNoControlMessage() {
+		super(DEFAULT_ENTITY_ID);
 	}
 
 	public TransformationWerewolfNoControlMessage(int entityID, int werewolfEntityID) {
-		this.entityID = entityID;
+		super(entityID);
 		this.werewolfEntityID = werewolfEntityID;
 	}
 
@@ -35,17 +34,14 @@ public class TransformationWerewolfNoControlMessage extends MessageBase<Transfor
 	}
 
 	@Override
-	public IMessage onMessageReceived(TransformationWerewolfNoControlMessage message, MessageContext ctx) {
+	public IMessage onMessageReceived(TransformationWerewolfNoControlMessage message, MessageContext ctx,
+			EntityPlayer player) {
 		if (ctx.side == Side.CLIENT) {
-			Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.entityID);
-			if (entity instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) entity;
-				Minecraft mc = Minecraft.getMinecraft();
-				mc.addScheduledTask(() -> {
-					EntityWerewolf werewolf = (EntityWerewolf) player.world.getEntityByID(message.werewolfEntityID);
-					mc.setRenderViewEntity(werewolf);
-				});
-			}
+			Minecraft mc = Minecraft.getMinecraft();
+			mc.addScheduledTask(() -> {
+				EntityWerewolf werewolf = (EntityWerewolf) player.world.getEntityByID(message.werewolfEntityID);
+				mc.setRenderViewEntity(werewolf);
+			});
 		}
 		return null;
 	}

@@ -2,7 +2,6 @@ package pixeleyestudios.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -10,17 +9,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
-public class TransformationXPMessage extends MessageBase<TransformationXPMessage> {
+public class TransformationXPMessage extends PlayerMessageBase<TransformationXPMessage> {
 
 	private int xp;
-	private int entityID;
 
 	public TransformationXPMessage() {
+		super(DEFAULT_ENTITY_ID);
 	}
 
 	public TransformationXPMessage(int xp, int entityID) {
+		super(entityID);
 		this.xp = xp;
-		this.entityID = entityID;
 	}
 
 	@Override
@@ -36,16 +35,12 @@ public class TransformationXPMessage extends MessageBase<TransformationXPMessage
 	}
 
 	@Override
-	public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx) {
+	public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx, EntityPlayer player) {
 		if (ctx.side == Side.CLIENT) {
-			Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.entityID);
-			if (entity instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) entity;
-				Minecraft.getMinecraft().addScheduledTask(() -> {
-					ITransformationPlayer cap = TransformationHelper.getCap(player);
-					cap.setXP(message.xp);
-				});
-			}
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				ITransformationPlayer cap = TransformationHelper.getCap(player);
+				cap.setXP(message.xp);
+			});
 		}
 		return null;
 	}

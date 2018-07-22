@@ -32,6 +32,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 	/** name of the entity the werewolf was before transformation */
 	private String entityName;
 	public static final double SPEED = 0.45D;
+	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
@@ -61,7 +62,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(10);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(TRANSFORMATION.GENERAL_DAMAGE);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(SPEED);
 	}
@@ -126,7 +127,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 
 	@Override
 	public int getTransformationInt() {
-		return Transformations.WEREWOLF.ID;
+		return TRANSFORMATION.ID;
 	}
 
 	@Override

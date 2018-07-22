@@ -1,5 +1,4 @@
 # To-Do:
-- fix ToolAxe class
 - change goblin speed and AI
 - let iron golems attack you when in werewolf form
 - make that pure silver armour has a thorns effect against werewolves
@@ -8,9 +7,13 @@
 - fix werewolf model (animation)
 - fix werewolf entity
 - make custom hand renderer
-- remove no control thingy
+- fix no control thing
 - make particle effects on player/villager transformation
 - add events
 - create xp bar texture and make it showable
-- fix some stuff in WerewolfEventHandler
 - fix entity spawn
+- fix entities vanishing when to far away
+- make that players deal more damage and get hunger in werewolf form
+- test werewolf damage system
+- fix packet system (player id behaves weirdly)
+- make add WITCH to not supernatural list

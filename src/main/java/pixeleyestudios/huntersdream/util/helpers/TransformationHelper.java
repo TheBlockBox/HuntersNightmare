@@ -6,43 +6,53 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.MinecraftForge;
+import pixeleyestudios.huntersdream.event.TransformationXPEvent;
 import pixeleyestudios.huntersdream.init.CapabilitiesInit;
 import pixeleyestudios.huntersdream.util.Reference;
 import pixeleyestudios.huntersdream.util.handlers.PacketHandler.Packets;
 import pixeleyestudios.huntersdream.util.interfaces.ICalculateLevel;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformation;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
+import pixeleyestudios.huntersdream.util.twovalues.TwoValuesList;
 
 public interface TransformationHelper {
 	public enum Transformations {
-		// TODO: Add levelling system for HUMAN and VAMPIRE
+		// TODO: Add levelling system for HUMAN, VAMPIRE and WITCH
 
-		HUMAN(0, p -> {
-			return 0;
-		}),
+		HUMAN(0, p -> 0),
 
-		WEREWOLF(1, WerewolfHelper::getWerewolfLevel, "werewolf_beta_black", "werewolf_beta_white",
+		WEREWOLF(1, 8, WerewolfHelper::getWerewolfLevel, "werewolf_beta_black", "werewolf_beta_white",
 				"werewolf_beta_brown"), // I've always wanted to use the :: operator
 
-		VAMPIRE(2, p -> {
-			return 0;
-		});
+		VAMPIRE(2, p -> 0),
+
+		WITCH(3, p -> 0);
 
 		// when an entity has no transformation, use null
 		// (no transformation meaning not infectable)
 
 		public final int ID;
+		/**
+		 * the damage that the entites should deal in half hearts or for player's the
+		 * damage multiplier
+		 */
+		public final int GENERAL_DAMAGE;
 		private final ICalculateLevel CALCULATE_LEVEL;
 		public final ResourceLocation[] TEXTURES;
 
-		private Transformations(int id, ICalculateLevel calculateLevel, String... textures) {
+		private Transformations(int id, int generalDamage, ICalculateLevel calculateLevel, String... textures) {
 			this.ID = id;
 			this.CALCULATE_LEVEL = calculateLevel;
 			TEXTURES = new ResourceLocation[textures.length];
+			this.GENERAL_DAMAGE = generalDamage;
 			for (int i = 0; i < textures.length; i++) {
 				TEXTURES[i] = new ResourceLocation(Reference.MODID, "textures/entity/" + textures[i] + ".png");
 			}
+		}
 
+		private Transformations(int id, ICalculateLevel calculateLevel, String... textures) {
+			this(id, 1, calculateLevel, textures);
 		}
 
 		public static Transformations fromID(int id) {
@@ -65,7 +75,34 @@ public interface TransformationHelper {
 		public double getPercentageToNextLevel(EntityPlayer player) {
 			return getLevel(player) - getLevelFloor(player);
 		}
+
+		public boolean isSupernatural() {
+			return !(this == Transformations.HUMAN);
+		}
 	}
+
+	public enum TransformationXPSentReason {
+		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF);
+
+		/** The transformations that can receive xp through this cause */
+		public final Transformations[] TRANSFORMATIONS;
+
+		private TransformationXPSentReason(Transformations... transformations) {
+			this.TRANSFORMATIONS = transformations;
+		}
+
+		public static boolean validReason(TransformationXPSentReason reason, Transformations transformation) {
+			for (Transformations t : reason.TRANSFORMATIONS) {
+				if (t == transformation) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	/** Contains entities that can be infected */
+	public final TwoValuesList<Class<? extends EntityLivingBase>, Transformations[]> INFECTABLE_ENTITES = new TwoValuesList<>();
 
 	/**
 	 * Returns the transformation capability of the given player (just a short-cut
@@ -77,10 +114,10 @@ public interface TransformationHelper {
 
 	/**
 	 * Changes the player's transformation also resets xp and transformed and sends
-	 * the data to the client (this method is only server side!)
+	 * the data to the client (this method is only to be called server side!)
 	 */
 	public static void changeTransformation(EntityPlayerMP player, Transformations transformation) {
-		ITransformationPlayer cap = TransformationHelper.getCap(player);
+		ITransformationPlayer cap = getCap(player);
 		cap.setXP(0); // reset xp
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
@@ -88,9 +125,18 @@ public interface TransformationHelper {
 		Packets.TRANSFORMATION.sync(player); // sync data with client
 	}
 
-	public static void changeTransformationWhenPossible(EntityPlayerMP player, Transformations transformation) {
-		if (canChangeTransformation(player)) {
-			changeTransformation(player, transformation);
+	// TODO: Add handling of transformation change
+	public static void changeTransformation(EntityLivingBase entity, Transformations transformation) {
+		if (entity instanceof EntityPlayerMP) {
+			changeTransformation((EntityPlayerMP) entity, transformation);
+		} else {
+
+		}
+	}
+
+	public static void changeTransformationWhenPossible(EntityLivingBase entity, Transformations transformation) {
+		if (canChangeTransformation(entity)) {
+			changeTransformation(entity, transformation);
 		}
 	}
 
@@ -99,12 +145,7 @@ public interface TransformationHelper {
 	 * (e.g. by werewolf infection)
 	 */
 	public static boolean canChangeTransformation(EntityLivingBase entity) {
-		return (getTransformation(entity) == Transformations.HUMAN);
-	}
-
-	// TODO: Add handling of transformation change
-	public static void changeTransformation(EntityLivingBase entity, Transformations transformation) {
-
+		return ((getTransformation(entity) == Transformations.HUMAN) || INFECTABLE_ENTITES.has(entity.getClass()));
 	}
 
 	public static Transformations getTransformation(EntityLivingBase entity) {
@@ -128,25 +169,44 @@ public interface TransformationHelper {
 		return null;
 	}
 
-	/**
-	 * Increments the player's xp, sends a message on levelup and sends an xp packet
-	 */
-	public static void incrementXP(EntityPlayerMP player) {
-		addXP(player, 1);
+	public static void incrementXP(EntityPlayerMP player, TransformationXPSentReason reason) {
+		addXP(player, 1, reason);
+	}
+
+	public static void addXP(EntityPlayerMP player, int xpToAdd, TransformationXPSentReason reason) {
+		ITransformationPlayer cap = getCap(player);
+		setXP(player, (cap.getXP() + xpToAdd), reason);
 	}
 
 	/**
-	 * Adds the given xp to the player's xp, sends a message on levelup and sends an
-	 * xp packet
+	 * Sets the players xp to the given xp, sends a message on levelup and an xp
+	 * packet
 	 */
-	public static void addXP(EntityPlayerMP player, int xpToAdd) {
+	public static void setXP(EntityPlayerMP player, int xp, TransformationXPSentReason reason) {
 		ITransformationPlayer cap = getCap(player);
 		int levelBefore = cap.getTransformation().getLevelFloor(player);
-		cap.addXP(xpToAdd);
-		int levelAfter = cap.getTransformation().getLevelFloor(player);
-		if (levelBefore < levelAfter) {
-			player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
+		TransformationXPEvent event = new TransformationXPEvent(player, xp, reason);
+
+		if (!MinecraftForge.EVENT_BUS.post(event)) {
+			cap.setXP(event.getAmount());
+			int levelAfter = cap.getTransformation().getLevelFloor(player);
+			if (levelBefore < levelAfter) {
+				player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
+			}
+			Packets.XP.sync(player);
 		}
-		Packets.XP.sync(player);
+	}
+
+	/**
+	 * Add an entity that can be infected
+	 * 
+	 * @param transformations
+	 *            The transformations in that the entity can transform
+	 */
+	public static void addInfectableEntity(Class<? extends EntityLivingBase> entity,
+			Transformations... transformations) {
+		if (!INFECTABLE_ENTITES.has(entity)) {
+			INFECTABLE_ENTITES.add(entity, transformations);
+		}
 	}
 }

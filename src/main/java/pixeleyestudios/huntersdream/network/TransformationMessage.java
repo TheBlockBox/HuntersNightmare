@@ -2,7 +2,6 @@ package pixeleyestudios.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -10,22 +9,22 @@ import net.minecraftforge.fml.relauncher.Side;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
-public class TransformationMessage extends MessageBase<TransformationMessage> {
+public class TransformationMessage extends PlayerMessageBase<TransformationMessage> {
 
 	private int xp;
 	private boolean transformed;
 	private int transformationID;
-	private int entityID;
 	private int textureIndex;
 
 	public TransformationMessage() {
+		super(DEFAULT_ENTITY_ID);
 	}
 
 	public TransformationMessage(int xp, boolean transformed, int transformationID, int entityID, int textureIndex) {
+		super(entityID);
 		this.xp = xp;
 		this.transformed = transformed;
 		this.transformationID = transformationID;
-		this.entityID = entityID;
 		this.textureIndex = textureIndex;
 	}
 
@@ -48,19 +47,15 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	}
 
 	@Override
-	public IMessage onMessageReceived(TransformationMessage message, MessageContext ctx) {
+	public IMessage onMessageReceived(TransformationMessage message, MessageContext ctx, EntityPlayer player) {
 		if (ctx.side == Side.CLIENT) {
-			Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.entityID);
-			if (entity instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) entity;
-				Minecraft.getMinecraft().addScheduledTask(() -> {
-					ITransformationPlayer cap = TransformationHelper.getCap(player);
-					cap.setXP(message.xp);
-					cap.setTransformed(message.transformed);
-					cap.setTransformationID(message.transformationID);
-					cap.setTextureIndex(message.textureIndex);
-				});
-			}
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				ITransformationPlayer cap = TransformationHelper.getCap(player);
+				cap.setXP(message.xp);
+				cap.setTransformed(message.transformed);
+				cap.setTransformationID(message.transformationID);
+				cap.setTextureIndex(message.textureIndex);
+			});
 		}
 		return null;
 	}
