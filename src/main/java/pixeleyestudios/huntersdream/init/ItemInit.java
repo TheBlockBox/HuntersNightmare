@@ -33,11 +33,11 @@ public class ItemInit {
 
 	// Tools
 	// public static final Item AXE_SILVER = new ToolAxe("axe_silver", TOOL_SILVER);
-	public static final Item HOE_PURE_SILVER = new ToolPureSilverHoe();
-	public static final Item PICKAXE_PURE_SILVER = new ToolPureSilverPickaxe();
-	public static final Item SHOVEL_PURE_SILVER = new ToolPureSilverShovel();
-	public static final Item SWORD_PURE_SILVER = new ToolPureSilverSword();
-	public static final Item AXE_PURE_SILVER = new ToolPureSilverAxe();
+	public static final Item HOE_PURE_SILVER = new ToolPureSilverHoe("hoe_pure_silver");
+	public static final Item PICKAXE_PURE_SILVER = new ToolPureSilverPickaxe("pickaxe_pure_silver");
+	public static final Item SHOVEL_PURE_SILVER = new ToolPureSilverShovel("shovel_pure_silver");
+	public static final Item SWORD_PURE_SILVER = new ToolPureSilverSword("sword_pure_silver");
+	public static final Item AXE_PURE_SILVER = new ToolPureSilverAxe("axe_pure_silver");
 
 	// Armor
 	public static final Item HELMET_PURE_SILVER = new ArmorBase("helmet_pure_silver", ARMOR_PURE_SILVER, 1,

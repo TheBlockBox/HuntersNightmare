@@ -16,17 +16,19 @@ import pixeleyestudios.huntersdream.network.TransformationTextureIndexMessage;
 import pixeleyestudios.huntersdream.network.TransformationWerewolfNightOverMessage;
 import pixeleyestudios.huntersdream.network.TransformationWerewolfNoControlMessage;
 import pixeleyestudios.huntersdream.network.TransformationXPMessage;
+import pixeleyestudios.huntersdream.util.ExecutionPath;
 import pixeleyestudios.huntersdream.util.Reference;
+import pixeleyestudios.huntersdream.util.exceptions.WrongSideException;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 
 public class PacketHandler {
 	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
-	public static int id = 0;
+	public static int networkID = 0;
 
 	public static void register() {
 		for (Packets packet : Packets.values()) {
-			INSTANCE.registerMessage(packet.getMessageClass(), packet.CLASS, id++, packet.SIDE);
+			INSTANCE.registerMessage(packet.getMessageClass(), packet.CLASS, networkID++, packet.SIDE);
 		}
 	}
 
@@ -61,9 +63,9 @@ public class PacketHandler {
 			this.NAME = messageBase.getName();
 		}
 
-		public void sync(EntityPlayer player, Object... args) {
+		public void sync(ExecutionPath path, EntityPlayer player, Object... args) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			int id = player.getEntityId();
+			int playerID = player.getEntityId();
 			EntityPlayerMP playerMP = null;
 			if (player instanceof EntityPlayerMP) {
 				playerMP = (EntityPlayerMP) player;
@@ -76,21 +78,22 @@ public class PacketHandler {
 				switch (this) {
 				// Server
 				case TRANSFORMATION:
+					System.out.println();
 					// could contain render changes
 					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformationInt(), id, cap.getTextureIndex()));
+							cap.getTransformationInt(), playerID, cap.getTextureIndex()));
 					break;
 				case XP:
-					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), id));
+					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), playerID));
 					break;
 				case NIGHT_OVER:
 					// only changes player view
-					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(id), playerMP);
+					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(playerID), playerMP);
 					break;
 				case NO_CONTROL:
 					// only changes player view
 					INSTANCE.sendTo(
-							new TransformationWerewolfNoControlMessage(id, Integer.parseInt(args[0].toString())),
+							new TransformationWerewolfNoControlMessage(playerID, Integer.parseInt(args[0].toString())),
 							playerMP);
 					break;
 
@@ -104,14 +107,16 @@ public class PacketHandler {
 					throw new IllegalArgumentException("Illegal arguments: Couldn't find packet " + this.toString()
 							+ "\nAdditional info:\nWrong side? "
 							+ (player.world.isRemote ? (this.SIDE == SERVER) : (this.SIDE == CLIENT)) + "\nPlayer: "
-							+ player.getName() + "\nAdditional argument length: " + args.length);
+							+ player.getName() + "\nAdditional argument length: " + args.length + "\nPath: "
+							+ path.get());
 				}
 
-				System.out.println(this.MESSAGE_BASE.getName() + " packet sent on side "
-						+ (player.world.isRemote ? Side.CLIENT : Side.SERVER).toString());
+				if (ConfigHandler.showPacketMessages)
+					System.out.println(this.MESSAGE_BASE.getName() + " packet sent on side "
+							+ (player.world.isRemote ? CLIENT : SERVER).toString() + "\nPath: " + path.get());
 			} else {
-				throw new UnsupportedOperationException("Packet " + this.NAME + " couldn't be sent: Side "
-						+ (player.world.isRemote ? CLIENT : SERVER).toString() + " can't send this packet!");
+				throw new WrongSideException("Packet " + this.NAME + " couldn't be sent\nPath: " + path.get(),
+						(this.SIDE == SERVER ? CLIENT : SERVER));
 			}
 		}
 	}

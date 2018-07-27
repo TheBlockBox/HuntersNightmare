@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import pixeleyestudios.huntersdream.entity.EntityWerewolf;
+import pixeleyestudios.huntersdream.util.exceptions.WrongTransformationException;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
@@ -44,7 +45,8 @@ public class WerewolfHelper {
 
 			return level;
 		} else {
-			throw new IllegalArgumentException("Given player is not a werewolf");
+			throw new WrongTransformationException("Given player is not a werewolf",
+					TransformationHelper.getTransformation(player));
 		}
 	}
 
@@ -81,8 +83,10 @@ public class WerewolfHelper {
 				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 600, 0, false, false));
 				break;
 			}
+			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 600, 0, false, false));
 		} else {
-			throw new IllegalArgumentException("The given player isn't a werewolf and/or transformed");
+			throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
+					TransformationHelper.getTransformation(player));
 		}
 	}
 
@@ -91,7 +95,7 @@ public class WerewolfHelper {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)) {
 
 		} else {
-			throw new IllegalArgumentException("Given entity can't be infected");
+			throw new WrongTransformationException("Given entity can't be infected");
 		}
 	}
 
@@ -161,7 +165,7 @@ public class WerewolfHelper {
 				&& (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)) {
 			return 1;
 		} else {
-			throw new IllegalArgumentException("The given entity is not a werewolf");
+			throw new WrongTransformationException("The given entity is not a werewolf");
 		}
 	}
 
@@ -200,7 +204,7 @@ public class WerewolfHelper {
 				return 25;
 			}
 		} else {
-			throw new IllegalArgumentException("Given entity can't infect and therefore has no infection percantage");
+			throw new WrongTransformationException("The given entity is not a werewolf");
 		}
 	}
 
@@ -209,8 +213,7 @@ public class WerewolfHelper {
 	public static boolean hasControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
 		if (cap.getTransformation() != Transformations.WEREWOLF) {
-			throw new IllegalArgumentException(
-					"Can't use this method on a non werewolf player (" + cap.getTransformation().toString() + ")");
+			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
 		}
 		return (cap.getTransformation().getLevelFloor(player) >= 0);
 	}

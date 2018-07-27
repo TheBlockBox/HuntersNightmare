@@ -5,8 +5,8 @@ import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 
 public class ToolPureSilverShovel extends ToolShovel implements IEffectiveAgainstWerewolf {
 
-	public ToolPureSilverShovel() {
-		super("shovel_pure_silver", ItemInit.TOOL_PURE_SILVER);
+	public ToolPureSilverShovel(String name) {
+		super(name, ItemInit.TOOL_PURE_SILVER);
 	}
 
 }

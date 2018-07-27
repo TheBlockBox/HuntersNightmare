@@ -1,5 +1,8 @@
 package pixeleyestudios.huntersdream.entity;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -8,11 +11,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -26,12 +31,12 @@ import pixeleyestudios.huntersdream.util.interfaces.ITransformation;
 /**
  * A werewolf
  */
-public class EntityWerewolf extends EntityZombie implements ITransformation, IEntityAdditionalSpawnData {
+public class EntityWerewolf extends EntityMob implements ITransformation, IEntityAdditionalSpawnData {
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
 	private String entityName;
-	public static final double SPEED = 0.45D;
+	public static final double SPEED = 0.7D;
 	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
@@ -45,18 +50,24 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 	}
 
 	public EntityWerewolf(World worldIn) {
-		this(worldIn, 0, "werewolfvillager");
+		this(worldIn, 0, EntityWerewolfVillager.class.getName());
 	}
 
 	@Override
 	protected void initEntityAI() {
 		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.02D, false));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.4D, false));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 		this.applyEntityAI();
+	}
+
+	protected void applyEntityAI() {
+		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
+		this.targetTasks.addTask(2,
+				new EntityAINearestAttackableTarget<EntityLivingBase>(this, EntityLivingBase.class, true));
 	}
 
 	@Override
@@ -92,6 +103,7 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
@@ -101,13 +113,25 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 					EntityLiving entity = null;
 
 					if (!entityName.startsWith("player")) {
-						switch (entityName) {
-						case "werewolfvillager":
-							entity = new EntityWerewolfVillager(world, textureIndex);
-							break;
 
-						default:
-							throw new NullPointerException("Couldn't find entity \"" + entityName + "\"");
+						Class<? extends Entity> entityClass;
+
+						try {
+							entityClass = (Class<? extends Entity>) Class.forName(entityName);
+							Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
+									Transformations.class);
+							entity = (EntityLiving) constructor.newInstance(this.world, this.getTextureIndex(),
+									this.getTransformation());
+						} catch (ClassNotFoundException e) {
+							throw new NullPointerException("Can't find class " + entityName);
+						} catch (ClassCastException e) {
+							throw new IllegalArgumentException("Given class " + entityName + " is not an entity");
+						} catch (NoSuchMethodException | InvocationTargetException | SecurityException
+								| IllegalAccessException e) {
+							throw new NullPointerException("Class " + entityName
+									+ " does not have an accessible constructor with parameters World, int, Transformations");
+						} catch (InstantiationException e) {
+							throw new IllegalArgumentException("Can't instantiate class " + entityName);
 						}
 
 						entity.setPosition(posX, posY, posZ);
@@ -132,33 +156,17 @@ public class EntityWerewolf extends EntityZombie implements ITransformation, IEn
 
 	@Override
 	public void setTransformationID(int id) {
-		throw new IllegalArgumentException("Transformation already determined");
+		throw new UnsupportedOperationException("Transformation already determined");
 	}
 
 	@Override
 	public void setTransformed(boolean transformed) {
-		// just does nothing
+		throw new UnsupportedOperationException("Entity is always transformed");
 	}
 
 	@Override
 	public int getTextureIndex() {
 		return textureIndex;
-	}
-
-	@Override
-	public boolean attackEntityAsMob(Entity entityIn) {
-		boolean flag = super.attackEntityAsMob(entityIn);
-
-		if (flag && this.getHeldItemMainhand().isEmpty() && entityIn instanceof EntityLivingBase) {
-			WerewolfHelper.infect((EntityLivingBase) entityIn);
-		}
-
-		return flag;
-	}
-
-	@Override
-	protected boolean shouldBurnInDay() {
-		return false;
 	}
 
 	@Override

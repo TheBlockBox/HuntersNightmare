@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import pixeleyestudios.huntersdream.Main;
 import pixeleyestudios.huntersdream.entity.renderer.RenderWolfmanPlayer;
 import pixeleyestudios.huntersdream.util.Reference;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
@@ -21,13 +22,14 @@ import pixeleyestudios.huntersdream.util.interfaces.ITransformationPlayer;
 /**
  * Handles events which are important for transforming
  */
-@SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber
 public class TransformationClientEventHandler {
-
+	@SideOnly(Side.CLIENT)
 	private static RenderWolfmanPlayer renderWerewolf = null;
+	@SideOnly(Side.CLIENT)
 	private static ResourceLocation texture = null;
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
 		if (ConfigHandler.customPlayerRender) {
@@ -46,20 +48,14 @@ public class TransformationClientEventHandler {
 		}
 	}
 
-	// TODO: Custom hand render
-	@SubscribeEvent
-	public static void onRenderPlayerHand(RenderHandEvent event) {
-		if (ConfigHandler.customPlayerRender) {
-
-		}
-	}
-
 	// TODO: Transformation xp handler
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onGameOverlayRenderPost(RenderGameOverlayEvent.Post event) {
 		if (ConfigHandler.renderXPBar) {
 			Minecraft mc = Minecraft.getMinecraft();
-			if (!mc.player.capabilities.isCreativeMode) {
+			EntityPlayer player = Main.proxy.getPlayer();
+			if (!player.capabilities.isCreativeMode) {
 				if ((!event.isCancelable()) && event.getType() == ElementType.EXPERIENCE) {
 					if (texture == null)
 						texture = new ResourceLocation(Reference.MODID, "textures/gui/transformation_xp_bar.png");
@@ -68,11 +64,20 @@ public class TransformationClientEventHandler {
 					int x = event.getResolution().getScaledWidth() / 2 + 10;
 					int y = event.getResolution().getScaledHeight() - 48;
 					mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 81, 8);
-					int percent = (int) (TransformationHelper.getTransformation(mc.player)
-							.getPercentageToNextLevel(mc.player) * 79);
+					int percent = (int) (TransformationHelper.getTransformation(player).getPercentageToNextLevel(player)
+							* 79);
 					mc.ingameGUI.drawTexturedModalRect(x + 1, y + 1, 0, 9, percent, 6);
 				}
 			}
+		}
+	}
+
+	// TODO: Custom hand render
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public static void onRenderPlayerHand(RenderHandEvent event) {
+		if (ConfigHandler.customPlayerRender) {
+
 		}
 	}
 }

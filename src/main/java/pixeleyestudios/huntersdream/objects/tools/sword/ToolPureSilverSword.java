@@ -5,7 +5,7 @@ import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 
 public class ToolPureSilverSword extends ToolSword implements IEffectiveAgainstWerewolf {
 
-	public ToolPureSilverSword() {
-		super("sword_pure_silver", ItemInit.TOOL_PURE_SILVER);
+	public ToolPureSilverSword(String name) {
+		super(name, ItemInit.TOOL_PURE_SILVER);
 	}
 }

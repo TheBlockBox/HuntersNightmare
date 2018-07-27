@@ -15,5 +15,7 @@
 - fix entities vanishing when to far away
 - make that players deal more damage and get hunger in werewolf form
 - test werewolf damage system
-- fix packet system (player id behaves weirdly)
-- make add WITCH to not supernatural list
+- add logger
+- add thorns when attacked by werewolf and wearing silver armour
+- fix xp
+- test new entity ai

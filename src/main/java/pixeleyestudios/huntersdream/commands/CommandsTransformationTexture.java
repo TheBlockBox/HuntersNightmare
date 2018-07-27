@@ -6,6 +6,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
+import pixeleyestudios.huntersdream.util.ExecutionPath;
 import pixeleyestudios.huntersdream.util.handlers.PacketHandler.Packets;
 import pixeleyestudios.huntersdream.util.helpers.CommandHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
@@ -50,7 +51,7 @@ public class CommandsTransformationTexture extends CommandBase {
 				cap.setTextureIndex(index);
 				sender.sendMessage(new TextComponentTranslation("command.transformationtexture.set", player.getName(),
 						cap.getTextureIndex()));
-				Packets.TRANSFORMATION.sync(player);
+				Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 			}
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);

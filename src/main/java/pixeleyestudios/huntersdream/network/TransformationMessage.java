@@ -20,8 +20,8 @@ public class TransformationMessage extends PlayerMessageBase<TransformationMessa
 		super(DEFAULT_ENTITY_ID);
 	}
 
-	public TransformationMessage(int xp, boolean transformed, int transformationID, int entityID, int textureIndex) {
-		super(entityID);
+	public TransformationMessage(int xp, boolean transformed, int transformationID, int entID, int textureIndex) {
+		super(entID);
 		this.xp = xp;
 		this.transformed = transformed;
 		this.transformationID = transformationID;

@@ -5,8 +5,8 @@ import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 
 public class ToolPureSilverHoe extends ToolHoe implements IEffectiveAgainstWerewolf {
 
-	public ToolPureSilverHoe() {
-		super("hoe_pure_silver", ItemInit.TOOL_PURE_SILVER);
+	public ToolPureSilverHoe(String name) {
+		super(name, ItemInit.TOOL_PURE_SILVER);
 	}
 
 }

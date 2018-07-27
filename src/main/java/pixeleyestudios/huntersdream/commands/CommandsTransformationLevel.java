@@ -6,6 +6,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
+import pixeleyestudios.huntersdream.util.ExecutionPath;
 import pixeleyestudios.huntersdream.util.handlers.PacketHandler.Packets;
 import pixeleyestudios.huntersdream.util.helpers.CommandHelper;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
@@ -63,7 +64,7 @@ public class CommandsTransformationLevel extends CommandBase {
 
 			cap.setXP(value);
 			sender.sendMessage(new TextComponentTranslation("command.transformationXP.set", player.getName(), value));
-			Packets.TRANSFORMATION.sync(player);
+			Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

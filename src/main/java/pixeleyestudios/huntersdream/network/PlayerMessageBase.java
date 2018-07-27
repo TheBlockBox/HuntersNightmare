@@ -9,15 +9,17 @@ import net.minecraftforge.fml.relauncher.Side;
 /**
  * Extend this class if you want to include a player id in your packet/message
  */
-public abstract class PlayerMessageBase<T extends IMessage> extends MessageBase<T> {
+public abstract class PlayerMessageBase<T extends PlayerMessageBase<T>> extends MessageBase<T> {
 	public static final int DEFAULT_ENTITY_ID = Integer.MAX_VALUE;
-	/**
-	 * Use this id only for the player
-	 */
-	protected int entityID = DEFAULT_ENTITY_ID;
+	/** Use this id only for the player */
+	protected int entityID;
 
-	public PlayerMessageBase(int entityID) {
-		this.entityID = entityID;
+	public PlayerMessageBase() {
+		this.entityID = DEFAULT_ENTITY_ID;
+	}
+
+	public PlayerMessageBase(int entID) {
+		this.entityID = entID;
 	}
 
 	@Override
@@ -25,9 +27,9 @@ public abstract class PlayerMessageBase<T extends IMessage> extends MessageBase<
 		EntityPlayer player = null;
 		try {
 			if (ctx.side == Side.CLIENT) {
-				player = (EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(entityID);
+				player = (EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.entityID);
 			} else if (ctx.side == Side.SERVER) {
-				player = (EntityPlayer) ctx.getServerHandler().player.world.getEntityByID(entityID);
+				player = (EntityPlayer) ctx.getServerHandler().player.world.getEntityByID(message.entityID);
 			}
 
 			if (player == null) {
@@ -35,10 +37,10 @@ public abstract class PlayerMessageBase<T extends IMessage> extends MessageBase<
 			}
 
 			return onMessageReceived(message, ctx, player);
-		} catch (NullPointerException e1) {
-			System.err.println(getName() + " packet couldn't find player with id " + entityID
-					+ (entityID == DEFAULT_ENTITY_ID ? " = default id" : "= not default id"));
-		} catch (ClassCastException e2) {
+		} catch (NullPointerException e) {
+			System.err.println(getName() + " packet couldn't find player with id " + message.entityID
+					+ (message.entityID == DEFAULT_ENTITY_ID ? " = default id" : " = not default id"));
+		} catch (ClassCastException e) {
 			System.err.println(getName() + " packet tried to cast non-player entity to player");
 		}
 

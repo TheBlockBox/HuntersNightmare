@@ -5,8 +5,8 @@ import pixeleyestudios.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 
 public class ToolPureSilverPickaxe extends ToolPickaxe implements IEffectiveAgainstWerewolf {
 
-	public ToolPureSilverPickaxe() {
-		super("pickaxe_pure_silver", ItemInit.TOOL_PURE_SILVER);
+	public ToolPureSilverPickaxe(String name) {
+		super(name, ItemInit.TOOL_PURE_SILVER);
 	}
 
 }

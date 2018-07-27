@@ -6,13 +6,14 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import pixeleyestudios.huntersdream.entity.renderer.RenderWerewolf;
+import pixeleyestudios.huntersdream.util.exceptions.WrongTransformationException;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper.Transformations;
 import pixeleyestudios.huntersdream.util.helpers.WerewolfHelper;
 import pixeleyestudios.huntersdream.util.interfaces.ITransformation;
@@ -32,10 +33,14 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 		textureIndex = rand.nextInt(Transformations.WEREWOLF.TEXTURES.length);
 	}
 
-	public EntityWerewolfVillager(World worldIn, int textureIndex) {
+	public EntityWerewolfVillager(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		setProfession(5);
 		this.textureIndex = textureIndex;
+		if (transformation != Transformations.WEREWOLF) {
+			throw new WrongTransformationException("EntityWerewolfVillager only accepts WEREWOLF transformation",
+					transformation);
+		}
 	}
 
 	@Override
@@ -51,6 +56,11 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	@Override
 	public int getProfession() {
 		return 5;
+	}
+
+	@Override
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation("entity.werewolf.name");
 	}
 
 	@Override
@@ -104,24 +114,13 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 		if (ticksExisted % 40 == 0) {
 			if (!world.isRemote) {
 				if (WerewolfHelper.isWerewolfTime(this)) {
-					EntityWerewolf werewolf = new EntityWerewolf(world, textureIndex, "werewolfvillager");
+					EntityWerewolf werewolf = new EntityWerewolf(world, textureIndex, getClass().getName());
 					werewolf.setPosition(posX, posY, posZ);
 					world.removeEntity(this);
 					world.spawnEntity(werewolf);
 				}
 			}
 		}
-	}
-
-	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
-	}
-
-	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
-		setTransformed(compound.getBoolean("transformed"));
 	}
 
 	@Override
@@ -141,7 +140,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 
 	@Override
 	public void setTransformed(boolean transformed) {
-		// just does nothing
+		throw new UnsupportedOperationException("Entity is always not transformed");
 	}
 
 	@Override

@@ -26,7 +26,6 @@ import pixeleyestudios.huntersdream.init.ItemInit;
 import pixeleyestudios.huntersdream.init.PotionInit;
 import pixeleyestudios.huntersdream.util.compat.OreDictionaryCompat;
 import pixeleyestudios.huntersdream.util.interfaces.IHasModel;
-import pixeleyestudios.huntersdream.world.gen.WorldGenCustomEntitySpawn;
 import pixeleyestudios.huntersdream.world.gen.WorldGenCustomOres;
 
 /**
@@ -49,7 +48,6 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onEntityRegister(RegistryEvent.Register<EntityEntry> event) {
 		EntityInit.registerEntities(event);
-		// TODO: Register everything properly
 	}
 
 	@SubscribeEvent
@@ -90,7 +88,6 @@ public class RegistryHandler {
 	public static void preInitRegistries(FMLPreInitializationEvent event) {
 		Main.proxy.preInit();
 		CapabilitiesInit.registerCapabilities();
-		WorldGenCustomEntitySpawn.registerEntitySpawns();
 	}
 
 	public static void initRegistries(FMLInitializationEvent event) {

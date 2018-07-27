@@ -5,13 +5,15 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import pixeleyestudios.huntersdream.util.handlers.ConfigHandler;
 
-public abstract class MessageBase<T extends IMessage> implements IMessage, IMessageHandler<T, IMessage> {
+public abstract class MessageBase<T extends MessageBase<T>> implements IMessage, IMessageHandler<T, IMessage> {
 
 	@Override
 	public final IMessage onMessage(T message, MessageContext ctx) {
 		IMessage iMessage = onMessageReceived(message, ctx);
-		System.out.println(getName() + " packet received on side " + ctx.side.toString());
+		if (ConfigHandler.showPacketMessages)
+			System.out.println(getName() + " packet received on side " + ctx.side.toString());
 		return iMessage;
 	}
 

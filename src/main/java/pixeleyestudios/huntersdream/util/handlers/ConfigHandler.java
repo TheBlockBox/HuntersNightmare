@@ -15,6 +15,8 @@ public class ConfigHandler {
 	public static boolean customPlayerRender = true;
 	public static boolean renderXPBar = true;
 
+	public static boolean showPacketMessages = false;
+
 	public static Configuration config;
 
 	public static void init(File file) {
@@ -22,15 +24,14 @@ public class ConfigHandler {
 
 		String category;
 
-		category = "IDs";
-		config.addCustomCategoryComment(category, "Set IDs for entities, worlds etc.");
-		goblinID = config.getInt("Goblin ID", category, 130, 120, Integer.MAX_VALUE, "ID for the goblin");
-		werewolfVillagerID = config.getInt("Werewolf Villager ID", category, 131, 120, Integer.MAX_VALUE,
-				"ID for werewolf villager");
-		werewolfID = config.getInt("Werewolf ID", category, 132, 120, Integer.MAX_VALUE, "ID for werewolf");
+		category = "advanced";
+		config.addCustomCategoryComment(category,
+				"Settings for advanced users (modders, modpack makers, server admins etc.)");
+		showPacketMessages = config.getBoolean("Show packet messages", category, false,
+				"Show messages in log when data between the client and the server is synced (doesn't include error chat messages)");
 
-		category = "Rendering";
-		config.addCustomCategoryComment(category, "Activate/Deactivate render");
+		category = "rendering";
+		config.addCustomCategoryComment(category, "Activate/Deactivate render (client side only)");
 		customPlayerRender = config.getBoolean("Custom player render", category, true,
 				"Use different player render when transformed");
 		renderXPBar = config.getBoolean("Render xp bar", category, true,
@@ -40,7 +41,7 @@ public class ConfigHandler {
 	}
 
 	public static void registerConfig(FMLPreInitializationEvent event) {
-		Main.setConfig(new File(event.getModConfigurationDirectory() + "/" + Reference.MODID));
+		Main.setConfig(new File(event.getModConfigurationDirectory().toString()));
 		Main.getConfig().mkdirs();
 		init(new File(Main.getConfig().getPath(), Reference.MODID + ".cfg"));
 	}

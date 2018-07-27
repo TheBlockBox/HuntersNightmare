@@ -1,15 +1,26 @@
 package pixeleyestudios.huntersdream.init;
 
+import static net.minecraft.init.Biomes.BIRCH_FOREST;
+import static net.minecraft.init.Biomes.BIRCH_FOREST_HILLS;
+import static net.minecraft.init.Biomes.FOREST;
+import static net.minecraft.init.Biomes.FOREST_HILLS;
+import static net.minecraft.init.Biomes.MUTATED_BIRCH_FOREST;
+import static net.minecraft.init.Biomes.MUTATED_BIRCH_FOREST_HILLS;
+import static net.minecraft.init.Biomes.MUTATED_FOREST;
+import static net.minecraft.init.Biomes.MUTATED_ROOFED_FOREST;
+import static net.minecraft.init.Biomes.ROOFED_FOREST;
+
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import pixeleyestudios.huntersdream.Main;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import pixeleyestudios.huntersdream.entity.EntityGoblinTD;
 import pixeleyestudios.huntersdream.entity.EntityWerewolf;
 import pixeleyestudios.huntersdream.entity.EntityWerewolfVillager;
@@ -17,18 +28,22 @@ import pixeleyestudios.huntersdream.entity.renderer.RenderGoblinTD;
 import pixeleyestudios.huntersdream.entity.renderer.RenderWerewolf;
 import pixeleyestudios.huntersdream.entity.renderer.RenderWerewolfVillager;
 import pixeleyestudios.huntersdream.util.Reference;
-import pixeleyestudios.huntersdream.util.handlers.ConfigHandler;
 
 public class EntityInit {
-	// private static int networkID = 0;
+	private static int networkID = 0;
 
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
-		registerEntity("goblintd", EntityGoblinTD.class, ConfigHandler.goblinID, 20, 29696, 255);
-		registerEntity("werewolfvillager", EntityWerewolfVillager.class, ConfigHandler.werewolfVillagerID, 15, 41414,
-				5252);
-		registerEntity("werewolf", EntityWerewolf.class, ConfigHandler.werewolfID, 15, 3155156, 166116);
-		// TODO: Change egg colour
 
+		// Register with egg
+		registerEntity(event, "goblintd", EntityGoblinTD.class, 20, 29696, 255);
+
+		// Register with egg and spawn
+		registerEntity(event, "werewolfvillager", EntityWerewolfVillager.class, 15, 41414, 5252,
+				EnumCreatureType.CREATURE, 1, 10, 50, FOREST, FOREST_HILLS, BIRCH_FOREST, BIRCH_FOREST_HILLS,
+				MUTATED_BIRCH_FOREST, MUTATED_BIRCH_FOREST_HILLS, MUTATED_ROOFED_FOREST, MUTATED_FOREST, ROOFED_FOREST);
+
+		// Register without egg
+		registerEntity(event, "werewolf", EntityWerewolf.class, 15);
 	}
 
 	public static void registerEntityRenders() {
@@ -60,9 +75,32 @@ public class EntityInit {
 	 * new texture in textures/entity
 	 */
 
-	private static void registerEntity(String name, Class<? extends Entity> entity, int id, int trackingRange,
-			int eggColor1, int eggColor2) {
-		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MODID + ":" + name), entity, name, id,
-				Main.instance, trackingRange, 1, true, eggColor1, eggColor2);
+	/** Register with egg */
+	private static void registerEntity(RegistryEvent.Register<EntityEntry> event, String name,
+			Class<? extends Entity> entity, int trackingRange, int eggColor1, int eggColor2) {
+		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
+				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
+				.tracker(trackingRange, 20, false).egg(eggColor1, eggColor2).build();
+		event.getRegistry().register(entry);
+	}
+
+	/** Register without egg */
+	private static void registerEntity(RegistryEvent.Register<EntityEntry> event, String name,
+			Class<? extends Entity> entity, int trackingRange) {
+		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
+				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
+				.tracker(trackingRange, 20, false).build();
+		event.getRegistry().register(entry);
+	}
+
+	/** Register with egg and spawn biomes */
+	private static void registerEntity(RegistryEvent.Register<EntityEntry> event, String name,
+			Class<? extends Entity> entity, int trackingRange, int eggColor1, int eggColor2, EnumCreatureType type,
+			int weight, int min, int max, Biome... spawnBiomes) {
+		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
+				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
+				.tracker(trackingRange, 20, false).egg(eggColor1, eggColor2).spawn(type, weight, min, max, spawnBiomes)
+				.build();
+		event.getRegistry().register(entry);
 	}
 }

@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import pixeleyestudios.huntersdream.capabilities.CapabilityProvider;
 import pixeleyestudios.huntersdream.init.CapabilitiesInit;
+import pixeleyestudios.huntersdream.util.ExecutionPath;
 import pixeleyestudios.huntersdream.util.Reference;
 import pixeleyestudios.huntersdream.util.handlers.PacketHandler.Packets;
 import pixeleyestudios.huntersdream.util.helpers.TransformationHelper;
@@ -37,6 +38,6 @@ public class CapabilityHandler {
 		transformationPlayer.setTransformationID(oldTransformationPlayer.getTransformationInt());
 		transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 
-		Packets.TRANSFORMATION.sync(event.getEntityPlayer());
+		Packets.TRANSFORMATION.sync(new ExecutionPath(), event.getEntityPlayer());
 	}
 }

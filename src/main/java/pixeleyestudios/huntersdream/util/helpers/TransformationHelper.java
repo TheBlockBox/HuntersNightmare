@@ -9,6 +9,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import pixeleyestudios.huntersdream.event.TransformationXPEvent;
 import pixeleyestudios.huntersdream.init.CapabilitiesInit;
+import pixeleyestudios.huntersdream.util.ExecutionPath;
 import pixeleyestudios.huntersdream.util.Reference;
 import pixeleyestudios.huntersdream.util.handlers.PacketHandler.Packets;
 import pixeleyestudios.huntersdream.util.interfaces.ICalculateLevel;
@@ -77,7 +78,7 @@ public interface TransformationHelper {
 		}
 
 		public boolean isSupernatural() {
-			return !(this == Transformations.HUMAN);
+			return !(this == Transformations.HUMAN || this == Transformations.WITCH);
 		}
 	}
 
@@ -122,7 +123,7 @@ public interface TransformationHelper {
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(0); // reset texture index (to avoid ArrayIndexOutOfBoundsExceptions)
-		Packets.TRANSFORMATION.sync(player); // sync data with client
+		Packets.TRANSFORMATION.sync(new ExecutionPath(), player); // sync data with client
 	}
 
 	// TODO: Add handling of transformation change
@@ -193,7 +194,7 @@ public interface TransformationHelper {
 			if (levelBefore < levelAfter) {
 				player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
 			}
-			Packets.XP.sync(player);
+			Packets.XP.sync(new ExecutionPath(), player);
 		}
 	}
 
