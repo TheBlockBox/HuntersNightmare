@@ -1,0 +1,11 @@
+{
+  "homepage": "https://minecraft.curseforge.com/projects/hunters-dream",
+  "1.12.2": {
+    "0.1.0": "-gaining levels through staying under the sky on a full moon night\n-transform into a werewolf on full moon\n-several commands\n-base for goblin\n-really buggy werewolf villager\n-pure silver stuff\n-server compatibility"
+  }
+  
+  "promos": {
+    "1.12.2-latest": "0.1.0",
+	"1.12.2-recommended": "0.1.0"
+  }
+}
