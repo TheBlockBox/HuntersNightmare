@@ -2,6 +2,9 @@ package theblockbox.huntersdream;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -24,6 +27,8 @@ public class Main {
 
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.COMMON)
 	public static CommonProxy proxy;
+
+	public static final Logger LOGGER = LogManager.getLogger(Reference.MODID);
 
 	@EventHandler
 	public static void preInit(FMLPreInitializationEvent event) {

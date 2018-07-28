@@ -39,11 +39,11 @@ public class EntityInit {
 
 		// Register with egg and spawn
 		registerEntity(event, "werewolfvillager", EntityWerewolfVillager.class, 15, 41414, 5252,
-				EnumCreatureType.CREATURE, 1, 10, 50, FOREST, FOREST_HILLS, BIRCH_FOREST, BIRCH_FOREST_HILLS,
+				EnumCreatureType.CREATURE, 6, 10, 100, FOREST, FOREST_HILLS, BIRCH_FOREST, BIRCH_FOREST_HILLS,
 				MUTATED_BIRCH_FOREST, MUTATED_BIRCH_FOREST_HILLS, MUTATED_ROOFED_FOREST, MUTATED_FOREST, ROOFED_FOREST);
 
 		// Register without egg
-		registerEntity(event, "werewolf", EntityWerewolf.class, 15);
+		registerEntity(event, "werewolf", EntityWerewolf.class, 20);
 	}
 
 	public static void registerEntityRenders() {

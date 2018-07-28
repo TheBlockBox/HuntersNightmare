@@ -1,6 +1,9 @@
 package theblockbox.huntersdream.util;
 
-/** This is only for retrieving a line. Don't throw this */
+/**
+ * This is only for retrieving a line, so if a method requires an ExecutionPath
+ * object, you have to make a new one. Don't throw this
+ */
 public class ExecutionPath extends Exception {
 	private static final long serialVersionUID = 1L;
 

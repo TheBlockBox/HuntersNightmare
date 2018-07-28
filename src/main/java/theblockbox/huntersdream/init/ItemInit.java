@@ -10,7 +10,7 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
-import theblockbox.huntersdream.objects.armor.ArmorBase;
+import theblockbox.huntersdream.objects.armor.PureSilverArmorBase;
 import theblockbox.huntersdream.objects.items.ItemBase;
 import theblockbox.huntersdream.objects.tools.axe.ToolPureSilverAxe;
 import theblockbox.huntersdream.objects.tools.hoe.ToolPureSilverHoe;
@@ -40,14 +40,15 @@ public class ItemInit {
 	public static final Item AXE_PURE_SILVER = new ToolPureSilverAxe("axe_pure_silver");
 
 	// Armor
-	public static final Item HELMET_PURE_SILVER = new ArmorBase("helmet_pure_silver", ARMOR_PURE_SILVER, 1,
-			EntityEquipmentSlot.HEAD);
-	public static final Item CHESTPLATE_PURE_SILVER = new ArmorBase("chestplate_pure_silver", ARMOR_PURE_SILVER, 1,
-			EntityEquipmentSlot.CHEST);
-	public static final Item LEGGINGS_PURE_SILVER = new ArmorBase("leggings_pure_silver", ARMOR_PURE_SILVER, 2,
-			EntityEquipmentSlot.LEGS);
-	public static final Item BOOTS_PURE_SILVER = new ArmorBase("boots_pure_silver", ARMOR_PURE_SILVER, 1,
-			EntityEquipmentSlot.FEET);
+	// These are the weirdest values in the whole world
+	public static final Item HELMET_PURE_SILVER = new PureSilverArmorBase("helmet_pure_silver", ARMOR_PURE_SILVER, 1,
+			EntityEquipmentSlot.HEAD, 1.2F, 1.03F);
+	public static final Item CHESTPLATE_PURE_SILVER = new PureSilverArmorBase("chestplate_pure_silver",
+			ARMOR_PURE_SILVER, 1, EntityEquipmentSlot.CHEST, 2.05F, 1.15F);
+	public static final Item LEGGINGS_PURE_SILVER = new PureSilverArmorBase("leggings_pure_silver", ARMOR_PURE_SILVER,
+			2, EntityEquipmentSlot.LEGS, 1.7F, 1.08F);
+	public static final Item BOOTS_PURE_SILVER = new PureSilverArmorBase("boots_pure_silver", ARMOR_PURE_SILVER, 1,
+			EntityEquipmentSlot.FEET, 1.2F, 1.03F);
 
 	/*
 	 * How to make normal item: - create JSON file in models/item - create item

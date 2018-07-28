@@ -1,6 +1,9 @@
 package theblockbox.huntersdream.util.helpers;
 
+import java.util.HashMap;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -8,17 +11,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 import theblockbox.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
+import theblockbox.huntersdream.util.interfaces.ITransformation;
 import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
-import theblockbox.huntersdream.util.twovalues.TwoValues;
-import theblockbox.huntersdream.util.twovalues.TwoValuesList;
 
 public class WerewolfHelper {
-	private static final TwoValuesList<Class<? extends EntityLivingBase>, Integer> ENTITIES_EFFECTIVE_AGAINST_WEREWOLF = new TwoValuesList<>();
-	private static final TwoValuesList<Item, Integer> ITEMS_EFFECTIVE_AGAINST_WEREWOLF = new TwoValuesList<>();
+	// the class is the entity's class and the integer is the effectiveness
+	private static final HashMap<Class<? extends EntityLivingBase>, Float> ENTITIES_EFFECTIVE_AGAINST_WEREWOLF = new HashMap<>();
+	// the integer is the effectiveness
+	private static final HashMap<Item, Float> ITEMS_EFFECTIVE_AGAINST_WEREWOLF = new HashMap<>();
 
 	/**
 	 * Returns true when a werewolf can transform in this world (Caution! This
@@ -103,15 +108,15 @@ public class WerewolfHelper {
 		if (object instanceof Entity) {
 			Entity entity = (Entity) object;
 			return (entity instanceof IEffectiveAgainstWerewolf
-					|| ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.has(entity.getClass()));
+					|| ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.containsKey(entity.getClass()));
 		} else if (object instanceof Class<?>) {
-			return ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.has(object);
+			return ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.containsKey((Class<?>) object);
 		} else if (object instanceof Item) {
 			Item item = (Item) object;
-			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.has(item));
+			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.containsKey(item));
 		} else if (object instanceof ItemStack) {
 			Item item = ((ItemStack) object).getItem();
-			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.has(item));
+			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.containsKey(item));
 		} else if (object instanceof IEffectiveAgainstWerewolf) {
 			System.err.println(
 					"An object implements the IEffectiveAgainstWerewolf interface although the object is neither entity (class) nor item");
@@ -125,20 +130,21 @@ public class WerewolfHelper {
 		addEffectiveAgainstWerewolf(entity, IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS);
 	}
 
-	public static void addEffectiveAgainstWerewolf(Class<? extends EntityLivingBase> entity, int damageMultiplier) {
-		ENTITIES_EFFECTIVE_AGAINST_WEREWOLF
-				.add(new TwoValues<Class<? extends EntityLivingBase>, Integer>(entity, damageMultiplier));
+	public static void addEffectiveAgainstWerewolf(Class<? extends EntityLivingBase> entity, float damageMultiplier) {
+		ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.put(entity, damageMultiplier);
 	}
 
 	public static void addEffectiveAgainstWerewolf(Item item) {
 		addEffectiveAgainstWerewolf(item, IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS);
 	}
 
-	public static void addEffectiveAgainstWerewolf(Item item, int damageMultiplier) {
-		ITEMS_EFFECTIVE_AGAINST_WEREWOLF.add(new TwoValues<Item, Integer>(item, damageMultiplier));
+	public static void addEffectiveAgainstWerewolf(Item item, float damageMultiplier) {
+		// ITEMS_EFFECTIVE_AGAINST_WEREWOLF.add(new TwoValues<Item, Integer>(item,
+		// damageMultiplier));
+		ITEMS_EFFECTIVE_AGAINST_WEREWOLF.put(item, damageMultiplier);
 	}
 
-	public static int getEffectivenessAgainstWerewolf(Object object) {
+	public static float getEffectivenessAgainstWerewolf(Object object) {
 		if (effectiveAgainstWerewolf(object)) {
 			if (object instanceof IEffectiveAgainstWerewolf) {
 				return ((IEffectiveAgainstWerewolf) object).getEffectiveness();
@@ -224,6 +230,44 @@ public class WerewolfHelper {
 					.getPlayerEntityByName(werewolf.getEntityName().substring(6, werewolf.getEntityName().length()));
 		} else {
 			throw new IllegalArgumentException("Werewolf is not a player");
+		}
+	}
+
+	/**
+	 * Call this method in your {@link Entity#onUpdate()} method to let your mob
+	 * transform into a werewolf when it is night. Caution! Your entity has to
+	 * extend EntityLiving or a subclass and needs a constructor World, int,
+	 * Transformations (World = spawn world, int = texture to use, Transformations =
+	 * transformation that the entity should have) When the werewolf transforms
+	 * back, this constructor will be called and World will be
+	 * {@link EntityWerewolf#getEntityWorld()}, int will be
+	 * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
+	 * {@link Transformations#WEREWOLF}
+	 * 
+	 * @param entity
+	 *            The entity to be transformed
+	 */
+	public static void toWerewolfWhenNight(EntityLiving entity) {
+		if (entity instanceof ITransformation) {
+			ITransformation transformation = (ITransformation) entity;
+			if (transformation.getTransformation() == Transformations.WEREWOLF) {
+				if (entity.ticksExisted % 40 == 0) {
+					World world = entity.world;
+					if (!world.isRemote) {
+						if (WerewolfHelper.isWerewolfTime(entity)) {
+							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
+									entity.getClass().getName());
+							werewolf.setPosition(entity.posX, entity.posY, entity.posZ);
+							world.removeEntity(entity);
+							world.spawnEntity(werewolf);
+						}
+					}
+				}
+			} else {
+				throw new WrongTransformationException("Entity is not a werewolf", transformation.getTransformation());
+			}
+		} else {
+			throw new IllegalArgumentException("Entity does not implement interface \"ITransformation\"");
 		}
 	}
 }

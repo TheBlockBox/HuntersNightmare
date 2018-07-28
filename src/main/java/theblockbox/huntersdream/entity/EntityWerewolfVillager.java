@@ -14,8 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.ITransformation;
 
 /**
@@ -60,7 +60,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 
 	@Override
 	public ITextComponent getDisplayName() {
-		return new TextComponentTranslation("entity.werewolf.name");
+		return new TextComponentTranslation("entity.werewolfvillager.name");
 	}
 
 	@Override
@@ -109,18 +109,9 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	}
 
 	@Override
-	public void onEntityUpdate() {
-		super.onEntityUpdate();
-		if (ticksExisted % 40 == 0) {
-			if (!world.isRemote) {
-				if (WerewolfHelper.isWerewolfTime(this)) {
-					EntityWerewolf werewolf = new EntityWerewolf(world, textureIndex, getClass().getName());
-					werewolf.setPosition(posX, posY, posZ);
-					world.removeEntity(this);
-					world.spawnEntity(werewolf);
-				}
-			}
-		}
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
+		WerewolfHelper.toWerewolfWhenNight(this);
 	}
 
 	@Override

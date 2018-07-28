@@ -3,11 +3,16 @@ package theblockbox.huntersdream.util.handlers;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.google.common.base.Predicate;
+
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -16,9 +21,9 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.TransformationXPSentReason;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.ITransformation;
 import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
 
@@ -85,7 +90,7 @@ public class TransformationEventHandler {
 					if (WerewolfHelper.playerNotUnderBlock(player) && cap.transformed()
 							&& cap.getTransformation() == Transformations.WEREWOLF) {
 						TransformationHelper.incrementXP((EntityPlayerMP) player,
-								TransformationXPSentReason.WEREWOLF_UNDER_MOON);
+								TransformationXPSentReason.WEREWOLF_UNDER_MOON, new ExecutionPath());
 					}
 					// this piece of code syncs the player data every five minutes, so basically you
 					// don't have to sync the data every time you change something
@@ -111,6 +116,21 @@ public class TransformationEventHandler {
 			if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
 				event.setAmount(event.getAmount() * transformationAttacker.getTransformation().GENERAL_DAMAGE);
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onEntityJoin(EntityJoinWorldEvent event) {
+		if (event.getEntity() instanceof EntityGolem) {
+			EntityGolem entity = (EntityGolem) event.getEntity();
+			Predicate<EntityPlayer> predicate = input -> {
+				ITransformation transformation = TransformationHelper.getITransformation(input);
+				return (transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed();
+			};
+			entity.targetTasks.addTask(2,
+					new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
+			entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity, EntityPlayer.class,
+					10, true, false, predicate));
 		}
 	}
 

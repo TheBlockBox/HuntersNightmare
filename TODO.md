@@ -1,21 +1,14 @@
 # To-Do:
 - change goblin speed and AI
-- let iron golems attack you when in werewolf form
-- make that pure silver armour has a thorns effect against werewolves
 - fix potions
 - fix being werewolf transformation (when losing control) (e.g. on death)
 - fix werewolf model (animation)
-- fix werewolf entity
 - make custom hand renderer
-- fix no control thing
 - make particle effects on player/villager transformation
 - add events
-- create xp bar texture and make it showable
 - fix entity spawn
-- fix entities vanishing when to far away
-- make that players deal more damage and get hunger in werewolf form
-- test werewolf damage system
-- add logger
-- add thorns when attacked by werewolf and wearing silver armour
-- fix xp
-- test new entity ai
+- fix entities vanishing when too far away
+- use logger
+- fix entities moving laggy
+- move xp bar when there are bubbles
+- fix that werewolves get more damage by items that are effective against them

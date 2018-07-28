@@ -3,8 +3,11 @@ package theblockbox.huntersdream.entity;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import com.google.common.base.Predicate;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,8 +27,9 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.ITransformation;
 
 /**
@@ -36,7 +40,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
 	private String entityName;
-	public static final double SPEED = 0.7D;
+	public static final double SPEED = 0.5D;
 	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
@@ -56,7 +60,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	@Override
 	protected void initEntityAI() {
 		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.4D, false));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.3D, false));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
@@ -66,8 +70,17 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	protected void applyEntityAI() {
 		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-		this.targetTasks.addTask(2,
-				new EntityAINearestAttackableTarget<EntityLivingBase>(this, EntityLivingBase.class, true));
+		Predicate<EntityCreature> predicateMob = input -> {
+			return !(input instanceof EntityWerewolf);
+		};
+		Predicate<EntityPlayer> predicatePlayer = input -> {
+			ITransformation transformation = TransformationHelper.getITransformation(input);
+			return !((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed());
+		};
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
+				true, false, predicateMob));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
+				true, false, predicatePlayer));
 	}
 
 	@Override
@@ -103,10 +116,9 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void onEntityUpdate() {
-		super.onEntityUpdate();
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
 		if (ticksExisted % 40 == 0) {
 			if (!world.isRemote) {
 				if (!WerewolfHelper.isWerewolfTime(this)) {
@@ -114,10 +126,9 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 					if (!entityName.startsWith("player")) {
 
-						Class<? extends Entity> entityClass;
-
 						try {
-							entityClass = (Class<? extends Entity>) Class.forName(entityName);
+							@SuppressWarnings("unchecked")
+							Class<? extends Entity> entityClass = (Class<? extends Entity>) Class.forName(entityName);
 							Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
 									Transformations.class);
 							entity = (EntityLiving) constructor.newInstance(this.world, this.getTextureIndex(),

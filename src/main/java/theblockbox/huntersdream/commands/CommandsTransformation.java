@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
 import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
@@ -40,13 +39,13 @@ public class CommandsTransformation extends CommandBase {
 			}
 			int transformation = args[0].equals("get") ? TransformationHelper.getCap(player).getTransformationInt()
 					: Integer.parseInt(args[0]);
-			TransformationHelper.changeTransformation(player, Transformations.fromID(transformation));
+			TransformationHelper.changeTransformation(player, Transformations.fromID(transformation),
+					new ExecutionPath());
 			// sender.sendMessage(new TextComponentString(
 			// player.getName() + " is now a " +
 			// Transformations.fromID(transformation).toString()));
 			sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
 					player.getName(), Transformations.fromID(transformation).toString()));
-			Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

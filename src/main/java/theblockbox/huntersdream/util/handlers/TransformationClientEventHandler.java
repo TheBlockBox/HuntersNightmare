@@ -2,7 +2,7 @@ package theblockbox.huntersdream.util.handlers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -13,10 +13,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.renderer.RenderWolfmanPlayer;
-import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
 
 /**
@@ -26,8 +25,6 @@ import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
 public class TransformationClientEventHandler {
 	@SideOnly(Side.CLIENT)
 	private static RenderWolfmanPlayer renderWerewolf = null;
-	@SideOnly(Side.CLIENT)
-	private static ResourceLocation texture = null;
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -48,25 +45,30 @@ public class TransformationClientEventHandler {
 		}
 	}
 
-	// TODO: Transformation xp handler
+	// Transformation xp handler
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onGameOverlayRenderPost(RenderGameOverlayEvent.Post event) {
 		if (ConfigHandler.renderXPBar) {
 			Minecraft mc = Minecraft.getMinecraft();
 			EntityPlayer player = Main.proxy.getPlayer();
-			if (!player.capabilities.isCreativeMode) {
+			GameType gameType = mc.playerController.getCurrentGameType();
+			if (gameType != GameType.CREATIVE && gameType != GameType.SPECTATOR) {
 				if ((!event.isCancelable()) && event.getType() == ElementType.EXPERIENCE) {
-					if (texture == null)
-						texture = new ResourceLocation(Reference.MODID, "textures/gui/transformation_xp_bar.png");
-
-					mc.renderEngine.bindTexture(texture);
-					int x = event.getResolution().getScaledWidth() / 2 + 10;
-					int y = event.getResolution().getScaledHeight() - 48;
-					mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 81, 8);
-					int percent = (int) (TransformationHelper.getTransformation(player).getPercentageToNextLevel(player)
-							* 79);
-					mc.ingameGUI.drawTexturedModalRect(x + 1, y + 1, 0, 9, percent, 6);
+					Transformations transformation = TransformationHelper.getTransformation(player);
+					if (transformation.getLevel(player) > 0) {
+						mc.renderEngine.bindTexture(transformation.getXPBarTexture());
+						int x = event.getResolution().getScaledWidth() / 2 + 10;
+						int y = event.getResolution().getScaledHeight() - 48;
+						if (player.isInWater()) {
+							y -= 20;
+						}
+						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 81, 8);
+						int percent = (int) (transformation.getPercentageToNextLevel(player) * 79);
+						mc.ingameGUI.drawTexturedModalRect(x + 1, y + 1, 0, 9, percent, 9);
+						mc.ingameGUI.drawCenteredString(mc.fontRenderer,
+								Integer.toString(transformation.getLevelFloor(player)), x + 40, y - 7, 3138304);
+					}
 				}
 			}
 		}
