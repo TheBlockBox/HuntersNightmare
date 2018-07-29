@@ -1,120 +1,23 @@
 package theblockbox.huntersdream.util.helpers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.event.TransformationXPEvent;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
-import theblockbox.huntersdream.util.interfaces.ICalculateLevel;
-import theblockbox.huntersdream.util.interfaces.ITransformation;
-import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class TransformationHelper {
-	public enum Transformations {
-		// TODO: Add levelling system for HUMAN, VAMPIRE and WITCH
-
-		HUMAN(0, 1, 1F, DEFAULT_CALCULATE_LEVEL, false),
-
-		WEREWOLF(1, 8, 17.5F, WerewolfHelper::getWerewolfLevel, "werewolf_beta_white", "werewolf_beta_brown",
-				"werewolf_beta_black"),
-		// I've always wanted to use the :: operator
-
-		VAMPIRE(2, DEFAULT_CALCULATE_LEVEL),
-
-		WITCH(3, 1, 1F, DEFAULT_CALCULATE_LEVEL, false), CLOCKWORKANDROID(4, DEFAULT_CALCULATE_LEVEL), HYBRID(5,
-				DEFAULT_CALCULATE_LEVEL);
-
-		// when an entity has no transformation, use null
-		// (no transformation meaning not infectable)
-
-		public final int ID;
-		/**
-		 * the damage that the entites should deal in half hearts or for player's the
-		 * damage multiplier
-		 */
-		public final int GENERAL_DAMAGE;
-		private final ICalculateLevel CALCULATE_LEVEL;
-		public final ResourceLocation[] TEXTURES;
-		public final float PROTECTION;
-		private final boolean SUPER_NATURAL;
-
-		private Transformations(int id, int generalDamage, float protection, ICalculateLevel calculateLevel,
-				boolean supernatural, String... textures) {
-			this.ID = id;
-			this.CALCULATE_LEVEL = calculateLevel;
-			TEXTURES = new ResourceLocation[textures.length];
-			this.GENERAL_DAMAGE = generalDamage;
-			this.PROTECTION = protection;
-			this.SUPER_NATURAL = supernatural;
-			for (int i = 0; i < textures.length; i++) {
-				TEXTURES[i] = new ResourceLocation(Reference.MODID, "textures/entity/" + textures[i] + ".png");
-			}
-			TRANSFORMATIONS.add(this);
-			getNewTransformationID();
-		}
-
-		private Transformations(int id, int generalDamage, float protection, ICalculateLevel calculateLevel,
-				String... textures) {
-			this(id, generalDamage, protection, calculateLevel, true, textures);
-		}
-
-		private Transformations(int id, ICalculateLevel calculateLevel, String... textures) {
-			this(id, 1, 1F, calculateLevel, true, textures);
-		}
-
-		public static Transformations fromID(int id) {
-			for (Transformations transformations : TRANSFORMATIONS) {
-				if (transformations.ID == id) {
-					return transformations;
-				}
-			}
-			return null;
-		}
-
-		public static Transformations fromName(String name) {
-			for (Transformations transformation : TRANSFORMATIONS) {
-				if (transformation.toString().equalsIgnoreCase(name)) {
-					return transformation;
-				}
-			}
-			return null;
-		}
-
-		public double getLevel(EntityPlayer player) {
-			return CALCULATE_LEVEL.getLevel(player);
-		}
-
-		public int getLevelFloor(EntityPlayer player) {
-			return MathHelper.floor(getLevel(player));
-		}
-
-		public double getPercentageToNextLevel(EntityPlayer player) {
-			return getLevel(player) - getLevelFloor(player);
-		}
-
-		public boolean isSupernatural() {
-			return SUPER_NATURAL;
-		}
-
-		public String toStringLowerCase() {
-			return toString().toLowerCase();
-		}
-
-		public ResourceLocation getXPBarTexture() {
-			return new ResourceLocation(Reference.MODID,
-					"textures/gui/transformation_xp_bar_" + toStringLowerCase() + ".png");
-		}
-	}
 
 	public enum TransformationXPSentReason {
 		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF);
@@ -134,16 +37,6 @@ public class TransformationHelper {
 			}
 			return false;
 		}
-	}
-
-	public static final ArrayList<Transformations> TRANSFORMATIONS = new ArrayList<>();
-	public static final ICalculateLevel DEFAULT_CALCULATE_LEVEL = player -> {
-		return getCap(player).getXP() / 500;
-	};
-	private static int currentTransformationID = 0;
-
-	public static int getNewTransformationID() {
-		return currentTransformationID++;
 	}
 
 	/**
@@ -219,6 +112,14 @@ public class TransformationHelper {
 		}
 
 		return null;
+	}
+
+	public static ITransformationCreature getITransformationCreature(EntityCreature entity) {
+		if (entity instanceof ITransformationCreature) {
+			return (ITransformationCreature) entity;
+		} else {
+			return entity.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
+		}
 	}
 
 	public static void incrementXP(EntityPlayerMP player, TransformationXPSentReason reason, ExecutionPath path) {

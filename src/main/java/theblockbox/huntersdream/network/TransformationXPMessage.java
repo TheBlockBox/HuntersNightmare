@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class TransformationXPMessage extends PlayerMessageBase<TransformationXPMessage> {
 

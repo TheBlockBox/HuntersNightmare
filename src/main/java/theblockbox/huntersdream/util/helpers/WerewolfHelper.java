@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.helpers;
 import java.util.HashMap;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,11 +14,12 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 import theblockbox.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
-import theblockbox.huntersdream.util.interfaces.ITransformation;
-import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class WerewolfHelper {
 	// the class is the entity's class and the integer is the effectiveness
@@ -30,7 +32,7 @@ public class WerewolfHelper {
 	 * method doesn't test if the entity is a werewolf or not)
 	 */
 	public static boolean isWerewolfTime(Entity entity) {
-		boolean isNight = !entity.getServer().worlds[0].isDaytime();
+		boolean isNight = !entity.getServer().getWorld(0).isDaytime();
 		boolean werewolfTime = entity.world.getCurrentMoonPhaseFactor() == 1F && isNight;
 		return werewolfTime;
 	}
@@ -59,36 +61,37 @@ public class WerewolfHelper {
 		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
 				&& TransformationHelper.getITransformation(player).transformed()) {
 			int level = TransformationHelper.getTransformation(player).getLevelFloor(player);
+			int duration = 40;
 
 			// Caution! Duration in ticks
 			switch (level) {
 			case 11:
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, 600, 20, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
 			case 10:
 
 			case 9:
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, 600, 20, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
 			case 8:
 
 			case 7:
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, 600, 20, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
 			case 6:
 
 			case 5:
-				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 600, 0, false, false));
-				player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 600, 0, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, duration, 0, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, duration, 0, false, false));
 			case 4:
 
 			case 3:
-				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 600, 0, false, false));
-				player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 600, 0, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, 0, false, false));
 			case 2:
 
 			case 1:
-				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 600, 0, false, false));
+				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, duration, 0, false, false));
 				break;
 			}
-			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 600, 0, false, false));
+			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 0, false, false));
 		} else {
 			throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
 					TransformationHelper.getTransformation(player));
@@ -248,26 +251,45 @@ public class WerewolfHelper {
 	 *            The entity to be transformed
 	 */
 	public static void toWerewolfWhenNight(EntityLiving entity) {
-		if (entity instanceof ITransformation) {
-			ITransformation transformation = (ITransformation) entity;
-			if (transformation.getTransformation() == Transformations.WEREWOLF) {
-				if (entity.ticksExisted % 40 == 0) {
-					World world = entity.world;
-					if (!world.isRemote) {
-						if (WerewolfHelper.isWerewolfTime(entity)) {
+		World world = entity.world;
+		if (!world.isRemote) {
+			if (entity.ticksExisted % 40 == 0) {
+				if (WerewolfHelper.isWerewolfTime(entity)) {
+					if (entity instanceof ITransformation) {
+						ITransformation transformation = (ITransformation) entity;
+						if (transformation.getTransformation() == Transformations.WEREWOLF) {
 							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
 									entity.getClass().getName());
 							werewolf.setPosition(entity.posX, entity.posY, entity.posZ);
 							world.removeEntity(entity);
 							world.spawnEntity(werewolf);
+						} else {
+							throw new WrongTransformationException("Entity is not a werewolf",
+									transformation.getTransformation());
 						}
+					} else {
+						if (entity instanceof EntityCreature) {
+							EntityCreature creature = (EntityCreature) entity;
+							ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
+							if (tc != null) {
+								if (tc.getCurrentTransformation() == Transformations.WEREWOLF) {
+									EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
+											"$bycap" + entity.getClass().getName());
+									werewolf.setPosition(entity.posX, entity.posY, entity.posZ);
+									world.removeEntity(entity);
+									world.spawnEntity(werewolf);
+									return;
+								} else {
+									throw new WrongTransformationException("Entity is not a werewolf",
+											tc.getCurrentTransformation());
+								}
+							}
+						}
+						throw new IllegalArgumentException(
+								"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
 					}
 				}
-			} else {
-				throw new WrongTransformationException("Entity is not a werewolf", transformation.getTransformation());
 			}
-		} else {
-			throw new IllegalArgumentException("Entity does not implement interface \"ITransformation\"");
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class ItemInit {
 	public static final List<Item> ITEMS = new ArrayList<>();
 
 	// Items
-	public static final Item INGOT_PURE_SILVER = new ItemBase("ingot_pure_silver", CreativeTabInit.HUNTERSDREAM_MISC);
+	public static final Item PURE_SILVER = new ItemBase("pure_silver", CreativeTabInit.HUNTERSDREAM_MISC);
 
 	// Materials
 	public static final ToolMaterial TOOL_PURE_SILVER = EnumHelper.addToolMaterial("tool_pure_silver", 3, 60, 6.0F,
@@ -60,7 +60,7 @@ public class ItemInit {
 	 */
 
 	static {
-		TOOL_PURE_SILVER.setRepairItem(new ItemStack(INGOT_PURE_SILVER));
-		ARMOR_PURE_SILVER.setRepairItem(new ItemStack(INGOT_PURE_SILVER));
+		TOOL_PURE_SILVER.setRepairItem(new ItemStack(PURE_SILVER));
+		ARMOR_PURE_SILVER.setRepairItem(new ItemStack(PURE_SILVER));
 	}
 }

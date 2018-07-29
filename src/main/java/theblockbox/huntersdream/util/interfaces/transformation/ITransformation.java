@@ -1,7 +1,6 @@
-package theblockbox.huntersdream.util.interfaces;
+package theblockbox.huntersdream.util.interfaces.transformation;
 
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
+import theblockbox.huntersdream.util.enums.Transformations;
 
 /**
  * This interface is for entites that can transform
@@ -15,12 +14,12 @@ public interface ITransformation {
 	public int getTransformationInt();
 
 	default public Transformations getTransformation() {
-		return TransformationHelper.Transformations.fromID(getTransformationInt());
+		return Transformations.fromID(getTransformationInt());
 	}
 
 	public void setTransformationID(int id);
 
-	default public void setTransformation(TransformationHelper.Transformations transformation) {
+	default public void setTransformation(Transformations transformation) {
 		setTransformationID(transformation.ID);
 	}
 

@@ -14,26 +14,45 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
-import theblockbox.huntersdream.util.interfaces.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
-public class EntityGoblinTD extends EntityVillager implements IEntityAdditionalSpawnData {
+public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IEntityAdditionalSpawnData {
 	private int textureIndex;
+	private int textureIndexTransformed;
 	/** The amount of textures available for the goblins */
 	public static final int TEXTURES = 6;
+	private static final DataParameter<Integer> TRANSFORMATION_INT = EntityDataManager
+			.<Integer>createKey(EntityZombie.class, DataSerializers.VARINT);
 
-	public EntityGoblinTD(World worldIn) {
+	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
 		this.textureIndex = Main.RANDOM.nextInt(TEXTURES);
+		this.textureIndexTransformed = Main.RANDOM.nextInt(getCurrentTransformation().TEXTURES.length);
+	}
+
+	public EntityGoblinTD(World worldIn) {
+		this(worldIn, 0, Transformations.HUMAN);
+	}
+
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		dataManager.register(TRANSFORMATION_INT, Transformations.HUMAN.ID);
 	}
 
 	@Override
@@ -60,6 +79,12 @@ public class EntityGoblinTD extends EntityVillager implements IEntityAdditionalS
 				true, false, predicateMob));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
 				true, false, predicatePlayer));
+	}
+
+	@Override
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
+		getCurrentTransformation().transformCreatureWhenPossible(this);
 	}
 
 	@Override
@@ -92,19 +117,41 @@ public class EntityGoblinTD extends EntityVillager implements IEntityAdditionalS
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		buffer.writeInt(this.textureIndex);
+		buffer.writeInt(this.textureIndexTransformed);
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf buffer) {
 		this.textureIndex = buffer.readInt();
+		this.textureIndexTransformed = buffer.readInt();
 	}
 
-	public int getTextureIndex() {
+	public int getTexture() {
 		return textureIndex;
 	}
 
 	@Override
 	public EntityVillager createChild(EntityAgeable ageable) {
 		return new EntityGoblinTD(world);
+	}
+
+	@Override
+	public int getTextureIndex() {
+		return this.textureIndexTransformed;
+	}
+
+	@Override
+	public Transformations[] getTransformationsNotImmuneTo() {
+		return new Transformations[] { Transformations.VAMPIRE, Transformations.WEREWOLF };
+	}
+
+	@Override
+	public int getCurrentTransformationInt() {
+		return this.dataManager.get(TRANSFORMATION_INT);
+	}
+
+	@Override
+	public void setCurrentTransformationInt(int transformation) {
+		this.dataManager.set(TRANSFORMATION_INT, transformation);
 	}
 }

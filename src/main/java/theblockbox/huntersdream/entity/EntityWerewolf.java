@@ -1,15 +1,10 @@
 package theblockbox.huntersdream.entity;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import com.google.common.base.Predicate;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -21,6 +16,7 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -28,15 +24,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
 /**
  * A werewolf
  */
-public class EntityWerewolf extends EntityMob implements ITransformation, IEntityAdditionalSpawnData {
+public class EntityWerewolf extends EntityMob implements ITransformationEntityTransformed, IEntityAdditionalSpawnData {
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
@@ -56,7 +53,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	}
 
 	public EntityWerewolf(World worldIn) {
-		this(worldIn, Main.RANDOM.nextInt(TRANSFORMATION.TEXTURES.length), EntityWerewolfVillager.class.getName());
+		this(worldIn, Main.RANDOM.nextInt(TRANSFORMATION.TEXTURES.length), "$bycap" + EntityVillager.class.getName());
 	}
 
 	@Override
@@ -121,60 +118,16 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	@Override
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
-		if (ticksExisted % 40 == 0) {
-			if (!world.isRemote) {
-				if (!WerewolfHelper.isWerewolfTime(this)) {
-					EntityLiving entity = null;
-
-					if (!entityName.startsWith("player")) {
-
-						try {
-							@SuppressWarnings("unchecked")
-							Class<? extends Entity> entityClass = (Class<? extends Entity>) Class.forName(entityName);
-							Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
-									Transformations.class);
-							entity = (EntityLiving) constructor.newInstance(this.world, this.getTextureIndex(),
-									this.getTransformation());
-						} catch (ClassNotFoundException e) {
-							throw new NullPointerException("Can't find class " + entityName);
-						} catch (ClassCastException e) {
-							throw new IllegalArgumentException("Given class " + entityName + " is not an entity");
-						} catch (NoSuchMethodException | InvocationTargetException | SecurityException
-								| IllegalAccessException e) {
-							throw new NullPointerException("Class " + entityName
-									+ " does not have an accessible constructor with parameters World, int, Transformations");
-						} catch (InstantiationException e) {
-							throw new IllegalArgumentException("Can't instantiate class " + entityName);
-						}
-
-						entity.setPosition(posX, posY, posZ);
-						world.spawnEntity(entity);
-					}
-
-					world.removeEntity(this);
-				}
+		if (!world.isRemote) {
+			if (!WerewolfHelper.isWerewolfTime(this)) {
+				ITransformationEntityTransformed.transformBack(this);
 			}
 		}
 	}
 
 	@Override
-	public boolean transformed() {
-		return true;
-	}
-
-	@Override
 	public int getTransformationInt() {
 		return TRANSFORMATION.ID;
-	}
-
-	@Override
-	public void setTransformationID(int id) {
-		throw new UnsupportedOperationException("Transformation already determined");
-	}
-
-	@Override
-	public void setTransformed(boolean transformed) {
-		throw new UnsupportedOperationException("Entity is always transformed");
 	}
 
 	@Override
@@ -197,6 +150,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	/**
 	 * Returns the name of the werewolf's normal form
 	 */
+	@Override
 	public String getEntityName() {
 		return entityName;
 	}

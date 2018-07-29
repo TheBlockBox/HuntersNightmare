@@ -14,14 +14,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 /**
  * The villager that is a werewolf but not transformed
+ * 
+ * @deprecated Now using normal {@link EntityVillager} instead of this here
  */
+@Deprecated
 public class EntityWerewolfVillager extends EntityVillager implements ITransformation, IEntityAdditionalSpawnData {
 	/**
 	 * used to determine the colour of the werewolf form {@link RenderWerewolf}
@@ -112,7 +114,7 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	@Override
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
-		WerewolfHelper.toWerewolfWhenNight(this);
+		getTransformation().transformCreatureWhenPossible(this);
 	}
 
 	@Override
@@ -149,5 +151,4 @@ public class EntityWerewolfVillager extends EntityVillager implements ITransform
 	public int getTextureIndex() {
 		return textureIndex;
 	}
-
 }

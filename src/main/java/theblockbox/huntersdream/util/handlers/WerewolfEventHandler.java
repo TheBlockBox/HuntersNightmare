@@ -12,13 +12,13 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.util.ExecutionPath;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.TransformationXPSentReason;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IArmorEffectiveAgainstWerewolf;
-import theblockbox.huntersdream.util.interfaces.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 @Mod.EventBusSubscriber
 public class WerewolfEventHandler {
@@ -98,7 +98,7 @@ public class WerewolfEventHandler {
 			EntityPlayerMP player = (EntityPlayerMP) event.getSource().getTrueSource();
 			ITransformation transformation = TransformationHelper.getITransformation(player);
 			if ((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed()) {
-				TransformationHelper.addXP(player, 5, TransformationXPSentReason.WEREWOLF_HAS_KILLED,
+				TransformationHelper.addXP(player, 10, TransformationXPSentReason.WEREWOLF_HAS_KILLED,
 						new ExecutionPath());
 			}
 		}

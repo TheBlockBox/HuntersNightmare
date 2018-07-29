@@ -18,3 +18,5 @@
 - rotate legs by 25 degrees
 - (make that you don't get hunger effect when having no control)
 - test if bounding box works
+- make that every villager has a low chance of being a lycantrophe
+- remove EntityWerewolfVillager in future version (before next official build)

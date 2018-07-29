@@ -29,6 +29,7 @@ import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolfVillager;
 import theblockbox.huntersdream.util.Reference;
 
+@SuppressWarnings("deprecation")
 public class EntityInit {
 	private static int networkID = 0;
 

@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.util.handlers;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -13,18 +14,24 @@ import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 @Mod.EventBusSubscriber
 public class CapabilityHandler {
 	public final static ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = new ResourceLocation(Reference.MODID,
 			"transformationPlayer");
+	public static final ResourceLocation TRANSFORMATION_CREATURE_CAPABILITY = new ResourceLocation(Reference.MODID,
+			"transformationcreature");
 
 	@SubscribeEvent
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof EntityPlayer) {
 			event.addCapability(TRANSFORMATION_PLAYER_CAPABILITIY,
 					new CapabilityProvider<ITransformationPlayer>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
+		} else if (event.getObject() instanceof EntityVillager) {
+			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY, new CapabilityProvider<ITransformationCreature>(
+					CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE));
 		}
 	}
 

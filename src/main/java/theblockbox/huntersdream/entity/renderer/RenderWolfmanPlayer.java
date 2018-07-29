@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.entity.model.ModelLycanthrope;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 
 public class RenderWolfmanPlayer extends RenderLivingBase<EntityPlayer> {
 

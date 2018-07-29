@@ -10,7 +10,7 @@ import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class CommandsTransformationTexture extends CommandBase {
 

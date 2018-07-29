@@ -19,7 +19,7 @@ public class CreativeTabInit {
 	public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs("huntersDreamMisc") {
 		@Override
 		public ItemStack getTabIconItem() {
-			return new ItemStack(ItemInit.INGOT_PURE_SILVER);
+			return new ItemStack(ItemInit.PURE_SILVER);
 		}
 	};
 }
