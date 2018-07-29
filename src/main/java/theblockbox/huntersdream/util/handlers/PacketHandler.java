@@ -78,7 +78,6 @@ public class PacketHandler {
 				switch (this) {
 				// Server
 				case TRANSFORMATION:
-					System.out.println();
 					// could contain render changes
 					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
 							cap.getTransformationInt(), playerID, cap.getTextureIndex()));

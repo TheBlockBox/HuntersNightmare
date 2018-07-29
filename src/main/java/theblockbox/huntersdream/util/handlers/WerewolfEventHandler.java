@@ -71,7 +71,6 @@ public class WerewolfEventHandler {
 							if (WerewolfHelper.effectiveAgainstWerewolf(immediateSource)) {
 								event.setAmount(event.getAmount()
 										* WerewolfHelper.getEffectivenessAgainstWerewolf(immediateSource));
-								System.out.println("weapon");
 								return;
 							} else if (!weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
 								event.setAmount(

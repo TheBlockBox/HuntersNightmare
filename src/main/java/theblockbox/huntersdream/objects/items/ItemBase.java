@@ -11,7 +11,6 @@ public class ItemBase extends Item implements IHasModel {
 
 	public ItemBase(String name) {
 		this(name, CreativeTabInit.HUNTERSDREAM_MISC);
-		System.out.println("Caution! No creative tab set!");
 	}
 
 	public ItemBase(String name, CreativeTabs creativeTab) {
