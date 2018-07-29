@@ -4,14 +4,14 @@ import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import theblockbox.huntersdream.entity.model.ModelWolfman;
+import theblockbox.huntersdream.entity.model.ModelLycanthrope;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 
 public class RenderWolfmanPlayer extends RenderLivingBase<EntityPlayer> {
 
 	public RenderWolfmanPlayer(RenderManager manager) {
-		super(manager, new ModelWolfman(), 0.5F);
+		super(manager, new ModelLycanthrope(), 0.5F);
 	}
 
 	@Override

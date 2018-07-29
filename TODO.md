@@ -2,7 +2,6 @@
 - change goblin speed and AI
 - fix potions
 - fix being werewolf transformation (when losing control) (e.g. on death)
-- fix werewolf model (animation)
 - make custom hand renderer
 - make particle effects on player/villager transformation
 - add events
@@ -12,3 +11,10 @@
 - fix entities moving laggy
 - move xp bar when there are bubbles
 - fix that werewolves get more damage by items that are effective against them
+- test if update checker works
+- xp bar height could be too high (pixels that haven't initially been included could be included)
+- fix werewolf no control thing
+- make werewolf animation go on all fours
+- rotate legs by 25 degrees
+- (make that you don't get hunger effect when having no control)
+- test if bounding box works

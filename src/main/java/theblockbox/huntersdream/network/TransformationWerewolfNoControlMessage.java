@@ -41,6 +41,7 @@ public class TransformationWerewolfNoControlMessage extends PlayerMessageBase<Tr
 			mc.addScheduledTask(() -> {
 				EntityWerewolf werewolf = (EntityWerewolf) player.world.getEntityByID(message.werewolfEntityID);
 				mc.setRenderViewEntity(werewolf);
+				mc.gameSettings.thirdPersonView = 3;
 			});
 		}
 		return null;

@@ -51,6 +51,7 @@ public class TransformationEventHandler {
 
 						if (!cap.transformed()) {
 							cap.setTransformed(true);
+							player.getEntityBoundingBox().grow(0, 1, 0);
 							Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 
 							if (!WerewolfHelper.hasControl(player)) {
@@ -61,7 +62,7 @@ public class TransformationEventHandler {
 								werewolf.setPosition(player.posX, player.posY, player.posZ);
 								PLAYER_WEREWOLVES.add(werewolf);
 								world.spawnEntity(werewolf);
-								Packets.NO_CONTROL.sync(new ExecutionPath(), player, werewolf);
+								Packets.NO_CONTROL.sync(new ExecutionPath(), player, werewolf.getEntityId());
 							}
 						}
 
@@ -75,12 +76,13 @@ public class TransformationEventHandler {
 							World world = werewolf.world;
 							Packets.NIGHT_OVER.sync(new ExecutionPath(), WerewolfHelper.getPlayer(werewolf));
 							world.removeEntity(werewolf);
-
+							player.getEntityBoundingBox().contract(0, 1, 0);
 							PLAYER_WEREWOLVES.remove(werewolf);
 						}
 					}
 				} else if ((cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed()) {
 					cap.setTransformed(false);
+
 					Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 				}
 
@@ -92,10 +94,10 @@ public class TransformationEventHandler {
 						TransformationHelper.incrementXP((EntityPlayerMP) player,
 								TransformationXPSentReason.WEREWOLF_UNDER_MOON, new ExecutionPath());
 					}
-					// this piece of code syncs the player data every five minutes, so basically you
+					// this piece of code syncs the player data every ten minutes, so basically you
 					// don't have to sync the data every time you change something
 					// (though it is recommended)
-					if (player.ticksExisted % 6000 == 0) {
+					if (player.ticksExisted % 12000 == 0) {
 						Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 					}
 				}

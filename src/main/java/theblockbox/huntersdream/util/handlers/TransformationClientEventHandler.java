@@ -1,7 +1,10 @@
 package theblockbox.huntersdream.util.handlers;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -60,8 +63,13 @@ public class TransformationClientEventHandler {
 						mc.renderEngine.bindTexture(transformation.getXPBarTexture());
 						int x = event.getResolution().getScaledWidth() / 2 + 10;
 						int y = event.getResolution().getScaledHeight() - 48;
-						if (player.isInWater()) {
-							y -= 20;
+
+						// when there are bubbles aka the player is under water, move the bar up
+						Block block = player.world
+								.getBlockState(new BlockPos(player.posX, Math.ceil(player.posY + 1), player.posZ))
+								.getBlock();
+						if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+							y -= 10;
 						}
 						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 81, 8);
 						int percent = (int) (transformation.getPercentageToNextLevel(player) * 79);

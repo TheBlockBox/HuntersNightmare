@@ -27,6 +27,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper.Transformations;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -47,6 +48,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 		super(worldIn);
 		this.textureIndex = textureIndex;
 		this.entityName = entityName;
+		getEntityBoundingBox().grow(0, 1, 0);
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityLivingBase entity) {
@@ -54,13 +56,13 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	}
 
 	public EntityWerewolf(World worldIn) {
-		this(worldIn, 0, EntityWerewolfVillager.class.getName());
+		this(worldIn, Main.RANDOM.nextInt(TRANSFORMATION.TEXTURES.length), EntityWerewolfVillager.class.getName());
 	}
 
 	@Override
 	protected void initEntityAI() {
 		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.3D, false));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.2D, false));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));

@@ -221,7 +221,7 @@ public class WerewolfHelper {
 		if (cap.getTransformation() != Transformations.WEREWOLF) {
 			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
 		}
-		return (cap.getTransformation().getLevelFloor(player) >= 0);
+		return (cap.getTransformation().getLevelFloor(player) >= 0); // TODO: Change this!
 	}
 
 	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {
