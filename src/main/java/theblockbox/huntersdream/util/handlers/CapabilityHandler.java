@@ -20,7 +20,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 @Mod.EventBusSubscriber
 public class CapabilityHandler {
 	public final static ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = new ResourceLocation(Reference.MODID,
-			"transformationPlayer");
+			"transformationplayer");
 	public static final ResourceLocation TRANSFORMATION_CREATURE_CAPABILITY = new ResourceLocation(Reference.MODID,
 			"transformationcreature");
 

@@ -11,7 +11,7 @@ public interface ITransformationCreature extends ITransformation {
 	default public int[] getTransformationIntsNotImmuneTo() {
 		int[] transformations = new int[getTransformationsNotImmuneTo().length];
 		for (int i = 0; i < getTransformationsNotImmuneTo().length; i++) {
-			transformations[i] = getTransformationsNotImmuneTo()[i].ID;
+			transformations[i] = getTransformationsNotImmuneTo()[i].getID();
 		}
 		return transformations;
 	}
@@ -19,7 +19,7 @@ public interface ITransformationCreature extends ITransformation {
 	default public void setTransformationsNotImmuneTo(Transformations... transformationsNotImmuneTo) {
 		int[] transformations = new int[transformationsNotImmuneTo.length];
 		for (int i = 0; i < transformationsNotImmuneTo.length; i++) {
-			transformations[i] = transformationsNotImmuneTo[i].ID;
+			transformations[i] = transformationsNotImmuneTo[i].getID();
 		}
 		setTransformationsNotImmuneTo(transformations);
 	}
@@ -48,21 +48,21 @@ public interface ITransformationCreature extends ITransformation {
 	}
 
 	/** This method is made to prevent interfering with setTransformation */
-	public int getCurrentTransformationInt();
+	public int getCurrentTransformationID();
 
-	public void setCurrentTransformationInt(int transformation);
+	public void setCurrentTransformationID(int transformation);
 
 	default public Transformations getCurrentTransformation() {
-		return Transformations.fromID(getCurrentTransformationInt());
+		return Transformations.fromID(getCurrentTransformationID());
 	}
 
 	default public void setCurrentTransformation(Transformations transformation) {
-		setCurrentTransformationInt(transformation.ID);
+		setCurrentTransformationID(transformation.getID());
 	}
 
 	/**
 	 * @deprecated The entity is ALWAYS a human. To get the transformation after the
-	 *             mob transformed, use {@link #getCurrentTransformationInt()}
+	 *             mob transformed, use {@link #getCurrentTransformationID()}
 	 */
 	@Override
 	@Deprecated

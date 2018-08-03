@@ -7,8 +7,10 @@ import com.google.common.base.Predicate;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityGolem;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -20,13 +22,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.TransformationXPSentReason;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 @Mod.EventBusSubscriber
@@ -64,7 +68,7 @@ public class TransformationEventHandler {
 								werewolf.setPosition(player.posX, player.posY, player.posZ);
 								PLAYER_WEREWOLVES.add(werewolf);
 								world.spawnEntity(werewolf);
-								Packets.NO_CONTROL.sync(new ExecutionPath(), player, werewolf.getEntityId());
+								Packets.NO_CONTROL.sync(new ExecutionPath(), player, werewolf);
 							}
 						}
 
@@ -118,7 +122,7 @@ public class TransformationEventHandler {
 		if (transformationAttacker != null) {
 			ItemStack weapon = attacker.getHeldItemMainhand();
 			if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
-				event.setAmount(event.getAmount() * transformationAttacker.getTransformation().GENERAL_DAMAGE);
+				event.setAmount(event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage());
 			}
 		}
 	}
@@ -135,6 +139,18 @@ public class TransformationEventHandler {
 					new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
 			entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity, EntityPlayer.class,
 					10, true, false, predicate));
+		} else if (event.getEntity() instanceof EntityVillager) {
+			EntityVillager villager = (EntityVillager) event.getEntity();
+			if (ChanceHelper.chanceOf(25)) {
+				ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
+				tc.setCurrentTransformation(Transformations.WEREWOLF);
+				tc.setTextureIndex(tc.getCurrentTransformation().getRandomTextureIndex());
+			}
+			Predicate<EntityLivingBase> predicate = input -> {
+				return TransformationHelper.getTransformation(input) == Transformations.WEREWOLF;
+			};
+			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class,
+					predicate, 8.0F, 0.6D, 0.6D));
 		}
 	}
 
@@ -143,12 +159,10 @@ public class TransformationEventHandler {
 		// check every two seconds
 		if (event.getEntity().ticksExisted % 40 == 0) {
 			try {
-				if (event.getEntityLiving() instanceof EntityCreature) {
-					EntityCreature creature = (EntityCreature) event.getEntityLiving();
-					TransformationHelper.getITransformationCreature(creature).getCurrentTransformation()
-							.transformCreatureWhenPossible(creature);
-				}
-			} catch (NullPointerException e) {
+				EntityCreature creature = (EntityCreature) event.getEntityLiving();
+				TransformationHelper.getITransformationCreature(creature).getCurrentTransformation()
+						.transformCreatureWhenPossible(creature);
+			} catch (NullPointerException | ClassCastException e) {
 			}
 		}
 	}

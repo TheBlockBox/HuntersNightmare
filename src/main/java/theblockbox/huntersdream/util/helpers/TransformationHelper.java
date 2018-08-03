@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.event.TransformationXPEvent;
+import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -18,26 +19,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCr
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class TransformationHelper {
-
-	public enum TransformationXPSentReason {
-		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF);
-
-		/** The transformations that can receive xp through this cause */
-		public final Transformations[] TRANSFORMATIONS;
-
-		private TransformationXPSentReason(Transformations... transformations) {
-			this.TRANSFORMATIONS = transformations;
-		}
-
-		public static boolean validReason(TransformationXPSentReason reason, Transformations transformation) {
-			for (Transformations t : reason.TRANSFORMATIONS) {
-				if (t == transformation) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
 
 	/**
 	 * Contains entities that can be infected. The class is the entity's class and
@@ -154,8 +135,7 @@ public class TransformationHelper {
 	/**
 	 * Add an entity that can be infected
 	 * 
-	 * @param transformations
-	 *            The transformations in that the entity can transform
+	 * @param transformations The transformations in that the entity can transform
 	 */
 	public static void addInfectableEntity(Class<? extends EntityLivingBase> entity,
 			Transformations... transformations) {

@@ -23,7 +23,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -45,7 +44,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		super(worldIn);
 		this.textureIndex = textureIndex;
 		this.entityName = entityName;
-		getEntityBoundingBox().grow(0, 1, 0);
+		this.setSize(1F, 2.5F);
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityLivingBase entity) {
@@ -53,7 +52,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	public EntityWerewolf(World worldIn) {
-		this(worldIn, Main.RANDOM.nextInt(TRANSFORMATION.TEXTURES.length), "$bycap" + EntityVillager.class.getName());
+		this(worldIn, TRANSFORMATION.getRandomTextureIndex(), "$bycap" + EntityVillager.class.getName());
 	}
 
 	@Override
@@ -85,7 +84,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(TRANSFORMATION.GENERAL_DAMAGE);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(TRANSFORMATION.getGeneralDamage());
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(SPEED);
 	}
@@ -127,7 +126,13 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public int getTransformationInt() {
-		return TRANSFORMATION.ID;
+		return TRANSFORMATION.getID();
+	}
+
+	@Override
+	public Transformations getTransformation() {
+		// TODO Auto-generated method stub
+		return ITransformationEntityTransformed.super.getTransformation();
 	}
 
 	@Override

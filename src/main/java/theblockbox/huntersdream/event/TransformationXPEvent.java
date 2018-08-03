@@ -4,8 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.TransformationXPSentReason;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 /**
@@ -46,5 +46,25 @@ public class TransformationXPEvent extends PlayerEvent {
 	@Override
 	public Result getResult() {
 		return super.getResult();
+	}
+
+	public enum TransformationXPSentReason {
+		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF);
+
+		/** The transformations that can receive xp through this cause */
+		public final Transformations[] TRANSFORMATIONS;
+
+		private TransformationXPSentReason(Transformations... transformations) {
+			this.TRANSFORMATIONS = transformations;
+		}
+
+		public static boolean validReason(TransformationXPSentReason reason, Transformations transformation) {
+			for (Transformations t : reason.TRANSFORMATIONS) {
+				if (t == transformation) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

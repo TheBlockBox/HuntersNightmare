@@ -17,6 +17,5 @@
 - make werewolf animation go on all fours
 - rotate legs by 25 degrees
 - (make that you don't get hunger effect when having no control)
-- test if bounding box works
-- make that every villager has a low chance of being a lycantrophe
-- remove EntityWerewolfVillager in future version (before next official build)
+- when no control werewolf kills mob, also make (sure) that player gets 10 instead of 5 xp
+- and make sure that no control werewolves have to kill and not only hurt the mob to get xp

@@ -15,6 +15,6 @@ public class RenderWerewolf extends RenderLiving<EntityWerewolf> {
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityWerewolf entity) {
-		return Transformations.WEREWOLF.TEXTURES[entity.getTextureIndex()];
+		return Transformations.WEREWOLF.getTextures()[entity.getTextureIndex()];
 	}
 }

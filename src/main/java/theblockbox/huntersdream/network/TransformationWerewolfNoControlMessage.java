@@ -8,47 +8,57 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 
-public class TransformationWerewolfNoControlMessage extends PlayerMessageBase<TransformationWerewolfNoControlMessage> {
+public class TransformationWerewolfNoControlMessage extends MessageBase<TransformationWerewolfNoControlMessage> {
 
-	private int werewolfEntityID;
+	private EntityPlayer player;
+	private EntityWerewolf werewolf;
 
 	public TransformationWerewolfNoControlMessage() {
-		super(DEFAULT_ENTITY_ID);
 	}
 
-	public TransformationWerewolfNoControlMessage(int entityID, int werewolfEntityID) {
-		super(entityID);
-		this.werewolfEntityID = werewolfEntityID;
+	public TransformationWerewolfNoControlMessage(EntityPlayer player, EntityWerewolf werewolf) {
+		this.player = player;
+		this.werewolf = werewolf;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.entityID = buf.readInt();
-		this.werewolfEntityID = buf.readInt();
+		this.player = readPlayer(buf);
+		this.werewolf = (EntityWerewolf) readEntity(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(entityID);
-		buf.writeInt(werewolfEntityID);
-	}
-
-	@Override
-	public IMessage onMessageReceived(TransformationWerewolfNoControlMessage message, MessageContext ctx,
-			EntityPlayer player) {
-		if (ctx.side == Side.CLIENT) {
-			Minecraft mc = Minecraft.getMinecraft();
-			mc.addScheduledTask(() -> {
-				EntityWerewolf werewolf = (EntityWerewolf) player.world.getEntityByID(message.werewolfEntityID);
-				mc.setRenderViewEntity(werewolf);
-				mc.gameSettings.thirdPersonView = 3;
-			});
-		}
-		return null;
+		writeEntity(buf, player);
+		writeEntity(buf, werewolf);
 	}
 
 	@Override
 	public String getName() {
 		return "Transformation Player Werewolf No Control";
+	}
+
+	@Override
+	public MessageHandler<TransformationWerewolfNoControlMessage, ? extends IMessage> getMessageHandler() {
+		return new Handler();
+	}
+
+	public static class Handler extends MessageHandler<TransformationWerewolfNoControlMessage, IMessage> {
+		public Handler() {
+		}
+
+		@Override
+		public IMessage onMessageReceived(TransformationWerewolfNoControlMessage message, MessageContext ctx) {
+			if (ctx.side == Side.CLIENT) {
+				Minecraft mc = Minecraft.getMinecraft();
+				mc.addScheduledTask(() -> {
+					EntityWerewolf werewolf = message.werewolf;
+					mc.setRenderViewEntity(werewolf);
+					mc.gameSettings.thirdPersonView = 3;
+				});
+			}
+			return null;
+		}
+
 	}
 }

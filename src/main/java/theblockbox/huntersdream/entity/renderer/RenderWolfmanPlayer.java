@@ -16,7 +16,7 @@ public class RenderWolfmanPlayer extends RenderLivingBase<EntityPlayer> {
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityPlayer entity) {
-		return Transformations.WEREWOLF.TEXTURES[TransformationHelper.getCap(entity).getTextureIndex()];
+		return Transformations.WEREWOLF.getTextures()[TransformationHelper.getCap(entity).getTextureIndex()];
 	}
 
 	@Override

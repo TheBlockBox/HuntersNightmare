@@ -1,0 +1,110 @@
+---- Minecraft Crash Report ----
+// You're mean.
+
+Time: 7/29/18 3:27 PM
+Description: Ticking entity
+
+theblockbox.huntersdream.util.exceptions.WrongTransformationException: Wrong transformation: HUMAN
+Entity is not a werewolf
+	at theblockbox.huntersdream.util.helpers.WerewolfHelper.toWerewolfWhenNight(WerewolfHelper.java:282)
+	at theblockbox.huntersdream.util.helpers.TransformationHelper$Transformations.transformCreatureWhenPossible(TransformationHelper.java:129)
+	at theblockbox.huntersdream.util.handlers.TransformationEventHandler.onEntityTick(TransformationEventHandler.java:147)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler_17_TransformationEventHandler_onEntityTick_LivingUpdateEvent.invoke(.dynamic)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler.invoke(ASMEventHandler.java:90)
+	at net.minecraftforge.fml.common.eventhandler.EventBus.post(EventBus.java:182)
+	at net.minecraftforge.common.ForgeHooks.onLivingUpdate(ForgeHooks.java:566)
+	at net.minecraft.entity.EntityLivingBase.onUpdate(EntityLivingBase.java:2312)
+	at net.minecraft.entity.EntityLiving.onUpdate(EntityLiving.java:346)
+	at net.minecraft.world.World.updateEntityWithOptionalForce(World.java:2168)
+	at net.minecraft.world.WorldServer.updateEntityWithOptionalForce(WorldServer.java:871)
+	at net.minecraft.world.World.updateEntity(World.java:2127)
+	at net.minecraft.world.World.updateEntities(World.java:1928)
+	at net.minecraft.world.WorldServer.updateEntities(WorldServer.java:643)
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:842)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:743)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:192)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:592)
+	at java.lang.Thread.run(Unknown Source)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Server thread
+Stacktrace:
+	at theblockbox.huntersdream.util.helpers.WerewolfHelper.toWerewolfWhenNight(WerewolfHelper.java:282)
+	at theblockbox.huntersdream.util.helpers.TransformationHelper$Transformations.transformCreatureWhenPossible(TransformationHelper.java:129)
+	at theblockbox.huntersdream.util.handlers.TransformationEventHandler.onEntityTick(TransformationEventHandler.java:147)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler_17_TransformationEventHandler_onEntityTick_LivingUpdateEvent.invoke(.dynamic)
+	at net.minecraftforge.fml.common.eventhandler.ASMEventHandler.invoke(ASMEventHandler.java:90)
+	at net.minecraftforge.fml.common.eventhandler.EventBus.post(EventBus.java:182)
+	at net.minecraftforge.common.ForgeHooks.onLivingUpdate(ForgeHooks.java:566)
+	at net.minecraft.entity.EntityLivingBase.onUpdate(EntityLivingBase.java:2312)
+	at net.minecraft.entity.EntityLiving.onUpdate(EntityLiving.java:346)
+	at net.minecraft.world.World.updateEntityWithOptionalForce(World.java:2168)
+	at net.minecraft.world.WorldServer.updateEntityWithOptionalForce(WorldServer.java:871)
+	at net.minecraft.world.World.updateEntity(World.java:2127)
+
+-- Entity being ticked --
+Details:
+	Entity Type: minecraft:villager (net.minecraft.entity.passive.EntityVillager)
+	Entity ID: 84
+	Entity Name: Villager
+	Entity's Exact location: 257.50, 66.00, -71.50
+	Entity's Block location: World: (257,66,-72), Chunk: (at 1,4,8 in 16,-5; contains blocks 256,0,-80 to 271,255,-65), Region: (0,-1; contains chunks 0,-32 to 31,-1, blocks 0,0,-512 to 511,255,-1)
+	Entity's Momentum: 0.00, -0.08, 0.00
+	Entity's Passengers: []
+	Entity's Vehicle: ~~ERROR~~ NullPointerException: null
+Stacktrace:
+	at net.minecraft.world.World.updateEntities(World.java:1928)
+	at net.minecraft.world.WorldServer.updateEntities(WorldServer.java:643)
+
+-- Affected level --
+Details:
+	Level name: New World
+	All players: 1 total; [EntityPlayerMP['Player993'/139, l='New World', x=256.76, y=68.00, z=-73.05]]
+	Chunk stats: ServerChunkCache: 924 Drop: 0
+	Level seed: -5195305921575210423
+	Level generator: ID 00 - default, ver 1. Features enabled: true
+	Level generator options: 
+	Level spawn location: World: (252,64,-48), Chunk: (at 12,4,0 in 15,-3; contains blocks 240,0,-48 to 255,255,-33), Region: (0,-1; contains chunks 0,-32 to 31,-1, blocks 0,0,-512 to 511,255,-1)
+	Level time: 12986 game time, 12986 day time
+	Level dimension: 0
+	Level storage version: 0x04ABD - Anvil
+	Level weather: Rain time: 70663 (now: false), thunder time: 34829 (now: false)
+	Level game mode: Game mode: creative (ID 1). Hardcore: false. Cheats: true
+Stacktrace:
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:842)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:743)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:192)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:592)
+	at java.lang.Thread.run(Unknown Source)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 1.8.0_171, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 949307464 bytes (905 MB) / 1263534080 bytes (1205 MB) up to 3810525184 bytes (3634 MB)
+	JVM Flags: 0 total; 
+	IntCache: cache: 0, tcache: 0, allocated: 12, tallocated: 94
+	FML: MCP 9.42 Powered by Forge 14.23.4.2711 6 mods loaded, 6 mods active
+	States: 'U' = Unloaded 'L' = Loaded 'C' = Constructed 'H' = Pre-initialized 'I' = Initialized 'J' = Post-initialized 'A' = Available 'D' = Disabled 'E' = Errored
+
+	| State     | ID            | Version      | Source                           | Signature |
+	|:--------- |:------------- |:------------ |:-------------------------------- |:--------- |
+	| UCHIJAAAA | minecraft     | 1.12.2       | minecraft.jar                    | None      |
+	| UCHIJAAAA | mcp           | 9.42         | minecraft.jar                    | None      |
+	| UCHIJAAAA | FML           | 8.0.99.99    | forgeSrc-1.12.2-14.23.4.2711.jar | None      |
+	| UCHIJAAAA | forge         | 14.23.4.2711 | forgeSrc-1.12.2-14.23.4.2711.jar | None      |
+	| UCHIJAAAA | huntersdream  | 0.2.0        | bin                              | None      |
+	| UCHIJAAAA | torohealthmod | 1.12.2-11    | torohealth-1.12.2-11.jar         | None      |
+
+	Loaded coremods (and transformers): 
+	GL info: ~~ERROR~~ RuntimeException: No OpenGL context found in the current thread.
+	Profiler Position: N/A (disabled)
+	Player Count: 1 / 8; [EntityPlayerMP['Player993'/139, l='New World', x=256.76, y=68.00, z=-73.05]]
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Definitely; Client brand changed to 'fml,forge'

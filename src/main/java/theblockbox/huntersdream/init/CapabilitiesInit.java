@@ -9,7 +9,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -114,9 +113,9 @@ public class CapabilitiesInit {
 	}
 
 	private static class TransformationCreature implements ITransformationCreature {
-		private int textureIndex = Main.RANDOM.nextInt(getCurrentTransformation().TEXTURES.length);
 		private int[] transformationsNotImmuneTo = new int[0];
-		private int transformation = Transformations.HUMAN.ID;
+		private int transformation = Transformations.HUMAN.getID();
+		private int textureIndex = 0;
 
 		@Override
 		public int getTextureIndex() {
@@ -138,12 +137,12 @@ public class CapabilitiesInit {
 		}
 
 		@Override
-		public int getCurrentTransformationInt() {
+		public int getCurrentTransformationID() {
 			return this.transformation;
 		}
 
 		@Override
-		public void setCurrentTransformationInt(int transformation) {
+		public void setCurrentTransformationID(int transformation) {
 			this.transformation = transformation;
 		}
 
@@ -160,7 +159,7 @@ public class CapabilitiesInit {
 				EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger("textureIndex", instance.getTextureIndex());
-			compound.setInteger("transformation", instance.getCurrentTransformationInt());
+			compound.setInteger("transformation", instance.getCurrentTransformationID());
 			compound.setIntArray("transformationidsnotimmuneto", instance.getTransformationIntsNotImmuneTo());
 			return compound;
 		}
@@ -171,7 +170,7 @@ public class CapabilitiesInit {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
 				instance.setTextureIndex(compound.getInteger("textureIndex"));
-				instance.setCurrentTransformationInt(compound.getInteger("transformation"));
+				instance.setCurrentTransformationID(compound.getInteger("transformation"));
 				instance.setTransformationsNotImmuneTo(compound.getIntArray("transformationidsnotimmuneto"));
 			}
 		}

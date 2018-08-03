@@ -8,8 +8,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
@@ -26,20 +28,23 @@ public class PacketHandler {
 	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
 	public static int networkID = 0;
 
-	public static void register() {
+	// I wanted to make this cleaner but still don't get what all this class casting
+	// stuff is doing
+	@SuppressWarnings("unchecked")
+	public static <T extends IMessage, REPLY extends IMessage> void register() {
 		for (Packets packet : Packets.values()) {
-			INSTANCE.registerMessage(packet.getMessageClass(), packet.CLASS, networkID++, packet.SIDE);
+			INSTANCE.registerMessage(
+					(Class<IMessageHandler<T, REPLY>>) packet.MESSAGE_BASE.getMessageHandler().getClass(),
+					(Class<T>) packet.MESSAGE_BASE.getClass(), networkID++, packet.SIDE);
 		}
 	}
 
 	public enum Packets {
-		TRANSFORMATION(new TransformationMessage()), NIGHT_OVER(
-				new TransformationWerewolfNightOverMessage()), NO_CONTROL(
-						new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()), TEXTURE_INDEX(
-								new TransformationTextureIndexMessage(), SERVER);
+		TRANSFORMATION(new TransformationMessage()), NIGHT_OVER(new TransformationWerewolfNightOverMessage()),
+		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
+		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER);
 
 		private final MessageBase<?> MESSAGE_BASE;
-		public final Class<? extends IMessage> CLASS;
 		/** Side that receives package */
 		public final Side SIDE;
 		/** The result of {@link MessageBase#getName()} */
@@ -49,23 +54,15 @@ public class PacketHandler {
 			this(messageBase, CLIENT);
 		}
 
-		// I have literally no idea what this does but it works
-		@SuppressWarnings("unchecked")
-		public <T> Class<T> getMessageClass() {
-			return (Class<T>) this.CLASS;
-		}
-
 		// Remember: Don't trust the client
 		private Packets(MessageBase<?> messageBase, Side side) {
 			this.MESSAGE_BASE = messageBase;
 			this.SIDE = side;
-			this.CLASS = messageBase.getClass();
 			this.NAME = messageBase.getName();
 		}
 
 		public void sync(ExecutionPath path, EntityPlayer player, Object... args) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			int playerID = player.getEntityId();
 			EntityPlayerMP playerMP = null;
 			if (player instanceof EntityPlayerMP) {
 				playerMP = (EntityPlayerMP) player;
@@ -80,20 +77,23 @@ public class PacketHandler {
 				case TRANSFORMATION:
 					// could contain render changes
 					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformationInt(), playerID, cap.getTextureIndex()));
+							cap.getTransformationInt(), player, cap.getTextureIndex()));
 					break;
 				case XP:
-					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), playerID));
+					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), player));
 					break;
 				case NIGHT_OVER:
 					// only changes player view
-					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(playerID), playerMP);
+					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(player), playerMP);
 					break;
 				case NO_CONTROL:
 					// only changes player view
-					INSTANCE.sendTo(
-							new TransformationWerewolfNoControlMessage(playerID, Integer.parseInt(args[0].toString())),
-							playerMP);
+					try {
+						INSTANCE.sendTo(new TransformationWerewolfNoControlMessage(player, (EntityWerewolf) args[0]),
+								playerMP);
+					} catch (ClassCastException e) {
+						throw new IllegalArgumentException("Given object is not an instance of EntityWerewolf");
+					}
 					break;
 
 				// Client

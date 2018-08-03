@@ -31,20 +31,30 @@ public class TransformationTextureIndexMessage extends MessageBase<Transformatio
 	}
 
 	@Override
-	public IMessage onMessageReceived(TransformationTextureIndexMessage message, MessageContext ctx) {
-		if (ctx.side == Side.SERVER) {
-			EntityPlayerMP player = ctx.getServerHandler().player;
-			player.getServerWorld().addScheduledTask(() -> {
-				TransformationHelper.getCap(player).setTextureIndex(message.textureIndex);
-				// notify everyone that one player has a new texture
-				Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
-			});
-		}
-		return null;
+	public String getName() {
+		return "Transformation Texture Index";
 	}
 
 	@Override
-	public String getName() {
-		return "Transformation Texture Index";
+	public MessageHandler<TransformationTextureIndexMessage, ? extends IMessage> getMessageHandler() {
+		return new Handler();
+	}
+
+	public static class Handler extends MessageHandler<TransformationTextureIndexMessage, IMessage> {
+		public Handler() {
+		}
+
+		@Override
+		public IMessage onMessageReceived(TransformationTextureIndexMessage message, MessageContext ctx) {
+			if (ctx.side == Side.SERVER) {
+				EntityPlayerMP player = ctx.getServerHandler().player;
+				player.getServerWorld().addScheduledTask(() -> {
+					TransformationHelper.getCap(player).setTextureIndex(message.textureIndex);
+					// notify everyone that one player has a new texture
+					Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
+				});
+			}
+			return null;
+		}
 	}
 }

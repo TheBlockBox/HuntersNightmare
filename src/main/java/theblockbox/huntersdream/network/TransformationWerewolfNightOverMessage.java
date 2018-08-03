@@ -7,40 +7,47 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class TransformationWerewolfNightOverMessage extends PlayerMessageBase<TransformationWerewolfNightOverMessage> {
+public class TransformationWerewolfNightOverMessage extends MessageBase<TransformationWerewolfNightOverMessage> {
+	private EntityPlayer player;
 
 	public TransformationWerewolfNightOverMessage() {
-		super(DEFAULT_ENTITY_ID);
 	}
 
-	public TransformationWerewolfNightOverMessage(int entityID) {
-		super(entityID);
+	public TransformationWerewolfNightOverMessage(EntityPlayer player) {
+		this.player = player;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.entityID = buf.readInt();
+		this.player = readPlayer(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(entityID);
-	}
-
-	@Override
-	public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx,
-			EntityPlayer player) {
-		if (ctx.side == Side.CLIENT) {
-			Minecraft mc = Minecraft.getMinecraft();
-			mc.addScheduledTask(() -> {
-				mc.setRenderViewEntity(player);
-			});
-		}
-		return null;
+		writeEntity(buf, player);
 	}
 
 	@Override
 	public String getName() {
 		return "Transformation Werewolf Night Over";
+	}
+
+	@Override
+	public MessageHandler<TransformationWerewolfNightOverMessage, ? extends IMessage> getMessageHandler() {
+		return new Handler();
+	}
+
+	public static class Handler extends MessageHandler<TransformationWerewolfNightOverMessage, IMessage> {
+
+		@Override
+		public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx) {
+			if (ctx.side == Side.CLIENT) {
+				Minecraft mc = Minecraft.getMinecraft();
+				mc.addScheduledTask(() -> {
+					mc.setRenderViewEntity(message.player);
+				});
+			}
+			return null;
+		}
 	}
 }

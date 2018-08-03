@@ -1,0 +1,101 @@
+---- Minecraft Crash Report ----
+// Hi. I'm Minecraft, and I'm a crashaholic.
+
+Time: 7/29/18 4:43 PM
+Description: Ticking entity
+
+java.lang.NullPointerException: Class net.minecraft.entity.passive.EntityVillager does not have an accessible constructor with parameters World, int, Transformations
+	at theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed.transformBack(ITransformationEntityTransformed.java:62)
+	at theblockbox.huntersdream.entity.EntityWerewolf.onLivingUpdate(EntityWerewolf.java:123)
+	at net.minecraft.entity.EntityLivingBase.onUpdate(EntityLivingBase.java:2396)
+	at net.minecraft.entity.EntityLiving.onUpdate(EntityLiving.java:346)
+	at net.minecraft.entity.monster.EntityMob.onUpdate(EntityMob.java:57)
+	at net.minecraft.world.World.updateEntityWithOptionalForce(World.java:2168)
+	at net.minecraft.world.WorldServer.updateEntityWithOptionalForce(WorldServer.java:871)
+	at net.minecraft.world.World.updateEntity(World.java:2127)
+	at net.minecraft.world.World.updateEntities(World.java:1928)
+	at net.minecraft.world.WorldServer.updateEntities(WorldServer.java:643)
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:842)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:743)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:192)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:592)
+	at java.lang.Thread.run(Unknown Source)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Server thread
+Stacktrace:
+	at theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed.transformBack(ITransformationEntityTransformed.java:62)
+	at theblockbox.huntersdream.entity.EntityWerewolf.onLivingUpdate(EntityWerewolf.java:123)
+	at net.minecraft.entity.EntityLivingBase.onUpdate(EntityLivingBase.java:2396)
+	at net.minecraft.entity.EntityLiving.onUpdate(EntityLiving.java:346)
+	at net.minecraft.entity.monster.EntityMob.onUpdate(EntityMob.java:57)
+	at net.minecraft.world.World.updateEntityWithOptionalForce(World.java:2168)
+	at net.minecraft.world.WorldServer.updateEntityWithOptionalForce(WorldServer.java:871)
+	at net.minecraft.world.World.updateEntity(World.java:2127)
+
+-- Entity being ticked --
+Details:
+	Entity Type: huntersdream:werewolf (theblockbox.huntersdream.entity.EntityWerewolf)
+	Entity ID: 1696
+	Entity Name: Werewolf
+	Entity's Exact location: -490.93, 65.00, 469.19
+	Entity's Block location: World: (-491,65,469), Chunk: (at 5,4,5 in -31,29; contains blocks -496,0,464 to -481,255,479), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Entity's Momentum: 0.10, -0.08, -0.09
+	Entity's Passengers: []
+	Entity's Vehicle: ~~ERROR~~ NullPointerException: null
+Stacktrace:
+	at net.minecraft.world.World.updateEntities(World.java:1928)
+	at net.minecraft.world.WorldServer.updateEntities(WorldServer.java:643)
+
+-- Affected level --
+Details:
+	Level name: New World
+	All players: 1 total; [EntityPlayerMP['Player983'/190, l='New World', x=-495.17, y=64.00, z=466.60]]
+	Chunk stats: ServerChunkCache: 4226 Drop: 0
+	Level seed: 5795646914791717417
+	Level generator: ID 00 - default, ver 1. Features enabled: true
+	Level generator options: 
+	Level spawn location: World: (-482,64,452), Chunk: (at 14,4,4 in -31,28; contains blocks -496,0,448 to -481,255,463), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Level time: 2018 game time, 1023 day time
+	Level dimension: 0
+	Level storage version: 0x04ABD - Anvil
+	Level weather: Rain time: 56283 (now: false), thunder time: 70079 (now: false)
+	Level game mode: Game mode: creative (ID 1). Hardcore: false. Cheats: true
+Stacktrace:
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:842)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:743)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:192)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:592)
+	at java.lang.Thread.run(Unknown Source)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 1.8.0_171, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 1212740664 bytes (1156 MB) / 2142240768 bytes (2043 MB) up to 3810525184 bytes (3634 MB)
+	JVM Flags: 0 total; 
+	IntCache: cache: 0, tcache: 0, allocated: 13, tallocated: 95
+	FML: MCP 9.42 Powered by Forge 14.23.4.2711 6 mods loaded, 6 mods active
+	States: 'U' = Unloaded 'L' = Loaded 'C' = Constructed 'H' = Pre-initialized 'I' = Initialized 'J' = Post-initialized 'A' = Available 'D' = Disabled 'E' = Errored
+
+	| State     | ID            | Version      | Source                           | Signature |
+	|:--------- |:------------- |:------------ |:-------------------------------- |:--------- |
+	| UCHIJAAAA | minecraft     | 1.12.2       | minecraft.jar                    | None      |
+	| UCHIJAAAA | mcp           | 9.42         | minecraft.jar                    | None      |
+	| UCHIJAAAA | FML           | 8.0.99.99    | forgeSrc-1.12.2-14.23.4.2711.jar | None      |
+	| UCHIJAAAA | forge         | 14.23.4.2711 | forgeSrc-1.12.2-14.23.4.2711.jar | None      |
+	| UCHIJAAAA | huntersdream  | 0.2.0        | bin                              | None      |
+	| UCHIJAAAA | torohealthmod | 1.12.2-11    | torohealth-1.12.2-11.jar         | None      |
+
+	Loaded coremods (and transformers): 
+	GL info: ~~ERROR~~ RuntimeException: No OpenGL context found in the current thread.
+	Profiler Position: N/A (disabled)
+	Player Count: 1 / 8; [EntityPlayerMP['Player983'/190, l='New World', x=-495.17, y=64.00, z=466.60]]
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Definitely; Client brand changed to 'fml,forge'

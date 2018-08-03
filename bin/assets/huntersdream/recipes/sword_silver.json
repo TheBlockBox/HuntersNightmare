@@ -1,0 +1,31 @@
+{
+    "type": "minecraft:crafting_shaped",
+    
+    "pattern":
+    [
+        "S",
+        "S",
+        "T"
+    ],
+    
+    "key":
+    {
+        "S":
+        {
+            "type": "forge:ore_dict",
+            "ore": "pureSilver"
+        },
+        
+        "T":
+        {
+            "type": "forge:ore_dict",
+            "ore": "stickWood"
+        }
+    },
+    
+    "result":
+    {
+        "item": "huntersdream:sword_pure_silver",
+        "count": 1
+    }
+}

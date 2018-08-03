@@ -20,7 +20,7 @@ public interface ITransformation {
 	public void setTransformationID(int id);
 
 	default public void setTransformation(Transformations transformation) {
-		setTransformationID(transformation.ID);
+		setTransformationID(transformation.getID());
 	}
 
 	public int getTextureIndex();

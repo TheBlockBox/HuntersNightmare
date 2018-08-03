@@ -15,6 +15,9 @@ public class ConfigHandler {
 	public static boolean customPlayerRender = true;
 	public static boolean renderXPBar = true;
 
+	public static boolean xpBarLeft = false;
+	public static boolean xpBarTop = false;
+
 	public static boolean showPacketMessages = false;
 
 	public static Configuration config;
@@ -36,6 +39,10 @@ public class ConfigHandler {
 				"Use different player render when transformed");
 		renderXPBar = config.getBoolean("Render xp bar", category, true,
 				"Render the player's (werewolf/vampire etc.) xp bar");
+		xpBarLeft = config.getBoolean("XP bar on left side", category, false,
+				"If you want your transformation xp bar to be rendered on the left side, set this to true");
+		xpBarTop = config.getBoolean("XP bar on top", category, false,
+				"If you want your transformation xp bar to be rendered on the top, set this to true");
 
 		config.save();
 	}

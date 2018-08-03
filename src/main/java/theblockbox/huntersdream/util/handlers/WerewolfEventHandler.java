@@ -11,11 +11,11 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper.TransformationXPSentReason;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IArmorEffectiveAgainstWerewolf;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
@@ -51,17 +51,15 @@ public class WerewolfEventHandler {
 						// when the attacker is supernatural,
 						if (transformationAttacker != null
 								&& transformationAttacker.getTransformation().isSupernatural()) {
-							if (transformationAttacker.getTransformation().isSupernatural()) {
-								// has no weapon and is effective against werewolf
-								if (weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
-									event.setAmount(event.getAmount()
-											* WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
-									return;
-								} else if (!weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
-									event.setAmount(
-											event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
-									return;
-								}
+							// has no weapon and is effective against werewolf
+							if (weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
+								event.setAmount(
+										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
+								return;
+							} else if (!weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
+								event.setAmount(
+										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
+								return;
 							}
 						} else {
 							// when attacker is not supernatural
@@ -87,7 +85,7 @@ public class WerewolfEventHandler {
 
 				// when nothing applies (this should also reduce any other damage from other
 				// damage sources)
-				event.setAmount((event.getAmount() / Transformations.WEREWOLF.PROTECTION));
+				event.setAmount((event.getAmount() / Transformations.WEREWOLF.getProtection()));
 			}
 		}
 	}

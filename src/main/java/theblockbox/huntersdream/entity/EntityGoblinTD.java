@@ -37,12 +37,14 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	public static final int TEXTURES = 6;
 	private static final DataParameter<Integer> TRANSFORMATION_INT = EntityDataManager
 			.<Integer>createKey(EntityZombie.class, DataSerializers.VARINT);
+	private final Transformations TRANSFORMATION;
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
 		this.textureIndex = Main.RANDOM.nextInt(TEXTURES);
-		this.textureIndexTransformed = Main.RANDOM.nextInt(getCurrentTransformation().TEXTURES.length);
+		this.TRANSFORMATION = transformation;
+		this.textureIndexTransformed = transformation.getRandomTextureIndex();
 	}
 
 	public EntityGoblinTD(World worldIn) {
@@ -52,7 +54,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		dataManager.register(TRANSFORMATION_INT, Transformations.HUMAN.ID);
+		dataManager.register(TRANSFORMATION_INT, this.TRANSFORMATION.getID());
 	}
 
 	@Override
@@ -146,12 +148,12 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
-	public int getCurrentTransformationInt() {
+	public int getCurrentTransformationID() {
 		return this.dataManager.get(TRANSFORMATION_INT);
 	}
 
 	@Override
-	public void setCurrentTransformationInt(int transformation) {
+	public void setCurrentTransformationID(int transformation) {
 		this.dataManager.set(TRANSFORMATION_INT, transformation);
 	}
 }

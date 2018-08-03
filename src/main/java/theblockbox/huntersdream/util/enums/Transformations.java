@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -14,82 +15,55 @@ import theblockbox.huntersdream.util.interfaces.ITransformCreature;
 
 public enum Transformations {
 
-	// TODO: Add levelling system for HUMAN, VAMPIRE and WITCH
-
-	HUMAN(0, 1, 1F, Helper.DEFAULT_CALCULATE_LEVEL, false, null),
-
-	WEREWOLF(1, 8, 17.5F, WerewolfHelper::getWerewolfLevel, WerewolfHelper::toWerewolfWhenNight, "werewolf_beta_white",
-			"werewolf_beta_brown", "werewolf_beta_black"),
-	// I've always wanted to use the :: operator
-
-	VAMPIRE(2, Helper.DEFAULT_CALCULATE_LEVEL, null),
-
-	WITCH(3, 1, 1F, Helper.DEFAULT_CALCULATE_LEVEL, false, null),
-
-	CLOCKWORKANDROID(4, Helper.DEFAULT_CALCULATE_LEVEL, null),
-
-	HYBRID(5, Helper.DEFAULT_CALCULATE_LEVEL, null);
+	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID and HUNTER
+	HUMAN(TransformationEntry.create().setID(0).setSupernatural(false)),
+	WEREWOLF(TransformationEntry.create().setID(1).setGeneralDamage(8).setProtection(17.5F)
+			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
+			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
+			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
+	VAMPIRE(TransformationEntry.create().setID(2)), WITCH(TransformationEntry.create().setID(3)),
+	CLOCKWORKANDROID(TransformationEntry.create().setID(4)), HYBRID(TransformationEntry.create().setID(5)),
+	HUNTER(TransformationEntry.create().setID(6).setSupernatural(false));
 
 	// when an entity has no transformation, use null
 	// (no transformation meaning not infectable)
 
 	private static class Helper {
 		private static final ArrayList<Transformations> TRANSFORMATIONS = new ArrayList<>();
-		private static final ICalculateLevel DEFAULT_CALCULATE_LEVEL = player -> {
-			return TransformationHelper.getCap(player).getXP() / 500;
-		};
 		private static int currentTransformationID = 0;
 	}
 
-	public final int ID;
-	/**
-	 * the damage that the entites should deal in half hearts or for player's the
-	 * damage multiplier
-	 */
-	public final int GENERAL_DAMAGE;
-	private final ICalculateLevel CALCULATE_LEVEL;
-	public final ResourceLocation[] TEXTURES;
-	public final float PROTECTION;
-	private final boolean SUPER_NATURAL;
-	private final ITransformCreature TRANSFORM_CREATURE;
+	private final TransformationEntry ENTRY;
 
-	private Transformations(int id, int generalDamage, float protection, ICalculateLevel calculateLevel,
-			boolean supernatural, ITransformCreature transformCreature, String... textures) {
-		this.ID = id;
-		this.CALCULATE_LEVEL = calculateLevel;
-		TEXTURES = new ResourceLocation[textures.length];
-		this.GENERAL_DAMAGE = generalDamage;
-		this.PROTECTION = protection;
-		this.SUPER_NATURAL = supernatural;
-		for (int i = 0; i < textures.length; i++) {
-			TEXTURES[i] = new ResourceLocation(Reference.MODID, "textures/entity/" + textures[i] + ".png");
-		}
-		this.TRANSFORM_CREATURE = transformCreature;
+	private Transformations(TransformationEntry entry) {
+		this.ENTRY = entry;
 		Helper.TRANSFORMATIONS.add(this);
-		getNewTransformationID();
 	}
 
 	public static int getNewTransformationID() {
 		return Helper.currentTransformationID++;
 	}
 
-	private Transformations(int id, int generalDamage, float protection, ICalculateLevel calculateLevel,
-			ITransformCreature transformCreature, String... textures) {
-		this(id, generalDamage, protection, calculateLevel, true, transformCreature, textures);
-	}
-
-	private Transformations(int id, ICalculateLevel calculateLevel, ITransformCreature transformCreature,
-			String... textures) {
-		this(id, 1, 1F, calculateLevel, true, transformCreature, textures);
-	}
-
 	public static Transformations fromID(int id) {
 		for (Transformations transformations : Helper.TRANSFORMATIONS) {
-			if (transformations.ID == id) {
+			if (transformations.getTransformationInt() == id) {
 				return transformations;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the transformation's id (every transformation should have its own
+	 * unique id!)
+	 */
+	public int getTransformationInt() {
+		return this.ENTRY.transformationInt;
+	}
+
+	/** Does the same as {@link #getTransformationInt()} */
+	public int getID() {
+		return this.getTransformationInt();
 	}
 
 	public static Transformations fromName(String name) {
@@ -102,7 +76,7 @@ public enum Transformations {
 	}
 
 	public double getLevel(EntityPlayer player) {
-		return CALCULATE_LEVEL.getLevel(player);
+		return this.getCalculateLevel().getLevel(player);
 	}
 
 	public int getLevelFloor(EntityPlayer player) {
@@ -114,7 +88,7 @@ public enum Transformations {
 	}
 
 	public boolean isSupernatural() {
-		return SUPER_NATURAL;
+		return this.ENTRY.supernatural;
 	}
 
 	public String toStringLowerCase() {
@@ -127,8 +101,105 @@ public enum Transformations {
 	}
 
 	public void transformCreatureWhenPossible(EntityCreature creature) {
-		if (TRANSFORM_CREATURE != null) {
-			this.TRANSFORM_CREATURE.transformCreature(creature);
+		if (this.getTransformCreature() != null) {
+			this.getTransformCreature().transformCreature(creature);
+		}
+	}
+
+	public ITransformCreature getTransformCreature() {
+		return this.ENTRY.transformCreature;
+	}
+
+	public ICalculateLevel getCalculateLevel() {
+		return this.ENTRY.calculateLevel;
+	}
+
+	public int getGeneralDamage() {
+		return this.ENTRY.generalDamage;
+	}
+
+	public ResourceLocation[] getTextures() {
+		return this.ENTRY.textures;
+	}
+
+	public float getProtection() {
+		return this.ENTRY.protection;
+	}
+
+	public int getRandomTextureIndex() {
+		return Main.RANDOM.nextInt(this.getTextures().length);
+	}
+
+	/** Used to make new transformations */
+	public static class TransformationEntry {
+		private boolean supernatural = true;
+		/**
+		 * the damage that the entites should deal in half hearts or for player's the
+		 * damage multiplier
+		 */
+		private int generalDamage = 1;
+		private ResourceLocation[] textures = new ResourceLocation[0];
+		private ICalculateLevel calculateLevel = player -> {
+			return TransformationHelper.getCap(player).getXP() / 500;
+		};
+		private float protection = 1F;
+		private int transformationInt = getNewTransformationID();
+		private ITransformCreature transformCreature;
+
+		public TransformationEntry() {
+		}
+
+		/** returns a new instance of type TransformationEntry */
+		public static TransformationEntry create() {
+			return new TransformationEntry();
+		}
+
+		public TransformationEntry setSupernatural(boolean supernatural) {
+			this.supernatural = supernatural;
+			return this;
+		}
+
+		public TransformationEntry setGeneralDamage(int damage) {
+			this.generalDamage = damage;
+			return this;
+		}
+
+		public TransformationEntry setCalculateLevel(ICalculateLevel calculateLevel) {
+			this.calculateLevel = calculateLevel;
+			return this;
+		}
+
+		public TransformationEntry setProtection(float protection) {
+			this.protection = protection;
+			return this;
+		}
+
+		public TransformationEntry setID(int id) {
+			this.transformationInt = id;
+			return this;
+		}
+
+		public TransformationEntry setTransformCreature(ITransformCreature transformCreature) {
+			this.transformCreature = transformCreature;
+			return this;
+		}
+
+		public TransformationEntry setTextures(ResourceLocation... textures) {
+			this.textures = textures;
+			return this;
+		}
+
+		/**
+		 * Don't use this method when creating an addon (use
+		 * {@link #setTextures(ResourceLocation...)}
+		 */
+		public TransformationEntry setTexturesHD(String... textures) {
+			ResourceLocation[] resourceLocations = new ResourceLocation[textures.length];
+			for (int i = 0; i < textures.length; i++) {
+				resourceLocations[i] = new ResourceLocation(Reference.ENTITY_TEXTURE_PATH + textures[i] + ".png");
+			}
+			this.textures = resourceLocations;
+			return this;
 		}
 	}
 }

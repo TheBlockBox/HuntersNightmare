@@ -9,23 +9,24 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-public class TransformationMessage extends PlayerMessageBase<TransformationMessage> {
+public class TransformationMessage extends MessageBase<TransformationMessage> {
 
 	private int xp;
 	private boolean transformed;
 	private int transformationID;
 	private int textureIndex;
+	private EntityPlayer player;
 
 	public TransformationMessage() {
-		super(DEFAULT_ENTITY_ID);
 	}
 
-	public TransformationMessage(int xp, boolean transformed, int transformationID, int entID, int textureIndex) {
-		super(entID);
+	public TransformationMessage(int xp, boolean transformed, int transformationID, EntityPlayer player,
+			int textureIndex) {
 		this.xp = xp;
 		this.transformed = transformed;
 		this.transformationID = transformationID;
 		this.textureIndex = textureIndex;
+		this.player = player;
 	}
 
 	@Override
@@ -33,7 +34,7 @@ public class TransformationMessage extends PlayerMessageBase<TransformationMessa
 		this.xp = buf.readInt();
 		this.transformed = buf.readBoolean();
 		this.transformationID = buf.readInt();
-		this.entityID = buf.readInt();
+		this.player = readPlayer(buf);
 		this.textureIndex = buf.readInt();
 	}
 
@@ -42,26 +43,36 @@ public class TransformationMessage extends PlayerMessageBase<TransformationMessa
 		buf.writeInt(xp);
 		buf.writeBoolean(transformed);
 		buf.writeInt(transformationID);
-		buf.writeInt(entityID);
+		writeEntity(buf, player);
 		buf.writeInt(textureIndex);
-	}
-
-	@Override
-	public IMessage onMessageReceived(TransformationMessage message, MessageContext ctx, EntityPlayer player) {
-		if (ctx.side == Side.CLIENT) {
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				ITransformationPlayer cap = TransformationHelper.getCap(player);
-				cap.setXP(message.xp);
-				cap.setTransformed(message.transformed);
-				cap.setTransformationID(message.transformationID);
-				cap.setTextureIndex(message.textureIndex);
-			});
-		}
-		return null;
 	}
 
 	@Override
 	public String getName() {
 		return "Transformation";
+	}
+
+	@Override
+	public MessageHandler<TransformationMessage, ? extends IMessage> getMessageHandler() {
+		return new Handler();
+	}
+
+	public static class Handler extends MessageHandler<TransformationMessage, IMessage> {
+		public Handler() {
+		}
+
+		@Override
+		public IMessage onMessageReceived(TransformationMessage message, MessageContext ctx) {
+			if (ctx.side == Side.CLIENT) {
+				Minecraft.getMinecraft().addScheduledTask(() -> {
+					ITransformationPlayer cap = TransformationHelper.getCap(message.player);
+					cap.setXP(message.xp);
+					cap.setTransformed(message.transformed);
+					cap.setTransformationID(message.transformationID);
+					cap.setTextureIndex(message.textureIndex);
+				});
+			}
+			return null;
+		}
 	}
 }

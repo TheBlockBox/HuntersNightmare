@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    
+    "pattern":
+    [
+        "SSS",
+        "S S",
+        "S S"    
+    ],
+    
+    "key":
+    {
+        "S":
+        {
+            "type": "forge:ore_dict",
+            "ore": "pureSilver"
+        }
+    },
+    
+    "result":
+    {
+        "item": "huntersdream:leggings_pure_silver",
+        "count": 1
+    }
+}

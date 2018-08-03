@@ -9,44 +9,53 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-public class TransformationXPMessage extends PlayerMessageBase<TransformationXPMessage> {
+public class TransformationXPMessage extends MessageBase<TransformationXPMessage> {
 
 	private int xp;
+	private EntityPlayer player;
 
 	public TransformationXPMessage() {
-		super(DEFAULT_ENTITY_ID);
 	}
 
-	public TransformationXPMessage(int xp, int entityID) {
-		super(entityID);
+	public TransformationXPMessage(int xp, EntityPlayer player) {
+		this.player = player;
 		this.xp = xp;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.xp = buf.readInt();
-		this.entityID = buf.readInt();
+		this.player = readPlayer(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(xp);
-		buf.writeInt(entityID);
-	}
-
-	@Override
-	public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx, EntityPlayer player) {
-		if (ctx.side == Side.CLIENT) {
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				ITransformationPlayer cap = TransformationHelper.getCap(player);
-				cap.setXP(message.xp);
-			});
-		}
-		return null;
+		writeEntity(buf, player);
 	}
 
 	@Override
 	public String getName() {
 		return "Transformation XP";
+	}
+
+	@Override
+	public MessageHandler<TransformationXPMessage, ? extends IMessage> getMessageHandler() {
+		return new Handler();
+	}
+
+	public static class Handler extends MessageHandler<TransformationXPMessage, IMessage> {
+
+		@Override
+		public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx) {
+			if (ctx.side == Side.CLIENT) {
+				Minecraft.getMinecraft().addScheduledTask(() -> {
+					ITransformationPlayer cap = TransformationHelper.getCap(message.player);
+					cap.setXP(message.xp);
+				});
+			}
+			return null;
+		}
+
 	}
 }

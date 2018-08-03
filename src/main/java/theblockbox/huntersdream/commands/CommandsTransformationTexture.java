@@ -45,7 +45,7 @@ public class CommandsTransformationTexture extends CommandBase {
 						cap.getTextureIndex()));
 			} else {
 				int index = Integer.parseInt(args[0]);
-				if (index >= cap.getTransformation().TEXTURES.length) {
+				if (index >= cap.getTransformation().getTextures().length) {
 					throw new IllegalArgumentException("Wrong texture length");
 				}
 				cap.setTextureIndex(index);
