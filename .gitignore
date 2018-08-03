@@ -25,3 +25,16 @@ hs_err_pid*
 # IntelliJ files
 .idea
 *.iml
+
+# Eclipse files
+.classpath
+.gradle
+.project
+.settings
+/.metadata/
+
+# Forge files
+bin
+build
+*.launch
+run
