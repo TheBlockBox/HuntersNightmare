@@ -14,7 +14,6 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
@@ -24,37 +23,38 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
 public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IEntityAdditionalSpawnData {
 	private int textureIndex;
-	private int textureIndexTransformed;
 	/** The amount of textures available for the goblins */
 	public static final int TEXTURES = 6;
 	private static final DataParameter<Integer> TRANSFORMATION_INT = EntityDataManager
-			.<Integer>createKey(EntityZombie.class, DataSerializers.VARINT);
-	private final Transformations TRANSFORMATION;
+			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager
+			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
-		this.textureIndex = Main.RANDOM.nextInt(TEXTURES);
-		this.TRANSFORMATION = transformation;
-		this.textureIndexTransformed = transformation.getRandomTextureIndex();
+		this.textureIndex = ChanceHelper.randomInt(TEXTURES);
+		this.dataManager.set(TRANSFORMATION_INT, transformation.getID());
+		this.dataManager.set(TEXTURE_INDEX, transformation.getRandomTextureIndex());
 	}
 
 	public EntityGoblinTD(World worldIn) {
-		this(worldIn, 0, Transformations.HUMAN);
+		this(worldIn, 0, ChanceHelper.chanceOf(25) ? Transformations.WEREWOLF : Transformations.HUMAN);
 	}
 
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		dataManager.register(TRANSFORMATION_INT, this.TRANSFORMATION.getID());
+		this.dataManager.register(TRANSFORMATION_INT, 0);
+		this.dataManager.register(TEXTURE_INDEX, 0);
 	}
 
 	@Override
@@ -75,6 +75,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		};
 		Predicate<EntityPlayer> predicatePlayer = input -> {
 			ITransformation transformation = TransformationHelper.getITransformation(input);
+			// TODO: Edit this line here
 			return !((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed());
 		};
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
@@ -86,7 +87,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
-		getCurrentTransformation().transformCreatureWhenPossible(this);
+		this.getCurrentTransformation().transformCreatureWhenPossible(this);
 	}
 
 	@Override
@@ -119,17 +120,15 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		buffer.writeInt(this.textureIndex);
-		buffer.writeInt(this.textureIndexTransformed);
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf buffer) {
 		this.textureIndex = buffer.readInt();
-		this.textureIndexTransformed = buffer.readInt();
 	}
 
 	public int getTexture() {
-		return textureIndex;
+		return this.textureIndex;
 	}
 
 	@Override
@@ -139,7 +138,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public int getTextureIndex() {
-		return this.textureIndexTransformed;
+		return this.dataManager.get(TEXTURE_INDEX);
 	}
 
 	@Override
@@ -155,5 +154,10 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public void setCurrentTransformationID(int transformation) {
 		this.dataManager.set(TRANSFORMATION_INT, transformation);
+	}
+
+	@Override
+	public void setTextureIndex(int index) {
+		this.dataManager.set(TEXTURE_INDEX, index);
 	}
 }

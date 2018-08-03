@@ -6,8 +6,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.ICalculateLevel;
@@ -127,7 +127,7 @@ public enum Transformations {
 	}
 
 	public int getRandomTextureIndex() {
-		return Main.RANDOM.nextInt(this.getTextures().length);
+		return ChanceHelper.randomInt(this.getTextures().length);
 	}
 
 	/** Used to make new transformations */

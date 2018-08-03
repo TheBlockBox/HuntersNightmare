@@ -2,10 +2,13 @@ package theblockbox.huntersdream.util.helpers;
 
 import java.util.HashMap;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.event.TransformationXPEvent;
@@ -14,6 +17,12 @@ import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation.EntityEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation.ItemEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.effective.IArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.effective.IEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -33,6 +42,113 @@ public class TransformationHelper {
 	 */
 	public static ITransformationPlayer getCap(EntityPlayer player) {
 		return player.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER, null);
+	}
+
+	/**
+	 * Returns true when the object is either an instance of
+	 * {@link IEffectiveAgainstTransformation} or registered through
+	 * {@link #addEffectiveAgainst(Object, float, Transformations...)}
+	 */
+	public static boolean effectiveAgainstTransformation(Transformations effectiveAgainst, Object object) {
+		notItemstack(object);
+		if (object instanceof IEffectiveAgainstTransformation) {
+			return ((IEffectiveAgainstTransformation) object).effectiveAgainst(effectiveAgainst);
+		} else {
+			EffectiveAgainstTransformation<?> eat = EffectiveAgainstTransformation.getFromObject(object);
+			if (eat == null) {
+				return false;
+			} else {
+				return eat.effectiveAgainst(effectiveAgainst);
+			}
+		}
+	}
+
+	/**
+	 * Returns true when the object is either an instance of
+	 * {@link IArmorEffectiveAgainstTransformation} or registered through
+	 * {@link #addArmorEffectiveAgainst(Item, float, float, Transformations...)}
+	 */
+	public static boolean armorEffectiveAgainstTransformation(Transformations effectiveAgainst, Item armorPart) {
+		if (armorPart instanceof IArmorEffectiveAgainstTransformation) {
+			return ((IArmorEffectiveAgainstTransformation) armorPart).effectiveAgainst(effectiveAgainst);
+		} else {
+			ArmorEffectiveAgainstTransformation aeat = ArmorEffectiveAgainstTransformation.getFromArmor(armorPart);
+			if (aeat == null) {
+				return false;
+			} else {
+				return aeat.effectiveAgainst(effectiveAgainst);
+			}
+		}
+	}
+
+	public static IArmorEffectiveAgainstTransformation getAEAT(Item armorPart) {
+		if (armorPart instanceof IArmorEffectiveAgainstTransformation) {
+			return ((IArmorEffectiveAgainstTransformation) armorPart);
+		} else {
+			IArmorEffectiveAgainstTransformation aeat = ArmorEffectiveAgainstTransformation.getFromArmor(armorPart);
+			if (aeat == null) {
+				throw new IllegalArgumentException("Given armor is not effective against any transformation");
+			} else {
+				return aeat;
+			}
+		}
+	}
+
+	public static float armorGetProtectionAgainst(Transformations against, Item armorPart) {
+		if (armorEffectiveAgainstTransformation(against, armorPart)) {
+			return getAEAT(armorPart).getProtection();
+		} else {
+			throw new IllegalArgumentException("Given armor is not effective against the given transformation");
+		}
+	}
+
+	/**
+	 * Effectiveness = thorns (more info here:
+	 * {@link ArmorEffectiveAgainstTransformation#ArmorEffectiveAgainstTransformation(Item, float, float, Transformations...)})
+	 */
+	public static float armorGetEffectivenessAgainst(Transformations against, Item armorPart) {
+		if (armorEffectiveAgainstTransformation(against, armorPart)) {
+			return getAEAT(armorPart).getArmorEffectiveness();
+		} else {
+			throw new IllegalArgumentException("Given armor is not effective against the given transformation");
+		}
+	}
+
+	/**
+	 * (For armor parts, see
+	 */
+	public static float getEffectivenessAgainst(Transformations effectiveAgainst, Object object) {
+		notItemstack(object);
+		if (effectiveAgainstTransformation(effectiveAgainst, object)) {
+			if (object instanceof IEffectiveAgainstTransformation) {
+				return ((IEffectiveAgainstTransformation) object).getEffectiveness();
+			} else {
+				// this should NOT cause a NullPointerException
+				return EffectiveAgainstTransformation.getFromObject(object).getEffectiveness();
+			}
+		} else {
+			throw new IllegalArgumentException("The given object is not effective against the given transformation ("
+					+ effectiveAgainst.toString() + ")");
+		}
+	}
+
+	public static <T> void addEffectiveAgainst(T object, float effectiveness, Transformations... effectiveAgainst) {
+		if (object instanceof Entity) {
+			new EntityEffectiveAgainstTransformation((Entity) object, effectiveness, effectiveAgainst);
+		} else if (object instanceof Item) {
+			new ItemEffectiveAgainstTransformation((Item) object, effectiveness, effectiveAgainst);
+		} else {
+			throw new UnsupportedOperationException("The given object is not of type item or entity");
+		}
+	}
+
+	/**
+	 * For more info about the parameters see
+	 * {@link ArmorEffectiveAgainstTransformation#ArmorEffectiveAgainstTransformation(Item, float, float, Transformations...)}
+	 */
+	public static void addArmorEffectiveAgainst(Item armorPart, float protection, float effectiveness,
+			Transformations... effectiveAgainst) {
+		new ArmorEffectiveAgainstTransformation(armorPart, effectiveness, protection, effectiveAgainst);
 	}
 
 	/**
@@ -141,6 +257,24 @@ public class TransformationHelper {
 			Transformations... transformations) {
 		if (!INFECTABLE_ENTITES.containsKey(entity)) {
 			INFECTABLE_ENTITES.put(entity, transformations);
+		}
+	}
+
+	public static void notItemstack(Object object) {
+		if (object instanceof ItemStack) {
+			throw new IllegalArgumentException("Use ItemStack#getItem, instead of ItemStack");
+		}
+	}
+
+	public static Transformations getTransformedTransformation(EntityLivingBase entity) {
+		if (entity instanceof EntityPlayer) {
+			return getCap((EntityPlayer) entity).getTransformation();
+		} else if (entity instanceof ITransformationCreature) {
+			return ((ITransformationCreature) entity).getCurrentTransformation();
+		} else if (entity instanceof ITransformation) {
+			return ((ITransformation) entity).getTransformation();
+		} else {
+			return null;
 		}
 	}
 }

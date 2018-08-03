@@ -11,7 +11,7 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.objects.armor.PureSilverArmorBase;
-import theblockbox.huntersdream.objects.items.ItemBase;
+import theblockbox.huntersdream.objects.items.ItemPureSilver;
 import theblockbox.huntersdream.objects.tools.axe.ToolPureSilverAxe;
 import theblockbox.huntersdream.objects.tools.hoe.ToolPureSilverHoe;
 import theblockbox.huntersdream.objects.tools.pickaxe.ToolPureSilverPickaxe;
@@ -23,7 +23,7 @@ public class ItemInit {
 	public static final List<Item> ITEMS = new ArrayList<>();
 
 	// Items
-	public static final Item PURE_SILVER = new ItemBase("pure_silver", CreativeTabInit.HUNTERSDREAM_MISC);
+	public static final Item PURE_SILVER = new ItemPureSilver("pure_silver");
 
 	// Materials
 	public static final ToolMaterial TOOL_PURE_SILVER = EnumHelper.addToolMaterial("tool_pure_silver", 3, 60, 6.0F,
@@ -32,7 +32,6 @@ public class ItemInit {
 			Reference.MODID + ":pure_silver", 6, new int[] { 1, 3, 5, 2 }, 14, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.2F);
 
 	// Tools
-	// public static final Item AXE_SILVER = new ToolAxe("axe_silver", TOOL_SILVER);
 	public static final Item HOE_PURE_SILVER = new ToolPureSilverHoe("hoe_pure_silver");
 	public static final Item PICKAXE_PURE_SILVER = new ToolPureSilverPickaxe("pickaxe_pure_silver");
 	public static final Item SHOVEL_PURE_SILVER = new ToolPureSilverShovel("shovel_pure_silver");

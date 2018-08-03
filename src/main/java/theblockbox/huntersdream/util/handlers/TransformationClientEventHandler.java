@@ -62,13 +62,9 @@ public class TransformationClientEventHandler {
 					if (transformation.getLevel(player) > 0) {
 						mc.renderEngine.bindTexture(transformation.getXPBarTexture());
 
-						int x = event.getResolution().getScaledWidth() / 2 + 10;
-						int y;
-						if (ConfigHandler.xpBarTop) {
-							y = 0;
-						} else {
-							y = event.getResolution().getScaledHeight() - 48;
-						}
+						int x = ConfigHandler.xpBarLeft ? event.getResolution().getScaledWidth() / 2 - 90
+								: event.getResolution().getScaledWidth() / 2 + 10;
+						int y = ConfigHandler.xpBarTop ? 0 : event.getResolution().getScaledHeight() - 48;
 
 						// when there are bubbles aka the player is under water, move the bar up
 						if (!ConfigHandler.xpBarLeft && !ConfigHandler.xpBarTop) {

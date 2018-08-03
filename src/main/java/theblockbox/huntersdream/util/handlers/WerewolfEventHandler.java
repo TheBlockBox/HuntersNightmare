@@ -4,9 +4,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +16,6 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.IArmorEffectiveAgainstWerewolf;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 @Mod.EventBusSubscriber
@@ -47,16 +45,17 @@ public class WerewolfEventHandler {
 
 				if (!event.getSource().damageType.equals("thorns")) {
 					if (attacker != null) {
-						ItemStack weapon = attacker.getHeldItemMainhand();
+						ItemStack weaponItemStack = attacker.getHeldItemMainhand();
+						Item weapon = weaponItemStack.getItem();
 						// when the attacker is supernatural,
 						if (transformationAttacker != null
 								&& transformationAttacker.getTransformation().isSupernatural()) {
 							// has no weapon and is effective against werewolf
-							if (weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
+							if (weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
 								event.setAmount(
 										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
 								return;
-							} else if (!weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
+							} else if (!weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
 								event.setAmount(
 										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
 								return;
@@ -70,7 +69,7 @@ public class WerewolfEventHandler {
 								event.setAmount(event.getAmount()
 										* WerewolfHelper.getEffectivenessAgainstWerewolf(immediateSource));
 								return;
-							} else if (!weapon.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
+							} else if (!weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
 								event.setAmount(
 										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
 								return;
@@ -130,33 +129,6 @@ public class WerewolfEventHandler {
 						// fill hunger
 						EntityPlayer player = (EntityPlayer) attacker;
 						player.getFoodStats().addStats(1, 1);
-					}
-
-					// add thorns
-					if (attacked != null) {
-						ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
-								attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
-								attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
-								attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
-						for (ItemStack item : armor) {
-							if (WerewolfHelper.effectiveAgainstWerewolf(item)) {
-								// Attack the werewolf back (thorns). The werewolf will get (the damage *
-								// effectiveness) / 20 (protection)
-								attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
-										(WerewolfHelper.getEffectivenessAgainstWerewolf(item) * event.getAmount()));
-								if (item.getItem() instanceof IArmorEffectiveAgainstWerewolf) {
-									event.setAmount(event.getAmount()
-											/ ((IArmorEffectiveAgainstWerewolf) item.getItem()).getProtection());
-								} else {
-									System.err.println(
-											"Item is armor and is registered as effective against werewolf but doesn't implement IArmorEffectiveAgainstWerewolf."
-													+ "Using default value 1.1F");
-									event.setAmount(event.getAmount() / 1.1F);
-								}
-								// TODO: Make better value for armour damage
-								item.damageItem(2, attacked);
-							}
-						}
 					}
 				}
 			}

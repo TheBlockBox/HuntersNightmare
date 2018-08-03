@@ -106,7 +106,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public float getEyeHeight() {
-		return super.getEyeHeight();
+		return 2.2F;
 	}
 
 	@Override
@@ -115,8 +115,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
-	public void onLivingUpdate() {
-		super.onLivingUpdate();
+	public void onEntityUpdate() {
+		super.onEntityUpdate();
 		if (!world.isRemote) {
 			if (!WerewolfHelper.isWerewolfTime(this)) {
 				ITransformationEntityTransformed.transformBack(this);
@@ -131,8 +131,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public Transformations getTransformation() {
-		// TODO Auto-generated method stub
-		return ITransformationEntityTransformed.super.getTransformation();
+		return TRANSFORMATION;
 	}
 
 	@Override
@@ -158,5 +157,11 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	public String getEntityName() {
 		return entityName;
+	}
+
+	@Override
+	public void fall(float distance, float damageMultiplier) {
+		// TODO Auto-generated method stub
+		super.fall(distance, damageMultiplier);
 	}
 }

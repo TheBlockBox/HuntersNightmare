@@ -13,7 +13,10 @@ import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -117,12 +120,38 @@ public class TransformationEventHandler {
 	@SubscribeEvent
 	public static void onEntityHurt(LivingHurtEvent event) {
 		EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+		EntityLivingBase attacked = event.getEntityLiving();
 		ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
 
+		// make that player deals more damage
 		if (transformationAttacker != null) {
 			ItemStack weapon = attacker.getHeldItemMainhand();
 			if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
 				event.setAmount(event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage());
+			}
+		}
+
+		// add thorns
+		if (attacked != null) {
+			Transformations transformation = TransformationHelper.getTransformation(attacker);
+			if (transformation != null) {
+				ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
+						attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
+						attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
+						attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
+				for (ItemStack item : armor) {
+					Item armorPart = item.getItem();
+					if (TransformationHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
+						// Attack the werewolf back (thorns). The werewolf will get (the damage *
+						// effectiveness) / 20 (protection)
+						attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
+								(TransformationHelper.armorGetEffectivenessAgainst(transformation, armorPart)
+										* event.getAmount()));
+						event.setAmount(event.getAmount()
+								/ TransformationHelper.armorGetProtectionAgainst(transformation, item.getItem()));
+						item.damageItem(4, attacked);
+					}
+				}
 			}
 		}
 	}

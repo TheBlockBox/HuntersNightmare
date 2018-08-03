@@ -22,7 +22,7 @@ public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityGoblinTD entity) {
-		return TEXTURES[entity.getTextureIndex()];
+		return TEXTURES[entity.getTexture()];
 	}
 
 	@Override

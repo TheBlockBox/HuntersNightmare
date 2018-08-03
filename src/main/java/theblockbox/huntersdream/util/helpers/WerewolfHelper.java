@@ -1,31 +1,22 @@
 package theblockbox.huntersdream.util.helpers;
 
-import java.util.HashMap;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.interfaces.IEffectiveAgainstWerewolf;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class WerewolfHelper {
-	// the class is the entity's class and the integer is the effectiveness
-	private static final HashMap<Class<? extends EntityLivingBase>, Float> ENTITIES_EFFECTIVE_AGAINST_WEREWOLF = new HashMap<>();
-	// the integer is the effectiveness
-	private static final HashMap<Item, Float> ITEMS_EFFECTIVE_AGAINST_WEREWOLF = new HashMap<>();
 
 	/**
 	 * Returns true when a werewolf can transform in this world (Caution! This
@@ -107,63 +98,11 @@ public class WerewolfHelper {
 		}
 	}
 
-	public static boolean effectiveAgainstWerewolf(Object object) {
-		if (object instanceof Entity) {
-			Entity entity = (Entity) object;
-			return (entity instanceof IEffectiveAgainstWerewolf
-					|| ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.containsKey(entity.getClass()));
-		} else if (object instanceof Class<?>) {
-			return ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.containsKey((Class<?>) object);
-		} else if (object instanceof Item) {
-			Item item = (Item) object;
-			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.containsKey(item));
-		} else if (object instanceof ItemStack) {
-			Item item = ((ItemStack) object).getItem();
-			return (item instanceof IEffectiveAgainstWerewolf || ITEMS_EFFECTIVE_AGAINST_WEREWOLF.containsKey(item));
-		} else if (object instanceof IEffectiveAgainstWerewolf) {
-			System.err.println(
-					"An object implements the IEffectiveAgainstWerewolf interface although the object is neither entity (class) nor item");
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public static void addEffectiveAgainstWerewolf(Class<? extends EntityLivingBase> entity) {
-		addEffectiveAgainstWerewolf(entity, IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS);
-	}
-
-	public static void addEffectiveAgainstWerewolf(Class<? extends EntityLivingBase> entity, float damageMultiplier) {
-		ENTITIES_EFFECTIVE_AGAINST_WEREWOLF.put(entity, damageMultiplier);
-	}
-
-	public static void addEffectiveAgainstWerewolf(Item item) {
-		addEffectiveAgainstWerewolf(item, IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS);
-	}
-
-	public static void addEffectiveAgainstWerewolf(Item item, float damageMultiplier) {
-		// ITEMS_EFFECTIVE_AGAINST_WEREWOLF.add(new TwoValues<Item, Integer>(item,
-		// damageMultiplier));
-		ITEMS_EFFECTIVE_AGAINST_WEREWOLF.put(item, damageMultiplier);
-	}
-
-	public static float getEffectivenessAgainstWerewolf(Object object) {
-		if (effectiveAgainstWerewolf(object)) {
-			if (object instanceof IEffectiveAgainstWerewolf) {
-				return ((IEffectiveAgainstWerewolf) object).getEffectiveness();
-			} else {
-				return IEffectiveAgainstWerewolf.DEFAULT_EFFECTIVENESS;
-			}
-		} else {
-			throw new IllegalArgumentException("The given object is not effective against a werewolf");
-		}
-	}
-
 	/**
 	 * Only for werewolves
 	 */
 	public static int getWerewolfStrengthMultiplier(EntityLivingBase entity) {
-		if ((TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)
+		if ((TransformationHelper.getTransformedTransformation(entity) == Transformations.WEREWOLF)
 				&& TransformationHelper.getITransformation(entity).transformed()) {
 			if (entity instanceof EntityPlayer) {
 				return 8;
@@ -171,7 +110,7 @@ public class WerewolfHelper {
 				return 8;
 			}
 		} else if (!TransformationHelper.getITransformation(entity).transformed()
-				&& (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)) {
+				&& (TransformationHelper.getTransformedTransformation(entity) == Transformations.WEREWOLF)) {
 			return 1;
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf");
@@ -247,8 +186,7 @@ public class WerewolfHelper {
 	 * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
 	 * {@link Transformations#WEREWOLF}
 	 * 
-	 * @param entity
-	 *            The entity to be transformed
+	 * @param entity The entity to be transformed
 	 */
 	public static void toWerewolfWhenNight(EntityLiving entity) {
 		World world = entity.world;
@@ -257,7 +195,7 @@ public class WerewolfHelper {
 				if (WerewolfHelper.isWerewolfTime(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
-						if (transformation.getTransformation() == Transformations.WEREWOLF) {
+						if (TransformationHelper.getTransformedTransformation(entity) == Transformations.WEREWOLF) {
 							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
 									entity.getClass().getName());
 							werewolf.setPosition(entity.posX, entity.posY, entity.posZ);
@@ -265,7 +203,7 @@ public class WerewolfHelper {
 							world.spawnEntity(werewolf);
 						} else {
 							throw new WrongTransformationException("Entity is not a werewolf",
-									transformation.getTransformation());
+									TransformationHelper.getTransformedTransformation(entity));
 						}
 					} else {
 						if (entity instanceof EntityCreature) {
@@ -291,5 +229,17 @@ public class WerewolfHelper {
 				}
 			}
 		}
+	}
+
+	public static float getEffectivenessAgainstWerewolf(Object object) {
+		float value = TransformationHelper.getEffectivenessAgainst(Transformations.WEREWOLF, object);
+		System.out.println("Object: " + object.getClass().getName() + " Value: " + value);
+		return value;
+	}
+
+	public static boolean effectiveAgainstWerewolf(Object object) {
+		boolean flag = TransformationHelper.effectiveAgainstTransformation(Transformations.WEREWOLF, object);
+		System.out.println("Object: " + object.getClass().getName() + " Effective: " + flag);
+		return flag;
 	}
 }

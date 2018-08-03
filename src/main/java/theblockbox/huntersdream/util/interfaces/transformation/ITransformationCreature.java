@@ -67,7 +67,8 @@ public interface ITransformationCreature extends ITransformation {
 	@Override
 	@Deprecated
 	default int getTransformationInt() {
-		return 0;
+		throw new UnsupportedOperationException("Use #getCurrentTransformation");
+		// return 0;
 	}
 
 	/**
@@ -77,6 +78,7 @@ public interface ITransformationCreature extends ITransformation {
 	@Override
 	@Deprecated
 	default Transformations getTransformation() {
-		return ITransformation.super.getTransformation();
+		throw new UnsupportedOperationException("Use #getCurrentTransformation");
+		// return ITransformation.super.getTransformation();
 	}
 }

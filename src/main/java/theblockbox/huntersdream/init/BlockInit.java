@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import theblockbox.huntersdream.objects.blocks.BlockBase;
 import theblockbox.huntersdream.objects.blocks.BlockOreBase;
+import theblockbox.huntersdream.objects.blocks.BlockPureSilver;
 
 public class BlockInit {
 	public static final List<Block> BLOCKS = new ArrayList<>(); // also includes ores
 	public static final List<BlockOreBase> ORES = new ArrayList<>();
 
-	public static final Block BLOCK_PURE_SILVER = new BlockBase("block_pure_silver", Material.IRON);
+	public static final Block BLOCK_PURE_SILVER = new BlockPureSilver("block_pure_silver");
 
 	// Ores
 	// only give a name, the dimension and the ore tag will be automatically added
