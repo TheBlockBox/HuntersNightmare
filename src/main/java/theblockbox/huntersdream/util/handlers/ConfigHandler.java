@@ -1,55 +1,43 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.io.File;
-
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import theblockbox.huntersdream.Main;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.util.Reference;
 
+@Config(modid = Reference.MODID, name = "Hunter's Dream Config")
+@Config.RequiresWorldRestart()
+@Config.LangKey(Reference.CFG_LANG + "title")
 public class ConfigHandler {
-	public static int goblinID = 130;
-	public static int werewolfVillagerID = 131;
-	public static int werewolfID = 132;
-
+	@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
+	@Config.Name("Render transformed player differently")
 	public static boolean customPlayerRender = true;
+
+	@Config.LangKey(Reference.CFG_LANG + "renderxpbar")
+	@Config.Name("Render transformation xp bar")
 	public static boolean renderXPBar = true;
 
+	@Config.LangKey(Reference.CFG_LANG + "xpbarleft")
+	@Config.Name("Transformation XP bar on the left side")
 	public static boolean xpBarLeft = false;
+
+	@Config.LangKey(Reference.CFG_LANG + "xpbartop")
+	@Config.Name("Transformation XP bar on the top")
 	public static boolean xpBarTop = false;
 
+	@Config.LangKey(Reference.CFG_LANG + "showpacketmessages")
+	@Config.Name("Show packet messages")
 	public static boolean showPacketMessages = false;
 
-	public static Configuration config;
-
-	public static void init(File file) {
-		config = new Configuration(file);
-
-		String category;
-
-		category = "advanced";
-		config.addCustomCategoryComment(category,
-				"Settings for advanced users (modders, modpack makers, server admins etc.)");
-		showPacketMessages = config.getBoolean("Show packet messages", category, false,
-				"Show messages in log when data between the client and the server is synced (doesn't include error chat messages)");
-
-		category = "rendering";
-		config.addCustomCategoryComment(category, "Activate/Deactivate render (client side only)");
-		customPlayerRender = config.getBoolean("Custom player render", category, true,
-				"Use different player render when transformed");
-		renderXPBar = config.getBoolean("Render xp bar", category, true,
-				"Render the player's (werewolf/vampire etc.) xp bar");
-		xpBarLeft = config.getBoolean("XP bar on left side", category, false,
-				"If you want your transformation xp bar to be rendered on the left side, set this to true");
-		xpBarTop = config.getBoolean("XP bar on top", category, false,
-				"If you want your transformation xp bar to be rendered on the top, set this to true");
-
-		config.save();
-	}
-
-	public static void registerConfig(FMLPreInitializationEvent event) {
-		Main.setConfig(new File(event.getModConfigurationDirectory().toString()));
-		Main.getConfig().mkdirs();
-		init(new File(Main.getConfig().getPath(), Reference.MODID + ".cfg"));
+	@Mod.EventBusSubscriber
+	public static class ConfigEventHandler {
+		@SubscribeEvent
+		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
+			if (event.getModID().equals(Reference.MODID)) {
+				ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+			}
+		}
 	}
 }

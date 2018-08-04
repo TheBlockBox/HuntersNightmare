@@ -17,6 +17,7 @@ import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation.EntityEffectiveAgainstTransformation;
@@ -186,19 +187,22 @@ public class TransformationHelper {
 	 * (e.g. by werewolf infection)
 	 */
 	public static boolean canChangeTransformation(EntityLivingBase entity) {
-		return ((getTransformation(entity) == Transformations.HUMAN)
-				|| INFECTABLE_ENTITES.containsKey(entity.getClass()));
+		return (((getTransformation(entity) == Transformations.HUMAN)
+				|| INFECTABLE_ENTITES.containsKey(entity.getClass())
+				|| (getTransformation(entity) == Transformations.HUNTER)) && !isInfected(entity));
 	}
 
 	public static Transformations getTransformation(EntityLivingBase entity) {
-		Transformations transformation = null;
-
-		if (entity instanceof EntityPlayer) {
-			transformation = getCap((EntityPlayer) entity).getTransformation();
-		} else if (entity instanceof ITransformation) {
-			transformation = ((ITransformation) entity).getTransformation();
+		if (entity == null) {
+			return null;
+		} else {
+			ITransformation transformation = getITransformation(entity);
+			if (transformation == null) {
+				return null;
+			} else {
+				return transformation.getTransformation();
+			}
 		}
-		return transformation;
 	}
 
 	public static ITransformation getITransformation(EntityLivingBase entity) {
@@ -206,16 +210,20 @@ public class TransformationHelper {
 			return getCap((EntityPlayer) entity);
 		} else if (entity instanceof ITransformation) {
 			return (ITransformation) entity;
+		} else {
+			return getITransformationCreature(entity);
 		}
-
-		return null;
 	}
 
-	public static ITransformationCreature getITransformationCreature(EntityCreature entity) {
-		if (entity instanceof ITransformationCreature) {
-			return (ITransformationCreature) entity;
+	public static ITransformationCreature getITransformationCreature(EntityLivingBase entity) {
+		if (entity instanceof EntityCreature && entity != null) {
+			if (entity instanceof ITransformationCreature) {
+				return (ITransformationCreature) entity;
+			} else {
+				return entity.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
+			}
 		} else {
-			return entity.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
+			return null;
 		}
 	}
 
@@ -266,15 +274,49 @@ public class TransformationHelper {
 		}
 	}
 
-	public static Transformations getTransformedTransformation(EntityLivingBase entity) {
-		if (entity instanceof EntityPlayer) {
-			return getCap((EntityPlayer) entity).getTransformation();
-		} else if (entity instanceof ITransformationCreature) {
-			return ((ITransformationCreature) entity).getCurrentTransformation();
-		} else if (entity instanceof ITransformation) {
-			return ((ITransformation) entity).getTransformation();
+	public static boolean transformedTransformation(EntityLivingBase entity, Transformations transformation) {
+		if (entity == null)
+			return false;
+		else
+			return (getTransformation(entity) == (transformation)) && getITransformation(entity).transformed();
+	}
+
+	public static boolean canBeInfectedWith(Transformations infection, EntityLivingBase entity) {
+		if (canChangeTransformation(entity)) {
+			ITransformationCreature tc = getITransformationCreature(entity);
+			if (tc != null) {
+				return tc.notImmuneToTransformation(infection);
+			} else {
+				return true;
+			}
 		} else {
-			return null;
+			return false;
+		}
+	}
+
+	public static IInfectInTicks getIInfectInTicks(EntityLivingBase entity) {
+		return entity.getCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null);
+	}
+
+	public static void infectIn(int ticksUntilInfection, EntityLivingBase entityToBeInfected,
+			Transformations infectTo) {
+		IInfectInTicks iit = getIInfectInTicks(entityToBeInfected);
+		if (iit != null) {
+			iit.setTime(ticksUntilInfection);
+			iit.setCurrentlyInfected(true);
+			iit.setInfectionTransformation(infectTo);
+		} else {
+			throw new IllegalArgumentException(
+					"The given entity does not have the capability IInfectInTicks/infectinticks");
+		}
+	}
+
+	public static boolean isInfected(EntityLivingBase entity) {
+		IInfectInTicks iit = getIInfectInTicks(entity);
+		if (iit != null) {
+			return iit.currentlyInfected();
+		} else {
+			return false;
 		}
 	}
 }

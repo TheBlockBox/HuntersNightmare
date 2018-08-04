@@ -6,6 +6,7 @@ import static net.minecraftforge.fml.relauncher.Side.SERVER;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.TransformationMessage;
+import theblockbox.huntersdream.network.TransformationReplyMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
 import theblockbox.huntersdream.network.TransformationWerewolfNightOverMessage;
 import theblockbox.huntersdream.network.TransformationWerewolfNoControlMessage;
@@ -42,7 +44,8 @@ public class PacketHandler {
 	public enum Packets {
 		TRANSFORMATION(new TransformationMessage()), NIGHT_OVER(new TransformationWerewolfNightOverMessage()),
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
-		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER);
+		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
+		TRANSFORMATION_REPLY(new TransformationReplyMessage(), CLIENT);
 
 		private final MessageBase<?> MESSAGE_BASE;
 		/** Side that receives package */
@@ -77,7 +80,7 @@ public class PacketHandler {
 				case TRANSFORMATION:
 					// could contain render changes
 					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformationInt(), player, cap.getTextureIndex()));
+							cap.getTransformationID(), player, cap.getTextureIndex()));
 					break;
 				case XP:
 					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), player));
@@ -88,18 +91,20 @@ public class PacketHandler {
 					break;
 				case NO_CONTROL:
 					// only changes player view
-					try {
-						INSTANCE.sendTo(new TransformationWerewolfNoControlMessage(player, (EntityWerewolf) args[0]),
-								playerMP);
-					} catch (ClassCastException e) {
-						throw new IllegalArgumentException("Given object is not an instance of EntityWerewolf");
-					}
+					INSTANCE.sendTo(new TransformationWerewolfNoControlMessage(player, (EntityWerewolf) args[0]),
+							playerMP);
 					break;
 
 				// Client
 				case TEXTURE_INDEX:
 					// only cosmetic changes, so you can trust the client
 					INSTANCE.sendToServer(new TransformationTextureIndexMessage(cap.getTextureIndex()));
+					break;
+
+				case TRANSFORMATION_REPLY:
+					INSTANCE.sendTo(
+							new TransformationReplyMessage((String) args[0], (EntityPlayer) args[1], (Item) args[2]),
+							playerMP);
 					break;
 
 				default:

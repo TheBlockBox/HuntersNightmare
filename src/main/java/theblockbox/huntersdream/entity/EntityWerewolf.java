@@ -73,7 +73,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		};
 		Predicate<EntityPlayer> predicatePlayer = input -> {
 			ITransformation transformation = TransformationHelper.getITransformation(input);
-			return !((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed());
+			return ((transformation.getTransformation() != Transformations.WEREWOLF)
+					&& !(transformation.transformed()));
 		};
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));
@@ -115,8 +116,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
-	public void onEntityUpdate() {
-		super.onEntityUpdate();
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
 		if (!world.isRemote) {
 			if (!WerewolfHelper.isWerewolfTime(this)) {
 				ITransformationEntityTransformed.transformBack(this);
@@ -125,7 +126,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
-	public int getTransformationInt() {
+	public int getTransformationID() {
 		return TRANSFORMATION.getID();
 	}
 

@@ -28,6 +28,20 @@ public interface ITransformationCreature extends ITransformation {
 		throw new UnsupportedOperationException("Can't set transformations not immune to");
 	}
 
+	default public boolean notImmuneToTransformation(Transformations transformation) {
+		return this.notImmuneToTransformationID(transformation.getID());
+	}
+
+	default public boolean notImmuneToTransformationID(int transformationID) {
+		for (Transformations transformation : getTransformationsNotImmuneTo()) {
+			if (transformation.getID() == transformationID) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	@Override
 	default boolean transformed() {
 		return false;
@@ -45,40 +59,5 @@ public interface ITransformationCreature extends ITransformation {
 	@Override
 	default void setTransformationID(int id) {
 		throw new UnsupportedOperationException("Transformation is always HUMAN");
-	}
-
-	/** This method is made to prevent interfering with setTransformation */
-	public int getCurrentTransformationID();
-
-	public void setCurrentTransformationID(int transformation);
-
-	default public Transformations getCurrentTransformation() {
-		return Transformations.fromID(getCurrentTransformationID());
-	}
-
-	default public void setCurrentTransformation(Transformations transformation) {
-		setCurrentTransformationID(transformation.getID());
-	}
-
-	/**
-	 * @deprecated The entity is ALWAYS a human. To get the transformation after the
-	 *             mob transformed, use {@link #getCurrentTransformationID()}
-	 */
-	@Override
-	@Deprecated
-	default int getTransformationInt() {
-		throw new UnsupportedOperationException("Use #getCurrentTransformation");
-		// return 0;
-	}
-
-	/**
-	 * @deprecated The entity is ALWAYS a human. To get the transformation after the
-	 *             mob transformed, use {@link #getCurrentTransformation()}
-	 */
-	@Override
-	@Deprecated
-	default Transformations getTransformation() {
-		throw new UnsupportedOperationException("Use #getCurrentTransformation");
-		// return ITransformation.super.getTransformation();
 	}
 }

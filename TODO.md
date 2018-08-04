@@ -16,7 +16,6 @@
 - when no control werewolf kills mob, also make (sure) that player gets 10 instead of 5 xp
 (- and make sure that no control werewolves have to kill and not only hurt the mob to get xp)
 - make no control thing only for level 0 without xp
-- search for ITransformation#getTransformation calls
-- also do this for predicates
-- make method transformedAndTransformation(Transformations) in TransformationHelper
-- change onEntityUpdate to onLivingUpdate
+- make player rendering work again
+- check networking/client - server communication
+- fix infection

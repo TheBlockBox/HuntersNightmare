@@ -76,7 +76,7 @@ public interface ITransformationEntityTransformed extends ITransformation {
 								ITransformationCreature transformation = TransformationHelper
 										.getITransformationCreature((EntityCreature) e);
 								transformation.setTextureIndex(entity.getTextureIndex());
-								transformation.setCurrentTransformation(entity.getTransformation());
+								transformation.setTransformation(entity.getTransformation());
 							} catch (NullPointerException ex) {
 								NullPointerException exception = new NullPointerException(
 										"Either the entity's capability or something else was null");

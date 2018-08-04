@@ -8,8 +8,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
@@ -52,7 +54,7 @@ public class WerewolfHelper {
 		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
 				&& TransformationHelper.getITransformation(player).transformed()) {
 			int level = TransformationHelper.getTransformation(player).getLevelFloor(player);
-			int duration = 40;
+			int duration = 400;
 
 			// Caution! Duration in ticks
 			switch (level) {
@@ -89,12 +91,35 @@ public class WerewolfHelper {
 		}
 	}
 
-	// TODO: Make infection
+	/**
+	 * Don't use this to infect an entity. Rather use
+	 * {@link #infectEntityAsWerewolf(EntityLivingBase)}
+	 */
 	public static void infect(EntityLivingBase entityToBeInfected) {
-		if (TransformationHelper.canChangeTransformation(entityToBeInfected)) {
-
+		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
+				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
+			TransformationHelper.changeTransformation(entityToBeInfected, Transformations.WEREWOLF,
+					new ExecutionPath());
 		} else {
 			throw new WrongTransformationException("Given entity can't be infected");
+		}
+	}
+
+	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
+		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
+				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
+			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 80, 0, false, true)); // TODO: Change
+																											// to 6000
+			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 80, 1, false, true)); // TODO:
+																											// Change to
+																											// 6000
+			if (entityToBeInfected instanceof EntityPlayer) {
+				((EntityPlayer) entityToBeInfected)
+						.sendMessage(new TextComponentTranslation("transformations.infected.werewolf"));
+				TransformationHelper.infectIn(80, entityToBeInfected, Transformations.WEREWOLF);// TODO: Change to 6000
+			} else {
+				TransformationHelper.infectIn(12000, entityToBeInfected, Transformations.WEREWOLF);
+			}
 		}
 	}
 
@@ -102,15 +127,14 @@ public class WerewolfHelper {
 	 * Only for werewolves
 	 */
 	public static int getWerewolfStrengthMultiplier(EntityLivingBase entity) {
-		if ((TransformationHelper.getTransformedTransformation(entity) == Transformations.WEREWOLF)
+		if ((TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF)
 				&& TransformationHelper.getITransformation(entity).transformed()) {
 			if (entity instanceof EntityPlayer) {
 				return 8;
 			} else {
 				return 8;
 			}
-		} else if (!TransformationHelper.getITransformation(entity).transformed()
-				&& (TransformationHelper.getTransformedTransformation(entity) == Transformations.WEREWOLF)) {
+		} else if (WerewolfHelper.transformedWerewolf(entity)) {
 			return 1;
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf");
@@ -122,8 +146,7 @@ public class WerewolfHelper {
 	 * the entity is a werewolf and transformed!)
 	 */
 	public static boolean canInfect(EntityLivingBase entity) {
-		if (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF
-				&& TransformationHelper.getITransformation(entity).transformed()) {
+		if (transformedWerewolf(entity)) {
 			// if entity is a player
 			if (entity instanceof EntityPlayer) {
 
@@ -133,7 +156,7 @@ public class WerewolfHelper {
 					return true;
 				}
 
-			} else if (!(entity instanceof EntityPlayer)) {
+			} else {
 				return true;
 			}
 		}
@@ -195,7 +218,7 @@ public class WerewolfHelper {
 				if (WerewolfHelper.isWerewolfTime(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
-						if (TransformationHelper.getTransformedTransformation(entity) == Transformations.WEREWOLF) {
+						if (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF) {
 							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
 									entity.getClass().getName());
 							werewolf.setPosition(entity.posX, entity.posY, entity.posZ);
@@ -203,14 +226,14 @@ public class WerewolfHelper {
 							world.spawnEntity(werewolf);
 						} else {
 							throw new WrongTransformationException("Entity is not a werewolf",
-									TransformationHelper.getTransformedTransformation(entity));
+									TransformationHelper.getTransformation(entity));
 						}
 					} else {
 						if (entity instanceof EntityCreature) {
 							EntityCreature creature = (EntityCreature) entity;
 							ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
 							if (tc != null) {
-								if (tc.getCurrentTransformation() == Transformations.WEREWOLF) {
+								if (tc.getTransformation() == Transformations.WEREWOLF) {
 									EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
 											"$bycap" + entity.getClass().getName());
 									werewolf.setPosition(entity.posX, entity.posY, entity.posZ);
@@ -219,7 +242,7 @@ public class WerewolfHelper {
 									return;
 								} else {
 									throw new WrongTransformationException("Entity is not a werewolf",
-											tc.getCurrentTransformation());
+											tc.getTransformation());
 								}
 							}
 						}
@@ -231,15 +254,27 @@ public class WerewolfHelper {
 		}
 	}
 
+	/**
+	 * Shortcut method for
+	 * {@link TransformationHelper#getEffectivenessAgainst(Transformations, Object)}
+	 */
 	public static float getEffectivenessAgainstWerewolf(Object object) {
-		float value = TransformationHelper.getEffectivenessAgainst(Transformations.WEREWOLF, object);
-		System.out.println("Object: " + object.getClass().getName() + " Value: " + value);
-		return value;
+		return TransformationHelper.getEffectivenessAgainst(Transformations.WEREWOLF, object);
 	}
 
+	/**
+	 * Shortcut method for
+	 * {@link TransformationHelper#effectiveAgainstTransformation(Transformations, Object)}
+	 */
 	public static boolean effectiveAgainstWerewolf(Object object) {
-		boolean flag = TransformationHelper.effectiveAgainstTransformation(Transformations.WEREWOLF, object);
-		System.out.println("Object: " + object.getClass().getName() + " Effective: " + flag);
-		return flag;
+		return TransformationHelper.effectiveAgainstTransformation(Transformations.WEREWOLF, object);
+	}
+
+	/**
+	 * Shortcut method for
+	 * {@link TransformationHelper#transformedTransformation(EntityLivingBase, Transformations)}
+	 */
+	public static boolean transformedWerewolf(EntityLivingBase entity) {
+		return TransformationHelper.transformedTransformation(entity, Transformations.WEREWOLF);
 	}
 }

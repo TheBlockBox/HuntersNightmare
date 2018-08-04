@@ -25,24 +25,23 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
 public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IEntityAdditionalSpawnData {
-	private int textureIndex;
 	/** The amount of textures available for the goblins */
 	public static final int TEXTURES = 6;
-	private static final DataParameter<Integer> TRANSFORMATION_INT = EntityDataManager
-			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
+	private int goblinTextureIndex;
 	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager
+			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> TRANSFORMATION_ID = EntityDataManager
 			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
-		this.textureIndex = ChanceHelper.randomInt(TEXTURES);
-		this.dataManager.set(TRANSFORMATION_INT, transformation.getID());
+		this.goblinTextureIndex = ChanceHelper.randomInt(TEXTURES);
+		this.dataManager.set(TRANSFORMATION_ID, transformation.getID());
 		this.dataManager.set(TEXTURE_INDEX, transformation.getRandomTextureIndex());
 	}
 
@@ -53,8 +52,8 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		this.dataManager.register(TRANSFORMATION_INT, 0);
 		this.dataManager.register(TEXTURE_INDEX, 0);
+		this.dataManager.register(TRANSFORMATION_ID, 0);
 	}
 
 	@Override
@@ -71,23 +70,13 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	protected void applyEntityAI() {
 		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
 		Predicate<EntityCreature> predicateMob = input -> {
-			return !(input instanceof EntityWerewolf);
+			return !(input instanceof EntityGoblinTD);
 		};
-		Predicate<EntityPlayer> predicatePlayer = input -> {
-			ITransformation transformation = TransformationHelper.getITransformation(input);
-			// TODO: Edit this line here
-			return !((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed());
-		};
+		Predicate<EntityPlayer> predicatePlayer = WerewolfHelper::transformedWerewolf;
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
 				true, false, predicatePlayer));
-	}
-
-	@Override
-	public void onLivingUpdate() {
-		super.onLivingUpdate();
-		this.getCurrentTransformation().transformCreatureWhenPossible(this);
 	}
 
 	@Override
@@ -119,16 +108,16 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
-		buffer.writeInt(this.textureIndex);
+		buffer.writeInt(this.goblinTextureIndex);
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf buffer) {
-		this.textureIndex = buffer.readInt();
+		this.goblinTextureIndex = buffer.readInt();
 	}
 
 	public int getTexture() {
-		return this.textureIndex;
+		return this.goblinTextureIndex;
 	}
 
 	@Override
@@ -147,13 +136,13 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
-	public int getCurrentTransformationID() {
-		return this.dataManager.get(TRANSFORMATION_INT);
+	public int getTransformationID() {
+		return this.dataManager.get(TRANSFORMATION_ID);
 	}
 
 	@Override
-	public void setCurrentTransformationID(int transformation) {
-		this.dataManager.set(TRANSFORMATION_INT, transformation);
+	public void setTransformationID(int transformation) {
+		this.dataManager.set(TRANSFORMATION_ID, transformation);
 	}
 
 	@Override

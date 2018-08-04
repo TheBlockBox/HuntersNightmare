@@ -6,11 +6,13 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.ICalculateLevel;
+import theblockbox.huntersdream.util.interfaces.IInfect;
 import theblockbox.huntersdream.util.interfaces.ITransformCreature;
 
 public enum Transformations {
@@ -19,7 +21,7 @@ public enum Transformations {
 	HUMAN(TransformationEntry.create().setID(0).setSupernatural(false)),
 	WEREWOLF(TransformationEntry.create().setID(1).setGeneralDamage(8).setProtection(17.5F)
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
-			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
+			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight).setInfect(WerewolfHelper::infect)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
 	VAMPIRE(TransformationEntry.create().setID(2)), WITCH(TransformationEntry.create().setID(3)),
 	CLOCKWORKANDROID(TransformationEntry.create().setID(4)), HYBRID(TransformationEntry.create().setID(5)),
@@ -130,6 +132,10 @@ public enum Transformations {
 		return ChanceHelper.randomInt(this.getTextures().length);
 	}
 
+	public IInfect getInfect() {
+		return this.ENTRY.infect;
+	}
+
 	/** Used to make new transformations */
 	public static class TransformationEntry {
 		private boolean supernatural = true;
@@ -145,6 +151,7 @@ public enum Transformations {
 		private float protection = 1F;
 		private int transformationInt = getNewTransformationID();
 		private ITransformCreature transformCreature;
+		private IInfect infect;
 
 		public TransformationEntry() {
 		}
@@ -200,6 +207,15 @@ public enum Transformations {
 			}
 			this.textures = resourceLocations;
 			return this;
+		}
+
+		public TransformationEntry setInfect(IInfect infect) {
+			this.infect = infect;
+			return this;
+		}
+
+		public Transformations getTransformations(String name) {
+			return EnumHelper.addEnum(Transformations.class, name, new Class<?>[] { TransformationEntry.class }, this);
 		}
 	}
 }

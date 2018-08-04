@@ -19,7 +19,6 @@ import theblockbox.huntersdream.entity.renderer.RenderWolfmanPlayer;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 /**
  * Handles events which are important for transforming
@@ -34,16 +33,16 @@ public class TransformationClientEventHandler {
 	public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
 		if (ConfigHandler.customPlayerRender) {
 			EntityPlayer player = event.getEntityPlayer();
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
 			// werewolf
-			if ((cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed()
-					&& WerewolfHelper.hasControl(player)) {
-				event.setCanceled(true);
-				if (renderWerewolf == null)
-					renderWerewolf = new RenderWolfmanPlayer(Minecraft.getMinecraft().getRenderManager());
-				renderWerewolf.doRender(player, event.getX(), event.getY(), event.getZ(), player.rotationYaw,
-						event.getPartialRenderTick());
+			if (WerewolfHelper.transformedWerewolf(player)) {
+				if (WerewolfHelper.hasControl(player)) {
+					event.setCanceled(true);
+					if (renderWerewolf == null)
+						renderWerewolf = new RenderWolfmanPlayer(Minecraft.getMinecraft().getRenderManager());
+					renderWerewolf.doRender(player, event.getX(), event.getY(), event.getZ(), player.rotationYaw,
+							event.getPartialRenderTick());
+				}
 			}
 		}
 	}

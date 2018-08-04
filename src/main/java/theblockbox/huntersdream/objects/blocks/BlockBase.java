@@ -9,17 +9,29 @@ import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.util.interfaces.IHasModel;
+import theblockbox.huntersdream.util.interfaces.effective.ISilverEffectiveAgainstTransformation;
 
 public class BlockBase extends Block implements IHasModel {
 
 	public BlockBase(String name, Material materialIn) {
+		this(name, materialIn, false);
+	}
+
+	public BlockBase(String name, Material materialIn, boolean silver) {
 		super(materialIn);
 		setUnlocalizedName(name);
 		setRegistryName(name);
 		setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
-
 		BlockInit.BLOCKS.add(this);
-		ItemInit.ITEMS.add(getItemBlock().setRegistryName(this.getRegistryName()));
+
+		ItemBlock itemBlock;
+		if (silver) {
+			itemBlock = new ItemBlockSilver(this);
+		} else {
+			itemBlock = new ItemBlock(this);
+		}
+
+		ItemInit.ITEMS.add(itemBlock.setRegistryName(this.getRegistryName()));
 	}
 
 	@Override
@@ -27,7 +39,9 @@ public class BlockBase extends Block implements IHasModel {
 		Main.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
 
-	public ItemBlock getItemBlock() {
-		return new ItemBlock(this);
+	private static class ItemBlockSilver extends ItemBlock implements ISilverEffectiveAgainstTransformation {
+		public ItemBlockSilver(Block block) {
+			super(block);
+		}
 	}
 }

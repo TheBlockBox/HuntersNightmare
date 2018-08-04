@@ -1,5 +1,5 @@
-# Language:
-# Region:
+# Language: English
+# Region: USA
 # Translated by: 
 
 # Armor
@@ -48,5 +48,19 @@ command.transformationtexture.set=%s's texture was set to %s
 
 # Chat messages
 transformations.onLevelUp=You feel that you're getting stronger... You're now level %s
+transformations.infected.werewolf=You've been bitten but the wound is ... healing?
+# FP = First Person, TP = Third Person, picked = by yourself, touch = someone touched you
+transformations.werewolf.fp.picked=You touch %s! Your skin burns as you hold it. Hope nobody saw that!
+transformations.werewolf.fp.touched=You've been touched with %s and it burns your skin
+transformations.werewolf.tp.picked=You notice something off about %s when they picked up %s. Could they be?
+transformations.werewolf.tp.touched=You touch %s with %s and you notice they're in pain. Could they be?
+
+# Config
+huntersdream.config.title=Hunter's Dream Config
+huntersdream.config.customPlayerRender=Custom Player Render
+huntersdream.config.renderxpbar=Render transformation xp bar
+huntersdream.config.xpbarleft=Render transformation xp bar on the left hand side
+huntersdream.config.xpbartop=Render transformation xp bar on the top
+huntersdream.config.showpacketmessages=Show Packet Messages
 
 # Other stuff

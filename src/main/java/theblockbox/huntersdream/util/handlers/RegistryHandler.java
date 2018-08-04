@@ -82,7 +82,6 @@ public class RegistryHandler {
 	 */
 	public static void otherRegistries(FMLPreInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new WorldGenCustomOres(), 0);
-		ConfigHandler.registerConfig(event);
 	}
 
 	public static void preInitRegistries(FMLPreInitializationEvent event) {

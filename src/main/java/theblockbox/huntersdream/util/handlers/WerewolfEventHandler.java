@@ -37,10 +37,7 @@ public class WerewolfEventHandler {
 		ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
 
 		if (transformationWerewolf != null) {
-			if (transformationWerewolf.getTransformation() != Transformations.WEREWOLF
-					|| !transformationWerewolf.transformed()) {
-				return;
-			} else {
+			if (WerewolfHelper.transformedWerewolf(hurtWerewolf)) {
 				// now it is made sure that the attacked entity is a werewolf
 
 				if (!event.getSource().damageType.equals("thorns")) {
@@ -93,8 +90,7 @@ public class WerewolfEventHandler {
 	public static void onEntityDeath(LivingDeathEvent event) {
 		if (event.getSource().getTrueSource() instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) event.getSource().getTrueSource();
-			ITransformation transformation = TransformationHelper.getITransformation(player);
-			if ((transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed()) {
+			if (WerewolfHelper.transformedWerewolf(player)) {
 				TransformationHelper.addXP(player, 10, TransformationXPSentReason.WEREWOLF_HAS_KILLED,
 						new ExecutionPath());
 			}
@@ -110,8 +106,7 @@ public class WerewolfEventHandler {
 			EntityLivingBase attacked = event.getEntityLiving();
 
 			if (transformationAttacker != null) {
-				if ((transformationAttacker.getTransformation() == Transformations.WEREWOLF)
-						&& transformationAttacker.transformed()) {
+				if (WerewolfHelper.transformedWerewolf(attacker)) {
 					// now it is ensured that the attacker is a werewolf
 
 					// if the werewolf can infect
@@ -120,7 +115,7 @@ public class WerewolfEventHandler {
 							// and the entity can be infected
 							if (TransformationHelper.canChangeTransformation(attacked)) {
 								// infect the entity
-								WerewolfHelper.infect(event.getEntityLiving());
+								WerewolfHelper.infectEntityAsWerewolf(attacked);
 							}
 						}
 					}

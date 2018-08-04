@@ -10,6 +10,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -18,6 +19,8 @@ public class CapabilitiesInit {
 	public static final Capability<ITransformationPlayer> CAPABILITY_TRANSFORMATION_PLAYER = null;
 	@CapabilityInject(ITransformationCreature.class)
 	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = null;
+	@CapabilityInject(IInfectInTicks.class)
+	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = null;
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
@@ -34,6 +37,14 @@ public class CapabilitiesInit {
 					@Override
 					public ITransformationCreature call() throws Exception {
 						return new TransformationCreature();
+					}
+				});
+		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectionInTicksStorage(),
+				new Callable<IInfectInTicks>() {
+
+					@Override
+					public IInfectInTicks call() throws Exception {
+						return new InfectInTicks();
 					}
 				});
 	}
@@ -55,7 +66,7 @@ public class CapabilitiesInit {
 		}
 
 		@Override
-		public int getTransformationInt() {
+		public int getTransformationID() {
 			return transformationInt;
 		}
 
@@ -94,7 +105,7 @@ public class CapabilitiesInit {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setBoolean("transformed", instance.transformed());
 			compound.setInteger("xp", instance.getXP());
-			compound.setInteger("transformationID", instance.getTransformationInt());
+			compound.setInteger("transformationid", instance.getTransformationID());
 			compound.setInteger("textureIndex", instance.getTextureIndex());
 			return compound;
 		}
@@ -137,12 +148,12 @@ public class CapabilitiesInit {
 		}
 
 		@Override
-		public int getCurrentTransformationID() {
+		public int getTransformationID() {
 			return this.transformation;
 		}
 
 		@Override
-		public void setCurrentTransformationID(int transformation) {
+		public void setTransformationID(int transformation) {
 			this.transformation = transformation;
 		}
 
@@ -158,8 +169,8 @@ public class CapabilitiesInit {
 		public NBTBase writeNBT(Capability<ITransformationCreature> capability, ITransformationCreature instance,
 				EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setInteger("textureIndex", instance.getTextureIndex());
-			compound.setInteger("transformation", instance.getCurrentTransformationID());
+			compound.setInteger("textureindex", instance.getTextureIndex());
+			compound.setInteger("transformation", instance.getTransformationID());
 			compound.setIntArray("transformationidsnotimmuneto", instance.getTransformationIntsNotImmuneTo());
 			return compound;
 		}
@@ -169,11 +180,79 @@ public class CapabilitiesInit {
 				EnumFacing side, NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
-				instance.setTextureIndex(compound.getInteger("textureIndex"));
-				instance.setCurrentTransformationID(compound.getInteger("transformation"));
+				instance.setTextureIndex(compound.getInteger("textureindex"));
+				instance.setTransformationID(compound.getInteger("transformation"));
 				instance.setTransformationsNotImmuneTo(compound.getIntArray("transformationidsnotimmuneto"));
 			}
 		}
 
+	}
+
+	private static class InfectInTicks implements IInfectInTicks {
+		private int time = -1;
+		private int timeUntilInfection = -1;
+		private int infectionTransformationID = 0;
+		private boolean currentlyInfected = false;
+
+		@Override
+		public int getTime() {
+			return this.time;
+		}
+
+		public void setTime(int time) {
+			this.time = time;
+			this.timeUntilInfection = time;
+		}
+
+		@Override
+		public int getTimeUntilInfection() {
+			return this.timeUntilInfection;
+		}
+
+		public void setTimeUntilInfection(int timeUntilInfection) {
+			this.timeUntilInfection = timeUntilInfection;
+		}
+
+		public int getInfectionTransformationID() {
+			return infectionTransformationID;
+		}
+
+		public void setInfectionTransformationID(int infectionTransformationID) {
+			this.infectionTransformationID = infectionTransformationID;
+		}
+
+		@Override
+		public boolean currentlyInfected() {
+			return this.currentlyInfected;
+		}
+
+		public void setCurrentlyInfected(boolean currentlyInfected) {
+			this.currentlyInfected = currentlyInfected;
+		}
+	}
+
+	private static class InfectionInTicksStorage implements IStorage<IInfectInTicks> {
+
+		@Override
+		public NBTBase writeNBT(Capability<IInfectInTicks> capability, IInfectInTicks instance, EnumFacing side) {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setInteger("time", instance.getTime());
+			compound.setInteger("timeuntilinfection", instance.getTime());
+			compound.setInteger("infectionTransformationid", instance.getInfectionTransformationID());
+			compound.setBoolean("currentlyinfected", instance.currentlyInfected());
+			return compound;
+		}
+
+		@Override
+		public void readNBT(Capability<IInfectInTicks> capability, IInfectInTicks instance, EnumFacing side,
+				NBTBase nbt) {
+			if (nbt instanceof NBTTagCompound) {
+				NBTTagCompound compound = (NBTTagCompound) nbt;
+				instance.setTime(compound.getInteger("time"));
+				instance.setTimeUntilInfection(compound.getInteger("timeuntilinfection"));
+				instance.setInfectionTransformationID(compound.getInteger("infectionTransformationid"));
+				instance.setCurrentlyInfected(compound.getBoolean("currentlyinfected"));
+			}
+		}
 	}
 }

@@ -11,10 +11,10 @@ public interface ITransformation {
 
 	public void setTransformed(boolean transformed);
 
-	public int getTransformationInt();
+	public int getTransformationID();
 
 	default public Transformations getTransformation() {
-		return Transformations.fromID(getTransformationInt());
+		return Transformations.fromID(getTransformationID());
 	}
 
 	public void setTransformationID(int id);

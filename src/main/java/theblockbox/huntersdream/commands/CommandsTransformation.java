@@ -37,7 +37,7 @@ public class CommandsTransformation extends CommandBase {
 			} else {
 				player = (EntityPlayerMP) sender;
 			}
-			int transformation = args[0].equals("get") ? TransformationHelper.getCap(player).getTransformationInt()
+			int transformation = args[0].equals("get") ? TransformationHelper.getCap(player).getTransformationID()
 					: Integer.parseInt(args[0]);
 			TransformationHelper.changeTransformation(player, Transformations.fromID(transformation),
 					new ExecutionPath());

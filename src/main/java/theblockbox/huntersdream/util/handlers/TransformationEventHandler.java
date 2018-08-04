@@ -5,10 +5,12 @@ import java.util.Iterator;
 
 import com.google.common.base.Predicate;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,15 +25,20 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
+import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviourException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.effective.IEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -39,20 +46,30 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 @Mod.EventBusSubscriber
 public class TransformationEventHandler {
 	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
+	public static final DamageSource EFFECTIVE_AGAINST_TRANSFORMATION = new DamageSource(
+			"effectiveAgainstTransformation");
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
 
-		if (cap.transformed()) {
-			if (cap.getTransformation() == Transformations.WEREWOLF) {
-				event.player.inventory.dropAllItems();
-			}
+		if (WerewolfHelper.transformedWerewolf(player)) {
+			player.inventory.dropAllItems();
 		}
 
 		if (player.ticksExisted % 20 == 0) {
 			if (!player.world.isRemote) { // ensures that this is the server side
+
+				Item[] hands = { player.getHeldItemMainhand().getItem(), player.getHeldItemOffhand().getItem() };
+				for (Item item : hands) {
+					if (item instanceof IEffectiveAgainstTransformation) {
+						if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
+							player.attackEntityFrom(EFFECTIVE_AGAINST_TRANSFORMATION,
+									cap.transformed() ? cap.getTransformation().getProtection() : 1);
+						}
+					}
+				}
 
 				// werewolf
 				if (WerewolfHelper.isWerewolfTime(player)) {
@@ -89,7 +106,7 @@ public class TransformationEventHandler {
 							PLAYER_WEREWOLVES.remove(werewolf);
 						}
 					}
-				} else if ((cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed()) {
+				} else if (WerewolfHelper.transformedWerewolf(player)) {
 					cap.setTransformed(false);
 
 					Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
@@ -98,8 +115,7 @@ public class TransformationEventHandler {
 				if (player.ticksExisted % 1200 == 0) {
 					// every minute when the player is not under a block, transformed and a
 					// werewolf, one xp gets added
-					if (WerewolfHelper.playerNotUnderBlock(player) && cap.transformed()
-							&& cap.getTransformation() == Transformations.WEREWOLF) {
+					if (WerewolfHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)) {
 						TransformationHelper.addXP((EntityPlayerMP) player, 5,
 								TransformationXPSentReason.WEREWOLF_UNDER_MOON, new ExecutionPath());
 					}
@@ -111,7 +127,7 @@ public class TransformationEventHandler {
 					}
 				}
 			}
-			if ((cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed()) {
+			if (WerewolfHelper.transformedWerewolf(player)) {
 				WerewolfHelper.applyLevelBuffs(player);
 			}
 		}
@@ -133,23 +149,25 @@ public class TransformationEventHandler {
 
 		// add thorns
 		if (attacked != null) {
-			Transformations transformation = TransformationHelper.getTransformation(attacker);
-			if (transformation != null) {
-				ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
-						attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
-						attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
-						attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
-				for (ItemStack item : armor) {
-					Item armorPart = item.getItem();
-					if (TransformationHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
-						// Attack the werewolf back (thorns). The werewolf will get (the damage *
-						// effectiveness) / 20 (protection)
-						attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
-								(TransformationHelper.armorGetEffectivenessAgainst(transformation, armorPart)
-										* event.getAmount()));
-						event.setAmount(event.getAmount()
-								/ TransformationHelper.armorGetProtectionAgainst(transformation, item.getItem()));
-						item.damageItem(4, attacked);
+			if (attacker != null) {
+				Transformations transformation = TransformationHelper.getTransformation(attacker);
+				if (transformation != null) {
+					ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
+							attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
+							attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
+							attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
+					for (ItemStack item : armor) {
+						Item armorPart = item.getItem();
+						if (TransformationHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
+							// Attack the werewolf back (thorns). The werewolf will get (the damage *
+							// effectiveness) / 20 (protection)
+							attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
+									(TransformationHelper.armorGetEffectivenessAgainst(transformation, armorPart)
+											* event.getAmount()));
+							event.setAmount(event.getAmount()
+									/ TransformationHelper.armorGetProtectionAgainst(transformation, item.getItem()));
+							item.damageItem(4, attacked);
+						}
 					}
 				}
 			}
@@ -161,8 +179,7 @@ public class TransformationEventHandler {
 		if (event.getEntity() instanceof EntityGolem) {
 			EntityGolem entity = (EntityGolem) event.getEntity();
 			Predicate<EntityPlayer> predicate = input -> {
-				ITransformation transformation = TransformationHelper.getITransformation(input);
-				return (transformation.getTransformation() == Transformations.WEREWOLF) && transformation.transformed();
+				return WerewolfHelper.transformedWerewolf(input);
 			};
 			entity.targetTasks.addTask(2,
 					new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
@@ -172,12 +189,10 @@ public class TransformationEventHandler {
 			EntityVillager villager = (EntityVillager) event.getEntity();
 			if (ChanceHelper.chanceOf(25)) {
 				ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
-				tc.setCurrentTransformation(Transformations.WEREWOLF);
-				tc.setTextureIndex(tc.getCurrentTransformation().getRandomTextureIndex());
+				tc.setTransformation(Transformations.WEREWOLF);
+				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
 			}
-			Predicate<EntityLivingBase> predicate = input -> {
-				return TransformationHelper.getTransformation(input) == Transformations.WEREWOLF;
-			};
+			Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
 			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class,
 					predicate, 8.0F, 0.6D, 0.6D));
 		}
@@ -185,15 +200,93 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
+		// should I check for the side here?
 		// check every two seconds
-		if (event.getEntity().ticksExisted % 40 == 0) {
+		if (event.getEntityLiving().ticksExisted % 60 == 0) {
+			EntityLivingBase entity = event.getEntityLiving();
 			try {
-				EntityCreature creature = (EntityCreature) event.getEntityLiving();
-				TransformationHelper.getITransformationCreature(creature).getCurrentTransformation()
+				EntityCreature creature = (EntityCreature) entity;
+				TransformationHelper.getITransformationCreature(creature).getTransformation()
 						.transformCreatureWhenPossible(creature);
 			} catch (NullPointerException | ClassCastException e) {
 			}
+
+			if (!entity.world.isRemote) {
+				if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null)) {
+					IInfectInTicks iit = TransformationHelper.getIInfectInTicks(entity);
+					if (iit.getTime() > -1) {
+						if (iit.currentlyInfected()) {
+							if (iit.getTimeUntilInfection() > 0) {
+								iit.setTimeUntilInfection(iit.getTimeUntilInfection() - 60);
+							} else if (iit.getTimeUntilInfection() <= 0) {
+								// when already done,
+
+								// infect entity
+								iit.getInfectionTransformation().getInfect().infectEntity(entity);
+
+								// set to standard (-1)
+								iit.setTime(-1);
+							}
+						} else {
+							throw new UnexpectedBehaviourException(
+									"IInfectInTicks#currentlyInfected returns false although there is definitely an infection going on");
+						}
+					}
+				}
+			}
 		}
+	}
+
+	@SubscribeEvent
+	public static void onItemPickup(ItemPickupEvent event) {
+		EntityItem originalEntity = event.getOriginalEntity();
+		if (!originalEntity.world.isRemote) {
+			String throwerName = originalEntity.getThrower();
+			EntityPlayer player = event.player;
+			ITransformationPlayer cap = TransformationHelper.getCap(player);
+			Item item = event.getStack().getItem();
+			if (item instanceof IEffectiveAgainstTransformation) {
+				if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
+					// now it is ensured that the item is effective against the player
+					String msg = "transformations." + cap.getTransformation().toStringLowerCase() + ".";
+
+					EntityPlayer thrower;
+					if (!(throwerName == null) && !(throwerName.equals("null"))
+							&& !(throwerName.equals(player.getName()))) {
+						thrower = originalEntity.world.getPlayerEntityByName(throwerName);
+						Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), player, msg + "fp.touched", player,
+								item);
+						Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), thrower, msg + "tp.touched", player,
+								item);
+					} else {
+						Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), player, msg + "fp.picked", player, item);
+						thrower = getNearestPlayer(player.world, player, 5);
+						if (thrower != null) {
+							Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), thrower, msg + "tp.picked", player,
+									item);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static EntityPlayer getNearestPlayer(World world, Entity entity, double range) {
+		double d0 = -1.0D;
+		EntityPlayer entityplayer = null;
+
+		for (int i = 0; i < world.playerEntities.size(); ++i) {
+			EntityPlayer entityplayer1 = world.playerEntities.get(i);
+
+			double distance = entityplayer1.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+
+			if ((range < 0.0D || distance < range * range) && (d0 == -1.0D || distance < d0) && (distance > 1.1)) {
+				d0 = distance;
+				entityplayer = entityplayer1;
+			}
+		}
+
+		return entityplayer;
 	}
 
 	public static EntityWerewolf[] getPlayerWerewolves() {
