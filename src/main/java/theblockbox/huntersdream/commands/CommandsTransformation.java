@@ -37,12 +37,16 @@ public class CommandsTransformation extends CommandBase {
 			} else {
 				player = (EntityPlayerMP) sender;
 			}
-			int transformation = args[0].equals("get") ? TransformationHelper.getCap(player).getTransformationID()
-					: Integer.parseInt(args[0]);
-			TransformationHelper.changeTransformation(player, Transformations.fromID(transformation),
-					new ExecutionPath());
-			sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
-					player.getName(), Transformations.fromID(transformation).toString()));
+			if (args[0].equals("get")) {
+				sender.sendMessage(new TextComponentTranslation("command.transformation.transformationGet",
+						player.getName(), TransformationHelper.getTransformation(player).toString()));
+			} else {
+				int transformation = Integer.parseInt(args[0]);
+				TransformationHelper.changeTransformation(player, Transformations.fromID(transformation),
+						new ExecutionPath());
+				sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
+						player.getName(), Transformations.fromID(transformation).toString()));
+			}
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

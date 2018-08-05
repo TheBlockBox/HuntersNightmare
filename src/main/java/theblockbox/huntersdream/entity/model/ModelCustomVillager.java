@@ -8,6 +8,7 @@ import net.minecraft.util.math.MathHelper;
 /**
  * ModelVillager - Either Mojang or a mod author Created using Tabula 7.0.0
  */
+@Deprecated
 public class ModelCustomVillager extends ModelBase {
 	public ModelRenderer head;
 	public ModelRenderer armr;

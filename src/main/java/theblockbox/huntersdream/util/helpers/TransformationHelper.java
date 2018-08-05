@@ -170,10 +170,14 @@ public class TransformationHelper {
 	// TODO: Add handling of transformation change
 	public static void changeTransformation(EntityLivingBase entity, Transformations transformation,
 			ExecutionPath path) {
-		if (entity instanceof EntityPlayerMP) {
-			changeTransformation((EntityPlayerMP) entity, transformation, path);
+		if (entity instanceof EntityPlayer) {
+			if (entity instanceof EntityPlayerMP) {
+				changeTransformation((EntityPlayerMP) entity, transformation, path);
+			} else {
+				throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
+			}
 		} else {
-			throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
+			getITransformation(entity).setTransformation(transformation);
 		}
 	}
 
@@ -291,10 +295,8 @@ public class TransformationHelper {
 		if (canChangeTransformation(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
 			if (tc != null) {
-				System.out.println("tc not immune to transformation" + tc.notImmuneToTransformation(infection));
 				return tc.notImmuneToTransformation(infection);
 			} else {
-				System.out.println("ids dru");
 				return true;
 			}
 		} else {
@@ -306,10 +308,8 @@ public class TransformationHelper {
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
 			if (tc != null) {
-				System.out.println("tc not immune to transformation" + tc.notImmuneToTransformation(infection));
 				return tc.notImmuneToTransformation(infection);
 			} else {
-				System.out.println("ids dru");
 				return true;
 			}
 		} else {

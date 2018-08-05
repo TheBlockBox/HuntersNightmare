@@ -9,11 +9,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
+import theblockbox.huntersdream.network.MessageBase.MessageHandler;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationReplyMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
@@ -30,14 +30,9 @@ public class PacketHandler {
 	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
 	public static int networkID = 0;
 
-	// I wanted to make this cleaner but still don't get what all this class casting
-	// stuff is doing
-	@SuppressWarnings("unchecked")
-	public static <T extends IMessage, REPLY extends IMessage> void register() {
+	public static void register() {
 		for (Packets packet : Packets.values()) {
-			INSTANCE.registerMessage(
-					(Class<IMessageHandler<T, REPLY>>) packet.MESSAGE_BASE.getMessageHandler().getClass(),
-					(Class<T>) packet.MESSAGE_BASE.getClass(), networkID++, packet.SIDE);
+			packet.register();
 		}
 	}
 
@@ -45,7 +40,7 @@ public class PacketHandler {
 		TRANSFORMATION(new TransformationMessage()), NIGHT_OVER(new TransformationWerewolfNightOverMessage()),
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
 		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
-		TRANSFORMATION_REPLY(new TransformationReplyMessage(), CLIENT);
+		TRANSFORMATION_REPLY(new TransformationReplyMessage());
 
 		private final MessageBase<?> MESSAGE_BASE;
 		/** Side that receives package */
@@ -62,6 +57,14 @@ public class PacketHandler {
 			this.MESSAGE_BASE = messageBase;
 			this.SIDE = side;
 			this.NAME = messageBase.getName();
+		}
+
+		// not a really beautiful way of doing this, but "it just works"
+		@SuppressWarnings("unchecked")
+		public <REQ extends MessageBase<REQ>, REPLY extends IMessage> void register() {
+			INSTANCE.registerMessage(
+					(Class<MessageHandler<REQ, REPLY>>) this.MESSAGE_BASE.getMessageHandler().getClass(),
+					(Class<REQ>) this.MESSAGE_BASE.getClass(), networkID++, this.SIDE);
 		}
 
 		public void sync(ExecutionPath path, EntityPlayer player, Object... args) {
@@ -83,12 +86,12 @@ public class PacketHandler {
 					break;
 				case NIGHT_OVER:
 					// only changes player view
-					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(player), (EntityPlayerMP) player);
+					sendMessageToPlayer(new TransformationWerewolfNightOverMessage(player), player);
 					break;
 				case NO_CONTROL:
 					// only changes player view
-					INSTANCE.sendTo(new TransformationWerewolfNoControlMessage(player, (EntityWerewolf) args[0]),
-							(EntityPlayerMP) player);
+					sendMessageToPlayer(new TransformationWerewolfNoControlMessage(player, (EntityWerewolf) args[0]),
+							player);
 					break;
 
 				// Client
@@ -98,9 +101,9 @@ public class PacketHandler {
 					break;
 
 				case TRANSFORMATION_REPLY:
-					INSTANCE.sendTo(
+					sendMessageToPlayer(
 							new TransformationReplyMessage((String) args[0], (EntityPlayer) args[1], (Item) args[2]),
-							(EntityPlayerMP) player);
+							player);
 					break;
 
 				default:
@@ -123,6 +126,10 @@ public class PacketHandler {
 				throw new WrongSideException("Packet " + this.NAME + " couldn't be sent\nPath: " + path.get(),
 						(this.SIDE == SERVER ? CLIENT : SERVER));
 			}
+		}
+
+		public static void sendMessageToPlayer(IMessage message, EntityPlayer player) {
+			INSTANCE.sendTo(message, (EntityPlayerMP) player);
 		}
 	}
 }

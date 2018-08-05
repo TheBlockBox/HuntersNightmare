@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -188,14 +189,26 @@ public class TransformationEventHandler {
 					10, true, false, predicate));
 		} else if (event.getEntity() instanceof EntityVillager) {
 			EntityVillager villager = (EntityVillager) event.getEntity();
-			if (ChanceHelper.chanceOf(25)) {
+			if (ChanceHelper.chanceOf(5)) {
 				ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
 				tc.setTransformation(Transformations.WEREWOLF);
 				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+				tc.setTransformationsNotImmuneTo(new Transformations[] { Transformations.WEREWOLF,
+						Transformations.VAMPIRE, Transformations.HUNTER });
 			}
 			Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
 			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class,
 					predicate, 8.0F, 0.6D, 0.6D));
+		} else if (event.getEntity() instanceof EntityGoblinTD) {
+			EntityGoblinTD goblin = (EntityGoblinTD) event.getEntity();
+			if (ChanceHelper.chanceOf(1.5F)) {
+				ITransformationCreature tc = TransformationHelper.getITransformationCreature(goblin);
+				tc.setTransformation(Transformations.WEREWOLF);
+				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+			}
+			Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
+			goblin.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(goblin, EntityLivingBase.class, predicate,
+					8.0F, 0.6D, 0.6D));
 		}
 	}
 

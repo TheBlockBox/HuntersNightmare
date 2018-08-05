@@ -38,9 +38,7 @@ public class TransformationClientEventHandler {
 
 			// werewolf
 			if ((cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed()) {
-				System.out.println("work");
 				if (WerewolfHelper.hasControl(player)) {
-					System.out.println("work betta");
 					event.setCanceled(true);
 					if (renderWerewolf == null)
 						renderWerewolf = new RenderWolfmanPlayer(Minecraft.getMinecraft().getRenderManager());
@@ -48,8 +46,6 @@ public class TransformationClientEventHandler {
 							event.getPartialRenderTick());
 				}
 			} else {
-				System.out.println(
-						"transformation: " + cap.getTransformation().toString() + " transformed:" + cap.transformed());
 			}
 		}
 	}

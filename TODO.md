@@ -5,7 +5,6 @@
 - make custom hand renderer
 - make particle effects on player/villager transformation
 - add events
-- fix entity spawn
 - fix entities vanishing when too far away
 - use logger
 - xp bar height could be too high (pixels that haven't initially been included could be included)
@@ -15,7 +14,9 @@
 - (make that you don't get hunger effect when having no control)
 - when no control werewolf kills mob, also make (sure) that player gets 10 instead of 5 xp
 (- and make sure that no control werewolves have to kill and not only hurt the mob to get xp)
+- make that no control werewolves can't get xp and remove the above two tasks
 - make no control thing only for level 0 without xp
 - make player rendering work again
-- check networking/client - server communication
-- fix infection
+- fix networking/client - server communication
+- fix villager infection
+- use Minecraft.getMinecraft().addScheduledTask() again in TransformationMessage

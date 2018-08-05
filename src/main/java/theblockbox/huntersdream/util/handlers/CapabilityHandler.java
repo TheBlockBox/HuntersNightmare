@@ -57,10 +57,12 @@ public class CapabilityHandler {
 		transformationPlayer.setTransformationID(oldTransformationPlayer.getTransformationID());
 		transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 
-		IInfectInTicks iit = TransformationHelper.getIInfectInTicks(event.getEntityPlayer());
-		iit.setCurrentlyInfected(false);
-		iit.setInfectionTransformation(Transformations.HUMAN);
-		iit.setTime(-1);
+		if (event.isWasDeath()) {
+			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(event.getEntityPlayer());
+			iit.setCurrentlyInfected(false);
+			iit.setInfectionTransformation(Transformations.HUMAN);
+			iit.setTime(-1);
+		}
 
 		Packets.TRANSFORMATION.sync(new ExecutionPath(), event.getEntityPlayer());
 	}

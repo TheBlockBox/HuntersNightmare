@@ -6,7 +6,7 @@ public class WrongTransformationException extends RuntimeException {
 	private static final long serialVersionUID = 1581449395217223441L;
 
 	public WrongTransformationException(String message, Transformations transformation) {
-		super("Wrong transformation: " + transformation.toString() + "\n" + message);
+		super("Wrong transformation: " + transformation + "\n" + message);
 	}
 
 	public WrongTransformationException(String message) {

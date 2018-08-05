@@ -15,15 +15,19 @@ public class ChanceHelper {
 		return -1;
 	}
 
-	public static boolean chanceOf(Random random, int percentage) {
-		if (percentage > 100 || percentage < 0) {
+	public static boolean chanceOf(Random random, float percentage) {
+		if (percentage > 1000 || percentage < 0) {
 			throw new IllegalArgumentException("Percentage can't be over 100 / under 0");
 		}
 
-		return ((random.nextInt(100) + 1) <= percentage);
+		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10F)));
+	}
+
+	public static boolean chanceOf(float percentage) {
+		return chanceOf(ChanceHelper.RANDOM, percentage);
 	}
 
 	public static boolean chanceOf(int percentage) {
-		return chanceOf(ChanceHelper.RANDOM, percentage);
+		return chanceOf((float) percentage);
 	}
 }

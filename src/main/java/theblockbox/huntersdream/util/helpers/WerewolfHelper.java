@@ -122,9 +122,10 @@ public class WerewolfHelper {
 			if (entityToBeInfected instanceof EntityPlayer) {
 				((EntityPlayer) entityToBeInfected)
 						.sendMessage(new TextComponentTranslation("transformations.infected.werewolf"));
-				TransformationHelper.infectIn(80, entityToBeInfected, Transformations.WEREWOLF);// TODO: Change to 6000
+				TransformationHelper.infectIn(80, entityToBeInfected, Transformations.WEREWOLF); // TODO: Change to 6000
 			} else {
-				TransformationHelper.infectIn(12000, entityToBeInfected, Transformations.WEREWOLF);
+				TransformationHelper.infectIn(40, entityToBeInfected, Transformations.WEREWOLF); // TODO: Change to
+																									// 12000
 			}
 		}
 	}
@@ -157,11 +158,8 @@ public class WerewolfHelper {
 			if (entity instanceof EntityPlayer) {
 
 				EntityPlayer player = (EntityPlayer) entity;
-				// and level is higher than five
-				if (TransformationHelper.getTransformation(player).getLevelFloor(player) >= 5) {
-					return true;
-				}
-
+				// return true when level is higher than five
+				return TransformationHelper.getTransformation(player).getLevelFloor(player) >= 5;
 			} else {
 				return true;
 			}
@@ -175,13 +173,14 @@ public class WerewolfHelper {
 			if (entity instanceof EntityPlayer) {
 				return 100;
 			} else if (entity instanceof EntityLivingBase) {
-				return 25;
+				return 100;
 			} else {
 				System.err.println("Found entity that can infect but has no infection percantage... Using 25%");
 				return 25;
 			}
 		} else {
-			throw new WrongTransformationException("The given entity is not a werewolf");
+			throw new WrongTransformationException("The given entity is not a werewolf",
+					TransformationHelper.getTransformation(entity));
 		}
 	}
 
