@@ -159,10 +159,4 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	public String getEntityName() {
 		return entityName;
 	}
-
-	@Override
-	public void fall(float distance, float damageMultiplier) {
-		// TODO Auto-generated method stub
-		super.fall(distance, damageMultiplier);
-	}
 }

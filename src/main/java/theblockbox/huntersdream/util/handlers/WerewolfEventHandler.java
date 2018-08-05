@@ -113,7 +113,9 @@ public class WerewolfEventHandler {
 					if (WerewolfHelper.canInfect(attacker)) {
 						if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
 							// and the entity can be infected
-							if (TransformationHelper.canChangeTransformation(attacked)) {
+							if (TransformationHelper.canChangeTransformation(attacked)
+									&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, attacked)
+									&& (!TransformationHelper.isInfected(attacked))) {
 								// infect the entity
 								WerewolfHelper.infectEntityAsWerewolf(attacked);
 							}

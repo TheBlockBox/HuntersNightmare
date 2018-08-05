@@ -55,9 +55,4 @@ public interface ITransformationCreature extends ITransformation {
 	default void setTextureIndex(int index) {
 		throw new UnsupportedOperationException("Can't set texture index");
 	}
-
-	@Override
-	default void setTransformationID(int id) {
-		throw new UnsupportedOperationException("Transformation is always HUMAN");
-	}
 }

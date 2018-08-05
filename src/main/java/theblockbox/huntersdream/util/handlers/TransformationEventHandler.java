@@ -121,8 +121,9 @@ public class TransformationEventHandler {
 					}
 					// this piece of code syncs the player data every ten minutes, so basically you
 					// don't have to sync the data every time you change something
-					// (though it is recommended)
-					if (player.ticksExisted % 12000 == 0) {
+					// (though it is recommended)#
+					// TODO: Set this to 12000 (ten minutes) again
+					if (player.ticksExisted % 200 == 0) {
 						Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 					}
 				}
@@ -202,16 +203,16 @@ public class TransformationEventHandler {
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
 		// should I check for the side here?
 		// check every two seconds
-		if (event.getEntityLiving().ticksExisted % 60 == 0) {
-			EntityLivingBase entity = event.getEntityLiving();
-			try {
-				EntityCreature creature = (EntityCreature) entity;
-				TransformationHelper.getITransformationCreature(creature).getTransformation()
-						.transformCreatureWhenPossible(creature);
-			} catch (NullPointerException | ClassCastException e) {
-			}
+		if (!event.getEntityLiving().world.isRemote) {
+			if (event.getEntityLiving().ticksExisted % 60 == 0) {
+				EntityLivingBase entity = event.getEntityLiving();
+				try {
+					EntityCreature creature = (EntityCreature) entity;
+					TransformationHelper.getITransformationCreature(creature).getTransformation()
+							.transformCreatureWhenPossible(creature);
+				} catch (NullPointerException | ClassCastException e) {
+				}
 
-			if (!entity.world.isRemote) {
 				if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null)) {
 					IInfectInTicks iit = TransformationHelper.getIInfectInTicks(entity);
 					if (iit.getTime() > -1) {

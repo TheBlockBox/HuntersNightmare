@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.util.Reference;
 
 @Config(modid = Reference.MODID, name = "Hunter's Dream Config")
-@Config.RequiresWorldRestart()
 @Config.LangKey(Reference.CFG_LANG + "title")
 public class ConfigHandler {
 	@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")

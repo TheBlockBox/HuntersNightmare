@@ -11,11 +11,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.event.TransformationXPEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
@@ -139,7 +141,7 @@ public class TransformationHelper {
 		} else if (object instanceof Item) {
 			new ItemEffectiveAgainstTransformation((Item) object, effectiveness, effectiveAgainst);
 		} else {
-			throw new UnsupportedOperationException("The given object is not of type item or entity");
+			throw new IllegalArgumentException("The given object is not of type item or entity");
 		}
 	}
 
@@ -171,7 +173,7 @@ public class TransformationHelper {
 		if (entity instanceof EntityPlayerMP) {
 			changeTransformation((EntityPlayerMP) entity, transformation, path);
 		} else {
-
+			throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
 		}
 	}
 
@@ -187,9 +189,13 @@ public class TransformationHelper {
 	 * (e.g. by werewolf infection)
 	 */
 	public static boolean canChangeTransformation(EntityLivingBase entity) {
-		return (((getTransformation(entity) == Transformations.HUMAN)
-				|| INFECTABLE_ENTITES.containsKey(entity.getClass())
-				|| (getTransformation(entity) == Transformations.HUNTER)) && !isInfected(entity));
+		return canChangeTransformationOnInfection(entity) && !isInfected(entity);
+	}
+
+	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
+		Transformations transformation = getTransformation(entity);
+		return (transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
+				|| (INFECTABLE_ENTITES.containsKey(entity.getClass()));
 	}
 
 	public static Transformations getTransformation(EntityLivingBase entity) {
@@ -285,8 +291,25 @@ public class TransformationHelper {
 		if (canChangeTransformation(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
 			if (tc != null) {
+				System.out.println("tc not immune to transformation" + tc.notImmuneToTransformation(infection));
 				return tc.notImmuneToTransformation(infection);
 			} else {
+				System.out.println("ids dru");
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityLivingBase entity) {
+		if (canChangeTransformationOnInfection(entity)) {
+			ITransformationCreature tc = getITransformationCreature(entity);
+			if (tc != null) {
+				System.out.println("tc not immune to transformation" + tc.notImmuneToTransformation(infection));
+				return tc.notImmuneToTransformation(infection);
+			} else {
+				System.out.println("ids dru");
 				return true;
 			}
 		} else {

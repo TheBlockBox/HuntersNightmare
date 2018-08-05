@@ -66,10 +66,6 @@ public class PacketHandler {
 
 		public void sync(ExecutionPath path, EntityPlayer player, Object... args) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			EntityPlayerMP playerMP = null;
-			if (player instanceof EntityPlayerMP) {
-				playerMP = (EntityPlayerMP) player;
-			}
 			// you can get the sp player through Minecraft.getMinecraft().player;
 
 			if ((this.SIDE == SERVER && player.world.isRemote)
@@ -87,12 +83,12 @@ public class PacketHandler {
 					break;
 				case NIGHT_OVER:
 					// only changes player view
-					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(player), playerMP);
+					INSTANCE.sendTo(new TransformationWerewolfNightOverMessage(player), (EntityPlayerMP) player);
 					break;
 				case NO_CONTROL:
 					// only changes player view
 					INSTANCE.sendTo(new TransformationWerewolfNoControlMessage(player, (EntityWerewolf) args[0]),
-							playerMP);
+							(EntityPlayerMP) player);
 					break;
 
 				// Client
@@ -104,7 +100,7 @@ public class PacketHandler {
 				case TRANSFORMATION_REPLY:
 					INSTANCE.sendTo(
 							new TransformationReplyMessage((String) args[0], (EntityPlayer) args[1], (Item) args[2]),
-							playerMP);
+							(EntityPlayerMP) player);
 					break;
 
 				default:
@@ -114,6 +110,11 @@ public class PacketHandler {
 							+ player.getName() + "\nAdditional argument length: " + args.length + "\nPath: "
 							+ path.get());
 				}
+
+				// Receiving side can't be sending side
+				if (player.world.isRemote && this.SIDE == Side.CLIENT
+						|| !player.world.isRemote && this.SIDE == Side.SERVER)
+					throw new WrongSideException("Couldn't send packet " + this.NAME, player.world);
 
 				if (ConfigHandler.showPacketMessages)
 					System.out.println(this.MESSAGE_BASE.getName() + " packet sent on side "

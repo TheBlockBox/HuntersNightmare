@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
@@ -96,12 +97,17 @@ public class WerewolfHelper {
 	 * {@link #infectEntityAsWerewolf(EntityLivingBase)}
 	 */
 	public static void infect(EntityLivingBase entityToBeInfected) {
-		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
-				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
-			TransformationHelper.changeTransformation(entityToBeInfected, Transformations.WEREWOLF,
-					new ExecutionPath());
+		if (!entityToBeInfected.world.isRemote) {
+			if (TransformationHelper.canChangeTransformationOnInfection(entityToBeInfected) && TransformationHelper
+					.onInfectionCanBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
+				TransformationHelper.changeTransformation(entityToBeInfected, Transformations.WEREWOLF,
+						new ExecutionPath());
+			} else {
+				throw new WrongTransformationException("Given entity can't be infected",
+						TransformationHelper.getTransformation(entityToBeInfected));
+			}
 		} else {
-			throw new WrongTransformationException("Given entity can't be infected");
+			throw new WrongSideException("Entity can't be infected on client side", entityToBeInfected.world);
 		}
 	}
 
