@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationXPEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -163,7 +164,7 @@ public class TransformationHelper {
 		cap.setXP(0); // reset xp
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
-		cap.setTextureIndex(0); // reset texture index (to avoid ArrayIndexOutOfBoundsExceptions)
+		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
 		Packets.TRANSFORMATION.sync(path, player); // sync data with client
 	}
 
@@ -177,7 +178,13 @@ public class TransformationHelper {
 				throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
 			}
 		} else {
+			Main.LOGGER.debug("refreshed transformation");
 			getITransformation(entity).setTransformation(transformation);
+			ITransformationCreature tc = getITransformationCreature(entity);
+			if (tc != null) {
+				Main.LOGGER.debug("tc not null, refreshing texture index");
+				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+			}
 		}
 	}
 
@@ -198,6 +205,7 @@ public class TransformationHelper {
 
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
 		Transformations transformation = getTransformation(entity);
+		Main.LOGGER.debug("transformation: " + transformation.toString());
 		return (transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
 				|| (INFECTABLE_ENTITES.containsKey(entity.getClass()));
 	}
@@ -307,7 +315,10 @@ public class TransformationHelper {
 	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityLivingBase entity) {
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
+			Main.LOGGER.debug("tc null" + (tc == null) + "(if false, this returns true)");
 			if (tc != null) {
+				Main.LOGGER.debug(
+						"not immune to " + infection.toString() + ": " + tc.notImmuneToTransformation(infection));
 				return tc.notImmuneToTransformation(infection);
 			} else {
 				return true;

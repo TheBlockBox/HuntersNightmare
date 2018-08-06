@@ -10,6 +10,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -175,7 +176,7 @@ public class WerewolfHelper {
 			} else if (entity instanceof EntityLivingBase) {
 				return 100;
 			} else {
-				System.err.println("Found entity that can infect but has no infection percantage... Using 25%");
+				Main.LOGGER.error("Found entity that can infect but has no infection percantage... Using 25%");
 				return 25;
 			}
 		} else {

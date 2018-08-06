@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -51,7 +52,7 @@ public class CapabilitiesInit {
 
 	private static class TransformationPlayer implements ITransformationPlayer {
 		private boolean transformed = false;
-		private int transformationInt = 0;
+		private ResourceLocation transformationRL = Transformations.HUMAN.getResourceLocation();
 		private int xp = 0;
 		private int textureIndex = 0;
 
@@ -66,13 +67,13 @@ public class CapabilitiesInit {
 		}
 
 		@Override
-		public int getTransformationID() {
-			return transformationInt;
+		public ResourceLocation getTransformationRL() {
+			return this.transformationRL;
 		}
 
 		@Override
-		public void setTransformationID(int id) {
-			this.transformationInt = id;
+		public void setTransformationRL(ResourceLocation rl) {
+			this.transformationRL = rl;
 		}
 
 		@Override
@@ -105,8 +106,8 @@ public class CapabilitiesInit {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setBoolean("transformed", instance.transformed());
 			compound.setInteger("xp", instance.getXP());
-			compound.setInteger("transformationid", instance.getTransformationID());
-			compound.setInteger("textureIndex", instance.getTextureIndex());
+			compound.setString("transformationrl", instance.getTransformationRL().toString());
+			compound.setInteger("textureindex", instance.getTextureIndex());
 			return compound;
 		}
 
@@ -115,17 +116,17 @@ public class CapabilitiesInit {
 				EnumFacing side, NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
-				instance.setTransformationID(compound.getInteger("transformationid"));
+				instance.setTransformationRL(new ResourceLocation(compound.getString("transformationrl")));
 				instance.setXP(compound.getInteger("xp"));
 				instance.setTransformed(compound.getBoolean("transformed"));
-				instance.setTextureIndex(compound.getInteger("textureIndex"));
+				instance.setTextureIndex(compound.getInteger("textureindex"));
 			}
 		}
 	}
 
 	private static class TransformationCreature implements ITransformationCreature {
-		private int[] transformationsNotImmuneTo = new int[0];
-		private int transformation = Transformations.HUMAN.getID();
+		private ResourceLocation[] transformationsNotImmuneTo = new ResourceLocation[0];
+		private ResourceLocation transformation = Transformations.HUMAN.getResourceLocation();
 		private int textureIndex = 0;
 
 		@Override
@@ -137,23 +138,23 @@ public class CapabilitiesInit {
 		public Transformations[] getTransformationsNotImmuneTo() {
 			Transformations[] transformations = new Transformations[transformationsNotImmuneTo.length];
 			for (int i = 0; i < transformationsNotImmuneTo.length; i++) {
-				transformations[i] = Transformations.fromID(transformationsNotImmuneTo[i]);
+				transformations[i] = Transformations.fromResourceLocation(transformationsNotImmuneTo[i]);
 			}
 			return transformations;
 		}
 
 		@Override
-		public void setTransformationsNotImmuneTo(int... transformationsNotImmuneTo) {
+		public void setTransformationsNotImmuneTo(ResourceLocation... transformationsNotImmuneTo) {
 			this.transformationsNotImmuneTo = transformationsNotImmuneTo;
 		}
 
 		@Override
-		public int getTransformationID() {
+		public ResourceLocation getTransformationRL() {
 			return this.transformation;
 		}
 
 		@Override
-		public void setTransformationID(int transformation) {
+		public void setTransformationRL(ResourceLocation transformation) {
 			this.transformation = transformation;
 		}
 
@@ -169,9 +170,19 @@ public class CapabilitiesInit {
 		public NBTBase writeNBT(Capability<ITransformationCreature> capability, ITransformationCreature instance,
 				EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setInteger("textureindex", instance.getTextureIndex());
-			compound.setInteger("transformation", instance.getTransformationID());
-			compound.setIntArray("transformationidsnotimmuneto", instance.getTransformationIntsNotImmuneTo());
+			// adding tc everywhere that this doesn't get mixed up with TransformationPlayer
+			compound.setInteger("textureindextc", instance.getTextureIndex());
+			compound.setString("transformationrltc", instance.getTransformationRL().toString());
+
+			String transformations = "";
+			for (ResourceLocation rl : instance.getTransformationRLsNotImmuneTo()) {
+				transformations.concat(rl.toString() + "\n");
+			}
+			if (transformations.endsWith("\n")) {
+				transformations.substring(0, transformations.length() - 2);
+			}
+			compound.setString("transformationidsnotimmunetotc", transformations);
+
 			return compound;
 		}
 
@@ -180,9 +191,15 @@ public class CapabilitiesInit {
 				EnumFacing side, NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
-				instance.setTextureIndex(compound.getInteger("textureindex"));
-				instance.setTransformationID(compound.getInteger("transformation"));
-				instance.setTransformationsNotImmuneTo(compound.getIntArray("transformationidsnotimmuneto"));
+				instance.setTextureIndex(compound.getInteger("textureindextc"));
+				instance.setTransformationRL(new ResourceLocation(compound.getString("transformationrltc")));
+
+				String[] transformations = compound.getString("transformationidsnotimmunetotc").split("\n");
+				ResourceLocation[] resourceLocations = new ResourceLocation[transformations.length];
+				for (int i = 0; i < transformations.length; i++) {
+					resourceLocations[i] = new ResourceLocation(transformations[i]);
+				}
+				instance.setTransformationsNotImmuneTo(resourceLocations);
 			}
 		}
 
@@ -191,7 +208,7 @@ public class CapabilitiesInit {
 	private static class InfectInTicks implements IInfectInTicks {
 		private int time = -1;
 		private int timeUntilInfection = -1;
-		private int infectionTransformationID = 0;
+		private ResourceLocation infectionTransformationRL = Transformations.HUMAN.getResourceLocation();
 		private boolean currentlyInfected = false;
 
 		@Override
@@ -209,16 +226,19 @@ public class CapabilitiesInit {
 			return this.timeUntilInfection;
 		}
 
+		@Override
 		public void setTimeUntilInfection(int timeUntilInfection) {
 			this.timeUntilInfection = timeUntilInfection;
 		}
 
-		public int getInfectionTransformationID() {
-			return infectionTransformationID;
+		@Override
+		public ResourceLocation getInfectionTransformationRL() {
+			return infectionTransformationRL;
 		}
 
-		public void setInfectionTransformationID(int infectionTransformationID) {
-			this.infectionTransformationID = infectionTransformationID;
+		@Override
+		public void setInfectionTransformationRL(ResourceLocation resourceLocation) {
+			this.infectionTransformationRL = resourceLocation;
 		}
 
 		@Override
@@ -226,6 +246,7 @@ public class CapabilitiesInit {
 			return this.currentlyInfected;
 		}
 
+		@Override
 		public void setCurrentlyInfected(boolean currentlyInfected) {
 			this.currentlyInfected = currentlyInfected;
 		}
@@ -238,7 +259,7 @@ public class CapabilitiesInit {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger("time", instance.getTime());
 			compound.setInteger("timeuntilinfection", instance.getTime());
-			compound.setInteger("infectionTransformationid", instance.getInfectionTransformationID());
+			compound.setString("infectiontransformationrl", instance.getInfectionTransformationRL().toString());
 			compound.setBoolean("currentlyinfected", instance.currentlyInfected());
 			return compound;
 		}
@@ -250,7 +271,8 @@ public class CapabilitiesInit {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
 				instance.setTime(compound.getInteger("time"));
 				instance.setTimeUntilInfection(compound.getInteger("timeuntilinfection"));
-				instance.setInfectionTransformationID(compound.getInteger("infectionTransformationid"));
+				instance.setInfectionTransformationRL(
+						new ResourceLocation(compound.getString("infectiontransformationrl")));
 				instance.setCurrentlyInfected(compound.getBoolean("currentlyinfected"));
 			}
 		}

@@ -262,7 +262,7 @@ public class TransformationEventHandler {
 			if (item instanceof IEffectiveAgainstTransformation) {
 				if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
 					// now it is ensured that the item is effective against the player
-					String msg = "transformations." + cap.getTransformation().toStringLowerCase() + ".";
+					String msg = "transformations." + cap.getTransformation().toString() + ".";
 
 					EntityPlayer thrower;
 					if (!(throwerName == null) && !(throwerName.equals("null"))

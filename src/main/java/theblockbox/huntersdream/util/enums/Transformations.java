@@ -18,21 +18,20 @@ import theblockbox.huntersdream.util.interfaces.ITransformCreature;
 public enum Transformations {
 
 	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID and HUNTER
-	HUMAN(TransformationEntry.create().setID(0).setSupernatural(false)),
-	WEREWOLF(TransformationEntry.create().setID(1).setGeneralDamage(8).setProtection(17.5F)
+	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
+	WEREWOLF(TransformationEntry.create("werewolf").setGeneralDamage(8).setProtection(17.5F)
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
 			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight).setInfect(WerewolfHelper::infect)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
-	VAMPIRE(TransformationEntry.create().setID(2)), WITCH(TransformationEntry.create().setID(3)),
-	CLOCKWORKANDROID(TransformationEntry.create().setID(4)), HYBRID(TransformationEntry.create().setID(5)),
-	HUNTER(TransformationEntry.create().setID(6).setSupernatural(false));
+	VAMPIRE(TransformationEntry.create("vampire")), WITCH(TransformationEntry.create("witch")),
+	CLOCKWORKANDROID(TransformationEntry.create("clockwordandroid")), HYBRID(TransformationEntry.create("hybrid")),
+	HUNTER(TransformationEntry.create("hunter").setSupernatural(false));
 
 	// when an entity has no transformation, use null
 	// (no transformation meaning not infectable)
 
 	private static class Helper {
 		private static final ArrayList<Transformations> TRANSFORMATIONS = new ArrayList<>();
-		private static int currentTransformationID = 0;
 	}
 
 	private final TransformationEntry ENTRY;
@@ -42,39 +41,29 @@ public enum Transformations {
 		Helper.TRANSFORMATIONS.add(this);
 	}
 
-	public static int getNewTransformationID() {
-		return Helper.currentTransformationID++;
-	}
-
-	public static Transformations fromID(int id) {
+	/**
+	 * Returns the transformation that has the same name. If no transformation has
+	 * that name, null will be returned
+	 * 
+	 * @param name The name of the resourcelocation (obtained through
+	 *             {@link ResourceLocation#toString()}, something like
+	 *             "huntersdream:werewolf"
+	 */
+	public static Transformations fromName(String name) {
 		for (Transformations transformations : Helper.TRANSFORMATIONS) {
-			if (transformations.getTransformationInt() == id) {
+			if (transformations.getResourceLocation().toString().equals(name)) {
 				return transformations;
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * Returns the transformation's id (every transformation should have its own
-	 * unique id!)
-	 */
-	public int getTransformationInt() {
-		return this.ENTRY.transformationInt;
+	public static Transformations fromResourceLocation(ResourceLocation resourceLocation) {
+		return fromName(resourceLocation.toString());
 	}
 
-	/** Does the same as {@link #getTransformationInt()} */
-	public int getID() {
-		return this.getTransformationInt();
-	}
-
-	public static Transformations fromName(String name) {
-		for (Transformations transformation : Helper.TRANSFORMATIONS) {
-			if (transformation.toString().equalsIgnoreCase(name)) {
-				return transformation;
-			}
-		}
-		return null;
+	public ResourceLocation getResourceLocation() {
+		return this.ENTRY.resourceLocation;
 	}
 
 	public double getLevel(EntityPlayer player) {
@@ -93,13 +82,20 @@ public enum Transformations {
 		return this.ENTRY.supernatural;
 	}
 
-	public String toStringLowerCase() {
-		return toString().toLowerCase();
+	public ResourceLocation getXPBarTexture() {
+		return new ResourceLocation(getResourceLocation().getResourceDomain(),
+				"textures/gui/transformation_xp_bar_" + getResourceLocation().getResourcePath() + ".png");
 	}
 
-	public ResourceLocation getXPBarTexture() {
-		return new ResourceLocation(Reference.MODID,
-				"textures/gui/transformation_xp_bar_" + toStringLowerCase() + ".png");
+	/**
+	 * This method returns the resource location obtained through
+	 * {@link #getResourceLocation()} in a string representation. So for example for
+	 * werewolf with a resource location of new ResourceLocation("huntersdream",
+	 * "werewolf") this method here would return "huntersdream:werewolf"
+	 */
+	@Override
+	public String toString() {
+		return this.getResourceLocation().toString();
 	}
 
 	public void transformCreatureWhenPossible(EntityCreature creature) {
@@ -149,16 +145,25 @@ public enum Transformations {
 			return TransformationHelper.getCap(player).getXP() / 500;
 		};
 		private float protection = 1F;
-		private int transformationInt = getNewTransformationID();
 		private ITransformCreature transformCreature;
 		private IInfect infect;
+		private ResourceLocation resourceLocation;
 
-		public TransformationEntry() {
+		public TransformationEntry(ResourceLocation resourceLocation) {
+			this.resourceLocation = resourceLocation;
 		}
 
 		/** returns a new instance of type TransformationEntry */
-		public static TransformationEntry create() {
-			return new TransformationEntry();
+		public static TransformationEntry create(ResourceLocation resourceLocation) {
+			return new TransformationEntry(resourceLocation);
+		}
+
+		/**
+		 * Caution! Domain defaults to huntersdream. If you're making an addon, use
+		 * {@link #create(ResourceLocation)}
+		 */
+		public static TransformationEntry create(String resourceLocation) {
+			return new TransformationEntry(new ResourceLocation(Reference.MODID, resourceLocation));
 		}
 
 		public TransformationEntry setSupernatural(boolean supernatural) {
@@ -178,11 +183,6 @@ public enum Transformations {
 
 		public TransformationEntry setProtection(float protection) {
 			this.protection = protection;
-			return this;
-		}
-
-		public TransformationEntry setID(int id) {
-			this.transformationInt = id;
 			return this;
 		}
 

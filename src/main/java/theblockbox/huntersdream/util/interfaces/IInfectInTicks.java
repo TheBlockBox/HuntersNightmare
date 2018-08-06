@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.interfaces;
 
+import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.util.enums.Transformations;
 
 public interface IInfectInTicks {
@@ -12,16 +13,16 @@ public interface IInfectInTicks {
 
 	public void setTimeUntilInfection(int time);
 
-	public int getInfectionTransformationID();
+	public ResourceLocation getInfectionTransformationRL();
 
-	public void setInfectionTransformationID(int id);
+	public void setInfectionTransformationRL(ResourceLocation rl);
 
 	default public Transformations getInfectionTransformation() {
-		return Transformations.fromID(getInfectionTransformationID());
+		return Transformations.fromResourceLocation(getInfectionTransformationRL());
 	}
 
 	default public void setInfectionTransformation(Transformations transformation) {
-		this.setInfectionTransformationID(transformation.getID());
+		this.setInfectionTransformationRL(transformation.getResourceLocation());
 	}
 
 	public boolean currentlyInfected();

@@ -6,7 +6,6 @@
 - make particle effects on player/villager transformation
 - add events
 - fix entities vanishing when too far away
-- use logger
 - xp bar height could be too high (pixels that haven't initially been included could be included)
 - fix werewolf no control thing
 - make werewolf animation go on all fours
@@ -19,4 +18,4 @@
 - make player rendering work again
 - fix networking/client - server communication
 - fix villager infection
-- use Minecraft.getMinecraft().addScheduledTask() again in TransformationMessage
+- fix that villagers are not immune to certain transformations

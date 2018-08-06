@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
@@ -79,7 +80,7 @@ public class PacketHandler {
 				case TRANSFORMATION:
 					// could contain render changes
 					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformationID(), player, cap.getTextureIndex()));
+							cap.getTransformationRL(), player, cap.getTextureIndex()));
 					break;
 				case XP:
 					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), player));
@@ -120,7 +121,7 @@ public class PacketHandler {
 					throw new WrongSideException("Couldn't send packet " + this.NAME, player.world);
 
 				if (ConfigHandler.showPacketMessages)
-					System.out.println(this.MESSAGE_BASE.getName() + " packet sent on side "
+					Main.LOGGER.info(this.MESSAGE_BASE.getName() + " packet sent on side "
 							+ (player.world.isRemote ? CLIENT : SERVER).toString() + "\nPath: " + path.get());
 			} else {
 				throw new WrongSideException("Packet " + this.NAME + " couldn't be sent\nPath: " + path.get(),

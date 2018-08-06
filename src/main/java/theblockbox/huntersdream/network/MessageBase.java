@@ -4,11 +4,13 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.exceptions.EntityIDNotFoundException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
@@ -50,6 +52,14 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		buf.writeInt(entity.world.provider.getDimension());
 	}
 
+	public static ResourceLocation readResourceLocation(ByteBuf buf) {
+		return new ResourceLocation(readString(buf));
+	}
+
+	public static void writeResourceLocation(ByteBuf buf, ResourceLocation resourceLocation) {
+		writeString(buf, resourceLocation.toString());
+	}
+
 	public abstract MessageHandler<T, ? extends IMessage> getMessageHandler();
 
 	public abstract static class MessageHandler<T extends MessageBase<T>, REPLY extends IMessage>
@@ -61,7 +71,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		public REPLY onMessage(T message, MessageContext ctx) {
 			REPLY answer = onMessageReceived(message, ctx);
 			if (ConfigHandler.showPacketMessages)
-				System.out.println(name() + " packet received on side " + ctx.side.toString());
+				Main.LOGGER.info(name() + " packet received on side " + ctx.side.toString());
 			return answer;
 		}
 

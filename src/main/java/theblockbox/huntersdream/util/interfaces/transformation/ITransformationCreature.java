@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
+import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.util.enums.Transformations;
 
 /**
@@ -8,33 +9,33 @@ import theblockbox.huntersdream.util.enums.Transformations;
 public interface ITransformationCreature extends ITransformation {
 	public Transformations[] getTransformationsNotImmuneTo();
 
-	default public int[] getTransformationIntsNotImmuneTo() {
-		int[] transformations = new int[getTransformationsNotImmuneTo().length];
+	default public ResourceLocation[] getTransformationRLsNotImmuneTo() {
+		ResourceLocation[] transformations = new ResourceLocation[getTransformationsNotImmuneTo().length];
 		for (int i = 0; i < getTransformationsNotImmuneTo().length; i++) {
-			transformations[i] = getTransformationsNotImmuneTo()[i].getID();
+			transformations[i] = getTransformationsNotImmuneTo()[i].getResourceLocation();
 		}
 		return transformations;
 	}
 
 	default public void setTransformationsNotImmuneTo(Transformations... transformationsNotImmuneTo) {
-		int[] transformations = new int[transformationsNotImmuneTo.length];
+		ResourceLocation[] transformations = new ResourceLocation[transformationsNotImmuneTo.length];
 		for (int i = 0; i < transformationsNotImmuneTo.length; i++) {
-			transformations[i] = transformationsNotImmuneTo[i].getID();
+			transformations[i] = transformationsNotImmuneTo[i].getResourceLocation();
 		}
 		setTransformationsNotImmuneTo(transformations);
 	}
 
-	default public void setTransformationsNotImmuneTo(int... transformations) {
+	default public void setTransformationsNotImmuneTo(ResourceLocation... transformations) {
 		throw new UnsupportedOperationException("Can't set transformations not immune to");
 	}
 
 	default public boolean notImmuneToTransformation(Transformations transformation) {
-		return this.notImmuneToTransformationID(transformation.getID());
+		return this.notImmuneToTransformationRL(transformation.getResourceLocation());
 	}
 
-	default public boolean notImmuneToTransformationID(int transformationID) {
+	default public boolean notImmuneToTransformationRL(ResourceLocation resourceLocation) {
 		for (Transformations transformation : getTransformationsNotImmuneTo()) {
-			if (transformation.getID() == transformationID) {
+			if (transformation.toString().equals(resourceLocation.toString())) {
 				return true;
 			}
 		}

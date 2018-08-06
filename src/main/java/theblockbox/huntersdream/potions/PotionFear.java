@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import theblockbox.huntersdream.Main;
 
 public class PotionFear extends PotionBase {
 	/** If performEffect has been called yet */
@@ -22,7 +23,7 @@ public class PotionFear extends PotionBase {
 		if (!performedEffectedOneTime) {
 			performedEffectedOneTime = true;
 			pos = new BlockPos(entity);
-			System.out.println("Effect performed for first time");
+			Main.LOGGER.debug("Effect performed for first time");
 			return;
 		} else {
 			entity.setPosition(pos.getX(), pos.getY(), pos.getZ());

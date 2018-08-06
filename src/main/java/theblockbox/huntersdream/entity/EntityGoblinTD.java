@@ -20,6 +20,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -34,14 +35,14 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	private int goblinTextureIndex;
 	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager
 			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
-	private static final DataParameter<Integer> TRANSFORMATION_ID = EntityDataManager
-			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
+	private static final DataParameter<String> TRANSFORMATION_NAME = EntityDataManager
+			.<String>createKey(EntityGoblinTD.class, DataSerializers.STRING);
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
 		this.goblinTextureIndex = ChanceHelper.randomInt(TEXTURES);
-		this.dataManager.set(TRANSFORMATION_ID, transformation.getID());
+		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 		this.dataManager.set(TEXTURE_INDEX, transformation.getRandomTextureIndex());
 	}
 
@@ -53,7 +54,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	protected void entityInit() {
 		super.entityInit();
 		this.dataManager.register(TEXTURE_INDEX, 0);
-		this.dataManager.register(TRANSFORMATION_ID, 0);
+		this.dataManager.register(TRANSFORMATION_NAME, Transformations.HUMAN.toString());
 	}
 
 	@Override
@@ -136,13 +137,13 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
-	public int getTransformationID() {
-		return this.dataManager.get(TRANSFORMATION_ID);
+	public ResourceLocation getTransformationRL() {
+		return new ResourceLocation(this.dataManager.get(TRANSFORMATION_NAME));
 	}
 
 	@Override
-	public void setTransformationID(int transformation) {
-		this.dataManager.set(TRANSFORMATION_ID, transformation);
+	public void setTransformationRL(ResourceLocation transformation) {
+		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 	}
 
 	@Override

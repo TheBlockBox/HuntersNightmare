@@ -19,6 +19,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -126,8 +127,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
-	public int getTransformationID() {
-		return TRANSFORMATION.getID();
+	public ResourceLocation getTransformationRL() {
+		return TRANSFORMATION.getResourceLocation();
 	}
 
 	@Override

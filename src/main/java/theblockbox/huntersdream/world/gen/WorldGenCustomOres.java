@@ -10,6 +10,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.objects.blocks.BlockOreBase;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviourException;
@@ -30,7 +31,7 @@ public class WorldGenCustomOres implements IWorldGenerator {
 
 		BlockInit.ORES.stream().filter(e -> e.DIMENSION == world.provider.getDimension()).forEach(e -> {
 			if (e.getWorldGenMinable() == null)
-				System.err.println(
+				Main.LOGGER.error(
 						"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated.");
 			else
 				runGenerator(e.getWorldGenMinable(), world, random, chunkX, chunkZ, e.CHANCE, e.MIN_HEIGHT,

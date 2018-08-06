@@ -54,7 +54,7 @@ public class CapabilityHandler {
 
 		transformationPlayer.setXP(oldTransformationPlayer.getXP());
 		transformationPlayer.setTransformed(false);
-		transformationPlayer.setTransformationID(oldTransformationPlayer.getTransformationID());
+		transformationPlayer.setTransformationRL(oldTransformationPlayer.getTransformationRL());
 		transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 
 		if (event.isWasDeath()) {
