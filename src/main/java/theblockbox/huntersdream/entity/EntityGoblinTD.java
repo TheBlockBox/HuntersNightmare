@@ -20,7 +20,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -137,12 +136,12 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
-	public ResourceLocation getTransformationRL() {
-		return new ResourceLocation(this.dataManager.get(TRANSFORMATION_NAME));
+	public Transformations getTransformation() {
+		return Transformations.fromName(this.dataManager.get(TRANSFORMATION_NAME));
 	}
 
 	@Override
-	public void setTransformationRL(ResourceLocation transformation) {
+	public void setTransformation(Transformations transformation) {
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 	}
 

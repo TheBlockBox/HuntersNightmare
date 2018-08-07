@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -49,7 +48,7 @@ public class TransformationXPMessage extends MessageBase<TransformationXPMessage
 		@Override
 		public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				Minecraft.getMinecraft().addScheduledTask(() -> {
+				addScheduledTask(ctx, () -> {
 					ITransformationPlayer cap = TransformationHelper.getCap(message.player);
 					cap.setXP(message.xp);
 				});

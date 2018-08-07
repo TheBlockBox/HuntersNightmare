@@ -1,16 +1,20 @@
 package theblockbox.huntersdream.network;
 
+import javax.annotation.Nonnull;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.EntityIDNotFoundException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
@@ -58,6 +62,22 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 
 	public static void writeResourceLocation(ByteBuf buf, ResourceLocation resourceLocation) {
 		writeString(buf, resourceLocation.toString());
+	}
+
+	public static Transformations readTransformation(ByteBuf buf) {
+		String transformationName = readString(buf);
+		Transformations transformation = Transformations.fromName(transformationName);
+		if (transformation == null)
+			throw new NullPointerException("Found transformation is null. Name: " + transformationName);
+		return transformation;
+	}
+
+	public static void writeTransformation(ByteBuf buf, @Nonnull Transformations transformation) {
+		writeString(buf, transformation.toString());
+	}
+
+	public static void addScheduledTask(MessageContext ctx, Runnable runnableToSchedule) {
+		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(runnableToSchedule);
 	}
 
 	public abstract MessageHandler<T, ? extends IMessage> getMessageHandler();

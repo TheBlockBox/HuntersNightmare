@@ -206,8 +206,8 @@ public class TransformationHelper {
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
 		Transformations transformation = getTransformation(entity);
 		Main.LOGGER.debug("transformation: " + transformation.toString());
-		return (transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
-				|| (INFECTABLE_ENTITES.containsKey(entity.getClass()));
+		return ((transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
+				|| (INFECTABLE_ENTITES.containsKey(entity.getClass())) && transformation != null);
 	}
 
 	public static Transformations getTransformation(EntityLivingBase entity) {
@@ -301,15 +301,17 @@ public class TransformationHelper {
 
 	public static boolean canBeInfectedWith(Transformations infection, EntityLivingBase entity) {
 		if (canChangeTransformation(entity)) {
-			ITransformationCreature tc = getITransformationCreature(entity);
-			if (tc != null) {
-				return tc.notImmuneToTransformation(infection);
-			} else {
-				return true;
+			IInfectInTicks iit = getIInfectInTicks(entity);
+			if (iit != null) {
+				ITransformationCreature tc = getITransformationCreature(entity);
+				if (tc != null) {
+					return tc.notImmuneToTransformation(infection);
+				} else {
+					return true;
+				}
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityLivingBase entity) {

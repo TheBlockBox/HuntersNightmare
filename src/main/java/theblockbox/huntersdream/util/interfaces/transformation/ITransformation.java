@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
-import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.util.enums.Transformations;
 
 /**
@@ -12,17 +11,9 @@ public interface ITransformation {
 
 	public void setTransformed(boolean transformed);
 
-	public ResourceLocation getTransformationRL();
+	public Transformations getTransformation();
 
-	default public Transformations getTransformation() {
-		return Transformations.fromResourceLocation(getTransformationRL());
-	}
-
-	public void setTransformationRL(ResourceLocation resourceLocation);
-
-	default public void setTransformation(Transformations transformation) {
-		setTransformationRL(transformation.getResourceLocation());
-	}
+	public void setTransformation(Transformations transformation);
 
 	public int getTextureIndex();
 }

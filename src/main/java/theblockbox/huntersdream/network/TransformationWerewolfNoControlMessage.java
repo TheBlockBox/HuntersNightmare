@@ -50,8 +50,8 @@ public class TransformationWerewolfNoControlMessage extends MessageBase<Transfor
 		@Override
 		public IMessage onMessageReceived(TransformationWerewolfNoControlMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				Minecraft mc = Minecraft.getMinecraft();
-				mc.addScheduledTask(() -> {
+				addScheduledTask(ctx, () -> {
+					Minecraft mc = Minecraft.getMinecraft();
 					EntityWerewolf werewolf = message.werewolf;
 					mc.setRenderViewEntity(werewolf);
 					mc.gameSettings.thirdPersonView = 3;

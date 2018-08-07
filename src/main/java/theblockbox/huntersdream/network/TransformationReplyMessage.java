@@ -61,29 +61,30 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 		@Override
 		public IMessage onMessageReceived(TransformationReplyMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				if ((!(message.reply == null)) && (!message.reply.equals(""))) {
-					Minecraft mc = Minecraft.getMinecraft();
-					String reply = message.reply;
-					String pickedUp = I18n.format(message.pickedUp);
-					TextComponentTranslation tct = null;
+				addScheduledTask(ctx, () -> {
+					if ((!(message.reply == null)) && (!message.reply.equals(""))) {
+						String reply = message.reply;
+						String pickedUp = I18n.format(message.pickedUp);
+						TextComponentTranslation tct = null;
 
-					if (reply.contains("fp")) {
-						if (reply.contains("picked")) {
-							tct = new TextComponentTranslation(reply, pickedUp);
-						} else if (reply.contains("touched")) {
-							tct = new TextComponentTranslation(reply, pickedUp);
+						if (reply.contains("fp")) {
+							if (reply.contains("picked")) {
+								tct = new TextComponentTranslation(reply, pickedUp);
+							} else if (reply.contains("touched")) {
+								tct = new TextComponentTranslation(reply, pickedUp);
+							}
+						} else if (reply.contains("tp")) {
+							if (reply.contains("picked")) {
+								tct = new TextComponentTranslation(reply, message.player.getName(), pickedUp);
+							} else if (reply.contains("touched")) {
+								tct = new TextComponentTranslation(reply, message.player.getName(), pickedUp);
+							}
 						}
-					} else if (reply.contains("tp")) {
-						if (reply.contains("picked")) {
-							tct = new TextComponentTranslation(reply, message.player.getName(), pickedUp);
-						} else if (reply.contains("touched")) {
-							tct = new TextComponentTranslation(reply, message.player.getName(), pickedUp);
-						}
+
+						final TextComponentTranslation translation = tct;
+						Minecraft.getMinecraft().player.sendMessage(translation);
 					}
-
-					final TextComponentTranslation translation = tct;
-					mc.addScheduledTask(() -> mc.player.sendMessage(translation));
-				}
+				});
 			}
 			return null;
 		}

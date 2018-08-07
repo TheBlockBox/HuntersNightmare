@@ -9,6 +9,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.capabilities.CapabilityProvider;
+import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
@@ -40,8 +41,8 @@ public class CapabilityHandler {
 					CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE));
 		}
 
-		if (entity.hasCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null)
-				|| entity instanceof EntityPlayer || entity instanceof ITransformationCreature) {
+		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD || entity instanceof EntityPlayer
+				|| entity instanceof ITransformationCreature) {
 			event.addCapability(INFECT_IN_TICKS_CAPABILITY,
 					new CapabilityProvider<IInfectInTicks>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
 		}
@@ -54,7 +55,7 @@ public class CapabilityHandler {
 
 		transformationPlayer.setXP(oldTransformationPlayer.getXP());
 		transformationPlayer.setTransformed(false);
-		transformationPlayer.setTransformationRL(oldTransformationPlayer.getTransformationRL());
+		transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
 		transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 
 		if (event.isWasDeath()) {

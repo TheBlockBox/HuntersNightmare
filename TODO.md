@@ -19,3 +19,4 @@
 - fix networking/client - server communication
 - fix villager infection
 - fix that villagers are not immune to certain transformations
+- make NBTStringArray extending NBTBase (for TransformationCreature capability)

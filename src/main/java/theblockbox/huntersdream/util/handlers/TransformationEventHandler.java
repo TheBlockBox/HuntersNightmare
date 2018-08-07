@@ -178,38 +178,51 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onEntityJoin(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityGolem) {
-			EntityGolem entity = (EntityGolem) event.getEntity();
-			Predicate<EntityPlayer> predicate = input -> {
-				return WerewolfHelper.transformedWerewolf(input);
-			};
-			entity.targetTasks.addTask(2,
-					new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
-			entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity, EntityPlayer.class,
-					10, true, false, predicate));
-		} else if (event.getEntity() instanceof EntityVillager) {
-			EntityVillager villager = (EntityVillager) event.getEntity();
-			if (ChanceHelper.chanceOf(5)) {
-				ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
-				tc.setTransformation(Transformations.WEREWOLF);
-				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
-				tc.setTransformationsNotImmuneTo(new Transformations[] { Transformations.WEREWOLF,
-						Transformations.VAMPIRE, Transformations.HUNTER });
+		if (event.getEntity() instanceof EntityLivingBase) {
+			EntityLivingBase elb = (EntityLivingBase) event.getEntity();
+			if (elb instanceof EntityGolem) {
+				EntityGolem entity = (EntityGolem) elb;
+				Predicate<EntityPlayer> predicate = input -> {
+					return WerewolfHelper.transformedWerewolf(input);
+				};
+				entity.targetTasks.addTask(2,
+						new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
+				entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
+						EntityPlayer.class, 10, true, false, predicate));
+			} else if (elb instanceof EntityVillager) {
+				EntityVillager villager = (EntityVillager) elb;
+				if (ChanceHelper.chanceOf(5)) {
+					ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
+					tc.setTransformation(Transformations.WEREWOLF);
+				}
+				Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
+				villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class,
+						predicate, 8.0F, 0.6D, 0.6D));
+			} else if (elb instanceof EntityGoblinTD) {
+				EntityGoblinTD goblin = (EntityGoblinTD) elb;
+				if (ChanceHelper.chanceOf(1.5F)) {
+					ITransformationCreature tc = TransformationHelper.getITransformationCreature(goblin);
+					tc.setTransformation(Transformations.WEREWOLF);
+				}
+				Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
+				goblin.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(goblin, EntityLivingBase.class,
+						predicate, 8.0F, 0.6D, 0.6D));
 			}
-			Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
-			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class,
-					predicate, 8.0F, 0.6D, 0.6D));
-		} else if (event.getEntity() instanceof EntityGoblinTD) {
-			EntityGoblinTD goblin = (EntityGoblinTD) event.getEntity();
-			if (ChanceHelper.chanceOf(1.5F)) {
-				ITransformationCreature tc = TransformationHelper.getITransformationCreature(goblin);
-				tc.setTransformation(Transformations.WEREWOLF);
-				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+
+			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
+			if (tc != null) {
+				tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
 			}
-			Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
-			goblin.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(goblin, EntityLivingBase.class, predicate,
-					8.0F, 0.6D, 0.6D));
 		}
+	}
+
+	private static Transformations[] setEntityTransformationsNotImmuneTo(EntityLivingBase entity,
+			ITransformationCreature tc) {
+		tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD) {
+			return new Transformations[] { Transformations.WEREWOLF, Transformations.VAMPIRE };
+		}
+		return new Transformations[0];
 	}
 
 	@SubscribeEvent

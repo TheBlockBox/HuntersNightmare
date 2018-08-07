@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -28,7 +27,7 @@ public interface ITransformationEntityTransformed extends ITransformation {
 	}
 
 	@Override
-	default void setTransformationRL(ResourceLocation rl) {
+	default void setTransformation(Transformations transformation) {
 		throw new UnsupportedOperationException("This creature's transformation is already determined");
 	}
 

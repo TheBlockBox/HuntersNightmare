@@ -80,7 +80,7 @@ public class PacketHandler {
 				case TRANSFORMATION:
 					// could contain render changes
 					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformationRL(), player, cap.getTextureIndex()));
+							cap.getTransformation(), player, cap.getTextureIndex()));
 					break;
 				case XP:
 					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), player));

@@ -42,9 +42,8 @@ public class TransformationWerewolfNightOverMessage extends MessageBase<Transfor
 		@Override
 		public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				Minecraft mc = Minecraft.getMinecraft();
-				mc.addScheduledTask(() -> {
-					mc.setRenderViewEntity(message.player);
+				addScheduledTask(ctx, () -> {
+					Minecraft.getMinecraft().setRenderViewEntity(message.player);
 				});
 			}
 			return null;
