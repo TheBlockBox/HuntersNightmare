@@ -12,9 +12,7 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
@@ -95,30 +93,11 @@ public class WerewolfHelper {
 		}
 	}
 
-	/**
-	 * Don't use this to infect an entity. Rather use
-	 * {@link #infectEntityAsWerewolf(EntityLivingBase)}
-	 */
-	public static void infect(EntityLivingBase entityToBeInfected) {
-		if (!entityToBeInfected.world.isRemote) {
-			if (TransformationHelper.canChangeTransformationOnInfection(entityToBeInfected) && TransformationHelper
-					.onInfectionCanBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
-				TransformationHelper.changeTransformation(entityToBeInfected, Transformations.WEREWOLF,
-						new ExecutionPath());
-			} else {
-				throw new WrongTransformationException("Given entity can't be infected",
-						TransformationHelper.getTransformation(entityToBeInfected));
-			}
-		} else {
-			throw new WrongSideException("Entity can't be infected on client side", entityToBeInfected.world);
-		}
-	}
-
 	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
 				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
-			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 6000, 0, false, true));
-			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 6000, 1, false, true));
+			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 100, 0, false, true));
+			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 1, false, true));
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entityToBeInfected);
 			ionm.setInfectionStatus(InfectionStatus.MOON_ON_INFECTION);
 			ionm.setInfectionTick(entityToBeInfected.ticksExisted);

@@ -118,9 +118,11 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
-		if (!world.isRemote) {
-			if (!WerewolfHelper.isWerewolfTime(this)) {
-				ITransformationEntityTransformed.transformBack(this);
+		if (ticksExisted % 40 == 0) {
+			if (!world.isRemote) {
+				if (!WerewolfHelper.isWerewolfTime(this)) {
+					ITransformationEntityTransformed.transformBack(this);
+				}
 			}
 		}
 	}

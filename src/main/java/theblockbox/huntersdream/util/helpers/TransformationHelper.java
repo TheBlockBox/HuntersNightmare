@@ -371,8 +371,8 @@ public class TransformationHelper {
 	public static boolean isInfected(EntityLivingBase entity) {
 		IInfectInTicks iit = getIInfectInTicks(entity);
 		IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
-
 		boolean flag = false;
+
 		if (iit != null) {
 			flag = iit.currentlyInfected();
 		}

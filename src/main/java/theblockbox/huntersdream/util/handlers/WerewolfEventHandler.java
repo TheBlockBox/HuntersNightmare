@@ -149,6 +149,8 @@ public class WerewolfEventHandler {
 						ionm.setInfectionTick(-1);
 						ionm.setInfectionTransformation(Transformations.HUMAN);
 						// change transformation
+						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF,
+								new ExecutionPath());
 					}
 				}
 			}

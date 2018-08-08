@@ -248,7 +248,7 @@ public class TransformationEventHandler {
 					if (iit.getTime() > -1) {
 						if (iit.currentlyInfected()) {
 							if (iit.getTimeUntilInfection() > 0) {
-								iit.setTimeUntilInfection(iit.getTimeUntilInfection() - 60);
+								iit.setTimeUntilInfection(iit.getTimeUntilInfection() - 80);
 							} else if (iit.getTimeUntilInfection() <= 0) {
 								// when already done,
 
