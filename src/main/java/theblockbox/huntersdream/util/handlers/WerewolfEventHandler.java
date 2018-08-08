@@ -11,11 +11,14 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
+import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 @Mod.EventBusSubscriber
@@ -126,6 +129,26 @@ public class WerewolfEventHandler {
 						// fill hunger
 						EntityPlayer player = (EntityPlayer) attacker;
 						player.getFoodStats().addStats(1, 1);
+					}
+				}
+			}
+		}
+	}
+
+	public static void handleInfection(EntityLivingBase entity) {
+		if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
+			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
+			if (ionm.getInfectionTransformation() == Transformations.WEREWOLF) {
+				if (!WerewolfHelper.isWerewolfTime(entity)) {
+					if (ionm.getInfectionStatus() == InfectionStatus.MOON_ON_INFECTION) {
+						ionm.setInfectionStatus(InfectionStatus.AFTER_INFECTION);
+					}
+				} else if (WerewolfHelper.isWerewolfTime(entity)) {
+					if (ionm.getInfectionStatus() == InfectionStatus.AFTER_INFECTION) {
+						ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
+						ionm.setInfectionTick(-1);
+						ionm.setInfectionTransformation(Transformations.HUMAN);
+						// change transformation
 					}
 				}
 			}

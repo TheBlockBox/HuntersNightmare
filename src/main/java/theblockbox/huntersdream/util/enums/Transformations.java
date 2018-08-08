@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.EnumHelper;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -21,7 +22,7 @@ public enum Transformations {
 	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
 	WEREWOLF(TransformationEntry.create("werewolf").setGeneralDamage(8).setProtection(17.5F)
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
-			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight).setInfect(WerewolfHelper::infect)
+			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
 	VAMPIRE(TransformationEntry.create("vampire")), WITCH(TransformationEntry.create("witch")),
 	CLOCKWORKANDROID(TransformationEntry.create("clockwordandroid")), HYBRID(TransformationEntry.create("hybrid")),
@@ -55,6 +56,8 @@ public enum Transformations {
 				return transformations;
 			}
 		}
+		Main.LOGGER.error("The given string \"" + name
+				+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure");
 		return null;
 	}
 

@@ -2,6 +2,8 @@ package theblockbox.huntersdream.util.helpers;
 
 import java.util.HashMap;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +23,8 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation.EntityEffectiveAgainstTransformation;
@@ -159,7 +163,8 @@ public class TransformationHelper {
 	 * Changes the player's transformation also resets xp and transformed and sends
 	 * the data to the client (this method is only to be called server side!)
 	 */
-	public static void changeTransformation(EntityPlayerMP player, Transformations transformation, ExecutionPath path) {
+	public static void changeTransformation(EntityPlayerMP player, @Nonnull Transformations transformation,
+			ExecutionPath path) {
 		ITransformationPlayer cap = getCap(player);
 		cap.setXP(0); // reset xp
 		cap.setTransformed(false); // reset transformed
@@ -169,27 +174,36 @@ public class TransformationHelper {
 	}
 
 	// TODO: Add handling of transformation change
-	public static void changeTransformation(EntityLivingBase entity, Transformations transformation,
+	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation,
 			ExecutionPath path) {
-		if (entity instanceof EntityPlayer) {
-			if (entity instanceof EntityPlayerMP) {
-				changeTransformation((EntityPlayerMP) entity, transformation, path);
+		if (entity != null && transformation != null) {
+			if (entity instanceof EntityPlayer) {
+				if (entity instanceof EntityPlayerMP) {
+					changeTransformation((EntityPlayerMP) entity, transformation, path);
+				} else {
+					throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
+				}
 			} else {
-				throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
+				Main.LOGGER.debug("refreshed transformation");
+				getITransformation(entity).setTransformation(transformation);
+				ITransformationCreature tc = getITransformationCreature(entity);
+				if (tc != null) {
+					Main.LOGGER.debug("tc not null, refreshing texture index");
+					tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+				}
 			}
 		} else {
-			Main.LOGGER.debug("refreshed transformation");
-			getITransformation(entity).setTransformation(transformation);
-			ITransformationCreature tc = getITransformationCreature(entity);
-			if (tc != null) {
-				Main.LOGGER.debug("tc not null, refreshing texture index");
-				tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
-			}
+			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
+					+ " Transformation null: " + (transformation == null));
 		}
 	}
 
-	public static void changeTransformationWhenPossible(EntityLivingBase entity, Transformations transformation,
-			ExecutionPath path) {
+	public static void changeTransformationWhenPossible(@Nonnull EntityLivingBase entity,
+			@Nonnull Transformations transformation, ExecutionPath path) {
+		if (transformation == null || entity == null) {
+			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
+					+ " Transformation null: " + (transformation == null));
+		}
 		if (canChangeTransformation(entity)) {
 			changeTransformation(entity, transformation, path);
 		}
@@ -205,7 +219,7 @@ public class TransformationHelper {
 
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
 		Transformations transformation = getTransformation(entity);
-		Main.LOGGER.debug("transformation: " + transformation.toString());
+		Main.LOGGER.debug("transformation: " + transformation + " Entity: " + entity.getClass().getName());
 		return ((transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
 				|| (INFECTABLE_ENTITES.containsKey(entity.getClass())) && transformation != null);
 	}
@@ -302,6 +316,12 @@ public class TransformationHelper {
 	public static boolean canBeInfectedWith(Transformations infection, EntityLivingBase entity) {
 		if (canChangeTransformation(entity)) {
 			IInfectInTicks iit = getIInfectInTicks(entity);
+			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
+			if (ionm != null) {
+				if (infection == Transformations.WEREWOLF) {
+					return true;
+				}
+			}
 			if (iit != null) {
 				ITransformationCreature tc = getITransformationCreature(entity);
 				if (tc != null) {
@@ -310,6 +330,7 @@ public class TransformationHelper {
 					return true;
 				}
 			}
+
 		}
 		return false;
 	}
@@ -349,10 +370,18 @@ public class TransformationHelper {
 
 	public static boolean isInfected(EntityLivingBase entity) {
 		IInfectInTicks iit = getIInfectInTicks(entity);
+		IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
+
+		boolean flag = false;
 		if (iit != null) {
-			return iit.currentlyInfected();
-		} else {
-			return false;
+			flag = iit.currentlyInfected();
 		}
+
+		if (ionm != null) {
+			if (!flag) {
+				flag = !(ionm.getInfectionStatus() == InfectionStatus.NOT_INFECTED);
+			}
+		}
+		return flag;
 	}
 }

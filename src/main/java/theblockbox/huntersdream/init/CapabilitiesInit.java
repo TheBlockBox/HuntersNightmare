@@ -11,6 +11,8 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -21,6 +23,8 @@ public class CapabilitiesInit {
 	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = null;
 	@CapabilityInject(IInfectInTicks.class)
 	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = null;
+	@CapabilityInject(IInfectOnNextMoon.class)
+	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = null;
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
@@ -39,12 +43,20 @@ public class CapabilitiesInit {
 						return new TransformationCreature();
 					}
 				});
-		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectionInTicksStorage(),
+		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectInTicksStorage(),
 				new Callable<IInfectInTicks>() {
 
 					@Override
 					public IInfectInTicks call() throws Exception {
 						return new InfectInTicks();
+					}
+				});
+		CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new InfectOnNextMoonStorage(),
+				new Callable<IInfectOnNextMoon>() {
+
+					@Override
+					public IInfectOnNextMoon call() throws Exception {
+						return new InfectOnNextMoon();
 					}
 				});
 	}
@@ -167,19 +179,14 @@ public class CapabilitiesInit {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger("textureindex", instance.getTextureIndex());
 			compound.setString("transformation", instance.getTransformation().toString());
-
-			String transformations = "";
-			for (Transformations transformation : instance.getTransformationsNotImmuneTo()) {
-				if (transformation == null)
-					throw new NullPointerException("The transformation is null. Length of the transformations: "
-							+ instance.getTransformationsNotImmuneTo().length);
-				transformations.concat(transformation.toString() + "\n");
+			Transformations[] transformationsNotImmuneTo = instance.getTransformationsNotImmuneTo();
+			// set transformations not immune to
+			NBTTagCompound transformations = new NBTTagCompound();
+			transformations.setInteger("length", transformationsNotImmuneTo.length);
+			for (int i = 0; i < transformationsNotImmuneTo.length; i++) {
+				transformations.setString("t" + i, transformationsNotImmuneTo[i].toString());
 			}
-			if (transformations.endsWith("\n")) {
-				transformations.substring(0, transformations.length() - 2);
-			}
-			compound.setString("transformationidsnotimmuneto", transformations);
-
+			compound.setTag("transformationsnotimmuneto", transformations);
 			return compound;
 		}
 
@@ -190,17 +197,14 @@ public class CapabilitiesInit {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
 				instance.setTextureIndex(compound.getInteger("textureindex"));
 				instance.setTransformation(Transformations.fromName(compound.getString("transformation")));
-
-				String[] transformationNames = compound.getString("transformationidsnotimmuneto").split("\n");
-				Transformations[] transformations = new Transformations[transformationNames.length];
-				for (int i = 0; i < transformationNames.length; i++) {
-					transformations[i] = Transformations.fromName(transformationNames[i]);
-					if (transformations[i] == null)
-						throw new NullPointerException(
-								"The given string " + transformationNames[i] + " is not a transformation");
-
+				// get transformations not immune to
+				NBTTagCompound transformations = (NBTTagCompound) compound.getTag("transformationsnotimmuneto");
+				int length = transformations.getInteger("length");
+				Transformations[] transformationsNotImmuneTo = new Transformations[length];
+				for (int i = 0; i < length; i++) {
+					transformationsNotImmuneTo[i] = Transformations.fromName(transformations.getString("t" + i));
 				}
-				instance.setTransformationsNotImmuneTo(transformations);
+				instance.setTransformationsNotImmuneTo(transformationsNotImmuneTo);
 			}
 		}
 
@@ -253,7 +257,7 @@ public class CapabilitiesInit {
 		}
 	}
 
-	private static class InfectionInTicksStorage implements IStorage<IInfectInTicks> {
+	private static class InfectInTicksStorage implements IStorage<IInfectInTicks> {
 
 		@Override
 		public NBTBase writeNBT(Capability<IInfectInTicks> capability, IInfectInTicks instance, EnumFacing side) {
@@ -277,5 +281,66 @@ public class CapabilitiesInit {
 				instance.setCurrentlyInfected(compound.getBoolean("currentlyinfected"));
 			}
 		}
+	}
+
+	private static class InfectOnNextMoon implements IInfectOnNextMoon {
+		private InfectionStatus status = InfectionStatus.NOT_INFECTED;
+		private int infectionTick = -1;
+		private Transformations infectionTransformation = Transformations.HUMAN;
+
+		@Override
+		public InfectionStatus getInfectionStatus() {
+			return this.status;
+		}
+
+		@Override
+		public void setInfectionStatus(InfectionStatus status) {
+			this.status = status;
+		}
+
+		@Override
+		public int getInfectionTick() {
+			return this.infectionTick;
+		}
+
+		@Override
+		public void setInfectionTick(int tick) {
+			this.infectionTick = tick;
+		}
+
+		@Override
+		public Transformations getInfectionTransformation() {
+			return this.infectionTransformation;
+		}
+
+		@Override
+		public void setInfectionTransformation(Transformations transformation) {
+			this.infectionTransformation = transformation;
+		}
+	}
+
+	private static class InfectOnNextMoonStorage implements IStorage<IInfectOnNextMoon> {
+
+		@Override
+		public NBTBase writeNBT(Capability<IInfectOnNextMoon> capability, IInfectOnNextMoon instance, EnumFacing side) {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setString("infectionstatus", instance.getInfectionStatus().toString());
+			compound.setInteger("infectiontick", instance.getInfectionTick());
+			compound.setString("infectiontransformation", instance.getInfectionTransformation().toString());
+			return compound;
+		}
+
+		@Override
+		public void readNBT(Capability<IInfectOnNextMoon> capability, IInfectOnNextMoon instance, EnumFacing side,
+				NBTBase nbt) {
+			if (nbt instanceof NBTTagCompound) {
+				NBTTagCompound compound = (NBTTagCompound) nbt;
+				instance.setInfectionStatus(InfectionStatus.fromString(compound.getString("infectionstatus")));
+				instance.setInfectionTick(compound.getInteger("infectiontick"));
+				instance.setInfectionTransformation(
+						Transformations.fromName(compound.getString("infectiontransformation")));
+			}
+		}
+
 	}
 }

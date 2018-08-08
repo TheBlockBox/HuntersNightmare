@@ -73,7 +73,10 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 	}
 
 	public static void writeTransformation(ByteBuf buf, @Nonnull Transformations transformation) {
-		writeString(buf, transformation.toString());
+		if (transformation != null)
+			writeString(buf, transformation.toString());
+		else
+			throw new IllegalArgumentException("The transformation argument is null which it isn't allowed to be");
 	}
 
 	public static void addScheduledTask(MessageContext ctx, Runnable runnableToSchedule) {

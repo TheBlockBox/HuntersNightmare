@@ -8,14 +8,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -115,20 +117,17 @@ public class WerewolfHelper {
 	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
 				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
-			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 80, 0, false, true)); // TODO: Change
-																											// to 6000
-			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 80, 1, false, true)); // TODO:
-																											// Change to
-																											// 6000
-			if (entityToBeInfected instanceof EntityPlayer) {
-				((EntityPlayer) entityToBeInfected)
-						.sendMessage(new TextComponentTranslation("transformations.infected.werewolf"));
-				TransformationHelper.infectIn(80, entityToBeInfected, Transformations.WEREWOLF); // TODO: Change to 6000
-			} else {
-				TransformationHelper.infectIn(40, entityToBeInfected, Transformations.WEREWOLF); // TODO: Change to
-																									// 12000
-			}
+			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 6000, 0, false, true));
+			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 6000, 1, false, true));
+			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entityToBeInfected);
+			ionm.setInfectionStatus(InfectionStatus.MOON_ON_INFECTION);
+			ionm.setInfectionTick(entityToBeInfected.ticksExisted);
+			ionm.setInfectionTransformation(Transformations.WEREWOLF);
 		}
+	}
+
+	public static IInfectOnNextMoon getIInfectOnNextMoon(EntityLivingBase entity) {
+		return entity.getCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null);
 	}
 
 	/**
@@ -219,8 +218,8 @@ public class WerewolfHelper {
 	 */
 	public static void toWerewolfWhenNight(EntityLiving entity) {
 		World world = entity.world;
-		if (!world.isRemote) {
-			if (entity.ticksExisted % 40 == 0) {
+		if (entity.ticksExisted % 80 == 0) {
+			if (!world.isRemote) {
 				if (WerewolfHelper.isWerewolfTime(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;

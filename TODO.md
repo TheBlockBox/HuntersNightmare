@@ -17,6 +17,4 @@
 - make no control thing only for level 0 without xp
 - make player rendering work again
 - fix networking/client - server communication
-- fix villager infection
-- fix that villagers are not immune to certain transformations
-- make NBTStringArray extending NBTBase (for TransformationCreature capability)
+- finish InfectOnNextMoon

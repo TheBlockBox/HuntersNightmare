@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
@@ -120,11 +121,10 @@ public class TransformationEventHandler {
 						TransformationHelper.addXP((EntityPlayerMP) player, 5,
 								TransformationXPSentReason.WEREWOLF_UNDER_MOON, new ExecutionPath());
 					}
-					// this piece of code syncs the player data every ten minutes, so basically you
+					// this piece of code syncs the player data every five minutes, so basically you
 					// don't have to sync the data every time you change something
-					// (though it is recommended)#
-					// TODO: Set this to 12000 (ten minutes) again
-					if (player.ticksExisted % 200 == 0) {
+					// (though it is recommended)
+					if (player.ticksExisted % 6000 == 0) {
 						Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
 					}
 				}
@@ -211,7 +211,13 @@ public class TransformationEventHandler {
 
 			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
 			if (tc != null) {
-				tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
+				try {
+					tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
+				} catch (UnsupportedOperationException e) {
+					Main.LOGGER.error("UnsupportedOperationException with message \"" + e.getMessage()
+							+ "\" caught.\nEntity class: " + elb.getClass().getName()
+							+ "\nImplements ITransformationCreature: " + (elb instanceof ITransformationCreature));
+				}
 			}
 		}
 	}
@@ -219,7 +225,7 @@ public class TransformationEventHandler {
 	private static Transformations[] setEntityTransformationsNotImmuneTo(EntityLivingBase entity,
 			ITransformationCreature tc) {
 		tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
-		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD) {
+		if (entity instanceof EntityVillager) {
 			return new Transformations[] { Transformations.WEREWOLF, Transformations.VAMPIRE };
 		}
 		return new Transformations[0];
@@ -227,10 +233,8 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
-		// should I check for the side here?
-		// check every two seconds
-		if (!event.getEntityLiving().world.isRemote) {
-			if (event.getEntityLiving().ticksExisted % 60 == 0) {
+		if (event.getEntityLiving().ticksExisted % 80 == 0) {
+			if (!event.getEntityLiving().world.isRemote) {
 				EntityLivingBase entity = event.getEntityLiving();
 				try {
 					EntityCreature creature = (EntityCreature) entity;
@@ -260,6 +264,8 @@ public class TransformationEventHandler {
 						}
 					}
 				}
+
+				WerewolfEventHandler.handleInfection(entity);
 			}
 		}
 	}

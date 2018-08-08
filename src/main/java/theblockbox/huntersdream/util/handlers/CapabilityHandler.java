@@ -16,7 +16,10 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -28,6 +31,8 @@ public class CapabilityHandler {
 			"transformationcreature");
 	public static final ResourceLocation INFECT_IN_TICKS_CAPABILITY = new ResourceLocation(Reference.MODID,
 			"infectinticks");
+	public static final ResourceLocation INFECT_ON_NEXT_MOON = new ResourceLocation(Reference.MODID,
+			"infectonnextmoon");
 
 	@SubscribeEvent
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
@@ -45,6 +50,8 @@ public class CapabilityHandler {
 				|| entity instanceof ITransformationCreature) {
 			event.addCapability(INFECT_IN_TICKS_CAPABILITY,
 					new CapabilityProvider<IInfectInTicks>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
+			event.addCapability(INFECT_ON_NEXT_MOON,
+					new CapabilityProvider<IInfectOnNextMoon>(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON));
 		}
 	}
 
@@ -63,6 +70,10 @@ public class CapabilityHandler {
 			iit.setCurrentlyInfected(false);
 			iit.setInfectionTransformation(Transformations.HUMAN);
 			iit.setTime(-1);
+			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(event.getEntityPlayer());
+			ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
+			ionm.setInfectionTick(-1);
+			ionm.setInfectionTransformation(Transformations.HUMAN);
 		}
 
 		Packets.TRANSFORMATION.sync(new ExecutionPath(), event.getEntityPlayer());

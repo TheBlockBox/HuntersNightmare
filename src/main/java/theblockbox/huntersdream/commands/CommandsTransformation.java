@@ -69,8 +69,8 @@ public class CommandsTransformation extends CommandBase {
 				} else {
 					name = new ResourceLocation(Reference.MODID, transformation);
 				}
-				TransformationHelper.changeTransformation(player, Transformations.fromResourceLocation(name),
-						new ExecutionPath());
+				Transformations transformations = Transformations.fromResourceLocation(name);
+				TransformationHelper.changeTransformation(player, transformations, new ExecutionPath());
 				sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
 						player.getName(), Transformations.fromResourceLocation(name).toString()));
 			}
