@@ -25,7 +25,7 @@ import theblockbox.huntersdream.init.EntityInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
-import theblockbox.huntersdream.util.interfaces.IHasModel;
+import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
 /**
@@ -58,6 +58,11 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
 		// event.getRegistry().registerAll(values);
+	}
+
+	@SubscribeEvent
+	public static void onRegistryRegister(RegistryEvent.NewRegistry event) {
+		// RegistryBuilder<IForgeRegistryEntry<T>> builder = new RegistryBuilder<>();
 	}
 
 	@SubscribeEvent

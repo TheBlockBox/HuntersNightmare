@@ -4,7 +4,7 @@ import net.minecraft.item.ItemPickaxe;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.util.interfaces.IHasModel;
+import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 
 public class ToolPickaxe extends ItemPickaxe implements IHasModel {
 

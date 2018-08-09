@@ -170,7 +170,7 @@ public class WerewolfHelper {
 		if (cap.getTransformation() != Transformations.WEREWOLF) {
 			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
 		}
-		return (cap.getTransformation().getLevelFloor(player) >= 0); // TODO: Change this!
+		return (cap.getTransformation().getLevelFloor(player) > 0); // TODO: Change this!
 	}
 
 	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {
@@ -183,13 +183,11 @@ public class WerewolfHelper {
 	}
 
 	/**
-	 * Call this method in your {@link Entity#onUpdate()} method to let your mob
-	 * transform into a werewolf when it is night. Caution! Your entity has to
-	 * extend EntityLiving or a subclass and needs a constructor World, int,
-	 * Transformations (World = spawn world, int = texture to use, Transformations =
-	 * transformation that the entity should have) When the werewolf transforms
-	 * back, this constructor will be called and World will be
-	 * {@link EntityWerewolf#getEntityWorld()}, int will be
+	 * Caution! Your entity has to extend EntityLiving or a subclass and needs a
+	 * constructor World, int, Transformations (World = spawn world, int = texture
+	 * to use, Transformations = transformation that the entity should have) When
+	 * the werewolf transforms back, this constructor will be called and World will
+	 * be {@link EntityWerewolf#getEntityWorld()}, int will be
 	 * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
 	 * {@link Transformations#WEREWOLF}
 	 * 

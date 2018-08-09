@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.interfaces.effective;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -71,6 +72,11 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 				Transformations... effectiveAgainst) {
 			super(object, effectiveness, effectiveAgainst);
 			ITEMS.add(this);
+		}
+
+		public ItemEffectiveAgainstTransformation(Block object, float effectiveness,
+				Transformations... effectiveAgainst) {
+			this(Item.getItemFromBlock(object), effectiveness, effectiveAgainst);
 		}
 
 		@Override

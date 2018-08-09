@@ -8,8 +8,8 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.util.interfaces.IHasModel;
 import theblockbox.huntersdream.util.interfaces.effective.ISilverEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 
 public class BlockBase extends Block implements IHasModel {
 

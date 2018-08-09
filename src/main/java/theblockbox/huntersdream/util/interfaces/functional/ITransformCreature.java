@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces;
+package theblockbox.huntersdream.util.interfaces.functional;
 
 import net.minecraft.entity.EntityCreature;
 

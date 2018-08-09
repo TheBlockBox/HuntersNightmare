@@ -16,8 +16,8 @@ public class BlockOreBase extends BlockBase {
 	private boolean modified = false;
 
 	public BlockOreBase(String name, int dimensionID, String dimensionName, int minHeight, int maxHeight, int chance,
-			Block spawnOn) {
-		super(dimensionName + "_ore_" + name, Material.ROCK);
+			Block spawnOn, boolean silver) {
+		super(dimensionName + "_ore_" + name, Material.ROCK, silver);
 		this.setHardness(3.0F);
 		this.setResistance(15.0F);
 		this.DIMENSION = dimensionID;
@@ -29,12 +29,13 @@ public class BlockOreBase extends BlockBase {
 		BlockInit.ORES.add(this);
 	}
 
-	public BlockOreBase(String name, Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn) {
-		this(name, dimension.ID, dimension.NAME, minHeight, maxHeight, chance, spawnOn);
+	public BlockOreBase(String name, Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn,
+			boolean silver) {
+		this(name, dimension.ID, dimension.NAME, minHeight, maxHeight, chance, spawnOn, silver);
 	}
 
 	public BlockOreBase(String name, Dimensions dimension, int minHeight, int maxHeight, int chance) {
-		this(name, dimension, minHeight, maxHeight, chance, dimension.SPAWN_ON);
+		this(name, dimension, minHeight, maxHeight, chance, dimension.SPAWN_ON, false);
 	}
 
 	public WorldGenMinable getWorldGenMinable() {

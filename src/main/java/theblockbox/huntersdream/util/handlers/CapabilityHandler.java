@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.capabilities.CapabilityProvider;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
@@ -22,6 +21,7 @@ import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber
 public class CapabilityHandler {
@@ -33,6 +33,7 @@ public class CapabilityHandler {
 			"infectinticks");
 	public static final ResourceLocation INFECT_ON_NEXT_MOON = new ResourceLocation(Reference.MODID,
 			"infectonnextmoon");
+	public static final ResourceLocation WEREWOLF = new ResourceLocation(Reference.MODID, "werewolf");
 
 	@SubscribeEvent
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
@@ -52,6 +53,7 @@ public class CapabilityHandler {
 					new CapabilityProvider<IInfectInTicks>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
 			event.addCapability(INFECT_ON_NEXT_MOON,
 					new CapabilityProvider<IInfectOnNextMoon>(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON));
+			event.addCapability(WEREWOLF, new CapabilityProvider<IWerewolf>(CapabilitiesInit.CAPABILITY_WEREWOLF));
 		}
 	}
 
@@ -76,6 +78,6 @@ public class CapabilityHandler {
 			ionm.setInfectionTransformation(Transformations.HUMAN);
 		}
 
-		Packets.TRANSFORMATION.sync(new ExecutionPath(), event.getEntityPlayer());
+		Packets.TRANSFORMATION.sync(event.getEntityPlayer());
 	}
 }

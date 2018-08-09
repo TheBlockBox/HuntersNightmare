@@ -12,7 +12,11 @@ public class BlockInit {
 	public static final List<Block> BLOCKS = new ArrayList<>(); // also includes ores
 	public static final List<BlockOreBase> ORES = new ArrayList<>();
 
-	public static final Block BLOCK_PURE_SILVER = new BlockBase("block_pure_silver", Material.IRON, true);
+	public static final Block BLOCK_SILVER = new BlockBase("block_silver", Material.IRON, true);
+	// TODO: Make ore
+	public static final Block ORE_SILVER = new BlockBase("ore_silver", Material.ROCK, true);
+	// BlockOreBase("ore_silver",Dimensions.OVERWORLD, minHeight, maxHeight, chance,
+	// Blocks.STONE, true);
 
 	// Ores
 	// only give a name, the dimension and the ore tag will be automatically added

@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -94,8 +93,7 @@ public class WerewolfEventHandler {
 		if (event.getSource().getTrueSource() instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) event.getSource().getTrueSource();
 			if (WerewolfHelper.transformedWerewolf(player)) {
-				TransformationHelper.addXP(player, 10, TransformationXPSentReason.WEREWOLF_HAS_KILLED,
-						new ExecutionPath());
+				TransformationHelper.addXP(player, 10, TransformationXPSentReason.WEREWOLF_HAS_KILLED);
 			}
 		}
 	}
@@ -149,8 +147,7 @@ public class WerewolfEventHandler {
 						ionm.setInfectionTick(-1);
 						ionm.setInfectionTransformation(Transformations.HUMAN);
 						// change transformation
-						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF,
-								new ExecutionPath());
+						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF);
 					}
 				}
 			}

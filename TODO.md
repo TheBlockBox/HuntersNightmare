@@ -17,4 +17,5 @@
 - make no control thing only for level 0 without xp
 - make player rendering work again
 - fix networking/client - server communication
-- finish InfectOnNextMoon
+- fix that client having wrong information (maybe capabilities are the reason)
+- make silver ore generate and be smeltable into silver ingot

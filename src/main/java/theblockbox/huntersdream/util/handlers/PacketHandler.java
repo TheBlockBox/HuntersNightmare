@@ -68,7 +68,7 @@ public class PacketHandler {
 					(Class<REQ>) this.MESSAGE_BASE.getClass(), networkID++, this.SIDE);
 		}
 
-		public void sync(ExecutionPath path, EntityPlayer player, Object... args) {
+		public void sync(EntityPlayer player, Object... args) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			// you can get the sp player through Minecraft.getMinecraft().player;
 
@@ -112,7 +112,8 @@ public class PacketHandler {
 							+ "\nAdditional info:\nWrong side? "
 							+ (player.world.isRemote ? (this.SIDE == SERVER) : (this.SIDE == CLIENT)) + "\nPlayer: "
 							+ player.getName() + "\nAdditional argument length: " + args.length + "\nPath: "
-							+ path.get());
+							+ (new ExecutionPath()).get(1) + " from " + (new ExecutionPath()).get(2) + " from "
+							+ (new ExecutionPath()).get(3));
 				}
 
 				// Receiving side can't be sending side
@@ -122,9 +123,11 @@ public class PacketHandler {
 
 				if (ConfigHandler.showPacketMessages)
 					Main.LOGGER.info(this.MESSAGE_BASE.getName() + " packet sent on side "
-							+ (player.world.isRemote ? CLIENT : SERVER).toString() + "\nPath: " + path.get());
+							+ (player.world.isRemote ? CLIENT : SERVER).toString() + "\nPath: "
+							+ (new ExecutionPath()).get(1));
 			} else {
-				throw new WrongSideException("Packet " + this.NAME + " couldn't be sent\nPath: " + path.get(),
+				throw new WrongSideException(
+						"Packet " + this.NAME + " couldn't be sent\nPath: " + (new ExecutionPath()).get(1),
 						(this.SIDE == SERVER ? CLIENT : SERVER));
 			}
 		}

@@ -38,3 +38,6 @@ bin
 build
 *.launch
 run
+
+# Other
+build.bat

@@ -10,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -73,7 +72,7 @@ public class CommandsTransformationTexture extends CommandBase {
 				cap.setTextureIndex(index);
 				sender.sendMessage(new TextComponentTranslation("command.transformationtexture.set", player.getName(),
 						cap.getTextureIndex()));
-				Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
+				Packets.TRANSFORMATION.sync(player);
 			}
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);

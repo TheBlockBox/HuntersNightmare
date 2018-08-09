@@ -7,18 +7,19 @@ import theblockbox.huntersdream.init.ItemInit;
 public class OreDictionaryCompat {
 	public static void registerOres() {
 		// Silver
-		OreDictionary.registerOre("blockPureSilver", BlockInit.BLOCK_PURE_SILVER);
+		OreDictionary.registerOre("blockSilver", BlockInit.BLOCK_SILVER);
+		OreDictionary.registerOre("oreSilver", BlockInit.ORE_SILVER);
 
-		OreDictionary.registerOre("pureSilver", ItemInit.PURE_SILVER);
-		OreDictionary.registerOre("helmetPureSilver", ItemInit.HELMET_PURE_SILVER);
-		OreDictionary.registerOre("chestplatePureSilver", ItemInit.CHESTPLATE_PURE_SILVER);
-		OreDictionary.registerOre("leggingsPureSilver", ItemInit.LEGGINGS_PURE_SILVER);
-		OreDictionary.registerOre("bootsPureSilver", ItemInit.BOOTS_PURE_SILVER);
+		OreDictionary.registerOre("ingotSilver", ItemInit.INGOT_SILVER);
+		OreDictionary.registerOre("helmetSilver", ItemInit.HELMET_SILVER);
+		OreDictionary.registerOre("chestplateSilver", ItemInit.CHESTPLATE_SILVER);
+		OreDictionary.registerOre("leggingsSilver", ItemInit.LEGGINGS_SILVER);
+		OreDictionary.registerOre("bootsSilver", ItemInit.BOOTS_SILVER);
 
-		OreDictionary.registerOre("axePureSilver", ItemInit.AXE_PURE_SILVER);
-		OreDictionary.registerOre("pickaxePureSilver", ItemInit.HELMET_PURE_SILVER);
-		OreDictionary.registerOre("hoePureSilver", ItemInit.CHESTPLATE_PURE_SILVER);
-		OreDictionary.registerOre("swordPureSilver", ItemInit.LEGGINGS_PURE_SILVER);
-		OreDictionary.registerOre("shovelPurelSilver", ItemInit.BOOTS_PURE_SILVER);
+		OreDictionary.registerOre("axeSilver", ItemInit.AXE_SILVER);
+		OreDictionary.registerOre("pickaxeSilver", ItemInit.PICKAXE_SILVER);
+		OreDictionary.registerOre("hoeSilver", ItemInit.HOE_SILVER);
+		OreDictionary.registerOre("swordSilver", ItemInit.SWORD_SILVER);
+		OreDictionary.registerOre("shovelSilver", ItemInit.SHOVEL_SILVER);
 	}
 }

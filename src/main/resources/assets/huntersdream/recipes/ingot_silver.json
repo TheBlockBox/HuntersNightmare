@@ -11,13 +11,13 @@
         "B":
         {
             "type": "forge:ore_dict",
-            "ore": "blockPureSilver"
+            "ore": "blockSilver"
         }
     },
     
     "result":
     {
-        "item": "huntersdream:pure_silver",
+        "item": "huntersdream:ingot_silver",
         "count": 9
     }
 }

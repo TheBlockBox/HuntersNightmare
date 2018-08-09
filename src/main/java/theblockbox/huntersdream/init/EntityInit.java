@@ -3,9 +3,7 @@ package theblockbox.huntersdream.init;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -65,18 +63,6 @@ public class EntityInit {
 		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
 				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
 				.tracker(trackingRange, 20, false).build();
-		event.getRegistry().register(entry);
-	}
-
-	/** Register with egg and spawn biomes */
-	@SuppressWarnings("unused")
-	private static void registerEntity(RegistryEvent.Register<EntityEntry> event, String name,
-			Class<? extends Entity> entity, int trackingRange, int eggColor1, int eggColor2, EnumCreatureType type,
-			int weight, int min, int max, Biome... spawnBiomes) {
-		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
-				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
-				.tracker(trackingRange, 20, false).egg(eggColor1, eggColor2).spawn(type, weight, min, max, spawnBiomes)
-				.build();
 		event.getRegistry().register(entry);
 	}
 }

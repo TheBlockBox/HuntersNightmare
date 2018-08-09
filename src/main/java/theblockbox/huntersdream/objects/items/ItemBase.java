@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.util.interfaces.IHasModel;
+import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 
 public class ItemBase extends Item implements IHasModel {
 

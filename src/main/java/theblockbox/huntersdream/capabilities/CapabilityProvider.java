@@ -1,11 +1,11 @@
 package theblockbox.huntersdream.capabilities;
 
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public class CapabilityProvider<T> implements ICapabilitySerializable<NBTBase> {
+public class CapabilityProvider<T> implements ICapabilitySerializable<NBTTagCompound> {
 
 	private final Capability<T> CAP;
 	public final T INSTANCE;
@@ -26,12 +26,12 @@ public class CapabilityProvider<T> implements ICapabilitySerializable<NBTBase> {
 	}
 
 	@Override
-	public NBTBase serializeNBT() {
-		return CAP.getStorage().writeNBT(CAP, INSTANCE, null);
+	public NBTTagCompound serializeNBT() {
+		return (NBTTagCompound) CAP.getStorage().writeNBT(CAP, INSTANCE, null);
 	}
 
 	@Override
-	public void deserializeNBT(NBTBase nbt) {
+	public void deserializeNBT(NBTTagCompound nbt) {
 		CAP.getStorage().readNBT(CAP, INSTANCE, null, nbt);
 	}
 

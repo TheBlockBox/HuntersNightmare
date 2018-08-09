@@ -30,7 +30,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCr
 
 public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IEntityAdditionalSpawnData {
 	/** The amount of textures available for the goblins */
-	public static final int TEXTURES = 6;
+	public static final int TEXTURES = 7;
 	private int goblinTextureIndex;
 	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager
 			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);

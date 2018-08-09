@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,9 +19,9 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationXPEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
+import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -145,8 +146,10 @@ public class TransformationHelper {
 			new EntityEffectiveAgainstTransformation((Entity) object, effectiveness, effectiveAgainst);
 		} else if (object instanceof Item) {
 			new ItemEffectiveAgainstTransformation((Item) object, effectiveness, effectiveAgainst);
+		} else if (object instanceof Block) {
+			new ItemEffectiveAgainstTransformation((Block) object, effectiveness, effectiveAgainst);
 		} else {
-			throw new IllegalArgumentException("The given object is not of type item or entity");
+			throw new IllegalArgumentException("The given object is not of type item, block or entity");
 		}
 	}
 
@@ -163,32 +166,33 @@ public class TransformationHelper {
 	 * Changes the player's transformation also resets xp and transformed and sends
 	 * the data to the client (this method is only to be called server side!)
 	 */
-	public static void changeTransformation(EntityPlayerMP player, @Nonnull Transformations transformation,
-			ExecutionPath path) {
+	public static void changeTransformation(EntityPlayerMP player, @Nonnull Transformations transformation) {
+		if (transformation == null)
+			throw new NullPointerException("Null not allowed here");
 		ITransformationPlayer cap = getCap(player);
 		cap.setXP(0); // reset xp
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
-		Packets.TRANSFORMATION.sync(path, player); // sync data with client
+		if (ConfigHandler.showPacketMessages)
+			Main.LOGGER
+					.info("Transformation of player " + player.getName() + " changed to " + transformation.toString());
+		Packets.TRANSFORMATION.sync(player); // sync data with client
 	}
 
 	// TODO: Add handling of transformation change
-	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation,
-			ExecutionPath path) {
+	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation) {
 		if (entity != null && transformation != null) {
 			if (entity instanceof EntityPlayer) {
 				if (entity instanceof EntityPlayerMP) {
-					changeTransformation((EntityPlayerMP) entity, transformation, path);
+					changeTransformation((EntityPlayerMP) entity, transformation);
 				} else {
 					throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
 				}
 			} else {
-				Main.LOGGER.debug("refreshed transformation");
 				getITransformation(entity).setTransformation(transformation);
 				ITransformationCreature tc = getITransformationCreature(entity);
 				if (tc != null) {
-					Main.LOGGER.debug("tc not null, refreshing texture index");
 					tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
 				}
 			}
@@ -199,13 +203,13 @@ public class TransformationHelper {
 	}
 
 	public static void changeTransformationWhenPossible(@Nonnull EntityLivingBase entity,
-			@Nonnull Transformations transformation, ExecutionPath path) {
+			@Nonnull Transformations transformation) {
 		if (transformation == null || entity == null) {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
 					+ " Transformation null: " + (transformation == null));
 		}
 		if (canChangeTransformation(entity)) {
-			changeTransformation(entity, transformation, path);
+			changeTransformation(entity, transformation);
 		}
 	}
 
@@ -219,7 +223,6 @@ public class TransformationHelper {
 
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
 		Transformations transformation = getTransformation(entity);
-		Main.LOGGER.debug("transformation: " + transformation + " Entity: " + entity.getClass().getName());
 		return ((transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
 				|| (INFECTABLE_ENTITES.containsKey(entity.getClass())) && transformation != null);
 	}
@@ -259,21 +262,20 @@ public class TransformationHelper {
 		}
 	}
 
-	public static void incrementXP(EntityPlayerMP player, TransformationXPSentReason reason, ExecutionPath path) {
-		addXP(player, 1, reason, path);
+	public static void incrementXP(EntityPlayerMP player, TransformationXPSentReason reason) {
+		addXP(player, 1, reason);
 	}
 
-	public static void addXP(EntityPlayerMP player, int xpToAdd, TransformationXPSentReason reason,
-			ExecutionPath path) {
+	public static void addXP(EntityPlayerMP player, int xpToAdd, TransformationXPSentReason reason) {
 		ITransformationPlayer cap = getCap(player);
-		setXP(player, (cap.getXP() + xpToAdd), reason, path);
+		setXP(player, (cap.getXP() + xpToAdd), reason);
 	}
 
 	/**
 	 * Sets the players xp to the given xp, sends a message on levelup and an xp
 	 * packet
 	 */
-	public static void setXP(EntityPlayerMP player, int xp, TransformationXPSentReason reason, ExecutionPath path) {
+	public static void setXP(EntityPlayerMP player, int xp, TransformationXPSentReason reason) {
 		ITransformationPlayer cap = getCap(player);
 		int levelBefore = cap.getTransformation().getLevelFloor(player);
 		TransformationXPEvent event = new TransformationXPEvent(player, xp, reason);
@@ -284,7 +286,7 @@ public class TransformationHelper {
 			if (levelBefore < levelAfter) {
 				player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
 			}
-			Packets.XP.sync(path, player);
+			Packets.XP.sync(player);
 		}
 	}
 
@@ -338,10 +340,7 @@ public class TransformationHelper {
 	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityLivingBase entity) {
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
-			Main.LOGGER.debug("tc null" + (tc == null) + "(if false, this returns true)");
 			if (tc != null) {
-				Main.LOGGER.debug(
-						"not immune to " + infection.toString() + ": " + tc.notImmuneToTransformation(infection));
 				return tc.notImmuneToTransformation(infection);
 			} else {
 				return true;

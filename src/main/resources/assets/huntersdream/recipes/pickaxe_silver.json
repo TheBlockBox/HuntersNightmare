@@ -13,7 +13,7 @@
         "S":
         {
             "type": "forge:ore_dict",
-            "ore": "pureSilver"
+            "ore": "ingotSilver"
         },
         
         "T":
@@ -25,7 +25,7 @@
     
     "result":
     {
-        "item": "huntersdream:pickaxe_pure_silver",
+        "item": "huntersdream:pickaxe_silver",
         "count": 1
     }
 }

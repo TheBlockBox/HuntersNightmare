@@ -2,6 +2,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "huntersdream:items/sword_pure_silver"
+        "layer0": "huntersdream:items/axe_silver"
     }
 }

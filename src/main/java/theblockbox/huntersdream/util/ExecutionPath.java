@@ -11,7 +11,24 @@ public class ExecutionPath extends Exception {
 	}
 
 	public String get() {
-		StackTraceElement ste = getStackTrace()[0];
-		return ste.getClassName() + "." + ste.getMethodName() + ":" + ste.getLineNumber();
+		return get(0);
+	}
+
+	public String get(int index) {
+		StackTraceElement ste = getStackTrace()[index];
+		if (ste.isNativeMethod()) {
+			return "Native method: " + ste.getFileName() + ":" + ste.getClassName() + "." + ste.getMethodName() + ":"
+					+ ste.getLineNumber();
+		} else {
+			return ste.getClassName() + "." + ste.getMethodName() + ":" + ste.getLineNumber();
+		}
+	}
+
+	public String getAll() {
+		String toReturn = "";
+		for (int i = 0; i < getStackTrace().length; i++) {
+			toReturn += "\n" + "	at " + get(i);
+		}
+		return toReturn;
 	}
 }

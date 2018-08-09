@@ -8,13 +8,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.ICalculateLevel;
-import theblockbox.huntersdream.util.interfaces.IInfect;
-import theblockbox.huntersdream.util.interfaces.ITransformCreature;
+import theblockbox.huntersdream.util.interfaces.functional.ICalculateLevel;
+import theblockbox.huntersdream.util.interfaces.functional.IInfect;
+import theblockbox.huntersdream.util.interfaces.functional.ITransformCreature;
 
 public enum Transformations {
 
@@ -57,7 +58,8 @@ public enum Transformations {
 			}
 		}
 		Main.LOGGER.error("The given string \"" + name
-				+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure");
+				+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure\nStacktrace: "
+				+ (new ExecutionPath()).getAll());
 		return null;
 	}
 
@@ -154,6 +156,11 @@ public enum Transformations {
 
 		public TransformationEntry(ResourceLocation resourceLocation) {
 			this.resourceLocation = resourceLocation;
+			if (resourceLocation.getResourceDomain().equals("") || resourceLocation.getResourcePath().equals("")
+					|| resourceLocation == null
+					|| resourceLocation.getResourceDomain() == null | resourceLocation.getResourcePath() == null)
+				throw new NullPointerException(
+						"A value or the resource location itself is either null or an empty string");
 		}
 
 		/** returns a new instance of type TransformationEntry */

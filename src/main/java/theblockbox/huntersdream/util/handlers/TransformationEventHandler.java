@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
@@ -32,7 +33,6 @@ import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviourException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
@@ -80,7 +80,7 @@ public class TransformationEventHandler {
 						if (!cap.transformed()) {
 							cap.setTransformed(true);
 							player.getEntityBoundingBox().grow(0, 1, 0);
-							Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
+							Packets.TRANSFORMATION.sync(player);
 
 							if (!WerewolfHelper.hasControl(player)) {
 								World world = player.world;
@@ -90,7 +90,7 @@ public class TransformationEventHandler {
 								werewolf.setPosition(player.posX, player.posY, player.posZ);
 								PLAYER_WEREWOLVES.add(werewolf);
 								world.spawnEntity(werewolf);
-								Packets.NO_CONTROL.sync(new ExecutionPath(), player, werewolf);
+								Packets.NO_CONTROL.sync(player, werewolf);
 							}
 						}
 
@@ -102,7 +102,7 @@ public class TransformationEventHandler {
 						while (iterator.hasNext()) {
 							EntityWerewolf werewolf = iterator.next();
 							World world = werewolf.world;
-							Packets.NIGHT_OVER.sync(new ExecutionPath(), WerewolfHelper.getPlayer(werewolf));
+							Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
 							world.removeEntity(werewolf);
 							player.getEntityBoundingBox().contract(0, 1, 0);
 							PLAYER_WEREWOLVES.remove(werewolf);
@@ -111,7 +111,7 @@ public class TransformationEventHandler {
 				} else if (WerewolfHelper.transformedWerewolf(player)) {
 					cap.setTransformed(false);
 
-					Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
+					Packets.TRANSFORMATION.sync(player);
 				}
 
 				if (player.ticksExisted % 1200 == 0) {
@@ -119,13 +119,13 @@ public class TransformationEventHandler {
 					// werewolf, one xp gets added
 					if (WerewolfHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)) {
 						TransformationHelper.addXP((EntityPlayerMP) player, 5,
-								TransformationXPSentReason.WEREWOLF_UNDER_MOON, new ExecutionPath());
+								TransformationXPSentReason.WEREWOLF_UNDER_MOON);
 					}
 					// this piece of code syncs the player data every five minutes, so basically you
 					// don't have to sync the data every time you change something
 					// (though it is recommended)
 					if (player.ticksExisted % 6000 == 0) {
-						Packets.TRANSFORMATION.sync(new ExecutionPath(), player);
+						Packets.TRANSFORMATION.sync(player);
 					}
 				}
 			}
@@ -210,7 +210,7 @@ public class TransformationEventHandler {
 			}
 
 			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
-			if (tc != null) {
+			if (tc != null && !(elb instanceof EntityPlayer)) {
 				try {
 					tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
 				} catch (UnsupportedOperationException e) {
@@ -287,20 +287,24 @@ public class TransformationEventHandler {
 					if (!(throwerName == null) && !(throwerName.equals("null"))
 							&& !(throwerName.equals(player.getName()))) {
 						thrower = originalEntity.world.getPlayerEntityByName(throwerName);
-						Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), player, msg + "fp.touched", player,
-								item);
-						Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), thrower, msg + "tp.touched", player,
-								item);
+						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
+						Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
 					} else {
-						Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), player, msg + "fp.picked", player, item);
+						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.picked", player, item);
 						thrower = getNearestPlayer(player.world, player, 5);
 						if (thrower != null) {
-							Packets.TRANSFORMATION_REPLY.sync(new ExecutionPath(), thrower, msg + "tp.picked", player,
-									item);
+							Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.picked", player, item);
 						}
 					}
 				}
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onEntityItemPickup(EntityItemPickupEvent event) {
+		if (WerewolfHelper.transformedWerewolf(event.getEntityPlayer())) {
+			event.setCanceled(true);
 		}
 	}
 
