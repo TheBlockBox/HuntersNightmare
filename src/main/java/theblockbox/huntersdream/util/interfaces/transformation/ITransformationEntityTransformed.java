@@ -94,6 +94,7 @@ public interface ITransformationEntityTransformed extends ITransformation {
 						}
 
 						e.setPosition(creature.posX, creature.posY, creature.posZ);
+						e.setHealth(e.getHealth() / (creature.getMaxHealth() / creature.getHealth()));
 						creature.world.spawnEntity(e);
 					}
 

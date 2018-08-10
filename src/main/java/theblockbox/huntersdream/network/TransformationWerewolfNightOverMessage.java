@@ -8,23 +8,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class TransformationWerewolfNightOverMessage extends MessageBase<TransformationWerewolfNightOverMessage> {
-	private EntityPlayer player;
+	private int player;
 
 	public TransformationWerewolfNightOverMessage() {
 	}
 
 	public TransformationWerewolfNightOverMessage(EntityPlayer player) {
-		this.player = player;
+		this.player = player.getEntityId();
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.player = readPlayer(buf);
+		this.player = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		writeEntity(buf, player);
+		buf.writeInt(player);
 	}
 
 	@Override
@@ -43,7 +43,8 @@ public class TransformationWerewolfNightOverMessage extends MessageBase<Transfor
 		public IMessage onMessageReceived(TransformationWerewolfNightOverMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					Minecraft.getMinecraft().setRenderViewEntity(message.player);
+					Minecraft.getMinecraft().setRenderViewEntity(
+							(EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player));
 				});
 			}
 			return null;

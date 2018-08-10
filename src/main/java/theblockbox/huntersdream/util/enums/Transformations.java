@@ -21,7 +21,7 @@ public enum Transformations {
 
 	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID and HUNTER
 	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
-	WEREWOLF(TransformationEntry.create("werewolf").setGeneralDamage(8).setProtection(17.5F)
+	WEREWOLF(TransformationEntry.create("werewolf").setGeneralDamage(12).setProtection(20F)
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
 			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
@@ -109,7 +109,7 @@ public enum Transformations {
 		}
 	}
 
-	public ITransformCreature getTransformCreature() {
+	private ITransformCreature getTransformCreature() {
 		return this.ENTRY.transformCreature;
 	}
 

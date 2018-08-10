@@ -1,12 +1,11 @@
 package theblockbox.huntersdream.proxy;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy implements ICommonProxy {
 	@Override
 	public void registerItemRenderer(Item item, int meta, String id) {
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), id));
@@ -14,18 +13,16 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void preInit() {
+		RegistryHandler.preInitClient();
 	}
 
 	@Override
 	public void init() {
+		RegistryHandler.initClient();
 	}
 
 	@Override
 	public void postInit() {
-	}
-
-	@Override
-	public EntityPlayer getPlayer() {
-		return Minecraft.getMinecraft().player;
+		RegistryHandler.postInitClient();
 	}
 }

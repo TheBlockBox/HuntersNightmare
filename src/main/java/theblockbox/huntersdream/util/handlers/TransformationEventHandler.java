@@ -63,8 +63,8 @@ public class TransformationEventHandler {
 		if (player.ticksExisted % 20 == 0) {
 			if (!player.world.isRemote) { // ensures that this is the server side
 
-				Item[] hands = { player.getHeldItemMainhand().getItem(), player.getHeldItemOffhand().getItem() };
-				for (Item item : hands) {
+				for (ItemStack stack : player.getEquipmentAndArmor()) {
+					Item item = stack.getItem();
 					if (item instanceof IEffectiveAgainstTransformation) {
 						if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
 							player.attackEntityFrom(EFFECTIVE_AGAINST_TRANSFORMATION,
@@ -79,7 +79,6 @@ public class TransformationEventHandler {
 
 						if (!cap.transformed()) {
 							cap.setTransformed(true);
-							player.getEntityBoundingBox().grow(0, 1, 0);
 							Packets.TRANSFORMATION.sync(player);
 
 							if (!WerewolfHelper.hasControl(player)) {
@@ -104,13 +103,11 @@ public class TransformationEventHandler {
 							World world = werewolf.world;
 							Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
 							world.removeEntity(werewolf);
-							player.getEntityBoundingBox().contract(0, 1, 0);
 							PLAYER_WEREWOLVES.remove(werewolf);
 						}
 					}
 				} else if (WerewolfHelper.transformedWerewolf(player)) {
 					cap.setTransformed(false);
-
 					Packets.TRANSFORMATION.sync(player);
 				}
 
@@ -129,8 +126,10 @@ public class TransformationEventHandler {
 					}
 				}
 			}
-			if (WerewolfHelper.transformedWerewolf(player)) {
-				WerewolfHelper.applyLevelBuffs(player);
+			if (cap.getTransformation() == Transformations.WEREWOLF) {
+				if (cap.transformed()) {
+					WerewolfHelper.applyLevelBuffs(player);
+				}
 			}
 		}
 	}

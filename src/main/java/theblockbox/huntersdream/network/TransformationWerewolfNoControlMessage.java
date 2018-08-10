@@ -10,27 +10,27 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 
 public class TransformationWerewolfNoControlMessage extends MessageBase<TransformationWerewolfNoControlMessage> {
 
-	private EntityPlayer player;
-	private EntityWerewolf werewolf;
+	private int player;
+	private int werewolf;
 
 	public TransformationWerewolfNoControlMessage() {
 	}
 
 	public TransformationWerewolfNoControlMessage(EntityPlayer player, EntityWerewolf werewolf) {
-		this.player = player;
-		this.werewolf = werewolf;
+		this.player = player.getEntityId();
+		this.werewolf = werewolf.getEntityId();
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.player = readPlayer(buf);
-		this.werewolf = (EntityWerewolf) readEntity(buf);
+		this.player = buf.readInt();
+		this.werewolf = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		writeEntity(buf, player);
-		writeEntity(buf, werewolf);
+		buf.writeInt(player);
+		buf.writeInt(werewolf);
 	}
 
 	@Override
@@ -52,7 +52,8 @@ public class TransformationWerewolfNoControlMessage extends MessageBase<Transfor
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
 					Minecraft mc = Minecraft.getMinecraft();
-					EntityWerewolf werewolf = message.werewolf;
+					EntityWerewolf werewolf = (EntityWerewolf) Minecraft.getMinecraft().world
+							.getEntityByID(message.werewolf);
 					mc.setRenderViewEntity(werewolf);
 					mc.gameSettings.thirdPersonView = 3;
 				});

@@ -13,11 +13,11 @@ import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 
 public class BlockBase extends Block implements IHasModel {
 
-	public BlockBase(String name, Material materialIn) {
-		this(name, materialIn, false);
+	public BlockBase(String name, Material materialIn, float hardness) {
+		this(name, materialIn, hardness, false);
 	}
 
-	public BlockBase(String name, Material materialIn, boolean silver) {
+	public BlockBase(String name, Material materialIn, float hardness, boolean silver) {
 		super(materialIn);
 		setUnlocalizedName(name);
 		setRegistryName(name);
@@ -30,6 +30,7 @@ public class BlockBase extends Block implements IHasModel {
 		} else {
 			itemBlock = new ItemBlock(this);
 		}
+		this.setHardness(hardness);
 
 		ItemInit.ITEMS.add(itemBlock.setRegistryName(this.getRegistryName()));
 	}

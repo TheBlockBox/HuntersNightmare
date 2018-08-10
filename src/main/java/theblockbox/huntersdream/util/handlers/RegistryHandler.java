@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -14,7 +15,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationLevel;
@@ -35,14 +35,21 @@ import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 @Mod.EventBusSubscriber
 public class RegistryHandler {
 
+	// Registry events
+
+	@SubscribeEvent
+	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
+		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
+	}
+
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		event.getRegistry().registerAll(ItemInit.ITEMS.toArray(new Item[0]));
 	}
 
 	@SubscribeEvent
-	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
-		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
+	public static void onRegistryRegister(RegistryEvent.NewRegistry event) {
+		// RegistryBuilder<IForgeRegistryEntry<T>> builder = new RegistryBuilder<>();
 	}
 
 	@SubscribeEvent
@@ -58,11 +65,6 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
 		// event.getRegistry().registerAll(values);
-	}
-
-	@SubscribeEvent
-	public static void onRegistryRegister(RegistryEvent.NewRegistry event) {
-		// RegistryBuilder<IForgeRegistryEntry<T>> builder = new RegistryBuilder<>();
 	}
 
 	@SubscribeEvent
@@ -82,26 +84,50 @@ public class RegistryHandler {
 		EntityInit.registerEntityRenders();
 	}
 
+	// Common
+
 	/**
-	 * Is called in preInit stage before preInitRegistries
+	 * Is called on {@link FMLPreInitializationEvent} before
+	 * {@link #preInitCommon(FMLPreInitializationEvent)}
 	 */
-	public static void otherRegistries(FMLPreInitializationEvent event) {
+	public static void gameRegistry(FMLPreInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new WorldGenCustomOres(), 0);
 	}
 
-	public static void preInitRegistries(FMLPreInitializationEvent event) {
-		Main.proxy.preInit();
+	public static void preInitCommon(FMLPreInitializationEvent event) {
 		CapabilitiesInit.registerCapabilities();
 	}
 
-	public static void initRegistries(FMLInitializationEvent event) {
-		Main.proxy.init();
+	public static void initCommon(FMLInitializationEvent event) {
 		OreDictionaryCompat.registerOres();
 		PacketHandler.register();
 	}
 
-	public static void postInitRegistries(FMLPostInitializationEvent event) {
-		Main.proxy.postInit();
+	public static void postInitCommon(FMLPostInitializationEvent event) {
+	}
+
+	// Client
+
+	public static void preInitClient() {
+	}
+
+	public static void initClient() {
+		// Client side only event bus
+		MinecraftForge.EVENT_BUS.register(TransformationClientEventHandler.class);
+	}
+
+	public static void postInitClient() {
+	}
+
+	// Server
+
+	public static void preInitServer() {
+	}
+
+	public static void initServer() {
+	}
+
+	public static void postInitServer() {
 	}
 
 	public static void serverRegistries(FMLServerStartingEvent event) {

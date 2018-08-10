@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -11,26 +12,26 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 public class TransformationXPMessage extends MessageBase<TransformationXPMessage> {
 
 	private int xp;
-	private EntityPlayer player;
+	private int player;
 
 	public TransformationXPMessage() {
 	}
 
 	public TransformationXPMessage(int xp, EntityPlayer player) {
-		this.player = player;
+		this.player = player.getEntityId();
 		this.xp = xp;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.xp = buf.readInt();
-		this.player = readPlayer(buf);
+		this.player = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(xp);
-		writeEntity(buf, player);
+		buf.writeInt(player);
 	}
 
 	@Override
@@ -49,7 +50,8 @@ public class TransformationXPMessage extends MessageBase<TransformationXPMessage
 		public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					ITransformationPlayer cap = TransformationHelper.getCap(message.player);
+					ITransformationPlayer cap = TransformationHelper
+							.getCap((EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player));
 					cap.setXP(message.xp);
 				});
 			}

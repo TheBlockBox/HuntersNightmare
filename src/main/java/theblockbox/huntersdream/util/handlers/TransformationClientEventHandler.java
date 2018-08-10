@@ -10,11 +10,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.renderer.RenderWolfmanPlayer;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -24,12 +20,9 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 /**
  * Handles events which are important for transforming
  */
-@Mod.EventBusSubscriber
 public class TransformationClientEventHandler {
-	@SideOnly(Side.CLIENT)
 	private static RenderWolfmanPlayer renderWerewolf = null;
 
-	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
 		if (ConfigHandler.customPlayerRender) {
@@ -45,18 +38,15 @@ public class TransformationClientEventHandler {
 					renderWerewolf.doRender(player, event.getX(), event.getY(), event.getZ(), player.rotationYaw,
 							event.getPartialRenderTick());
 				}
-			} else {
 			}
 		}
 	}
 
-	// Transformation xp handler
-	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onGameOverlayRenderPost(RenderGameOverlayEvent.Post event) {
 		if (ConfigHandler.renderXPBar) {
 			Minecraft mc = Minecraft.getMinecraft();
-			EntityPlayer player = Main.proxy.getPlayer();
+			EntityPlayer player = mc.player;
 			GameType gameType = mc.playerController.getCurrentGameType();
 			if (gameType != GameType.CREATIVE && gameType != GameType.SPECTATOR) {
 				if ((!event.isCancelable()) && event.getType() == ElementType.EXPERIENCE) {
@@ -66,7 +56,10 @@ public class TransformationClientEventHandler {
 
 						int x = ConfigHandler.xpBarLeft ? event.getResolution().getScaledWidth() / 2 - 90
 								: event.getResolution().getScaledWidth() / 2 + 10;
-						int y = ConfigHandler.xpBarTop ? 0 : event.getResolution().getScaledHeight() - 48;
+						int y = ConfigHandler.xpBarTop ? 8 : event.getResolution().getScaledHeight() - 48;
+						if (ConfigHandler.xpBarTop) {
+							x = ConfigHandler.xpBarLeft ? 1 : event.getResolution().getScaledWidth() - 82;
+						}
 
 						// when there are bubbles aka the player is under water, move the bar up
 						if (!ConfigHandler.xpBarLeft && !ConfigHandler.xpBarTop) {
@@ -89,7 +82,6 @@ public class TransformationClientEventHandler {
 	}
 
 	// TODO: Custom hand render
-	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onRenderPlayerHand(RenderHandEvent event) {
 		if (ConfigHandler.customPlayerRender) {

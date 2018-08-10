@@ -7,28 +7,48 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.util.Reference;
 
-@Config(modid = Reference.MODID, name = "Hunter's Dream Config")
+@Config(modid = Reference.MODID)
 @Config.LangKey(Reference.CFG_LANG + "title")
 public class ConfigHandler {
 	@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
-	@Config.Name("Render transformed player differently")
 	public static boolean customPlayerRender = true;
 
-	@Config.LangKey(Reference.CFG_LANG + "renderxpbar")
+	@Config.LangKey(Reference.CFG_LANG + "renderXPBar")
 	@Config.Name("Render transformation xp bar")
 	public static boolean renderXPBar = true;
 
-	@Config.LangKey(Reference.CFG_LANG + "xpbarleft")
-	@Config.Name("Transformation XP bar on the left side")
+	@Config.LangKey(Reference.CFG_LANG + "xpBarLeft")
 	public static boolean xpBarLeft = false;
 
-	@Config.LangKey(Reference.CFG_LANG + "xpbartop")
-	@Config.Name("Transformation XP bar on the top")
+	@Config.LangKey(Reference.CFG_LANG + "xpBarTop")
 	public static boolean xpBarTop = false;
 
-	@Config.LangKey(Reference.CFG_LANG + "showpacketmessages")
-	@Config.Name("Show packet messages")
+	@Config.LangKey(Reference.CFG_LANG + "showPacketMessages")
 	public static boolean showPacketMessages = false;
+
+	@Config.LangKey(Reference.CFG_LANG + "veinSize")
+	@Config.RequiresWorldRestart
+	@Config.RangeInt(min = 0, max = 20)
+	public static int veinSize = 4;
+
+	@Config.LangKey(Reference.CFG_LANG + "generateSilverOre")
+	@Config.RequiresWorldRestart
+	public static boolean generateSilverOre = true;
+
+	@Config.LangKey(Reference.CFG_LANG + "silverMinY")
+	@Config.RequiresWorldRestart
+	@Config.RangeInt(min = 1, max = 70)
+	public static int silverMinY = 5;
+
+	@Config.LangKey(Reference.CFG_LANG + "silverMaxY")
+	@Config.RequiresWorldRestart
+	@Config.RangeInt(min = 1, max = 70)
+	public static int silverMaxY = 35;
+
+	@Config.LangKey(Reference.CFG_LANG + "silverChance")
+	@Config.RequiresWorldRestart
+	@Config.RangeInt(min = 0, max = 70)
+	public static int silverChance = 4;
 
 	@Mod.EventBusSubscriber
 	public static class ConfigEventHandler {

@@ -24,6 +24,7 @@ import theblockbox.huntersdream.network.TransformationXPMessage;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -79,8 +80,9 @@ public class PacketHandler {
 				// Server
 				case TRANSFORMATION:
 					// could contain render changes
-					INSTANCE.sendToAll(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformation(), player, cap.getTextureIndex()));
+					INSTANCE.sendToDimension(new TransformationMessage(cap.getXP(), cap.transformed(),
+							cap.getTransformation(), player, cap.getTextureIndex()),
+							player.world.provider.getDimension());
 					break;
 				case XP:
 					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), player));
@@ -110,25 +112,23 @@ public class PacketHandler {
 				default:
 					throw new IllegalArgumentException("Illegal arguments: Couldn't find packet " + this.toString()
 							+ "\nAdditional info:\nWrong side? "
-							+ (player.world.isRemote ? (this.SIDE == SERVER) : (this.SIDE == CLIENT)) + "\nPlayer: "
-							+ player.getName() + "\nAdditional argument length: " + args.length + "\nPath: "
-							+ (new ExecutionPath()).get(1) + " from " + (new ExecutionPath()).get(2) + " from "
-							+ (new ExecutionPath()).get(3));
+							+ (GeneralHelper.getOtherSide(GeneralHelper.getSideFromEntity(player)) == this.SIDE)
+							+ "\nPlayer: " + player.getName() + "\nAdditional argument length: " + args.length
+							+ "\nPath: " + (new ExecutionPath()).get(1) + " from " + (new ExecutionPath()).get(2)
+							+ " from " + (new ExecutionPath()).get(3));
 				}
 
 				// Receiving side can't be sending side
-				if (player.world.isRemote && this.SIDE == Side.CLIENT
-						|| !player.world.isRemote && this.SIDE == Side.SERVER)
+				if (GeneralHelper.getSideFromEntity(player) == this.SIDE)
 					throw new WrongSideException("Couldn't send packet " + this.NAME, player.world);
 
 				if (ConfigHandler.showPacketMessages)
 					Main.LOGGER.info(this.MESSAGE_BASE.getName() + " packet sent on side "
-							+ (player.world.isRemote ? CLIENT : SERVER).toString() + "\nPath: "
-							+ (new ExecutionPath()).get(1));
+							+ GeneralHelper.getSideFromEntity(player) + "\nPath: " + (new ExecutionPath()).get(1));
 			} else {
 				throw new WrongSideException(
 						"Packet " + this.NAME + " couldn't be sent\nPath: " + (new ExecutionPath()).get(1),
-						(this.SIDE == SERVER ? CLIENT : SERVER));
+						GeneralHelper.getOtherSide(this.SIDE));
 			}
 		}
 

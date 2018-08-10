@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -15,7 +16,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private boolean transformed;
 	private Transformations transformation;
 	private int textureIndex;
-	private EntityPlayer player;
+	private int player;
 
 	public TransformationMessage() {
 	}
@@ -26,7 +27,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.transformed = transformed;
 		this.transformation = transformation;
 		this.textureIndex = textureIndex;
-		this.player = player;
+		this.player = player.getEntityId();
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.xp = buf.readInt();
 		this.transformed = buf.readBoolean();
 		this.transformation = readTransformation(buf);
-		this.player = readPlayer(buf);
+		this.player = buf.readInt();
 		this.textureIndex = buf.readInt();
 	}
 
@@ -43,7 +44,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		buf.writeInt(xp);
 		buf.writeBoolean(transformed);
 		writeTransformation(buf, transformation);
-		writeEntity(buf, player);
+		buf.writeInt(player);
 		buf.writeInt(textureIndex);
 	}
 
@@ -65,7 +66,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		public IMessage onMessageReceived(final TransformationMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					ITransformationPlayer cap = TransformationHelper.getCap(message.player);
+					EntityPlayer player = (EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player);
+					ITransformationPlayer cap = TransformationHelper.getCap(player);
 					cap.setXP(message.xp);
 					cap.setTransformed(message.transformed);
 					cap.setTransformation(message.transformation);

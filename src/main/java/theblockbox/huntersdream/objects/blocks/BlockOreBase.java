@@ -17,9 +17,8 @@ public class BlockOreBase extends BlockBase {
 
 	public BlockOreBase(String name, int dimensionID, String dimensionName, int minHeight, int maxHeight, int chance,
 			Block spawnOn, boolean silver) {
-		super(dimensionName + "_ore_" + name, Material.ROCK, silver);
-		this.setHardness(3.0F);
-		this.setResistance(15.0F);
+		super(dimensionName + "_ore_" + name, Material.ROCK, 3.0F, silver);
+		this.setResistance(5.0F);
 		this.DIMENSION = dimensionID;
 		this.CHANCE = chance;
 		this.MIN_HEIGHT = minHeight;
@@ -27,6 +26,7 @@ public class BlockOreBase extends BlockBase {
 		this.SPAWN_ON = spawnOn;
 
 		BlockInit.ORES.add(this);
+		setHarvestLevel("pickaxe", 2);
 	}
 
 	public BlockOreBase(String name, Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn,

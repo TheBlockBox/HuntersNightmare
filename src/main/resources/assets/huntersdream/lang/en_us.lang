@@ -23,7 +23,7 @@ effect.fear=Fear
 
 # Blocks
 tile.block_silver.name=Silver Block
-tile.ore_silver.name=Silver Ore
+tile.overworld_ore_silver.name=Silver Ore
 
 # Entities
 entity.goblintd.name=Goblin
@@ -59,9 +59,14 @@ transformations.huntersdream:werewolf.tp.touched=You touch %s with %s and you no
 # Config
 huntersdream.config.title=Hunter's Dream Config
 huntersdream.config.customPlayerRender=Custom Player Render
-huntersdream.config.renderxpbar=Render transformation xp bar
-huntersdream.config.xpbarleft=Render transformation xp bar on the left hand side
-huntersdream.config.xpbartop=Render transformation xp bar on the top
-huntersdream.config.showpacketmessages=Show Packet Messages
+huntersdream.config.renderXPBar=Render transformation xp bar
+huntersdream.config.xpBarLeft=Render transformation xp bar on the left hand side
+huntersdream.config.xpBarTop=Render transformation xp bar on the top
+huntersdream.config.showPacketMessages=Show Packet Messages
+huntersdream.config.veinSize=Veins of ore per chunk
+huntersdream.config.generateSilverOre=Generate Silver Ore
+huntersdream.config.silverMinY=Minimum height of silver
+huntersdream.config.silverMaxY=Maximum height of silver
+huntersdream.config.silverChance=Average silver ores per vein
 
 # Other stuff

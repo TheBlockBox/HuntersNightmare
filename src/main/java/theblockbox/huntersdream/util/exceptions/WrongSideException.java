@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.exceptions;
 
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class WrongSideException extends RuntimeException {
 	private static final long serialVersionUID = 7281095896269746349L;
@@ -11,6 +12,6 @@ public class WrongSideException extends RuntimeException {
 	}
 
 	public WrongSideException(String message, World world) {
-		this(message, (world.isRemote ? Side.CLIENT : Side.SERVER));
+		this(message, GeneralHelper.getSideFromWorld(world));
 	}
 }

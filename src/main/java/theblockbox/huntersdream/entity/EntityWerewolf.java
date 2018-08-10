@@ -39,12 +39,13 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	private String entityName;
 	public static final double SPEED = 0.5D;
 	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
+	public static final float HEIGHT = 2.5F;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
 		this.textureIndex = textureIndex;
 		this.entityName = entityName;
-		this.setSize(1F, 2.5F);
+		this.setSize(1F, HEIGHT);
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityLivingBase entity) {

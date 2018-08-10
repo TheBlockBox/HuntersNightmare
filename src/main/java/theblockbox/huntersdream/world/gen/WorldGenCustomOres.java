@@ -14,13 +14,13 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.objects.blocks.BlockOreBase;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviourException;
+import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
 public class WorldGenCustomOres implements IWorldGenerator {
-	private final int BLOCKS_TO_SPAWN = 9;
 
 	public WorldGenCustomOres() {
 		for (BlockOreBase blockOreBase : BlockInit.ORES) {
-			blockOreBase.setWorldGenMinable(new WorldGenMinable(blockOreBase.getDefaultState(), BLOCKS_TO_SPAWN,
+			blockOreBase.setWorldGenMinable(new WorldGenMinable(blockOreBase.getDefaultState(), ConfigHandler.veinSize,
 					BlockMatcher.forBlock(blockOreBase.SPAWN_ON)));
 		}
 	}
@@ -29,14 +29,15 @@ public class WorldGenCustomOres implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
 			IChunkProvider chunkProvider) {
 
-		BlockInit.ORES.stream().filter(e -> e.DIMENSION == world.provider.getDimension()).forEach(e -> {
-			if (e.getWorldGenMinable() == null)
-				Main.LOGGER.error(
-						"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated.");
-			else
-				runGenerator(e.getWorldGenMinable(), world, random, chunkX, chunkZ, e.CHANCE, e.MIN_HEIGHT,
-						e.MAX_HEIGHT);
-		});
+		BlockInit.ORES.stream().filter(e -> e.DIMENSION == world.provider.getDimension())
+				.filter(e -> e == BlockInit.ORE_SILVER ? ConfigHandler.generateSilverOre : true).forEach(e -> {
+					if (e.getWorldGenMinable() == null)
+						Main.LOGGER.error(
+								"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated.");
+					else
+						runGenerator(e.getWorldGenMinable(), world, random, chunkX, chunkZ, e.CHANCE, e.MIN_HEIGHT,
+								e.MAX_HEIGHT);
+				});
 	}
 
 	private void runGenerator(WorldGenerator gen, World world, Random rand, int chunkX, int chunkZ, int chance,

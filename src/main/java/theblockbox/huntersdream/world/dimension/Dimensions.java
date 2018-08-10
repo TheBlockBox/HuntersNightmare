@@ -7,7 +7,7 @@ import net.minecraft.init.Blocks;
  * Made for easier ore generation
  */
 public enum Dimensions {
-	NETHER(Blocks.NETHERRACK, -1), OVERWORLD(Blocks.STONE, 0), END(Blocks.END_STONE, 1);
+	NETHER(Blocks.NETHERRACK, 1), OVERWORLD(Blocks.STONE, 0), END(Blocks.END_STONE, -1);
 	public final int ID;
 	public final String NAME;
 	/**

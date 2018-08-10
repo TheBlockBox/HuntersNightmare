@@ -5,7 +5,7 @@ package theblockbox.huntersdream.util.interfaces.effective;
  * against werewolves (= deal more damage)
  */
 public interface IEffectiveAgainstTransformation extends IEffective {
-	public static final float DEFAULT_EFFECTIVENESS = 2;
+	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 
 	/** The damage multiplier when used against the specified creature */
 	default public float getEffectiveness() {

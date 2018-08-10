@@ -18,28 +18,28 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 	private String reply = null;
 	private String pickedUp = null;
 	/** The touched player */
-	private EntityPlayer player = null;
+	private int player;
 
 	public TransformationReplyMessage() {
 	}
 
 	public TransformationReplyMessage(String reply, EntityPlayer player, Item pickedUp) {
 		this.reply = reply;
-		this.player = player;
+		this.player = player.getEntityId();
 		this.pickedUp = pickedUp.getUnlocalizedName() + ".name";
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.reply = readString(buf);
-		this.player = readPlayer(buf);
+		this.player = buf.readInt();
 		this.pickedUp = readString(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		writeString(buf, reply);
-		writeEntity(buf, player);
+		buf.writeInt(player);
 		writeString(buf, pickedUp);
 	}
 
@@ -63,6 +63,8 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
 					if ((!(message.reply == null)) && (!message.reply.equals(""))) {
+						EntityPlayer player = (EntityPlayer) Minecraft.getMinecraft().world
+								.getEntityByID(message.player);
 						String reply = message.reply;
 						String pickedUp = I18n.format(message.pickedUp);
 						TextComponentTranslation tct = null;
@@ -75,9 +77,9 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 							}
 						} else if (reply.contains("tp")) {
 							if (reply.contains("picked")) {
-								tct = new TextComponentTranslation(reply, message.player.getName(), pickedUp);
+								tct = new TextComponentTranslation(reply, player.getName(), pickedUp);
 							} else if (reply.contains("touched")) {
-								tct = new TextComponentTranslation(reply, message.player.getName(), pickedUp);
+								tct = new TextComponentTranslation(reply, player.getName(), pickedUp);
 							}
 						}
 
