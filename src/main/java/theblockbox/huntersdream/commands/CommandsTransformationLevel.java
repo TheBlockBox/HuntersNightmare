@@ -6,11 +6,11 @@ import java.util.List;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -54,11 +54,11 @@ public class CommandsTransformationLevel extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		try {
-			EntityPlayer player;
+			EntityPlayerMP player;
 			if (args.length >= 3) {
-				player = sender.getEntityWorld().getPlayerEntityByName(args[2]);
+				player = (EntityPlayerMP) sender.getEntityWorld().getPlayerEntityByName(args[2]);
 			} else {
-				player = (EntityPlayer) sender;
+				player = (EntityPlayerMP) sender;
 			}
 
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
@@ -84,9 +84,9 @@ public class CommandsTransformationLevel extends CommandBase {
 				throw new IllegalArgumentException("Minus xp");
 			}
 
-			cap.setXP(value);
+			TransformationHelper.setXP(player, value, TransformationXPSentReason.COMMAND);
 			sender.sendMessage(new TextComponentTranslation("command.transformationXP.set", player.getName(), value));
-			Packets.TRANSFORMATION.sync(player);
+
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
@@ -20,6 +21,7 @@ import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatu
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 public class WerewolfHelper {
 
@@ -40,11 +42,17 @@ public class WerewolfHelper {
 	// TODO: Add rituals that affect levelling
 	public static double getWerewolfLevel(EntityPlayer player) {
 		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
-			double level = ((double) TransformationHelper.getCap(player).getXP()) / 500.0;
+			ITransformationPlayer cap = TransformationHelper.getCap(player);
+			double level = ((double) cap.getXP()) / 500.0;
 
 			if (level >= 6) {
 				level = 5;
 			}
+
+			if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT))
+				level = 0;
+			else
+				level += 1;
 
 			return level;
 		} else {
@@ -54,42 +62,44 @@ public class WerewolfHelper {
 	}
 
 	public static void applyLevelBuffs(EntityPlayer player) {
-		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
-				&& TransformationHelper.getITransformation(player).transformed()) {
-			int level = TransformationHelper.getTransformation(player).getLevelFloor(player);
-			int duration = 400;
+		if (hasControl(player)) {
+			if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
+					&& TransformationHelper.getITransformation(player).transformed()) {
+				int level = TransformationHelper.getCap(player).getLevelFloor();
+				int duration = 400;
 
-			// Caution! Duration in ticks
-			switch (level) {
-			case 11:
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
-			case 10:
+				// Caution! Duration in ticks
+				switch (level) {
+				case 11:
+					player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
+				case 10:
 
-			case 9:
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
-			case 8:
+				case 9:
+					player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
+				case 8:
 
-			case 7:
-				player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
-			case 6:
+				case 7:
+					player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
+				case 6:
 
-			case 5:
-				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, duration, 0, false, false));
-			case 4:
+				case 5:
+					player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, duration, 0, false, false));
+				case 4:
 
-			case 3:
-				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0, false, false));
-				player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, 0, false, false));
-			case 2:
+				case 3:
+					player.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, 0, false, false));
+				case 2:
 
-			case 1:
-				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, duration, 0, false, false));
-				break;
+				case 1:
+					player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, duration, 0, false, false));
+					break;
+				}
+				player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
+			} else {
+				throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
+						TransformationHelper.getTransformation(player));
 			}
-			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
-		} else {
-			throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
-					TransformationHelper.getTransformation(player));
 		}
 	}
 
@@ -138,7 +148,7 @@ public class WerewolfHelper {
 
 				EntityPlayer player = (EntityPlayer) entity;
 				// return true when level is higher than five
-				return TransformationHelper.getTransformation(player).getLevelFloor(player) >= 5;
+				return TransformationHelper.getCap(player).getLevelFloor() >= 5;
 			} else {
 				return true;
 			}
@@ -163,14 +173,13 @@ public class WerewolfHelper {
 		}
 	}
 
-	// TODO: Set min level to 8 (4 only because you can't level higher)
 	/** Returns true when the player has control in the werewolf form */
 	public static boolean hasControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
 		if (cap.getTransformation() != Transformations.WEREWOLF) {
 			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
 		}
-		return (cap.getTransformation().getLevelFloor(player) > -1); // TODO: Change this!
+		return (cap.getLevelFloor() > 0);
 	}
 
 	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {
@@ -257,5 +266,9 @@ public class WerewolfHelper {
 	 */
 	public static boolean transformedWerewolf(EntityLivingBase entity) {
 		return TransformationHelper.transformedTransformation(entity, Transformations.WEREWOLF);
+	}
+
+	public static IWerewolf getIWerewolf(EntityPlayer player) {
+		return player.getCapability(CapabilitiesInit.CAPABILITY_WEREWOLF, null);
 	}
 }

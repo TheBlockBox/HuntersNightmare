@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
@@ -49,6 +50,19 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 			writeString(buf, transformation.toString());
 		else
 			throw new IllegalArgumentException("The transformation argument is null which it isn't allowed to be");
+	}
+
+	public static void writeRitualArray(ByteBuf buf, @Nonnull Rituals[] rituals) {
+		buf.writeInt(rituals.length); // rituals length
+		for (int i = 0; i < rituals.length; i++)
+			writeString(buf, rituals[i].toString());
+	}
+
+	public static Rituals[] readRitualArray(ByteBuf buf) {
+		Rituals[] rituals = new Rituals[buf.readInt()];
+		for (int i = 0; i < rituals.length; i++)
+			rituals[i] = Rituals.fromName(readString(buf));
+		return rituals;
 	}
 
 	public static void addScheduledTask(MessageContext ctx, Runnable runnableToSchedule) {

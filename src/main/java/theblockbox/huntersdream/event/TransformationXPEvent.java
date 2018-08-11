@@ -2,6 +2,7 @@ package theblockbox.huntersdream.event;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -14,7 +15,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
  * or methods that call this method). When this event is canceled, the player
  * won't get any xp added, no packet and no level up message will be sent. The
  * amount is the xp the player will have after the post of this event (given
- * that the event is not canceled)
+ * that the event is not canceled). Posted on {@link MinecraftForge#EVENT_BUS}
  */
 @Cancelable
 public class TransformationXPEvent extends PlayerEvent {
@@ -49,7 +50,7 @@ public class TransformationXPEvent extends PlayerEvent {
 	}
 
 	public enum TransformationXPSentReason {
-		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF);
+		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF), COMMAND;
 
 		/** The transformations that can receive xp through this cause */
 		public final Transformations[] TRANSFORMATIONS;

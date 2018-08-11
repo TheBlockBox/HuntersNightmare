@@ -171,6 +171,7 @@ public class TransformationHelper {
 			throw new NullPointerException("Null not allowed here");
 		ITransformationPlayer cap = getCap(player);
 		cap.setXP(0); // reset xp
+		cap.setLevel(0);
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
@@ -277,12 +278,13 @@ public class TransformationHelper {
 	 */
 	public static void setXP(EntityPlayerMP player, int xp, TransformationXPSentReason reason) {
 		ITransformationPlayer cap = getCap(player);
-		int levelBefore = cap.getTransformation().getLevelFloor(player);
+		int levelBefore = cap.getLevelFloor();
 		TransformationXPEvent event = new TransformationXPEvent(player, xp, reason);
 
 		if (!MinecraftForge.EVENT_BUS.post(event)) {
 			cap.setXP(event.getAmount());
-			int levelAfter = cap.getTransformation().getLevelFloor(player);
+			cap.setLevel(cap.getTransformation().getLevel((EntityPlayerMP) player));
+			int levelAfter = cap.getLevelFloor();
 			if (levelBefore < levelAfter) {
 				player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
 			}
@@ -382,5 +384,10 @@ public class TransformationHelper {
 			}
 		}
 		return flag;
+	}
+
+	public static void refreshLevel(EntityPlayerMP player) {
+		ITransformationPlayer cap = getCap(player);
+		cap.setLevel(cap.getTransformation().getLevel(player));
 	}
 }

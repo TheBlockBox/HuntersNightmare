@@ -5,7 +5,6 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -24,15 +23,16 @@ import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.EntityInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.PotionInit;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
 /**
  * In this class everythings gets registered (items, blocks, entities, biomes,
- * ores etc.)
+ * ores, event handlers etc.)
  */
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Reference.MODID)
 public class RegistryHandler {
 
 	// Registry events
@@ -99,8 +99,8 @@ public class RegistryHandler {
 	}
 
 	public static void initCommon(FMLInitializationEvent event) {
-		OreDictionaryCompat.registerOres();
 		PacketHandler.register();
+		OreDictionaryCompat.registerOres();
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
@@ -112,8 +112,6 @@ public class RegistryHandler {
 	}
 
 	public static void initClient() {
-		// Client side only event bus
-		MinecraftForge.EVENT_BUS.register(TransformationClientEventHandler.class);
 	}
 
 	public static void postInitClient() {

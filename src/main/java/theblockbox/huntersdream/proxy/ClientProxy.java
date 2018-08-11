@@ -25,4 +25,9 @@ public class ClientProxy implements ICommonProxy {
 	public void postInit() {
 		RegistryHandler.postInitClient();
 	}
+
+	@Override
+	public boolean physicalClient() {
+		return true;
+	}
 }

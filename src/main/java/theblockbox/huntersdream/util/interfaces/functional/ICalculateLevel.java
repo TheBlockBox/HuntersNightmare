@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.util.interfaces.functional;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 @FunctionalInterface
 /**
@@ -8,5 +8,5 @@ import net.minecraft.entity.player.EntityPlayer;
  * player's level
  */
 public interface ICalculateLevel {
-	public double getLevel(EntityPlayer player);
+	public double getLevel(EntityPlayerMP player);
 }

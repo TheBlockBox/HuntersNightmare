@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import theblockbox.huntersdream.objects.blocks.BlockBase;
 import theblockbox.huntersdream.objects.blocks.BlockOreBase;
+import theblockbox.huntersdream.objects.blocks.custommodel.BlockWerewolfEnchantingStone;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
@@ -20,6 +21,8 @@ public class BlockInit {
 	public static final Block BLOCK_SILVER = new BlockBase("block_silver", Material.IRON, 3.0F, true);
 	public static final Block ORE_SILVER = new BlockOreBase("silver", Dimensions.OVERWORLD, ConfigHandler.silverMinY,
 			ConfigHandler.silverMaxY, ConfigHandler.silverChance, Blocks.STONE, true);
+	public static final Block BLOCK_WEREWOLF_ENCHANTMENT_STONE = new BlockWerewolfEnchantingStone(
+			"werewolf_enchanting_stone");
 
 	// Ores
 	// only give a name, the dimension and the ore tag will be automatically added

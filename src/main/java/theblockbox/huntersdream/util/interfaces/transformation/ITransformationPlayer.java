@@ -1,13 +1,18 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
+import java.util.ArrayList;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
+import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;;
 
 /**
@@ -19,7 +24,8 @@ public interface ITransformationPlayer extends ITransformation {
 
 	/**
 	 * Use {@link TransformationHelper#setXP(EntityPlayerMP, int)} for automatic
-	 * packets and level up messages
+	 * packets and level up messages. When you use this, always remember to also do
+	 * {@link #setLevel(double)}
 	 */
 	public void setXP(int xp);
 
@@ -27,11 +33,72 @@ public interface ITransformationPlayer extends ITransformation {
 
 	public void setTextureIndex(int textureIndex);
 
+	public double getLevel();
+
+	public void setLevel(double level);
+
+	default public int getLevelFloor() {
+		return MathHelper.floor(getLevel());
+	}
+
+	default public double getPercentageToNextLevel() {
+		return (getLevel() - getLevelFloor());
+	}
+
+	public Rituals[] getRituals();
+
+	public void setRituals(Rituals[] rituals);
+
+	default public void addRitual(Rituals ritual) {
+		Rituals[] currentRituals = getRituals();
+		Rituals[] rituals = new Rituals[currentRituals.length + 1];
+		for (int i = 0; i < currentRituals.length; i++) {
+			rituals[i] = currentRituals[i];
+			if (rituals[i] == ritual)
+				throw new IllegalArgumentException(
+						"The ritual " + ritual.toString() + " is already in the array at index " + i);
+		}
+		rituals[currentRituals.length] = ritual;
+		setRituals(rituals);
+	}
+
+	default public void removeRitual(Rituals ritual) {
+		if (hasRitual(ritual)) {
+			Rituals[] currentRituals = getRituals();
+			ArrayList<Rituals> rituals = new ArrayList<>();
+			for (Rituals r : currentRituals) {
+				if (r != ritual)
+					rituals.add(r);
+			}
+			Rituals[] newRituals = rituals.toArray(new Rituals[0]);
+			if (newRituals.length != (currentRituals.length - 1))
+				throw new UnexpectedBehaviorException(
+						"Should remove one ritual, but array size is different then expected (old array size: "
+								+ currentRituals.length + " expected array size: " + (currentRituals.length - 1)
+								+ " gotten array size: " + newRituals.length);
+			setRituals(newRituals);
+		} else {
+			throw new IllegalArgumentException(
+					"The ritual " + ritual.toString() + " couldn't be found in the array and therefore not be removed");
+		}
+	}
+
+	default public boolean hasRitual(Rituals ritual) {
+		for (Rituals r : getRituals()) {
+			if (r == ritual)
+				return true;
+		}
+		return false;
+	}
+
 	public static class TransformationPlayer implements ITransformationPlayer {
 		private boolean transformed = false;
 		private Transformations transformation = Transformations.HUMAN;
 		private int xp = 0;
 		private int textureIndex = 0;
+		private double level = 0;
+		/** Rituals that the player has done */
+		private Rituals[] rituals = new Rituals[0];
 
 		@Override
 		public boolean transformed() {
@@ -65,7 +132,7 @@ public interface ITransformationPlayer extends ITransformation {
 
 		@Override
 		public int getTextureIndex() {
-			return textureIndex;
+			return this.textureIndex;
 		}
 
 		@Override
@@ -73,6 +140,25 @@ public interface ITransformationPlayer extends ITransformation {
 			this.textureIndex = textureIndex;
 		}
 
+		@Override
+		public double getLevel() {
+			return this.level;
+		}
+
+		@Override
+		public void setLevel(double level) {
+			this.level = level;
+		}
+
+		@Override
+		public Rituals[] getRituals() {
+			return this.rituals;
+		}
+
+		@Override
+		public void setRituals(Rituals[] rituals) {
+			this.rituals = rituals;
+		}
 	}
 
 	public static class TransformationPlayerStorage implements IStorage<ITransformationPlayer> {
@@ -80,6 +166,10 @@ public interface ITransformationPlayer extends ITransformation {
 		public static final String XP = "xp";
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TEXTURE_INDEX = "textureindex";
+		public static final String LEVEL = "level";
+		public static final String LENGTH = "length";
+		public static final String RITUALS = "rituals";
+		public static final String RITUAL_CHAR = "r";
 
 		@Override
 		public NBTBase writeNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
@@ -89,6 +179,14 @@ public interface ITransformationPlayer extends ITransformation {
 			compound.setInteger(XP, instance.getXP());
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
+			compound.setDouble(LEVEL, instance.getLevel());
+			Rituals[] rituals = instance.getRituals();
+			NBTTagCompound ritualStorage = new NBTTagCompound();
+			ritualStorage.setInteger(LENGTH, rituals.length);
+			for (int i = 0; i < rituals.length; i++) {
+				ritualStorage.setString(RITUAL_CHAR + i, rituals[i].toString());
+			}
+			compound.setTag(RITUALS, ritualStorage);
 			return compound;
 		}
 
@@ -100,6 +198,14 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setXP(compound.getInteger(XP));
 			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
+			instance.setLevel(compound.getDouble(LEVEL));
+			NBTTagCompound ritualStorage = (NBTTagCompound) compound.getTag(RITUALS);
+			int length = ritualStorage.getInteger(LENGTH);
+			Rituals[] rituals = new Rituals[length];
+			for (int i = 0; i < length; i++) {
+				rituals[i] = Rituals.fromName(ritualStorage.getString(RITUAL_CHAR + i));
+			}
+			instance.setRituals(rituals);
 		}
 	}
 }

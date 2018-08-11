@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.objects.blocks.BlockOreBase;
-import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviourException;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
 public class WorldGenCustomOres implements IWorldGenerator {
@@ -43,7 +43,7 @@ public class WorldGenCustomOres implements IWorldGenerator {
 	private void runGenerator(WorldGenerator gen, World world, Random rand, int chunkX, int chunkZ, int chance,
 			int minHeight, int maxHeight) {
 		if (minHeight > maxHeight || minHeight < 0 || maxHeight > 256)
-			throw new UnexpectedBehaviourException("Ore generated out of bounds");
+			throw new UnexpectedBehaviorException("Ore generated out of bounds");
 		int heightDiff = maxHeight - minHeight + 1;
 		for (int i = 0; i < chance; i++) {
 			int x = chunkX * 16 + rand.nextInt(16);

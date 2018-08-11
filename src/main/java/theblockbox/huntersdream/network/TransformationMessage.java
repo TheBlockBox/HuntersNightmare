@@ -3,9 +3,11 @@ package theblockbox.huntersdream.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -17,17 +19,21 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private Transformations transformation;
 	private int textureIndex;
 	private int player;
+	private double level;
+	private Rituals[] rituals;
 
 	public TransformationMessage() {
 	}
 
 	public TransformationMessage(int xp, boolean transformed, Transformations transformation, EntityPlayer player,
-			int textureIndex) {
+			int textureIndex, Rituals[] rituals) {
 		this.xp = xp;
 		this.transformed = transformed;
 		this.transformation = transformation;
 		this.textureIndex = textureIndex;
 		this.player = player.getEntityId();
+		this.level = transformation.getLevel((EntityPlayerMP) player);
+		this.rituals = rituals;
 	}
 
 	@Override
@@ -37,6 +43,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.transformation = readTransformation(buf);
 		this.player = buf.readInt();
 		this.textureIndex = buf.readInt();
+		this.level = buf.readDouble();
+		this.rituals = readRitualArray(buf);
 	}
 
 	@Override
@@ -46,6 +54,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		writeTransformation(buf, transformation);
 		buf.writeInt(player);
 		buf.writeInt(textureIndex);
+		buf.writeDouble(level);
+		writeRitualArray(buf, rituals);
 	}
 
 	@Override
@@ -72,6 +82,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 					cap.setTransformed(message.transformed);
 					cap.setTransformation(message.transformation);
 					cap.setTextureIndex(message.textureIndex);
+					cap.setLevel(message.level);
+					cap.setRituals(message.rituals);
 				});
 			}
 			return null;

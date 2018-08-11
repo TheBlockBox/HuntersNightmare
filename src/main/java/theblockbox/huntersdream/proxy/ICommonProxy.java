@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.proxy;
 
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.relauncher.Side;
 
 public interface ICommonProxy {
 	public void registerItemRenderer(Item item, int meta, String id);
@@ -10,4 +11,14 @@ public interface ICommonProxy {
 	public void init();
 
 	public void postInit();
+
+	public boolean physicalClient();
+
+	default public Side getPhysicalSide() {
+		if (physicalClient()) {
+			return Side.CLIENT;
+		} else {
+			return Side.SERVER;
+		}
+	}
 }

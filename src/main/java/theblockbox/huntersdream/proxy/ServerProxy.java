@@ -23,4 +23,9 @@ public class ServerProxy implements ICommonProxy {
 		RegistryHandler.postInitServer();
 	}
 
+	@Override
+	public boolean physicalClient() {
+		return false;
+	}
+
 }

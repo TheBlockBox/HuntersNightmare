@@ -10,8 +10,11 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.renderer.RenderWolfmanPlayer;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -20,6 +23,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 /**
  * Handles events which are important for transforming
  */
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = Reference.MODID)
 public class TransformationClientEventHandler {
 	private static RenderWolfmanPlayer renderWerewolf = null;
 
@@ -50,9 +54,9 @@ public class TransformationClientEventHandler {
 			GameType gameType = mc.playerController.getCurrentGameType();
 			if (gameType != GameType.CREATIVE && gameType != GameType.SPECTATOR) {
 				if ((!event.isCancelable()) && event.getType() == ElementType.EXPERIENCE) {
-					Transformations transformation = TransformationHelper.getTransformation(player);
-					if (transformation.getLevel(player) > 0) {
-						mc.renderEngine.bindTexture(transformation.getXPBarTexture());
+					ITransformationPlayer cap = TransformationHelper.getCap(player);
+					if (cap.getLevel() > 0) {
+						mc.renderEngine.bindTexture(cap.getTransformation().getXPBarTexture());
 
 						int x = ConfigHandler.xpBarLeft ? event.getResolution().getScaledWidth() / 2 - 90
 								: event.getResolution().getScaledWidth() / 2 + 10;
@@ -71,10 +75,10 @@ public class TransformationClientEventHandler {
 							}
 						}
 						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 81, 8);
-						int percent = (int) (transformation.getPercentageToNextLevel(player) * 79);
+						int percent = (int) (cap.getPercentageToNextLevel() * 79);
 						mc.ingameGUI.drawTexturedModalRect(x + 1, y + 1, 0, 9, percent, 9);
-						mc.ingameGUI.drawCenteredString(mc.fontRenderer,
-								Integer.toString(transformation.getLevelFloor(player)), x + 40, y - 7, 3138304);
+						mc.ingameGUI.drawCenteredString(mc.fontRenderer, Integer.toString(cap.getLevelFloor()), x + 40,
+								y - 7, 3138304);
 					}
 				}
 			}

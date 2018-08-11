@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -20,7 +21,7 @@ import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Reference.MODID)
 public class WerewolfEventHandler {
 
 	// use LivingDamage only for removing damage and LivingHurt for damage and
@@ -133,6 +134,10 @@ public class WerewolfEventHandler {
 		}
 	}
 
+	/**
+	 * Called in
+	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
+	 */
 	public static void handleInfection(EntityLivingBase entity) {
 		if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);

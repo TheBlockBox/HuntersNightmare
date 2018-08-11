@@ -81,11 +81,13 @@ public class PacketHandler {
 				case TRANSFORMATION:
 					// could contain render changes
 					INSTANCE.sendToDimension(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformation(), player, cap.getTextureIndex()),
+							cap.getTransformation(), player, cap.getTextureIndex(), cap.getRituals()),
 							player.world.provider.getDimension());
+					cap.setLevel(cap.getTransformation().getLevel((EntityPlayerMP) player));
 					break;
 				case XP:
-					INSTANCE.sendToAll(new TransformationXPMessage(cap.getXP(), player));
+					INSTANCE.sendToDimension(new TransformationXPMessage(cap.getXP(), player),
+							player.world.provider.getDimension());
 					break;
 				case NIGHT_OVER:
 					// only changes player view

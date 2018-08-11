@@ -33,8 +33,9 @@ import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviourException;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -45,7 +46,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Reference.MODID)
 public class TransformationEventHandler {
 	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
 	public static final DamageSource EFFECTIVE_AGAINST_TRANSFORMATION = new DamageSource(
@@ -78,18 +79,20 @@ public class TransformationEventHandler {
 					if (cap.getTransformation() == Transformations.WEREWOLF) {
 
 						if (!cap.transformed()) {
+							// TODO: Make transformation into werewolf
+							// IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 							cap.setTransformed(true);
 							Packets.TRANSFORMATION.sync(player);
 
 							if (!WerewolfHelper.hasControl(player)) {
 								World world = player.world;
-								EntityWerewolf werewolf = new EntityWerewolf(world,
+								EntityWerewolf were = new EntityWerewolf(world,
 										TransformationHelper.getCap(player).getTextureIndex(),
 										"player" + player.getName());
-								werewolf.setPosition(player.posX, player.posY, player.posZ);
-								PLAYER_WEREWOLVES.add(werewolf);
-								world.spawnEntity(werewolf);
-								Packets.NO_CONTROL.sync(player, werewolf);
+								were.setPosition(player.posX, player.posY, player.posZ);
+								PLAYER_WEREWOLVES.add(were);
+								world.spawnEntity(were);
+								Packets.NO_CONTROL.sync(player, were);
 							}
 						}
 
@@ -258,7 +261,7 @@ public class TransformationEventHandler {
 								iit.setTime(-1);
 							}
 						} else {
-							throw new UnexpectedBehaviourException(
+							throw new UnexpectedBehaviorException(
 									"IInfectInTicks#currentlyInfected returns false although there is definitely an infection going on");
 						}
 					}

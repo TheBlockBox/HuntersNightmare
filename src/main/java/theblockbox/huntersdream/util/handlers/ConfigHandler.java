@@ -14,7 +14,6 @@ public class ConfigHandler {
 	public static boolean customPlayerRender = true;
 
 	@Config.LangKey(Reference.CFG_LANG + "renderXPBar")
-	@Config.Name("Render transformation xp bar")
 	public static boolean renderXPBar = true;
 
 	@Config.LangKey(Reference.CFG_LANG + "xpBarLeft")
@@ -50,7 +49,7 @@ public class ConfigHandler {
 	@Config.RangeInt(min = 0, max = 70)
 	public static int silverChance = 4;
 
-	@Mod.EventBusSubscriber
+	@Mod.EventBusSubscriber(modid = Reference.MODID)
 	public static class ConfigEventHandler {
 		@SubscribeEvent
 		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {

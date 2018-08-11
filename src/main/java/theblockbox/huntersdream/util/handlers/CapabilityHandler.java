@@ -23,7 +23,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCr
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Reference.MODID)
 public class CapabilityHandler {
 	public final static ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = new ResourceLocation(Reference.MODID,
 			"transformationplayer");
@@ -42,6 +42,7 @@ public class CapabilityHandler {
 		if (entity instanceof EntityPlayer) {
 			event.addCapability(TRANSFORMATION_PLAYER_CAPABILITIY,
 					new CapabilityProvider<ITransformationPlayer>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
+			event.addCapability(WEREWOLF, new CapabilityProvider<IWerewolf>(CapabilitiesInit.CAPABILITY_WEREWOLF));
 		} else if (entity instanceof EntityVillager) {
 			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY, new CapabilityProvider<ITransformationCreature>(
 					CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE));
@@ -53,7 +54,6 @@ public class CapabilityHandler {
 					new CapabilityProvider<IInfectInTicks>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
 			event.addCapability(INFECT_ON_NEXT_MOON,
 					new CapabilityProvider<IInfectOnNextMoon>(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON));
-			event.addCapability(WEREWOLF, new CapabilityProvider<IWerewolf>(CapabilitiesInit.CAPABILITY_WEREWOLF));
 		}
 	}
 
@@ -63,6 +63,7 @@ public class CapabilityHandler {
 		ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(event.getOriginal());
 
 		transformationPlayer.setXP(oldTransformationPlayer.getXP());
+		transformationPlayer.setLevel(oldTransformationPlayer.getLevel());
 		transformationPlayer.setTransformed(false);
 		transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
 		transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());

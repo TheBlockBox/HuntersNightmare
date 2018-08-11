@@ -28,7 +28,7 @@ public class BlockBase extends Block implements IHasModel {
 		if (silver) {
 			itemBlock = new ItemBlockSilver(this);
 		} else {
-			itemBlock = new ItemBlock(this);
+			itemBlock = getItemBlock();
 		}
 		this.setHardness(hardness);
 
@@ -38,6 +38,10 @@ public class BlockBase extends Block implements IHasModel {
 	@Override
 	public void registerModels() {
 		Main.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+	}
+
+	protected ItemBlock getItemBlock() {
+		return new ItemBlock(this);
 	}
 
 	private static class ItemBlockSilver extends ItemBlock implements ISilverEffectiveAgainstTransformation {

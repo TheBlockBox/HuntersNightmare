@@ -24,6 +24,7 @@ effect.fear=Fear
 # Blocks
 tile.block_silver.name=Silver Block
 tile.overworld_ore_silver.name=Silver Ore
+tile.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
 
 # Entities
 entity.goblintd.name=Goblin
@@ -55,6 +56,8 @@ transformations.huntersdream:werewolf.fp.picked=You touch %s! Your skin burns as
 transformations.huntersdream:werewolf.fp.touched=You've been touched with %s and it burns your skin
 transformations.huntersdream:werewolf.tp.picked=You notice something off about %s when they picked up %s. Could they be?
 transformations.huntersdream:werewolf.tp.touched=You touch %s with %s and you notice they're in pain. Could they be?
+werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
+werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
 
 # Config
 huntersdream.config.title=Hunter's Dream Config

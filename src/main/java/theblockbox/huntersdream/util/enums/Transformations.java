@@ -3,13 +3,13 @@ package theblockbox.huntersdream.util.enums;
 import java.util.ArrayList;
 
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -71,16 +71,13 @@ public enum Transformations {
 		return this.ENTRY.resourceLocation;
 	}
 
-	public double getLevel(EntityPlayer player) {
-		return this.getCalculateLevel().getLevel(player);
-	}
-
-	public int getLevelFloor(EntityPlayer player) {
-		return MathHelper.floor(getLevel(player));
-	}
-
-	public double getPercentageToNextLevel(EntityPlayer player) {
-		return getLevel(player) - getLevelFloor(player);
+	public double getLevel(EntityPlayerMP player) {
+		if (!player.world.isRemote) {
+			return this.getCalculateLevel().getLevel(player);
+		} else {
+			throw new WrongSideException("Can only obtain level on server side. Please use cap#getLevel instead",
+					player.world);
+		}
 	}
 
 	public boolean isSupernatural() {
