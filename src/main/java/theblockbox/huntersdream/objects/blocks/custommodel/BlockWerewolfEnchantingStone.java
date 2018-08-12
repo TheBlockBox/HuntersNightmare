@@ -21,7 +21,6 @@ import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.effective.ISilverEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
@@ -131,8 +130,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 		return flag;
 	}
 
-	private static class ItemBlockWerewolfEnchantingStone extends ItemBlock
-			implements ISilverEffectiveAgainstTransformation {
+	private static class ItemBlockWerewolfEnchantingStone extends ItemBlock {
 		public ItemBlockWerewolfEnchantingStone(Block block) {
 			super(block);
 			setMaxStackSize(1);

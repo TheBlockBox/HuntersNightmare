@@ -15,6 +15,7 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
+import theblockbox.huntersdream.network.PlaySoundMessage;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationReplyMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
@@ -42,7 +43,7 @@ public class PacketHandler {
 		TRANSFORMATION(new TransformationMessage()), NIGHT_OVER(new TransformationWerewolfNightOverMessage()),
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
 		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
-		TRANSFORMATION_REPLY(new TransformationReplyMessage());
+		TRANSFORMATION_REPLY(new TransformationReplyMessage()), PLAY_SOUND(new PlaySoundMessage());
 
 		private final MessageBase<?> MESSAGE_BASE;
 		/** Side that receives package */
@@ -111,13 +112,16 @@ public class PacketHandler {
 							player);
 					break;
 
+				case PLAY_SOUND:
+					sendMessageToPlayer(new PlaySoundMessage((String) args[0], (int) args[1], (int) args[2]), player);
+					break;
+
 				default:
 					throw new IllegalArgumentException("Illegal arguments: Couldn't find packet " + this.toString()
 							+ "\nAdditional info:\nWrong side? "
 							+ (GeneralHelper.getOtherSide(GeneralHelper.getSideFromEntity(player)) == this.SIDE)
 							+ "\nPlayer: " + player.getName() + "\nAdditional argument length: " + args.length
-							+ "\nPath: " + (new ExecutionPath()).get(1) + " from " + (new ExecutionPath()).get(2)
-							+ " from " + (new ExecutionPath()).get(3));
+							+ "\nPath: " + (new ExecutionPath()).get(1, 4));
 				}
 
 				// Receiving side can't be sending side

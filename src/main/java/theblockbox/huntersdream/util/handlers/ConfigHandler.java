@@ -49,6 +49,9 @@ public class ConfigHandler {
 	@Config.RangeInt(min = 0, max = 70)
 	public static int silverChance = 4;
 
+	@Config.LangKey(Reference.CFG_LANG + "showFullStackTrace")
+	public static boolean showFullStackTrace = false;
+
 	@Mod.EventBusSubscriber(modid = Reference.MODID)
 	public static class ConfigEventHandler {
 		@SubscribeEvent

@@ -353,14 +353,6 @@ public class ModelLycanthrope extends ModelBase {
 		this.legr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
 
 		if (entityIn.isSprinting()) {
-			// TODO: handle sprinting animation
-			this.head.rotateAngleX = headPitch * 0.017453292F;
-			this.head.rotateAngleY = netHeadYaw * 0.017453292F;
-			this.body.rotateAngleX = -((float) Math.PI / 2F);
-			this.legl.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-			this.legr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-			this.arml.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-			this.armr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
 		}
 	}
 }

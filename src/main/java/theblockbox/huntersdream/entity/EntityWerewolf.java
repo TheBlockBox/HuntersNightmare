@@ -18,6 +18,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -93,17 +94,17 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public SoundEvent getAmbientSound() {
-		return super.getAmbientSound();
+		return SoundEvents.ENTITY_WOLF_GROWL;
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource sound) {
-		return super.getHurtSound(sound);
+		return SoundEvents.ENTITY_WOLF_HURT;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return super.getDeathSound();
+		return SoundEvents.ENTITY_WOLF_DEATH;
 	}
 
 	@Override
@@ -114,6 +115,11 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	public boolean isChild() {
 		return false;
+	}
+
+	@Override
+	protected float getSoundPitch() {
+		return super.getSoundPitch() - 0.4F;
 	}
 
 	@Override

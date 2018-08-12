@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -177,7 +178,6 @@ public interface ITransformationPlayer extends ITransformation {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setBoolean(TRANSFORMED, instance.transformed());
 			compound.setInteger(XP, instance.getXP());
-			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
 			compound.setDouble(LEVEL, instance.getLevel());
 			Rituals[] rituals = instance.getRituals();
@@ -187,6 +187,7 @@ public interface ITransformationPlayer extends ITransformation {
 				ritualStorage.setString(RITUAL_CHAR + i, rituals[i].toString());
 			}
 			compound.setTag(RITUALS, ritualStorage);
+			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			return compound;
 		}
 
@@ -196,7 +197,6 @@ public interface ITransformationPlayer extends ITransformation {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
 			instance.setTransformed(compound.getBoolean(TRANSFORMED));
 			instance.setXP(compound.getInteger(XP));
-			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
 			instance.setLevel(compound.getDouble(LEVEL));
 			NBTTagCompound ritualStorage = (NBTTagCompound) compound.getTag(RITUALS);
@@ -206,6 +206,15 @@ public interface ITransformationPlayer extends ITransformation {
 				rituals[i] = Rituals.fromName(ritualStorage.getString(RITUAL_CHAR + i));
 			}
 			instance.setRituals(rituals);
+			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
+
+			// pre-0.2.0 support
+			if (compound.hasKey("transformationID")) {
+				Main.LOGGER.warn("Seems like the mod has been upgraded... Loading transformation from old format");
+				@SuppressWarnings("deprecation")
+				Transformations transformation = Transformations.fromID(compound.getInteger("transformationID"));
+				instance.setTransformation(transformation);
+			}
 		}
 	}
 }

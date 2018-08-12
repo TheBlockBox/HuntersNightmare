@@ -1,8 +1,5 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import com.google.common.base.Predicate;
 
 import net.minecraft.entity.Entity;
@@ -48,9 +45,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class TransformationEventHandler {
-	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
-	public static final DamageSource EFFECTIVE_AGAINST_TRANSFORMATION = new DamageSource(
-			"effectiveAgainstTransformation");
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event) {
@@ -62,57 +56,23 @@ public class TransformationEventHandler {
 		}
 
 		if (player.ticksExisted % 20 == 0) {
+			if (WerewolfHelper.transformedWerewolf(player)) {
+				WerewolfHelper.applyLevelBuffs(player);
+			}
+
 			if (!player.world.isRemote) { // ensures that this is the server side
 
 				for (ItemStack stack : player.getEquipmentAndArmor()) {
 					Item item = stack.getItem();
 					if (item instanceof IEffectiveAgainstTransformation) {
 						if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
-							player.attackEntityFrom(EFFECTIVE_AGAINST_TRANSFORMATION,
+							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
 									cap.transformed() ? cap.getTransformation().getProtection() : 1);
 						}
 					}
 				}
 
-				// werewolf
-				if (WerewolfHelper.isWerewolfTime(player)) {
-					if (cap.getTransformation() == Transformations.WEREWOLF) {
-
-						if (!cap.transformed()) {
-							// TODO: Make transformation into werewolf
-							// IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
-							cap.setTransformed(true);
-							Packets.TRANSFORMATION.sync(player);
-
-							if (!WerewolfHelper.hasControl(player)) {
-								World world = player.world;
-								EntityWerewolf were = new EntityWerewolf(world,
-										TransformationHelper.getCap(player).getTextureIndex(),
-										"player" + player.getName());
-								were.setPosition(player.posX, player.posY, player.posZ);
-								PLAYER_WEREWOLVES.add(were);
-								world.spawnEntity(were);
-								Packets.NO_CONTROL.sync(player, were);
-							}
-						}
-
-						// remove werewolves
-					} else if (!PLAYER_WEREWOLVES.isEmpty()) {
-
-						Iterator<EntityWerewolf> iterator = PLAYER_WEREWOLVES.iterator();
-
-						while (iterator.hasNext()) {
-							EntityWerewolf werewolf = iterator.next();
-							World world = werewolf.world;
-							Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
-							world.removeEntity(werewolf);
-							PLAYER_WEREWOLVES.remove(werewolf);
-						}
-					}
-				} else if (WerewolfHelper.transformedWerewolf(player)) {
-					cap.setTransformed(false);
-					Packets.TRANSFORMATION.sync(player);
-				}
+				WerewolfEventHandler.onPlayerTick(event, (EntityPlayerMP) player, cap);
 
 				if (player.ticksExisted % 1200 == 0) {
 					// every minute when the player is not under a block, transformed and a
@@ -121,17 +81,13 @@ public class TransformationEventHandler {
 						TransformationHelper.addXP((EntityPlayerMP) player, 5,
 								TransformationXPSentReason.WEREWOLF_UNDER_MOON);
 					}
-					// this piece of code syncs the player data every five minutes, so basically you
+					// this piece of code syncs the player data every three minutes, so basically
+					// you
 					// don't have to sync the data every time you change something
 					// (though it is recommended)
-					if (player.ticksExisted % 6000 == 0) {
+					if (player.ticksExisted % 3600 == 0) {
 						Packets.TRANSFORMATION.sync(player);
 					}
-				}
-			}
-			if (cap.getTransformation() == Transformations.WEREWOLF) {
-				if (cap.transformed()) {
-					WerewolfHelper.applyLevelBuffs(player);
 				}
 			}
 		}
@@ -326,9 +282,5 @@ public class TransformationEventHandler {
 		}
 
 		return entityplayer;
-	}
-
-	public static EntityWerewolf[] getPlayerWerewolves() {
-		return PLAYER_WEREWOLVES.toArray(new EntityWerewolf[0]);
 	}
 }

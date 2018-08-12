@@ -59,15 +59,6 @@ public class CapabilityHandler {
 
 	@SubscribeEvent
 	public static void onPlayerClone(PlayerEvent.Clone event) {
-		ITransformationPlayer transformationPlayer = TransformationHelper.getCap(event.getEntityPlayer());
-		ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(event.getOriginal());
-
-		transformationPlayer.setXP(oldTransformationPlayer.getXP());
-		transformationPlayer.setLevel(oldTransformationPlayer.getLevel());
-		transformationPlayer.setTransformed(false);
-		transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
-		transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
-
 		if (event.isWasDeath()) {
 			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(event.getEntityPlayer());
 			iit.setCurrentlyInfected(false);
@@ -77,8 +68,18 @@ public class CapabilityHandler {
 			ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
 			ionm.setInfectionTick(-1);
 			ionm.setInfectionTransformation(Transformations.HUMAN);
-		}
 
-		Packets.TRANSFORMATION.sync(event.getEntityPlayer());
+			ITransformationPlayer transformationPlayer = TransformationHelper.getCap(event.getEntityPlayer());
+			ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(event.getOriginal());
+
+			transformationPlayer.setXP(oldTransformationPlayer.getXP());
+			transformationPlayer.setLevel(oldTransformationPlayer.getLevel());
+			transformationPlayer.setTransformed(false);
+			transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
+			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
+			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
+
+			Packets.TRANSFORMATION.sync(event.getEntityPlayer());
+		}
 	}
 }

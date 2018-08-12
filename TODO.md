@@ -15,3 +15,5 @@
 (- and make sure that no control werewolves have to kill and not only hurt the mob to get xp)
 - make that no control werewolves can't get xp and remove the above two tasks
 - make no control thing only for level 0 without xp
+- remove ghast screaming completely
+- fix that packets don't get sent on player death

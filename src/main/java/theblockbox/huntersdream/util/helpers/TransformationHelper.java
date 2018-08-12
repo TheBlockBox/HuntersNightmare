@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
@@ -44,6 +45,12 @@ public class TransformationHelper {
 	 * entity can transform
 	 */
 	public final static HashMap<Class<? extends EntityLivingBase>, Transformations[]> INFECTABLE_ENTITES = new HashMap<>();
+	/**
+	 * special damage source for things that are effective against specific
+	 * transformations
+	 */
+	public static final DamageSource EFFECTIVE_AGAINST_TRANSFORMATION = new DamageSource(
+			"effectiveAgainstTransformation");
 
 	/**
 	 * Returns the transformation capability of the given player (just a short-cut

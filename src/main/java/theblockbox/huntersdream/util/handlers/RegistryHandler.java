@@ -23,8 +23,10 @@ import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.EntityInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.PotionInit;
+import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
+import theblockbox.huntersdream.util.helpers.ObfuscationHelper;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
@@ -64,7 +66,7 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
-		// event.getRegistry().registerAll(values);
+		event.getRegistry().registerAll(SoundInit.SOUND_EVENTS.toArray(new SoundEvent[0]));
 	}
 
 	@SubscribeEvent
@@ -101,6 +103,7 @@ public class RegistryHandler {
 	public static void initCommon(FMLInitializationEvent event) {
 		PacketHandler.register();
 		OreDictionaryCompat.registerOres();
+		ObfuscationHelper.init();
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {

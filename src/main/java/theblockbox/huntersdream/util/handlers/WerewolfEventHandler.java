@@ -1,28 +1,45 @@
 package theblockbox.huntersdream.util.handlers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
+import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.ObfuscationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class WerewolfEventHandler {
+	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
 
 	// use LivingDamage only for removing damage and LivingHurt for damage and
 	// damaged resources
@@ -154,6 +171,161 @@ public class WerewolfEventHandler {
 						// change transformation
 						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF);
 					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Called in {@link TransformationEventHandler#onPlayerTick(PlayerTickEvent)}
+	 */
+	public static void onPlayerTick(PlayerTickEvent event, EntityPlayerMP player, ITransformationPlayer cap) {
+		// werewolf time
+		if (WerewolfHelper.isWerewolfTime(player)) {
+			if (cap.getTransformation() == Transformations.WEREWOLF) {
+				if (!cap.transformed()) {
+					werewolfTimeNotTransformed(player, cap);
+				} else {
+					werewolfTimeTransformed(player, cap);
+				}
+				// remove werewolves
+			} else if (!PLAYER_WEREWOLVES.isEmpty()) {
+
+				Iterator<EntityWerewolf> iterator = PLAYER_WEREWOLVES.iterator();
+
+				while (iterator.hasNext()) {
+					EntityWerewolf werewolf = iterator.next();
+					World world = werewolf.world;
+					Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
+					world.removeEntity(werewolf);
+					PLAYER_WEREWOLVES.remove(werewolf);
+				}
+			}
+			// not werewolf time
+		} else if (cap.getTransformation() == Transformations.WEREWOLF) {
+			if (cap.transformed()) {
+				notWerewolfTimeTransformed(player, cap);
+			} else {
+				notWerewolfTimeNotTransformed(player, cap);
+			}
+		}
+	}
+
+	// these methods are here for easier code understanding
+
+	private static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		WerewolfHelper.applyLevelBuffs(player);
+	}
+
+	private static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+
+		if (werewolf.getTransformationStage() == 0) {
+			werewolf.setTimeSinceTransformation(player.ticksExisted);
+			onStageChanged(player, werewolf, 1, cap);
+		}
+
+		// every five seconds (20 * 5 = 100) one stage up
+		int nextStage = MathHelper
+				.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
+		if (nextStage > werewolf.getTransformationStage()) {
+			onStageChanged(player, werewolf, nextStage, cap);
+		}
+	}
+
+	private static void onStageChanged(EntityPlayer player, IWerewolf werewolf, int nextStage,
+			ITransformationPlayer cap) {
+		werewolf.setTransformationStage(nextStage);
+		switch (werewolf.getTransformationStage()) {
+		case 1:
+			Packets.PLAY_SOUND.sync(player, "heartbeat", 100, 1);
+			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 550, 1));
+			player.addPotionEffect(new PotionEffect(MobEffects.POISON, 550, 0));
+			break;
+		case 2:
+			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 450, 1));
+			break;
+		case 3:
+			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 350, 255));
+			player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 350, 200, false, false));
+			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 350, 255));
+			player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 350, 255));
+			break;
+		case 4:
+			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 120, 0));
+			break;
+		case 5:
+			// nothing happens
+			break;
+		case 6:
+			Packets.PLAY_SOUND.sync(player, "howl", 1000000, 100);
+			werewolf.setTimeSinceTransformation(-1);
+			werewolf.setTransformationStage(0);
+			cap.setTransformed(true);
+			Packets.TRANSFORMATION.sync(player);
+
+			if (!WerewolfHelper.hasControl(player)) {
+				World world = player.world;
+				EntityWerewolf were = new EntityWerewolf(world, TransformationHelper.getCap(player).getTextureIndex(),
+						"player" + player.getName());
+				were.setPosition(player.posX, player.posY, player.posZ);
+				PLAYER_WEREWOLVES.add(were);
+				world.spawnEntity(were);
+				Packets.NO_CONTROL.sync(player, were);
+			}
+			ObfuscationHelper.forceSetSize(player, 1F, EntityWerewolf.HEIGHT);
+			break;
+		default:
+			throw new UnexpectedBehaviorException(
+					"Stage " + werewolf.getTransformationStage() + " is not a valid stage");
+		}
+		// Packets.PLAY_SOUND.sync(player, "ghast", 10, 1);
+		if (werewolf.getTransformationStage() != 0) {
+			player.sendMessage(new TextComponentTranslation(
+					"transformations.huntersdream:werewolf.transformingInto." + werewolf.getTransformationStage()));
+		}
+
+	}
+
+	private static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+		if (werewolf.getTransformationStage() == 0) {
+			player.sendMessage(
+					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
+			cap.setTransformed(false);
+			Packets.TRANSFORMATION.sync(player);
+			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
+			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
+			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 4));
+			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
+			// night vision for better blindness effect
+			player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
+			ObfuscationHelper.forceSetSize(player, 1F, 2F);
+		}
+	}
+
+	private static void notWerewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		// currently does nothing
+	}
+
+	public static EntityWerewolf[] getPlayerWerewolves() {
+		return PLAYER_WEREWOLVES.toArray(new EntityWerewolf[0]);
+	}
+
+	@SubscribeEvent
+	public static void onEntityHurt(LivingHurtEvent event) {
+		if (event.getEntityLiving() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+			if (!player.world.isRemote) {
+				ITransformationPlayer cap = TransformationHelper.getCap(player);
+				IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+				if (WerewolfHelper.isWerewolfTime(player) && !cap.transformed()
+						&& (cap.getTransformation() == Transformations.WEREWOLF)
+						&& werewolf.getTransformationStage() > 0) {
+					// cancel event if damage source isn't magic (including poison) or event can
+					// kill player
+					event.setCanceled(
+							(event.getSource() != DamageSource.MAGIC) || (event.getAmount() > player.getHealth()));
 				}
 			}
 		}

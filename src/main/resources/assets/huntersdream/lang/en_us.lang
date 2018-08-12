@@ -56,6 +56,13 @@ transformations.huntersdream:werewolf.fp.picked=You touch %s! Your skin burns as
 transformations.huntersdream:werewolf.fp.touched=You've been touched with %s and it burns your skin
 transformations.huntersdream:werewolf.tp.picked=You notice something off about %s when they picked up %s. Could they be?
 transformations.huntersdream:werewolf.tp.touched=You touch %s with %s and you notice they're in pain. Could they be?
+transformations.huntersdream:werewolf.transformingInto.1=You feel weird and nauseous
+transformations.huntersdream:werewolf.transformingInto.2=You bend over in pain, your lungs and kidneys have failed
+transformations.huntersdream:werewolf.transformingInto.3=Your internal organs have stopped working and started to repair differently
+transformations.huntersdream:werewolf.transformingInto.4=You go blind, your eyesight is changing. Still screaming in pain... This won't let you die
+transformations.huntersdream:werewolf.transformingInto.5=Your body is now having dramatic changes, bones and muscle tissue breaking and reforming, your eyesight is back but different. Your mind can only think about killing
+transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf within is now free...
+transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
 werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
 werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
 
@@ -71,5 +78,11 @@ huntersdream.config.generateSilverOre=Generate Silver Ore
 huntersdream.config.silverMinY=Minimum height of silver
 huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverChance=Average silver ores per vein
+huntersdream.config.showFullStackTrace=Show full stack trace in logs (use ONLY for debugging reasons)
+
+# Sounds (Subtitles)
+transformation.heartbeat=Heartbeat of a werewolf
+mob.ghast.scream=Werewolf screaming in pain
+transformation.werewolf.howling=Howling werewolf
 
 # Other stuff

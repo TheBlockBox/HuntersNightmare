@@ -3,6 +3,7 @@ package theblockbox.huntersdream.entity;
 import com.google.common.base.Predicate;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -23,6 +24,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -148,5 +151,16 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public void setTextureIndex(int index) {
 		this.dataManager.set(TEXTURE_INDEX, index);
+	}
+
+	@Override
+	public String getName() {
+		if (world.isRemote) {
+			return I18n.format("entity.goblintd.name");
+		} else {
+			Main.LOGGER.warn("The method EntityGoblinTD#getName has been called on server side.\nPath: "
+					+ (new ExecutionPath()).getAll());
+			return "Goblin";
+		}
 	}
 }

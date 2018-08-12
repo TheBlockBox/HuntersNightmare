@@ -22,10 +22,6 @@ public interface IWerewolf {
 
 	public void setTransformationStage(int stage);
 
-	public boolean getTransformingBack();
-
-	public void setTransformingBack(boolean transformingBack);
-
 	default public Transformations getTransformation() {
 		return Transformations.WEREWOLF;
 	}
@@ -33,7 +29,7 @@ public interface IWerewolf {
 	public static class Werewolf implements IWerewolf {
 		private int timeSinceTransformation = -1;
 		private int transformationStage = 0;
-		private boolean transformingBack = false;
+		// private boolean transformingBack = false;
 
 		@Override
 		public void setTimeSinceTransformation(int time) {
@@ -54,29 +50,18 @@ public interface IWerewolf {
 		public void setTransformationStage(int stage) {
 			this.transformationStage = stage;
 		}
-
-		@Override
-		public boolean getTransformingBack() {
-			return this.transformingBack;
-		}
-
-		@Override
-		public void setTransformingBack(boolean transformingBack) {
-			this.transformingBack = transformingBack;
-		}
 	}
 
 	public static class WerewolfStorage implements IStorage<IWerewolf> {
 		public static final String TIME_SINCE_TRANSFORMATION = "timesincetransformation";
 		public static final String TRANSFORMATION_STAGE = "transformationstage";
-		public static final String TRANSFORMING_BACK = "transformingback";
+		// public static final String TRANSFORMING_BACK = "transformingback";
 
 		@Override
 		public NBTBase writeNBT(Capability<IWerewolf> capability, IWerewolf instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger(TIME_SINCE_TRANSFORMATION, instance.getTimeSinceTransformation());
 			compound.setInteger(TRANSFORMATION_STAGE, instance.getTransformationStage());
-			compound.setBoolean(TRANSFORMING_BACK, instance.getTransformingBack());
 			return compound;
 		}
 
@@ -85,7 +70,6 @@ public interface IWerewolf {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
 			instance.setTimeSinceTransformation(compound.getInteger(TIME_SINCE_TRANSFORMATION));
 			instance.setTransformationStage(compound.getInteger(TRANSFORMATION_STAGE));
-			instance.setTransformingBack(compound.getBoolean(TRANSFORMING_BACK));
 		}
 	}
 }

@@ -9,6 +9,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -65,6 +66,24 @@ public enum Transformations {
 
 	public static Transformations fromResourceLocation(ResourceLocation resourceLocation) {
 		return fromName(resourceLocation.toString());
+	}
+
+	/**
+	 * @deprecated Use {@link #fromName(String)} or
+	 *             {@link #fromResourceLocation(ResourceLocation)} instead. This is
+	 *             only here because of pre-0.2.0 support
+	 * @param id The id of the transformation that you want to get
+	 * @return Returns the transformation that has the corresponding id
+	 */
+	@Deprecated
+	public static Transformations fromID(int id) {
+		if (id == 0) {
+			return Transformations.HUMAN;
+		} else if (id == 1) {
+			return Transformations.WEREWOLF;
+		} else {
+			throw new UnexpectedBehaviorException("The id " + id + " couldn't be found");
+		}
 	}
 
 	public ResourceLocation getResourceLocation() {
