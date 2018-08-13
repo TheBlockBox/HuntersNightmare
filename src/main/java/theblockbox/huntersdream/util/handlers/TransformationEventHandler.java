@@ -2,12 +2,10 @@ package theblockbox.huntersdream.util.handlers;
 
 import com.google.common.base.Predicate;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,14 +14,11 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
@@ -31,10 +26,12 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.TimedRunnable;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
@@ -52,7 +49,7 @@ public class TransformationEventHandler {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
 
 		if (WerewolfHelper.transformedWerewolf(player)) {
-			player.inventory.dropAllItems();
+			WerewolfEventHandler.onWerewolfTick(player);
 		}
 
 		if (player.ticksExisted % 20 == 0) {
@@ -69,6 +66,15 @@ public class TransformationEventHandler {
 							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
 									cap.transformed() ? cap.getTransformation().getProtection() : 1);
 						}
+					}
+				}
+
+				// only check for the first element because the list is always sorted
+				if (!GeneralHelper.RUNNABLES_TO_BE_EXECUTED.isEmpty()) {
+					TimedRunnable timedRunnable = GeneralHelper.RUNNABLES_TO_BE_EXECUTED.get(0);
+					if (timedRunnable.ON_TICK >= player.ticksExisted && timedRunnable.PLAYER.equals(player)) {
+						timedRunnable.RUNNABLE.run();
+						GeneralHelper.RUNNABLES_TO_BE_EXECUTED.remove(0);
 					}
 				}
 
@@ -191,8 +197,12 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
-		if (event.getEntityLiving().ticksExisted % 80 == 0) {
-			if (!event.getEntityLiving().world.isRemote) {
+		if (!event.getEntityLiving().world.isRemote) {
+			if (event.getEntityLiving() instanceof EntityWerewolf) {
+				WerewolfEventHandler.onWerewolfTick(event.getEntityLiving());
+			}
+			if (event.getEntityLiving().ticksExisted % 80 == 0) {
+
 				EntityLivingBase entity = event.getEntityLiving();
 				try {
 					EntityCreature creature = (EntityCreature) entity;
@@ -226,61 +236,5 @@ public class TransformationEventHandler {
 				WerewolfEventHandler.handleInfection(entity);
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public static void onItemPickup(ItemPickupEvent event) {
-		EntityItem originalEntity = event.getOriginalEntity();
-		if (!originalEntity.world.isRemote) {
-			String throwerName = originalEntity.getThrower();
-			EntityPlayer player = event.player;
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			Item item = event.getStack().getItem();
-			if (item instanceof IEffectiveAgainstTransformation) {
-				if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
-					// now it is ensured that the item is effective against the player
-					String msg = "transformations." + cap.getTransformation().toString() + ".";
-
-					EntityPlayer thrower;
-					if (!(throwerName == null) && !(throwerName.equals("null"))
-							&& !(throwerName.equals(player.getName()))) {
-						thrower = originalEntity.world.getPlayerEntityByName(throwerName);
-						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
-						Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
-					} else {
-						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.picked", player, item);
-						thrower = getNearestPlayer(player.world, player, 5);
-						if (thrower != null) {
-							Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.picked", player, item);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void onEntityItemPickup(EntityItemPickupEvent event) {
-		if (WerewolfHelper.transformedWerewolf(event.getEntityPlayer())) {
-			event.setCanceled(true);
-		}
-	}
-
-	public static EntityPlayer getNearestPlayer(World world, Entity entity, double range) {
-		double d0 = -1.0D;
-		EntityPlayer entityplayer = null;
-
-		for (int i = 0; i < world.playerEntities.size(); ++i) {
-			EntityPlayer entityplayer1 = world.playerEntities.get(i);
-
-			double distance = entityplayer1.getDistanceSq(entity.posX, entity.posY, entity.posZ);
-
-			if ((range < 0.0D || distance < range * range) && (d0 == -1.0D || distance < d0) && (distance > 1.1)) {
-				d0 = distance;
-				entityplayer = entityplayer1;
-			}
-		}
-
-		return entityplayer;
 	}
 }

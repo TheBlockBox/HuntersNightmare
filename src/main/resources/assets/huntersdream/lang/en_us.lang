@@ -65,6 +65,7 @@ transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf wi
 transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
 werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
 werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
+huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
 
 # Config
 huntersdream.config.title=Hunter's Dream Config
@@ -78,7 +79,7 @@ huntersdream.config.generateSilverOre=Generate Silver Ore
 huntersdream.config.silverMinY=Minimum height of silver
 huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverChance=Average silver ores per vein
-huntersdream.config.showFullStackTrace=Show full stack trace in logs (use ONLY for debugging reasons)
+huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
 
 # Sounds (Subtitles)
 transformation.heartbeat=Heartbeat of a werewolf

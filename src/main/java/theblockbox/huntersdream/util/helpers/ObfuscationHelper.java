@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 public class ObfuscationHelper {
 	public static boolean obfuscated = true;
 	public static Method setSizeMethod = null;
-	public static final String SET_SIZE_OBFUSCATED = "func_70105_a";
-	public static final String SET_SIZE_DEOBFUSCATED = "setSize";
+	public static final String SET_SIZE_OBF = "func_70105_a";
+	public static final String SET_SIZE_DEOBF = "setSize";
 
 	public static void init() {
 		for (Field field : World.class.getFields()) {
@@ -22,9 +22,8 @@ public class ObfuscationHelper {
 	public static void forceSetSize(Entity entity, float width, float height) {
 		if (setSizeMethod == null) {
 			try {
-				Method m = Entity.class
-						.getDeclaredMethod(ObfuscationHelper.obfuscated ? ObfuscationHelper.SET_SIZE_OBFUSCATED
-								: ObfuscationHelper.SET_SIZE_DEOBFUSCATED, float.class, float.class);
+				Method m = Entity.class.getDeclaredMethod(ObfuscationHelper.obfuscated ? ObfuscationHelper.SET_SIZE_OBF
+						: ObfuscationHelper.SET_SIZE_DEOBF, float.class, float.class);
 				setSizeMethod = m;
 			} catch (NoSuchMethodException e) {
 				entity.width = width;

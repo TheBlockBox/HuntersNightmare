@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.entity.model;
 
-import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
@@ -8,20 +8,14 @@ import net.minecraft.util.math.MathHelper;
 /**
  * Lycanthrope - VampireRedEye Created using Tabula 7.0.0
  */
-public class ModelLycanthrope extends ModelBase {
-	public ModelRenderer head;
-	public ModelRenderer body;
+public class ModelLycanthropeBiped extends ModelBiped {
 	public ModelRenderer tail;
-	public ModelRenderer arml;
-	public ModelRenderer armr;
-	public ModelRenderer legl;
-	public ModelRenderer legr;
 	public ModelRenderer snout;
 	public ModelRenderer jaw;
 	public ModelRenderer nose;
 	public ModelRenderer teeth;
 	public ModelRenderer earl;
-	public ModelRenderer earl_1;
+	public ModelRenderer earr;
 	public ModelRenderer headfurl;
 	public ModelRenderer headfurr;
 	public ModelRenderer body2;
@@ -67,8 +61,10 @@ public class ModelLycanthrope extends ModelBase {
 	public ModelRenderer clawr4;
 	public ModelRenderer clawr5;
 	public ModelRenderer clawr6;
+	/** This value is weird */
+	public static final float ROTATION = -0.5235987755982988F;
 
-	public ModelLycanthrope() {
+	public ModelLycanthropeBiped() {
 		this.textureWidth = 128;
 		this.textureHeight = 128;
 		this.hclawl3 = new ModelRenderer(this, 42, 12);
@@ -100,10 +96,10 @@ public class ModelLycanthrope extends ModelBase {
 		this.clawl6 = new ModelRenderer(this, 6, 120);
 		this.clawl6.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.clawl6.addBox(-0.5F, 17.0F, -4.2F, 1, 4, 1, 0.0F);
-		this.body = new ModelRenderer(this, 0, 30);
-		this.body.setRotationPoint(0.0F, -13.0F, -5.0F);
-		this.body.addBox(-5.0F, 0.0F, -4.5F, 10, 10, 9, 0.0F);
-		this.setRotateAngle(body, 0.3490658503988659F, 0.0F, 0.0F);
+		this.bipedBody = new ModelRenderer(this, 0, 30);
+		this.bipedBody.setRotationPoint(0.0F, -13.0F, -5.0F);
+		this.bipedBody.addBox(-5.0F, 0.0F, -4.5F, 10, 10, 9, 0.0F);
+		this.setRotateAngle(bipedBody, 0.3490658503988659F, 0.0F, 0.0F);
 		this.clawr = new ModelRenderer(this, 0, 120);
 		this.clawr.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.clawr.addBox(0.8F, 16.7F, -3.3F, 1, 1, 1, 0.0F);
@@ -130,10 +126,10 @@ public class ModelLycanthrope extends ModelBase {
 		this.hclawl5 = new ModelRenderer(this, 42, 16);
 		this.hclawl5.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.hclawl5.addBox(0.2F, 11.5F, -15.3F, 1, 3, 1, 0.0F);
-		this.arml = new ModelRenderer(this, 68, 8);
-		this.arml.setRotationPoint(4.8F, -10.0F, -4.0F);
-		this.arml.addBox(0.0F, -1.5F, -2.0F, 4, 10, 4, 0.0F);
-		this.setRotateAngle(arml, 0.4363323129985824F, 0.0F, 0.0F);
+		this.bipedLeftArm = new ModelRenderer(this, 68, 8);
+		this.bipedLeftArm.setRotationPoint(4.8F, -10.0F, -4.0F);
+		this.bipedLeftArm.addBox(0.0F, -1.5F, -2.0F, 4, 10, 4, 0.0F);
+		this.setRotateAngle(bipedLeftArm, 0.4363323129985824F, 0.0F, 0.0F);
 		this.tail4 = new ModelRenderer(this, 74, 72);
 		this.tail4.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.tail4.addBox(-2.0F, -1.5F, 11.0F, 4, 4, 4, 0.0F);
@@ -144,17 +140,17 @@ public class ModelLycanthrope extends ModelBase {
 		this.teeth = new ModelRenderer(this, 60, 0);
 		this.teeth.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.teeth.addBox(-1.5F, 2.8F, -10.0F, 3, 2, 4, 0.0F);
-		this.legl = new ModelRenderer(this, 0, 76);
-		this.legl.setRotationPoint(4.0F, 4.6F, 0.0F);
-		this.legl.addBox(-2.0F, -2.0F, -3.0F, 4, 10, 6, 0.0F);
-		this.setRotateAngle(legl, -0.5235987755982988F, 0.0F, 0.0F);
+		this.bipedLeftLeg = new ModelRenderer(this, 0, 76);
+		this.bipedLeftLeg.setRotationPoint(4.0F, 4.6F, 0.0F);
+		this.bipedLeftLeg.addBox(-2.0F, -2.0F, -3.0F, 4, 10, 6, 0.0F);
+		this.setRotateAngle(bipedLeftLeg, ROTATION, 0.0F, 0.0F);
 		this.hclawr5 = new ModelRenderer(this, 42, 16);
 		this.hclawr5.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.hclawr5.addBox(-3.8F, 11.5F, -15.3F, 1, 3, 1, 0.0F);
-		this.legr = new ModelRenderer(this, 0, 76);
-		this.legr.setRotationPoint(-4.0F, 4.6F, 0.0F);
-		this.legr.addBox(-2.0F, -2.0F, -3.0F, 4, 10, 6, 0.0F);
-		this.setRotateAngle(legr, -0.5235987755982988F, 0.0F, 0.0F);
+		this.bipedRightLeg = new ModelRenderer(this, 0, 76);
+		this.bipedRightLeg.setRotationPoint(-4.0F, 4.6F, 0.0F);
+		this.bipedRightLeg.addBox(-2.0F, -2.0F, -3.0F, 4, 10, 6, 0.0F);
+		this.setRotateAngle(bipedRightLeg, ROTATION, 0.0F, 0.0F);
 		this.headfurl = new ModelRenderer(this, 26, 14);
 		this.headfurl.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.headfurl.addBox(0.8F, 0.5F, -4.0F, 4, 4, 1, 0.0F);
@@ -210,9 +206,9 @@ public class ModelLycanthrope extends ModelBase {
 		this.nose = new ModelRenderer(this, 42, 0);
 		this.nose.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.nose.addBox(-1.0F, -0.3F, -10.1F, 2, 1, 1, 0.0F);
-		this.earl_1 = new ModelRenderer(this, 24, 0);
-		this.earl_1.setRotationPoint(0.0F, 0.0F, 0.0F);
-		this.earl_1.addBox(-3.0F, -5.9F, -3.0F, 2, 3, 1, 0.0F);
+		this.earr = new ModelRenderer(this, 24, 0);
+		this.earr.setRotationPoint(0.0F, 0.0F, 0.0F);
+		this.earr.addBox(-3.0F, -5.9F, -3.0F, 2, 3, 1, 0.0F);
 		this.hclawr6 = new ModelRenderer(this, 42, 16);
 		this.hclawr6.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.hclawr6.addBox(-2.5F, 11.5F, -15.3F, 1, 4, 1, 0.0F);
@@ -220,13 +216,13 @@ public class ModelLycanthrope extends ModelBase {
 		this.neck.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.neck.addBox(-3.0F, -3.0F, -3.0F, 6, 6, 6, 0.0F);
 		this.setRotateAngle(neck, 0.6829473363053812F, 0.0F, 0.0F);
-		this.armr = new ModelRenderer(this, 68, 8);
-		this.armr.setRotationPoint(-4.8F, -10.0F, -4.0F);
-		this.armr.addBox(-4.0F, -1.5F, -2.0F, 4, 10, 4, 0.0F);
-		this.setRotateAngle(armr, 0.4363323129985824F, 0.0F, 0.0F);
-		this.head = new ModelRenderer(this, 0, 0);
-		this.head.setRotationPoint(0.0F, -15.0F, -6.2F);
-		this.head.addBox(-3.5F, -3.0F, -6.0F, 7, 7, 6, 0.0F);
+		this.bipedRightArm = new ModelRenderer(this, 68, 8);
+		this.bipedRightArm.setRotationPoint(-4.8F, -10.0F, -4.0F);
+		this.bipedRightArm.addBox(-4.0F, -1.5F, -2.0F, 4, 10, 4, 0.0F);
+		this.setRotateAngle(bipedRightArm, 0.4363323129985824F, 0.0F, 0.0F);
+		this.bipedHead = new ModelRenderer(this, 0, 0);
+		this.bipedHead.setRotationPoint(0.0F, -15.0F, -6.2F);
+		this.bipedHead.addBox(-3.5F, -3.0F, -6.0F, 7, 7, 6, 0.0F);
 		this.tail3 = new ModelRenderer(this, 70, 56);
 		this.tail3.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.tail3.addBox(-2.5F, -3.6F, 4.0F, 5, 5, 8, 0.0F);
@@ -272,65 +268,65 @@ public class ModelLycanthrope extends ModelBase {
 		this.handl.addChild(this.hclawl3);
 		this.footr.addChild(this.clawr5);
 		this.footr.addChild(this.clawr6);
-		this.body.addChild(this.bodyfur2);
+		this.bipedBody.addChild(this.bodyfur2);
 		this.handr.addChild(this.hclawr4);
 		this.handl.addChild(this.hclawl6);
 		this.handl.addChild(this.hclawl2);
-		this.body.addChild(this.bodyfur1);
+		this.bipedBody.addChild(this.bodyfur1);
 		this.footl.addChild(this.clawl6);
 		this.footr.addChild(this.clawr);
 		this.footl.addChild(this.clawl5);
-		this.arml.addChild(this.handl);
-		this.armr.addChild(this.armr2);
-		this.head.addChild(this.snout);
-		this.armr.addChild(this.armrfur1);
-		this.armr.addChild(this.handr);
+		this.bipedLeftArm.addChild(this.handl);
+		this.bipedRightArm.addChild(this.armr2);
+		this.bipedHead.addChild(this.snout);
+		this.bipedRightArm.addChild(this.armrfur1);
+		this.bipedRightArm.addChild(this.handr);
 		this.handl.addChild(this.hclawl5);
 		this.tail.addChild(this.tail4);
 		this.footr.addChild(this.clawr3);
-		this.head.addChild(this.teeth);
+		this.bipedHead.addChild(this.teeth);
 		this.handr.addChild(this.hclawr5);
-		this.head.addChild(this.headfurl);
+		this.bipedHead.addChild(this.headfurl);
 		this.handr.addChild(this.hclawr3);
 		this.footr.addChild(this.clawr4);
-		this.legr.addChild(this.legr3);
-		this.arml.addChild(this.arml2);
-		this.body.addChild(this.body2);
-		this.legl.addChild(this.footl);
+		this.bipedRightLeg.addChild(this.legr3);
+		this.bipedLeftArm.addChild(this.arml2);
+		this.bipedBody.addChild(this.body2);
+		this.bipedLeftLeg.addChild(this.footl);
 		this.footl.addChild(this.clawl2);
 		this.footr.addChild(this.clawr2);
 		this.handl.addChild(this.hclawl4);
 		this.handr.addChild(this.hclawr2);
 		this.tail.addChild(this.tail2);
-		this.head.addChild(this.earl);
+		this.bipedHead.addChild(this.earl);
 		this.footl.addChild(this.clawl3);
-		this.head.addChild(this.nose);
-		this.head.addChild(this.earl_1);
+		this.bipedHead.addChild(this.nose);
+		this.bipedHead.addChild(this.earr);
 		this.handr.addChild(this.hclawr6);
-		this.body.addChild(this.neck);
+		this.bipedBody.addChild(this.neck);
 		this.tail.addChild(this.tail3);
 		this.footl.addChild(this.clawl4);
-		this.legr.addChild(this.footr);
+		this.bipedRightLeg.addChild(this.footr);
 		this.footl.addChild(this.clawl);
-		this.head.addChild(this.headfurr);
+		this.bipedHead.addChild(this.headfurr);
 		this.handl.addChild(this.hclawl);
-		this.head.addChild(this.jaw);
-		this.legl.addChild(this.legl2);
-		this.legr.addChild(this.legr2);
-		this.arml.addChild(this.armlfur1);
+		this.bipedHead.addChild(this.jaw);
+		this.bipedLeftLeg.addChild(this.legl2);
+		this.bipedRightLeg.addChild(this.legr2);
+		this.bipedLeftArm.addChild(this.armlfur1);
 		this.handr.addChild(this.hclawr);
-		this.legl.addChild(this.legl3);
+		this.bipedLeftLeg.addChild(this.legl3);
 	}
 
 	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-		this.body.render(f5);
-		this.arml.render(f5);
-		this.legl.render(f5);
-		this.legr.render(f5);
+		this.bipedBody.render(f5);
+		this.bipedLeftArm.render(f5);
+		this.bipedLeftLeg.render(f5);
+		this.bipedRightLeg.render(f5);
 		this.tail.render(f5);
-		this.armr.render(f5);
-		this.head.render(f5);
+		this.bipedRightArm.render(f5);
+		this.bipedHead.render(f5);
 	}
 
 	/**
@@ -345,14 +341,17 @@ public class ModelLycanthrope extends ModelBase {
 	@Override
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch, float scaleFactor, Entity entityIn) {
-		this.head.rotateAngleX = headPitch * 0.017453292F;
-		this.head.rotateAngleY = netHeadYaw * 0.017453292F;
-		this.arml.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.legl.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.armr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.legr.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.bipedHead.rotateAngleY = netHeadYaw * 0.017453292F;
+		this.bipedHead.rotateAngleX = headPitch * 0.017453292F;
+		this.bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount * 0.5F;
+		this.bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount
+				* 0.5F;
+		this.bipedRightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount * 0.5F;
+		this.bipedLeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount
+				* 0.5F;
 
-		if (entityIn.isSprinting()) {
-		}
+		// fix legs
+		this.bipedRightLeg.rotateAngleX += ROTATION;
+		this.bipedLeftLeg.rotateAngleX += ROTATION;
 	}
 }

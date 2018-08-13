@@ -50,6 +50,7 @@ public class PlaySoundMessage extends MessageBase<PlaySoundMessage> {
 		public Handler() {
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public IMessage onMessageReceived(PlaySoundMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {

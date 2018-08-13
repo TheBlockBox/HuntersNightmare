@@ -117,17 +117,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-		return canBlockStay(worldIn, pos);
-	}
-
-	@Override
-	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		return canPlaceBlockAt(worldIn, pos);
-	}
-
-	private boolean canBlockStay(World worldIn, BlockPos pos) {
-		boolean flag = worldIn.getBlockState(pos.down()).getMaterial().isSolid();
-		return flag;
+		return worldIn.getBlockState(pos.down()).getMaterial().isSolid();
 	}
 
 	private static class ItemBlockWerewolfEnchantingStone extends ItemBlock {

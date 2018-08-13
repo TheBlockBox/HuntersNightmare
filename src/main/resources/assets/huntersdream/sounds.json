@@ -21,11 +21,11 @@
 	
 	"transformation.werewolf.howling":
 	{
-		"category": "transformation.werewolf",
+		"category": "transformation",
 		"subtitle": "transformation.werewolf.howling",
 		"sounds": 
 		[{
-			"name": "huntersdream:transformation/werewolf/howling", "stream": true
+			"name": "huntersdream:transformation/werewolf/howl", "stream": true
 		}]
 	}
 }

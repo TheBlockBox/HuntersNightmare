@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
@@ -17,8 +18,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
@@ -28,11 +31,13 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.ObfuscationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
+import theblockbox.huntersdream.util.interfaces.effective.IEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
@@ -247,7 +252,6 @@ public class WerewolfEventHandler {
 			break;
 		case 3:
 			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 350, 255));
-			player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 350, 200, false, false));
 			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 350, 255));
 			player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 350, 255));
 			break;
@@ -258,7 +262,7 @@ public class WerewolfEventHandler {
 			// nothing happens
 			break;
 		case 6:
-			Packets.PLAY_SOUND.sync(player, "howl", 1000000, 100);
+			Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
 			werewolf.setTimeSinceTransformation(-1);
 			werewolf.setTransformationStage(0);
 			cap.setTransformed(true);
@@ -308,6 +312,22 @@ public class WerewolfEventHandler {
 		// currently does nothing
 	}
 
+	/**
+	 * Called in {@link TransformationEventHandler#onPlayerTick(PlayerTickEvent)}
+	 * and
+	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
+	 * 
+	 * @param werewolf The werewolf ticking
+	 */
+	public static void onWerewolfTick(EntityLivingBase werewolf) {
+		if (werewolf instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) werewolf;
+			if (!player.isCreative()) {
+				player.inventory.dropAllItems();
+			}
+		}
+	}
+
 	public static EntityWerewolf[] getPlayerWerewolves() {
 		return PLAYER_WEREWOLVES.toArray(new EntityWerewolf[0]);
 	}
@@ -326,6 +346,44 @@ public class WerewolfEventHandler {
 					// kill player
 					event.setCanceled(
 							(event.getSource() != DamageSource.MAGIC) || (event.getAmount() > player.getHealth()));
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onEntityItemPickup(EntityItemPickupEvent event) {
+		if (WerewolfHelper.transformedWerewolf(event.getEntityPlayer()) && !event.getEntityPlayer().isCreative()) {
+			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onItemPickup(ItemPickupEvent event) {
+		EntityItem originalEntity = event.getOriginalEntity();
+		if (!originalEntity.world.isRemote) {
+			String throwerName = originalEntity.getThrower();
+			EntityPlayer player = event.player;
+			ITransformationPlayer cap = TransformationHelper.getCap(player);
+			Item item = event.getStack().getItem();
+			if (item instanceof IEffectiveAgainstTransformation) {
+				if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
+					// now it is ensured that the item is effective against the player
+					String msg = "transformations." + cap.getTransformation().toString() + ".";
+
+					EntityPlayer thrower;
+					if (!(throwerName == null) && !(throwerName.equals("null"))
+							&& !(throwerName.equals(player.getName()))) {
+						thrower = originalEntity.world.getPlayerEntityByName(throwerName);
+						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
+						Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
+					} else {
+						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.picked", player, item);
+						thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
+						if (thrower != null) {
+							Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.picked", player, item);
+						}
+					}
 				}
 			}
 		}

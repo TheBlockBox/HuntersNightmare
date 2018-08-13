@@ -14,6 +14,7 @@ import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
@@ -60,16 +61,17 @@ public class CapabilityHandler {
 	@SubscribeEvent
 	public static void onPlayerClone(PlayerEvent.Clone event) {
 		if (event.isWasDeath()) {
-			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(event.getEntityPlayer());
+			EntityPlayer player = event.getEntityPlayer();
+			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(player);
 			iit.setCurrentlyInfected(false);
 			iit.setInfectionTransformation(Transformations.HUMAN);
 			iit.setTime(-1);
-			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(event.getEntityPlayer());
+			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(player);
 			ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
 			ionm.setInfectionTick(-1);
 			ionm.setInfectionTransformation(Transformations.HUMAN);
 
-			ITransformationPlayer transformationPlayer = TransformationHelper.getCap(event.getEntityPlayer());
+			ITransformationPlayer transformationPlayer = TransformationHelper.getCap(player);
 			ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(event.getOriginal());
 
 			transformationPlayer.setXP(oldTransformationPlayer.getXP());
@@ -79,7 +81,9 @@ public class CapabilityHandler {
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
 
-			Packets.TRANSFORMATION.sync(event.getEntityPlayer());
+			Packets.TRANSFORMATION.sync(player);
+			GeneralHelper.executeIn(() -> Packets.TRANSFORMATION.sync(player), player.ticksExisted + 600, player);
+			GeneralHelper.executeIn(() -> Packets.TRANSFORMATION.sync(player), player.ticksExisted + 1200, player);
 		}
 	}
 }

@@ -10,7 +10,7 @@ import net.minecraft.util.math.MathHelper;
  * ModelWolfman - VampireRedEye Created using Tabula 7.0.0
  * 
  * @deprecated To be removed in next version, replaced with
- *             {@link ModelLycanthrope}
+ *             {@link ModelLycanthropeBiped}
  */
 @Deprecated
 public class ModelWolfman extends ModelBase {

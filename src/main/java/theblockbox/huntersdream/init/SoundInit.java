@@ -10,12 +10,15 @@ import theblockbox.huntersdream.util.Reference;
 public class SoundInit {
 	public static final ArrayList<SoundEvent> SOUND_EVENTS = new ArrayList<>();
 
-	public static final SoundEvent HEART_BEAT;
 	/**
 	 * Couldn't find the right one in mc, so I just created this one and used the mc
 	 * sound
+	 * 
+	 * @deprecated TODO: Remove before build, not being used anymore
 	 */
+	@Deprecated
 	public static final SoundEvent GHAST_SCREAM;
+	public static final SoundEvent HEART_BEAT;
 	public static final SoundEvent WEREWOLF_HOWLING;
 
 	static {

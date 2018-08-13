@@ -4,13 +4,13 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.entity.model.ModelLycanthrope;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.util.enums.Transformations;
 
 public class RenderWerewolf extends RenderLiving<EntityWerewolf> {
 
 	public RenderWerewolf(RenderManager manager) {
-		super(manager, new ModelLycanthrope(), 0.5F);
+		super(manager, new ModelLycanthropeBiped(), 0.5F);
 	}
 
 	@Override

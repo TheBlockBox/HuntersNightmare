@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
+import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
@@ -63,6 +64,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.2D, false));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
+		this.tasks.addTask(4, new EntityAIBreakDoor(this));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 		this.applyEntityAI();
@@ -119,7 +121,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	protected float getSoundPitch() {
-		return super.getSoundPitch() - 0.4F;
+		return super.getSoundPitch() - 1.0F;
 	}
 
 	@Override
