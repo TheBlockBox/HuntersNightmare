@@ -1,9 +1,14 @@
 package theblockbox.huntersdream.objects.blocks;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CreativeTabInit;
@@ -47,6 +52,12 @@ public class BlockBase extends Block implements IHasModel {
 	private static class ItemBlockSilver extends ItemBlock implements ISilverEffectiveAgainstTransformation {
 		public ItemBlockSilver(Block block) {
 			super(block);
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+			super.addInformation(stack, worldIn, tooltip, flagIn);
+			tooltip.add(getTooltipEffectiveness());
 		}
 	}
 }

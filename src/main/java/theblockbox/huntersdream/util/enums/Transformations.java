@@ -27,7 +27,7 @@ public enum Transformations {
 			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
 	VAMPIRE(TransformationEntry.create("vampire")), WITCH(TransformationEntry.create("witch")),
-	CLOCKWORKANDROID(TransformationEntry.create("clockwordandroid")), HYBRID(TransformationEntry.create("hybrid")),
+	CLOCKWORKANDROID(TransformationEntry.create("clockworkandroid")), HYBRID(TransformationEntry.create("hybrid")),
 	HUNTER(TransformationEntry.create("hunter").setSupernatural(false));
 
 	// when an entity has no transformation, use null

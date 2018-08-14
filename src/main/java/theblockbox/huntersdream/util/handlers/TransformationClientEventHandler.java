@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.renderer.RenderLycantropheBiped;
 import theblockbox.huntersdream.entity.renderer.RenderLycantropheQuadruped;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -46,32 +45,28 @@ public class TransformationClientEventHandler {
 	public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
 		if (ConfigHandler.customPlayerRender) {
 			EntityPlayer player = event.getEntityPlayer();
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
-
 			// werewolf
-			if ((cap.getTransformation() == Transformations.WEREWOLF) && cap.transformed()) {
-				if (WerewolfHelper.hasControl(player)) {
-					event.setCanceled(true);
-					if (player.isSprinting()) {
-						if (renderLycantropheQuadruped == null)
-							renderLycantropheQuadruped = new RenderLycantropheQuadruped(
-									Minecraft.getMinecraft().getRenderManager());
-						renderLycantropheQuadruped.doRender(player, event.getX(), event.getY(), event.getZ(),
-								player.rotationYaw, event.getPartialRenderTick());
-					} else {
-						if (renderLycantropheBiped == null)
-							renderLycantropheBiped = new RenderLycantropheBiped(
-									Minecraft.getMinecraft().getRenderManager());
-						renderLycantropheBiped.doRender(player, event.getX(), event.getY(), event.getZ(),
-								player.rotationYaw, event.getPartialRenderTick());
-					}
+			if (WerewolfHelper.transformedWerewolf(player)) {
+				event.setCanceled(true);
+				if (player.isSprinting()) {
+					if (renderLycantropheQuadruped == null)
+						renderLycantropheQuadruped = new RenderLycantropheQuadruped(
+								Minecraft.getMinecraft().getRenderManager());
+					renderLycantropheQuadruped.doRender(player, event.getX(), event.getY(), event.getZ(),
+							player.rotationYaw, event.getPartialRenderTick());
+				} else {
+					if (renderLycantropheBiped == null)
+						renderLycantropheBiped = new RenderLycantropheBiped(
+								Minecraft.getMinecraft().getRenderManager());
+					renderLycantropheBiped.doRender(player, event.getX(), event.getY(), event.getZ(),
+							player.rotationYaw, event.getPartialRenderTick());
 				}
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public static void onGameOverlayRenderPost(RenderGameOverlayEvent.Post event) {
+	public static void onRenderGameOverlayPost(RenderGameOverlayEvent.Post event) {
 		if (ConfigHandler.renderXPBar) {
 			Minecraft mc = Minecraft.getMinecraft();
 			EntityPlayerSP player = mc.player;
@@ -79,7 +74,7 @@ public class TransformationClientEventHandler {
 			if (gameType != GameType.CREATIVE && gameType != GameType.SPECTATOR) {
 				if ((!event.isCancelable()) && event.getType() == ElementType.EXPERIENCE) {
 					ITransformationPlayer cap = TransformationHelper.getCap(player);
-					if (cap.getLevel() > 0) {
+					if (cap.getLevel() > 0.0D) {
 						mc.renderEngine.bindTexture(cap.getTransformation().getXPBarTexture());
 
 						int x = ConfigHandler.xpBarLeft ? event.getResolution().getScaledWidth() / 2 - 90
@@ -94,7 +89,7 @@ public class TransformationClientEventHandler {
 
 						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 81, 8);
 						int percent = (int) (cap.getPercentageToNextLevel() * 79);
-						mc.ingameGUI.drawTexturedModalRect(x + 1, y + 1, 0, 9, percent, 9);
+						mc.ingameGUI.drawTexturedModalRect(x + 1, y + 1, 0, 9, percent, 6);
 						mc.ingameGUI.drawCenteredString(mc.fontRenderer, Integer.toString(cap.getLevelFloor()), x + 40,
 								y - 7, 3138304);
 					}

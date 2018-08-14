@@ -173,7 +173,13 @@ public class WerewolfHelper {
 		}
 	}
 
-	/** Returns true when the player has control in the werewolf form */
+	/**
+	 * Returns true when the player has control in the werewolf form
+	 * 
+	 * @deprecated Don't use, we're going to make a new no control mechanic. Instead
+	 *             use {@link #hasMainlyControl(EntityPlayer)}.
+	 */
+	@Deprecated
 	public static boolean hasControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
 		if (cap.getTransformation() != Transformations.WEREWOLF) {
@@ -182,6 +188,22 @@ public class WerewolfHelper {
 		return (cap.getLevelFloor() > 0);
 	}
 
+	/**
+	 * Returns true when the given player has mainly control in the werewolf form
+	 */
+	public static boolean hasMainlyControl(EntityPlayer player) {
+		ITransformationPlayer cap = TransformationHelper.getCap(player);
+		if (cap.getTransformation() != Transformations.WEREWOLF) {
+			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
+		}
+		return (cap.getLevelFloor() > 0);
+	}
+
+	/**
+	 * @deprecated Will soon be removed because we are going to change the no
+	 *             control mechanic
+	 */
+	@Deprecated
 	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {
 		if (werewolf.getEntityName().startsWith("player")) {
 			return werewolf.world

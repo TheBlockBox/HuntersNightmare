@@ -317,14 +317,10 @@ public class ModelLycanthropeQuadruped extends ModelQuadruped {
 	}
 
 	@Override
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-		this.body.render(f5);
-		this.head.render(f5);
-		this.leg3.render(f5);
-		this.leg4.render(f5);
-		this.tail.render(f5);
-		this.leg2.render(f5);
-		this.leg1.render(f5);
+	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch, float scale) {
+		super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+		this.tail.render(scale);
 	}
 
 	/**

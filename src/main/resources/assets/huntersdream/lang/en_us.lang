@@ -81,9 +81,24 @@ huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverChance=Average silver ores per vein
 huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
 
+# Transformations
+huntersdream:human=Human
+huntersdream:werewolf=Werewolf
+huntersdream:vampire=Vampire
+huntersdream:witch=Witch
+huntersdream:clockworkandroid=Clockworkandroid
+huntersdream:hybrid=Hybrid
+huntersdream:hunter=Hunter
+
 # Sounds (Subtitles)
 transformation.heartbeat=Heartbeat of a werewolf
 mob.ghast.scream=Werewolf screaming in pain
 transformation.werewolf.howling=Howling werewolf
 
 # Other stuff
+# the word you'd use in a list (like Werewolf,Vampire and Hybrid). Space before it needed
+huntersdream.and= and
+huntersdream.effectiveAgainst.tooltip=Effective against %s with effectiveness %s
+huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s with thorns %s and protection %s
+# The character you use to split decimal values (in 11.56 the character is .)
+huntersdream.decimalpoint=.

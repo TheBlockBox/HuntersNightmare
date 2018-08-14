@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,7 +14,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -32,7 +30,6 @@ import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.ObfuscationHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -44,6 +41,8 @@ import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class WerewolfEventHandler {
+	/** @deprecated Don't use. We're going to make a new system */
+	@Deprecated
 	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
 
 	// use LivingDamage only for removing damage and LivingHurt for damage and
@@ -115,7 +114,7 @@ public class WerewolfEventHandler {
 	public static void onEntityDeath(LivingDeathEvent event) {
 		if (event.getSource().getTrueSource() instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) event.getSource().getTrueSource();
-			if (WerewolfHelper.transformedWerewolf(player)) {
+			if (WerewolfHelper.transformedWerewolf(player) && WerewolfHelper.hasMainlyControl(player)) {
 				TransformationHelper.addXP(player, 10, TransformationXPSentReason.WEREWOLF_HAS_KILLED);
 			}
 		}
@@ -194,18 +193,20 @@ public class WerewolfEventHandler {
 					werewolfTimeTransformed(player, cap);
 				}
 				// remove werewolves
-			} else if (!PLAYER_WEREWOLVES.isEmpty()) {
-
-				Iterator<EntityWerewolf> iterator = PLAYER_WEREWOLVES.iterator();
-
-				while (iterator.hasNext()) {
-					EntityWerewolf werewolf = iterator.next();
-					World world = werewolf.world;
-					Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
-					world.removeEntity(werewolf);
-					PLAYER_WEREWOLVES.remove(werewolf);
-				}
 			}
+// TODO: Remove this after the no control mechanic is completely done
+//			else if (!PLAYER_WEREWOLVES.isEmpty()) {
+//
+//				Iterator<EntityWerewolf> iterator = PLAYER_WEREWOLVES.iterator();
+//
+//				while (iterator.hasNext()) {
+//					EntityWerewolf werewolf = iterator.next();
+//					World world = werewolf.world;
+//					Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
+//					world.removeEntity(werewolf);
+//					PLAYER_WEREWOLVES.remove(werewolf);
+//				}
+//			}
 			// not werewolf time
 		} else if (cap.getTransformation() == Transformations.WEREWOLF) {
 			if (cap.transformed()) {
@@ -268,22 +269,21 @@ public class WerewolfEventHandler {
 			cap.setTransformed(true);
 			Packets.TRANSFORMATION.sync(player);
 
-			if (!WerewolfHelper.hasControl(player)) {
-				World world = player.world;
-				EntityWerewolf were = new EntityWerewolf(world, TransformationHelper.getCap(player).getTextureIndex(),
-						"player" + player.getName());
-				were.setPosition(player.posX, player.posY, player.posZ);
-				PLAYER_WEREWOLVES.add(were);
-				world.spawnEntity(were);
-				Packets.NO_CONTROL.sync(player, were);
-			}
-			ObfuscationHelper.forceSetSize(player, 1F, EntityWerewolf.HEIGHT);
+// TODO: Remove this after no control is done
+//			if (!WerewolfHelper.hasControl(player)) {
+//				World world = player.world;
+//				EntityWerewolf were = new EntityWerewolf(world, TransformationHelper.getCap(player).getTextureIndex(),
+//						"player" + player.getName());
+//				were.setPosition(player.posX, player.posY, player.posZ);
+//				PLAYER_WEREWOLVES.add(were);
+//				world.spawnEntity(were);
+//				Packets.NO_CONTROL.sync(player, were);
+//			}
 			break;
 		default:
 			throw new UnexpectedBehaviorException(
 					"Stage " + werewolf.getTransformationStage() + " is not a valid stage");
 		}
-		// Packets.PLAY_SOUND.sync(player, "ghast", 10, 1);
 		if (werewolf.getTransformationStage() != 0) {
 			player.sendMessage(new TextComponentTranslation(
 					"transformations.huntersdream:werewolf.transformingInto." + werewolf.getTransformationStage()));
@@ -304,7 +304,6 @@ public class WerewolfEventHandler {
 			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
 			// night vision for better blindness effect
 			player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
-			ObfuscationHelper.forceSetSize(player, 1F, 2F);
 		}
 	}
 
@@ -328,6 +327,10 @@ public class WerewolfEventHandler {
 		}
 	}
 
+	/**
+	 * @deprecated Don't use, we're going to change the no control mechanic
+	 */
+	@Deprecated
 	public static EntityWerewolf[] getPlayerWerewolves() {
 		return PLAYER_WEREWOLVES.toArray(new EntityWerewolf[0]);
 	}

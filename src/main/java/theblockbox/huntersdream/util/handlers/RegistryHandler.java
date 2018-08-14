@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.handlers;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationLevel;
@@ -26,7 +28,6 @@ import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
-import theblockbox.huntersdream.util.helpers.ObfuscationHelper;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
@@ -103,10 +104,13 @@ public class RegistryHandler {
 	public static void initCommon(FMLInitializationEvent event) {
 		PacketHandler.register();
 		OreDictionaryCompat.registerOres();
-		ObfuscationHelper.init();
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
+		for (ItemStack stack : OreDictionary.getOres("ingotSilver")) {
+			ItemInit.TOOL_SILVER.setRepairItem(stack);
+			ItemInit.ARMOR_SILVER.setRepairItem(stack);
+		}
 	}
 
 	// Client

@@ -8,7 +8,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.objects.armor.SilverArmorBase;
 import theblockbox.huntersdream.objects.items.ItemPureSilver;
@@ -26,8 +25,9 @@ public class ItemInit {
 	public static final Item INGOT_SILVER = new ItemPureSilver("ingot_silver");
 
 	// Materials
-	public static final ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial("tool_silver", 3, 60, 6.0F, 0.0F, 14);
-	public static final ArmorMaterial ARMOR_SILVER = EnumHelper.addArmorMaterial("armor_silver",
+	public static final ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,
+			6.0F, 0.0F, 14);
+	public static final ArmorMaterial ARMOR_SILVER = EnumHelper.addArmorMaterial(Reference.MODID + ":armor_silver",
 			Reference.MODID + ":silver", 6, new int[] { 1, 3, 5, 2 }, 14, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.2F);
 
 	// Tools
@@ -56,9 +56,4 @@ public class ItemInit {
 	 * texture in textures/items - create texture (for armor when it's worn) in
 	 * textures/models/armor
 	 */
-
-	static {
-		TOOL_SILVER.setRepairItem(new ItemStack(INGOT_SILVER));
-		ARMOR_SILVER.setRepairItem(new ItemStack(INGOT_SILVER));
-	}
 }

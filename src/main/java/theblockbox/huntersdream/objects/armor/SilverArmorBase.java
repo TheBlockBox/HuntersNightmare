@@ -1,6 +1,13 @@
 package theblockbox.huntersdream.objects.armor;
 
+import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.effective.IArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.ISilverEffectiveAgainstTransformation;
@@ -39,5 +46,13 @@ public class SilverArmorBase extends ArmorBase
 	@Override
 	public boolean effectiveAgainst(Transformations transformation) {
 		return IArmorEffectiveAgainstTransformation.super.effectiveAgainst(transformation);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		super.addInformation(stack, worldIn, tooltip, flagIn);
+		tooltip.add(getTooltipEffectiveness());
+		tooltip.add(getTooltipArmorEffective());
 	}
 }
