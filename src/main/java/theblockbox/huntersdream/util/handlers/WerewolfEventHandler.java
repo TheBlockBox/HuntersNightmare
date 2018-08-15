@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -44,6 +46,10 @@ public class WerewolfEventHandler {
 	/** @deprecated Don't use. We're going to make a new system */
 	@Deprecated
 	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
+
+	private static EntityPlayer entityPlayer;
+	public static float width = entityPlayer.width;
+	public static float height = entityPlayer.height;
 
 	// use LivingDamage only for removing damage and LivingHurt for damage and
 	// damaged resources
@@ -224,6 +230,7 @@ public class WerewolfEventHandler {
 	}
 
 	private static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		height = 0.3F;
 		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 
 		if (werewolf.getTransformationStage() == 0) {
@@ -239,9 +246,32 @@ public class WerewolfEventHandler {
 		}
 	}
 
-	private static void onStageChanged(EntityPlayer player, IWerewolf werewolf, int nextStage,
-			ITransformationPlayer cap) {
+	private static void onStageChanged(EntityPlayer player, IWerewolf werewolf, int nextStage, ITransformationPlayer cap) {
+
 		werewolf.setTransformationStage(nextStage);
+
+		if (width != player.width || height != player.height)
+		{
+			float f = player.width;
+			player.width = width;
+			player.height = height;
+
+			if (player.width < f)
+			{
+				double d0 = (double)width / 2.0D;
+				player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, player.posY, player.posZ - d0, player.posX + d0, player.posY + (double)player.height, player.posZ + d0));
+				return;
+			}
+
+			AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
+			player.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + (double)player.width, axisalignedbb.minY + (double)player.height, axisalignedbb.minZ + (double)player.width));
+
+			if (player.width > f && !player.world.isRemote)
+			{
+				player.move(MoverType.SELF, (double)(f - player.width), 0.0D, (double)(f - player.width));
+			}
+		}
+
 		switch (werewolf.getTransformationStage()) {
 		case 1:
 			Packets.PLAY_SOUND.sync(player, "heartbeat", 100, 1);
