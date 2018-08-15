@@ -9,6 +9,7 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
+import theblockbox.huntersdream.entity.EntityChair;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
@@ -25,6 +26,8 @@ public class EntityInit {
 
 		// Register without egg
 		registerEntity(event, "werewolf", EntityWerewolf.class, 20);
+
+		registerEntity(event, "chair", EntityChair.class, 16);
 	}
 
 	public static void registerEntityRenders() {
