@@ -200,7 +200,8 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
 			instance.setLevel(compound.getDouble(LEVEL));
 			NBTTagCompound ritualStorage = (NBTTagCompound) compound.getTag(RITUALS);
-			int length = ritualStorage.getInteger(LENGTH);
+			// pre-0.2.0 support
+			int length = ritualStorage != null ? ritualStorage.getInteger(LENGTH) : 0;
 			Rituals[] rituals = new Rituals[length];
 			for (int i = 0; i < length; i++) {
 				rituals[i] = Rituals.fromName(ritualStorage.getString(RITUAL_CHAR + i));
