@@ -1,18 +1,18 @@
 package theblockbox.huntersdream.util.helpers;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
-import theblockbox.huntersdream.util.TimedRunnable;
-import theblockbox.huntersdream.util.exceptions.WrongSideException;
+import theblockbox.huntersdream.util.Reference;
 
 /** A utility class for all things that don't fit into the other helpers */
 public class GeneralHelper {
-	public static final ArrayList<TimedRunnable> RUNNABLES_TO_BE_EXECUTED = new ArrayList<>();
+	public static final float STANDARD_PLAYER_WIDTH = 0.6F;
+	public static final float STANDARD_PLAYER_HEIGHT = 1.8F;
 
 	public static Side getSideFromWorld(World world) {
 		return (world.isRemote ? Side.CLIENT : Side.SERVER);
@@ -22,7 +22,7 @@ public class GeneralHelper {
 		return getSideFromWorld(entity.world);
 	}
 
-	public static Side getOtherSide(Side side) {
+	public static Side getOppositeSide(Side side) {
 		if (side != null) {
 			return side == Side.CLIENT ? Side.SERVER : Side.CLIENT;
 		} else {
@@ -48,35 +48,43 @@ public class GeneralHelper {
 		return entityplayer;
 	}
 
-	/**
-	 * Executes a {@link Runnable} on or after a specific tick of a specific player
-	 * (server side only!)
-	 * 
-	 * @param runnableToBeExecuted The runnable which should be executed
-	 * @param onTick               The tick on that or after that the runnable
-	 *                             should be executed
-	 * @param player               The player whose tick must be equal to or higher
-	 *                             than the onTick parameter so that the runnable
-	 *                             can be executed
-	 */
-	public static void executeIn(Runnable runnableToBeExecuted, int onTick, EntityPlayer player) {
-		if (GeneralHelper.getSideFromEntity(player) == Side.CLIENT)
-			throw new WrongSideException("This method is server-side only", player.world);
-		RUNNABLES_TO_BE_EXECUTED.add(new TimedRunnable(runnableToBeExecuted, onTick, player));
-		RUNNABLES_TO_BE_EXECUTED.sort(new Comparator<TimedRunnable>() {
-			/** Note: this comparator imposes orderings that are inconsistent with equals */
-			@Override
-			public int compare(TimedRunnable tr1, TimedRunnable tr2) {
-				if (tr1.ON_TICK == tr2.ON_TICK) {
-					return 0;
-				} else if (tr1.ON_TICK > tr2.ON_TICK) {
-					return 1;
-				} else if (tr1.ON_TICK < tr2.ON_TICK) {
-					return -1;
-				} else {
-					return Integer.MIN_VALUE;
-				}
+	public static void changePlayerSize(EntityPlayer player, float width, float height) {
+		if (width != player.width || height != player.height) {
+			float f = player.width;
+			player.width = width;
+			player.height = height;
+			if (player.width < f) {
+				double d0 = (double) width / 2.0D;
+				player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, player.posY, player.posZ - d0,
+						player.posX + d0, player.posY + (double) player.height, player.posZ + d0));
+				return;
 			}
-		});
+			AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
+			player.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ,
+					axisalignedbb.minX + (double) player.width, axisalignedbb.minY + (double) player.height,
+					axisalignedbb.minZ + (double) player.width));
+			if (player.width > f && !player.world.isRemote) {
+				player.move(MoverType.SELF, (double) (f - player.width), 0.0D, (double) (f - player.width));
+			}
+		}
+	}
+
+	public static int convertFromBaseToBase(String toConvert, int fromBase, int toBase) {
+		return Integer.valueOf(Integer.toString(Integer.valueOf(toConvert, fromBase), toBase));
+	}
+
+	public static int convertFromBaseToBase(int toConvert, int fromBase, int toBase) {
+		return convertFromBaseToBase(String.valueOf(toConvert), fromBase, toBase);
+	}
+
+	/**
+	 * Shortcut method for creating a resource location. If a mod id is not given,
+	 * {@link Reference#MODID} will be used
+	 */
+	public static ResourceLocation newResLoc(String resourcePath) {
+		if (resourcePath.contains(":"))
+			return new ResourceLocation(resourcePath);
+		else
+			return new ResourceLocation(Reference.MODID, resourcePath);
 	}
 }

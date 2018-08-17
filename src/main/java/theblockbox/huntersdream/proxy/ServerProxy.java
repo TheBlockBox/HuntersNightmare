@@ -3,7 +3,7 @@ package theblockbox.huntersdream.proxy;
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
-public class ServerProxy implements ICommonProxy {
+public class ServerProxy implements IProxy {
 	@Override
 	public void registerItemRenderer(Item item, int meta, String id) {
 	}

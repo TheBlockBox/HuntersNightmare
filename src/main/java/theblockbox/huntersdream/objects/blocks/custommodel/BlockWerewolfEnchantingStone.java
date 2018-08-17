@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.objects.blocks.custommodel;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -17,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import theblockbox.huntersdream.objects.items.ItemBlockWithMaxStackSize;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
@@ -25,6 +25,8 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+	private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(getSixteenth(1), 0, getSixteenth(1),
+			getSixteenth(15), getSixteenth(10), getSixteenth(15));
 	public static final Material WEREWOLF_ENCHANTING_STONE = new Material(MapColor.STONE) {
 		@Override
 		public boolean isSolid() {
@@ -65,8 +67,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return new AxisAlignedBB(getSixteenth(1), 0, getSixteenth(1), getSixteenth(15), getSixteenth(10),
-				getSixteenth(15));
+		return BOUNDING_BOX;
 	}
 
 	@Override
@@ -91,7 +92,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 
 	@Override
 	protected ItemBlock getItemBlock() {
-		return new ItemBlockWerewolfEnchantingStone(this);
+		return new ItemBlockWithMaxStackSize(this, 1);
 	}
 
 	@Override
@@ -101,7 +102,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return ((EnumFacing) state.getValue(FACING)).getIndex();
+		return state.getValue(FACING).getHorizontalIndex();
 	}
 
 	@Override
@@ -118,12 +119,5 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
 		return worldIn.getBlockState(pos.down()).getMaterial().isSolid();
-	}
-
-	private static class ItemBlockWerewolfEnchantingStone extends ItemBlock {
-		public ItemBlockWerewolfEnchantingStone(Block block) {
-			super(block);
-			setMaxStackSize(1);
-		}
 	}
 }

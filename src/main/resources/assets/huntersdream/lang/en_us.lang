@@ -25,14 +25,16 @@ effect.fear=Fear
 tile.block_silver.name=Silver Block
 tile.overworld_ore_silver.name=Silver Ore
 tile.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
+tile.chair.name=Chair
 
 # Entities
 entity.goblintd.name=Goblin
 entity.werewolf.name=Werewolf
 
 # Creative Tabs
-itemGroup.huntersDreamToolsCombat=Hunter's Dream Combat and Tools
-itemGroup.huntersDreamMisc=Hunter's Dream Miscellaneous
+itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools
+itemGroup.huntersdream.misc=Hunter's Dream Miscellaneous
+itemGroup.huntersdream.furniture=Hunter's Dream Furniture
 
 # Commands
 command.invalid=Invalid arguments

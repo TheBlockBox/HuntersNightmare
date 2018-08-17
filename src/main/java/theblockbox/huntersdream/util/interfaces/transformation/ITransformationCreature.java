@@ -36,10 +36,6 @@ public interface ITransformationCreature extends ITransformation {
 		throw new UnsupportedOperationException("Entity is always not transformed");
 	}
 
-	default void setTextureIndex(int index) {
-		throw new UnsupportedOperationException("Can't set texture index");
-	}
-
 	public static class TransformationCreature implements ITransformationCreature {
 		private Transformations[] transformationsNotImmuneTo = new Transformations[] { Transformations.HUMAN };
 		private Transformations transformation = Transformations.HUMAN;

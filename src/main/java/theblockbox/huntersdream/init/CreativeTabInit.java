@@ -9,17 +9,24 @@ import net.minecraft.item.ItemStack;
 
 public class CreativeTabInit {
 
-	public static final CreativeTabs HUNTERSDREAM_TOOLS_AND_WEAPONS = new CreativeTabs("huntersDreamToolsCombat") {
+	public static final CreativeTabs HUNTERSDREAM_TOOLS_AND_WEAPONS = new CreativeTabs("huntersdream.toolsandcombat") {
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(ItemInit.SWORD_SILVER);
 		}
 	};
 
-	public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs("huntersDreamMisc") {
+	public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs("huntersdream.misc") {
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(ItemInit.INGOT_SILVER);
+		}
+	};
+
+	public static final CreativeTabs HUNTERSDREAM_FURNITURE = new CreativeTabs("huntersdream.furniture") {
+		@Override
+		public ItemStack getTabIconItem() {
+			return new ItemStack(BlockInit.ORE_SILVER);
 		}
 	};
 }

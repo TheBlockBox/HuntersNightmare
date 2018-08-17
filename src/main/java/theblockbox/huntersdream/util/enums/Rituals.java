@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public enum Rituals {
 	LUPUS_ADVOCABIT("lupusadvocabit", Transformations.WEREWOLF);
@@ -20,7 +20,7 @@ public enum Rituals {
 	}
 
 	private Rituals(String name, Transformations... forTransformations) {
-		this(new ResourceLocation(Reference.MODID, name), forTransformations);
+		this(GeneralHelper.newResLoc(name), forTransformations);
 	}
 
 	private static class Helper {
@@ -40,11 +40,9 @@ public enum Rituals {
 	}
 
 	public static Rituals fromName(String name) {
-		for (Rituals ritual : Helper.RITUALS) {
-			if (ritual.getResourceLocation().toString().equals(name)) {
+		for (Rituals ritual : Helper.RITUALS)
+			if (ritual.getResourceLocation().toString().equals(name))
 				return ritual;
-			}
-		}
 		Main.LOGGER.error("The given string \"" + name
 				+ "\" does not have a corresponding ritual. Please report this, NullPointerExceptions may occure\nStacktrace: "
 				+ (new ExecutionPath()).getAll());

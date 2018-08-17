@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.init;
 
-import java.util.concurrent.Callable;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -35,43 +33,13 @@ public class CapabilitiesInit {
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
-				new Callable<ITransformationPlayer>() {
-
-					@Override
-					public ITransformationPlayer call() throws Exception {
-						return new TransformationPlayer();
-					}
-				});
+				() -> new TransformationPlayer());
 		CapabilityManager.INSTANCE.register(ITransformationCreature.class, new TransformationCreatureStorage(),
-				new Callable<ITransformationCreature>() {
-
-					@Override
-					public ITransformationCreature call() throws Exception {
-						return new TransformationCreature();
-					}
-				});
+				() -> new TransformationCreature());
 		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectInTicksStorage(),
-				new Callable<IInfectInTicks>() {
-
-					@Override
-					public IInfectInTicks call() throws Exception {
-						return new InfectInTicks();
-					}
-				});
+				() -> new InfectInTicks());
 		CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new InfectOnNextMoonStorage(),
-				new Callable<IInfectOnNextMoon>() {
-
-					@Override
-					public IInfectOnNextMoon call() throws Exception {
-						return new InfectOnNextMoon();
-					}
-				});
-		CapabilityManager.INSTANCE.register(IWerewolf.class, new WerewolfStorage(), new Callable<IWerewolf>() {
-
-			@Override
-			public IWerewolf call() throws Exception {
-				return new Werewolf();
-			}
-		});
+				() -> new InfectOnNextMoon());
+		CapabilityManager.INSTANCE.register(IWerewolf.class, new WerewolfStorage(), () -> new Werewolf());
 	}
 }

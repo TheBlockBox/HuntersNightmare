@@ -31,6 +31,11 @@ public interface ITransformationEntityTransformed extends ITransformation {
 		throw new UnsupportedOperationException("This creature's transformation is already determined");
 	}
 
+	@Override
+	default void setTextureIndex(int index) {
+		throw new UnsupportedOperationException("Can't set texture index");
+	}
+
 	/** Used to get the entity before the transformation */
 	public String getEntityName();
 

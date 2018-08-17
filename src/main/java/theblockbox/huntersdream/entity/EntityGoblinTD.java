@@ -130,7 +130,14 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public int getTextureIndex() {
-		return this.dataManager.get(TEXTURE_INDEX);
+		int textureIndex = this.dataManager.get(TEXTURE_INDEX);
+		try {
+			this.getTransformation().getTextures()[textureIndex].getClass();
+			return textureIndex;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			setTextureIndex(this.getTransformation().getRandomTextureIndex());
+			return this.getTextureIndex();
+		}
 	}
 
 	@Override

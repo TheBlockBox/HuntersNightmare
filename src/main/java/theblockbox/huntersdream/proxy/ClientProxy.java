@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
-public class ClientProxy implements ICommonProxy {
+public class ClientProxy implements IProxy {
 	@Override
 	public void registerItemRenderer(Item item, int meta, String id) {
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), id));

@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import theblockbox.huntersdream.proxy.ICommonProxy;
+import theblockbox.huntersdream.proxy.IProxy;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
@@ -26,7 +26,7 @@ public class Main {
 	public static Main instance;
 
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.SERVER)
-	public static ICommonProxy proxy;
+	public static IProxy proxy;
 
 	public static final Logger LOGGER = LogManager.getLogger(Reference.MODID);
 

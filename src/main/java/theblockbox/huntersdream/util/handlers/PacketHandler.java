@@ -74,8 +74,7 @@ public class PacketHandler {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			// you can get the sp player through Minecraft.getMinecraft().player;
 
-			if ((this.SIDE == SERVER && player.world.isRemote)
-					|| (this.SIDE == Side.CLIENT && (!player.world.isRemote))) {
+			if (this.SIDE == GeneralHelper.getOppositeSide(GeneralHelper.getSideFromEntity(player))) {
 
 				switch (this) {
 				// Server
@@ -119,7 +118,7 @@ public class PacketHandler {
 				default:
 					throw new IllegalArgumentException("Illegal arguments: Couldn't find packet " + this.toString()
 							+ "\nAdditional info:\nWrong side? "
-							+ (GeneralHelper.getOtherSide(GeneralHelper.getSideFromEntity(player)) == this.SIDE)
+							+ (GeneralHelper.getOppositeSide(GeneralHelper.getSideFromEntity(player)) == this.SIDE)
 							+ "\nPlayer: " + player.getName() + "\nAdditional argument length: " + args.length
 							+ "\nPath: " + (new ExecutionPath()).get(1, 4));
 				}
@@ -134,7 +133,7 @@ public class PacketHandler {
 			} else {
 				throw new WrongSideException(
 						"Packet " + this.NAME + " couldn't be sent\nPath: " + (new ExecutionPath()).get(1),
-						GeneralHelper.getOtherSide(this.SIDE));
+						GeneralHelper.getOppositeSide(this.SIDE));
 			}
 		}
 

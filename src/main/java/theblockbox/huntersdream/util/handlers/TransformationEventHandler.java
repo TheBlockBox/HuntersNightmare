@@ -19,14 +19,16 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.TimedRunnable;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
@@ -45,56 +47,65 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event) {
-		EntityPlayer player = event.player;
-		ITransformationPlayer cap = TransformationHelper.getCap(player);
+		if (event.phase == Phase.END) {
+			EntityPlayer player = event.player;
+			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
-		if (WerewolfHelper.transformedWerewolf(player)) {
-			WerewolfEventHandler.onWerewolfTick(player);
-		}
+			if (WerewolfHelper.transformedWerewolf(player))
+				WerewolfEventHandler.onWerewolfTick(player);
 
-		if (player.ticksExisted % 20 == 0) {
-			if (WerewolfHelper.transformedWerewolf(player)) {
-				WerewolfHelper.applyLevelBuffs(player);
-			}
+			if (player.ticksExisted % 20 == 0) {
+				if (WerewolfHelper.transformedWerewolf(player))
+					WerewolfHelper.applyLevelBuffs(player);
 
-			if (!player.world.isRemote) { // ensures that this is the server side
+				if (!player.world.isRemote) { // ensures that this is the server side
 
-				for (ItemStack stack : player.getEquipmentAndArmor()) {
-					Item item = stack.getItem();
-					if (item instanceof IEffectiveAgainstTransformation) {
-						if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
-							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
-									cap.transformed() ? cap.getTransformation().getProtection() : 1);
+					for (ItemStack stack : player.getEquipmentAndArmor()) {
+						Item item = stack.getItem();
+						if (item instanceof IEffectiveAgainstTransformation)
+							if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation()))
+								player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
+										cap.transformed() ? cap.getTransformation().getProtection() : 1);
+					}
+
+					WerewolfEventHandler.onPlayerTick(event, (EntityPlayerMP) player, cap);
+
+					if (player.ticksExisted % 1200 == 0) {
+						// every minute when the player is not under a block, transformed and a
+						// werewolf, one xp gets added
+						if (WerewolfHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)
+								&& WerewolfHelper.hasMainlyControl(player)) {
+							TransformationHelper.addXP((EntityPlayerMP) player, 5,
+									TransformationXPSentReason.WEREWOLF_UNDER_MOON);
+						}
+						// this piece of code syncs the player data every six minutes, so basically
+						// you
+						// don't have to sync the data every time you change something
+						// (though it is recommended)
+						if (player.ticksExisted % 7200 == 0) {
+							Packets.TRANSFORMATION.sync(player);
 						}
 					}
 				}
+			}
 
-				// only check for the first element because the list is always sorted
-				if (!GeneralHelper.RUNNABLES_TO_BE_EXECUTED.isEmpty()) {
-					TimedRunnable timedRunnable = GeneralHelper.RUNNABLES_TO_BE_EXECUTED.get(0);
-					if (timedRunnable.ON_TICK >= player.ticksExisted && timedRunnable.PLAYER.equals(player)) {
-						timedRunnable.RUNNABLE.run();
-						GeneralHelper.RUNNABLES_TO_BE_EXECUTED.remove(0);
-					}
+			// setting player size here (have to set every tick because it's also set every
+			// tick in the EntityPlayer class) We don't have to care about resetting the
+			// size because it gets resetted automatically every tick
+			if (WerewolfHelper.transformedWerewolf(player)) {
+				if (player.isSprinting()) {
+					// if quadruped
+					GeneralHelper.changePlayerSize(player, ModelLycanthropeQuadruped.WIDTH,
+							ModelLycanthropeQuadruped.HEIGHT);
+					player.eyeHeight = ModelLycanthropeQuadruped.EYE_HEIGHT;
+				} else {
+					// if biped
+					GeneralHelper.changePlayerSize(player, GeneralHelper.STANDARD_PLAYER_WIDTH,
+							ModelLycanthropeBiped.HEIGHT);
+					player.eyeHeight = ModelLycanthropeBiped.EYE_HEIGHT;
 				}
-
-				WerewolfEventHandler.onPlayerTick(event, (EntityPlayerMP) player, cap);
-
-				if (player.ticksExisted % 1200 == 0) {
-					// every minute when the player is not under a block, transformed and a
-					// werewolf, one xp gets added
-					if (WerewolfHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)) {
-						TransformationHelper.addXP((EntityPlayerMP) player, 5,
-								TransformationXPSentReason.WEREWOLF_UNDER_MOON);
-					}
-					// this piece of code syncs the player data every three minutes, so basically
-					// you
-					// don't have to sync the data every time you change something
-					// (though it is recommended)
-					if (player.ticksExisted % 3600 == 0) {
-						Packets.TRANSFORMATION.sync(player);
-					}
-				}
+			} else {
+				player.eyeHeight = player.getDefaultEyeHeight();
 			}
 		}
 	}
@@ -173,7 +184,7 @@ public class TransformationEventHandler {
 						predicate, 8.0F, 0.6D, 0.6D));
 			}
 
-			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
+			ITransformationCreature tc = elb.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
 			if (tc != null && !(elb instanceof EntityPlayer)) {
 				try {
 					tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));

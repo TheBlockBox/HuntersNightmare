@@ -61,10 +61,9 @@ public class ArmorEffectiveAgainstTransformation implements IArmorEffectiveAgain
 	}
 
 	public static ArmorEffectiveAgainstTransformation getFromArmor(Item armor) {
-		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS) {
+		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
 			if (aeat.getArmor().equals(armor))
 				return aeat;
-		}
 
 		return null;
 	}

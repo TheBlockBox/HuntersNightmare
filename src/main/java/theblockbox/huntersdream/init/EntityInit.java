@@ -3,7 +3,6 @@ package theblockbox.huntersdream.init;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -14,20 +13,16 @@ import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
-import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class EntityInit {
 	private static int networkID = 0;
 
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
-
-		// Register with egg
-		registerEntity(event, "goblintd", EntityGoblinTD.class, 20, 29696, 255);
-
-		// Register without egg
-		registerEntity(event, "werewolf", EntityWerewolf.class, 20);
-
-		registerEntity(event, "chair", EntityChair.class, 16);
+		event.getRegistry().registerAll(
+				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255).tracker(20, 20, false).build(),
+				getEntityEntryBuilder("werewolf", EntityWerewolf.class).tracker(20, 20, false).build(),
+				getEntityEntryBuilder("chair", EntityChair.class).build());
 	}
 
 	public static void registerEntityRenders() {
@@ -51,21 +46,7 @@ public class EntityInit {
 	 * new texture in textures/entity
 	 */
 
-	/** Register with egg */
-	private static void registerEntity(RegistryEvent.Register<EntityEntry> event, String name,
-			Class<? extends Entity> entity, int trackingRange, int eggColor1, int eggColor2) {
-		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
-				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
-				.tracker(trackingRange, 20, false).egg(eggColor1, eggColor2).build();
-		event.getRegistry().register(entry);
-	}
-
-	/** Register without egg */
-	private static void registerEntity(RegistryEvent.Register<EntityEntry> event, String name,
-			Class<? extends Entity> entity, int trackingRange) {
-		EntityEntry entry = EntityEntryBuilder.create().entity(entity)
-				.id(new ResourceLocation(Reference.MODID, name), networkID++).name(name)
-				.tracker(trackingRange, 20, false).build();
-		event.getRegistry().register(entry);
+	private static EntityEntryBuilder<Entity> getEntityEntryBuilder(String name, Class<? extends Entity> clazz) {
+		return EntityEntryBuilder.create().entity(clazz).id(GeneralHelper.newResLoc(name), networkID++).name(name);
 	}
 }

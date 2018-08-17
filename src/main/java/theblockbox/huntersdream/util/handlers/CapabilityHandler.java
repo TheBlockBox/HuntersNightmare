@@ -8,6 +8,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.capabilities.CapabilityProvider;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -26,20 +27,17 @@ import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class CapabilityHandler {
-	public final static ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = new ResourceLocation(Reference.MODID,
-			"transformationplayer");
-	public static final ResourceLocation TRANSFORMATION_CREATURE_CAPABILITY = new ResourceLocation(Reference.MODID,
-			"transformationcreature");
-	public static final ResourceLocation INFECT_IN_TICKS_CAPABILITY = new ResourceLocation(Reference.MODID,
-			"infectinticks");
-	public static final ResourceLocation INFECT_ON_NEXT_MOON = new ResourceLocation(Reference.MODID,
-			"infectonnextmoon");
-	public static final ResourceLocation WEREWOLF = new ResourceLocation(Reference.MODID, "werewolf");
+	public final static ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = GeneralHelper
+			.newResLoc("transformationplayer");
+	public static final ResourceLocation TRANSFORMATION_CREATURE_CAPABILITY = GeneralHelper
+			.newResLoc("transformationcreature");
+	public static final ResourceLocation INFECT_IN_TICKS_CAPABILITY = GeneralHelper.newResLoc("infectinticks");
+	public static final ResourceLocation INFECT_ON_NEXT_MOON = GeneralHelper.newResLoc("infectonnextmoon");
+	public static final ResourceLocation WEREWOLF = GeneralHelper.newResLoc("werewolf");
 
 	@SubscribeEvent
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
-
 		if (entity instanceof EntityPlayer) {
 			event.addCapability(TRANSFORMATION_PLAYER_CAPABILITIY,
 					new CapabilityProvider<ITransformationPlayer>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
@@ -59,7 +57,7 @@ public class CapabilityHandler {
 	}
 
 	@SubscribeEvent
-	public static void onPlayerClone(PlayerEvent.Clone event) {
+	public static void onPlayerClone(PlayerEvent.Clone event) throws InterruptedException {
 		if (event.isWasDeath()) {
 			EntityPlayer player = event.getEntityPlayer();
 			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(player);
@@ -81,9 +79,22 @@ public class CapabilityHandler {
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
 
-			Packets.TRANSFORMATION.sync(player);
-			GeneralHelper.executeIn(() -> Packets.TRANSFORMATION.sync(player), player.ticksExisted + 600, player);
-			GeneralHelper.executeIn(() -> Packets.TRANSFORMATION.sync(player), player.ticksExisted + 1200, player);
+			new Thread(() -> {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					Main.LOGGER.catching(e);
+				}
+				player.getServer().addScheduledTask(() -> Packets.TRANSFORMATION.sync(player));
+			}, "SyncCapAfterPlayerDeath1").start();
+			new Thread(() -> {
+				try {
+					Thread.sleep(40000);
+				} catch (InterruptedException e) {
+					Main.LOGGER.catching(e);
+				}
+				player.getServer().addScheduledTask(() -> Packets.TRANSFORMATION.sync(player));
+			}, "SyncCapAfterPlayerDeath2").start();
 		}
 	}
 }

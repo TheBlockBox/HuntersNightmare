@@ -16,4 +16,6 @@ public interface ITransformation {
 	public void setTransformation(Transformations transformation);
 
 	public int getTextureIndex();
+
+	public void setTextureIndex(int index);
 }

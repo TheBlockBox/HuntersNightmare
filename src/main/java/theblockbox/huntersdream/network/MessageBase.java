@@ -13,6 +13,7 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public abstract class MessageBase<T extends MessageBase<T>> implements IMessage {
 
@@ -30,7 +31,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 	}
 
 	public static ResourceLocation readResourceLocation(ByteBuf buf) {
-		return new ResourceLocation(readString(buf));
+		return GeneralHelper.newResLoc(readString(buf));
 	}
 
 	public static void writeResourceLocation(ByteBuf buf, ResourceLocation resourceLocation) {

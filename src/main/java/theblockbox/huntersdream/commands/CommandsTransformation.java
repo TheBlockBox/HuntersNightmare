@@ -8,12 +8,11 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class CommandsTransformation extends CommandBase {
@@ -62,16 +61,11 @@ public class CommandsTransformation extends CommandBase {
 						player.getName(), TransformationHelper.getTransformation(player).toString()));
 			} else {
 				String transformation = args[0];
-				ResourceLocation name;
-				if (transformation.contains(":")) {
-					name = new ResourceLocation(transformation);
-				} else {
-					name = new ResourceLocation(Reference.MODID, transformation);
-				}
-				Transformations transformations = Transformations.fromResourceLocation(name);
+				Transformations transformations = Transformations
+						.fromNameWithoutError(GeneralHelper.newResLoc(transformation).toString());
 				TransformationHelper.changeTransformation(player, transformations);
 				sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
-						player.getName(), Transformations.fromResourceLocation(name).toString()));
+						player.getName(), transformations.toString()));
 			}
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);

@@ -6,13 +6,14 @@ import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.model.ModelGoblinTD;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
 	public static final ResourceLocation[] TEXTURES = new ResourceLocation[EntityGoblinTD.TEXTURES];
 
 	static {
 		for (int i = 0; i < EntityGoblinTD.TEXTURES; i++) {
-			TEXTURES[i] = new ResourceLocation(Reference.MODID, "textures/entity/goblin" + i + ".png");
+			TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin" + i + ".png");
 		}
 	}
 

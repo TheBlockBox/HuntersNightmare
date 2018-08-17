@@ -63,6 +63,9 @@ public class ModelLycanthropeBiped extends ModelBiped {
 	public ModelRenderer clawr6;
 	/** This value is weird */
 	public static final float ROTATION = -0.5235987755982988F;
+	/** The werewolf's height */
+	public static final float HEIGHT = 2.6F;
+	public static final float EYE_HEIGHT = 2.2F;
 
 	public ModelLycanthropeBiped() {
 		this.textureWidth = 128;
@@ -353,5 +356,7 @@ public class ModelLycanthropeBiped extends ModelBiped {
 		// fix legs
 		this.bipedRightLeg.rotateAngleX += ROTATION;
 		this.bipedLeftLeg.rotateAngleX += ROTATION;
+		this.bipedRightArm.rotateAngleX -= ROTATION;
+		this.bipedLeftArm.rotateAngleX -= ROTATION;
 	}
 }

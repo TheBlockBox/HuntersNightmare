@@ -57,7 +57,10 @@ public class TransformationHelper {
 	 * method)
 	 */
 	public static ITransformationPlayer getCap(EntityPlayer player) {
-		return player.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER, null);
+		if (player != null)
+			return player.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER, null);
+		else
+			throw new NullPointerException("Player is null");
 	}
 
 	/**
@@ -188,7 +191,6 @@ public class TransformationHelper {
 		Packets.TRANSFORMATION.sync(player); // sync data with client
 	}
 
-	// TODO: Add handling of transformation change
 	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation) {
 		if (entity != null && transformation != null) {
 			if (entity instanceof EntityPlayer) {

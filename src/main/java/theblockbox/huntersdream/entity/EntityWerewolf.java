@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -25,6 +24,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -38,20 +39,21 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
-	private String entityName;
+	private String untransformedEntityName;
 	public static final double SPEED = 0.5D;
 	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
-	public static final float HEIGHT = 2.5F;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
-		this.textureIndex = textureIndex;
-		this.entityName = entityName;
-		this.setSize(1F, HEIGHT);
+		this.textureIndex = (textureIndex >= 0 && textureIndex < getTransformation().getTextures().length)
+				? textureIndex
+				: getTransformation().getRandomTextureIndex();
+		this.untransformedEntityName = entityName;
+		this.setSize(1F, ModelLycanthropeBiped.HEIGHT);
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityLivingBase entity) {
-		this(worldIn, textureIndex, EntityList.getEntityString(entity));
+		this(worldIn, textureIndex, entity.getClass().getName());
 	}
 
 	public EntityWerewolf(World worldIn) {
@@ -111,7 +113,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public float getEyeHeight() {
-		return 2.2F;
+		return ModelLycanthropeBiped.EYE_HEIGHT;
 	}
 
 	@Override
@@ -134,6 +136,10 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 				}
 			}
 		}
+		if (isSprinting())
+			setSize(ModelLycanthropeQuadruped.WIDTH, ModelLycanthropeQuadruped.HEIGHT);
+		else
+			setSize(1F, ModelLycanthropeBiped.HEIGHT);
 	}
 
 	@Override
@@ -148,13 +154,13 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
-		ByteBufUtils.writeUTF8String(buffer, entityName);
+		ByteBufUtils.writeUTF8String(buffer, untransformedEntityName);
 		buffer.writeInt(textureIndex);
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf buffer) {
-		this.entityName = ByteBufUtils.readUTF8String(buffer);
+		this.untransformedEntityName = ByteBufUtils.readUTF8String(buffer);
 		this.textureIndex = buffer.readInt();
 	}
 
@@ -163,6 +169,6 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	 */
 	@Override
 	public String getEntityName() {
-		return entityName;
+		return untransformedEntityName;
 	}
 }

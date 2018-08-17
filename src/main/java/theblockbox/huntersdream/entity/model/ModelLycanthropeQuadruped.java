@@ -3,6 +3,7 @@ package theblockbox.huntersdream.entity.model;
 import net.minecraft.client.model.ModelQuadruped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * LycanthropeAll4s - VampireRedEye Created using Tabula 7.0.0
@@ -60,6 +61,9 @@ public class ModelLycanthropeQuadruped extends ModelQuadruped {
 	public ModelRenderer clawr4;
 	public ModelRenderer clawr5;
 	public ModelRenderer clawr6;
+	public static final float HEIGHT = 1.6F;
+	public static final float WIDTH = 0.6F;
+	public static final float EYE_HEIGHT = 1.4F;
 
 	public ModelLycanthropeQuadruped() {
 		super(0, 0.0F);
@@ -330,5 +334,17 @@ public class ModelLycanthropeQuadruped extends ModelQuadruped {
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;
+	}
+
+	@Override
+	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch, float scaleFactor, Entity entityIn) {
+		this.head.rotateAngleX = headPitch * 0.017453292F;
+		this.head.rotateAngleY = netHeadYaw * 0.017453292F;
+		this.body.rotateAngleX = ((float) Math.PI / 2F);
+		this.leg1.rotateAngleX = (MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) / 2;
+		this.leg2.rotateAngleX = (MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount) / 2;
+		this.leg3.rotateAngleX = (MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount) / 2;
+		this.leg4.rotateAngleX = (MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) / 2;
 	}
 }

@@ -2,6 +2,8 @@ package theblockbox.huntersdream.util.enums;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -9,9 +11,9 @@ import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.functional.ICalculateLevel;
@@ -53,19 +55,31 @@ public enum Transformations {
 	 *             "huntersdream:werewolf"
 	 */
 	public static Transformations fromName(String name) {
-		for (Transformations transformations : Helper.TRANSFORMATIONS) {
-			if (transformations.getResourceLocation().toString().equals(name)) {
+		Transformations transformation = fromNameWithoutError(name);
+		if (transformation == null)
+			Main.LOGGER.error("The given string \"" + name
+					+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure\nStacktrace: "
+					+ (new ExecutionPath()).getAll());
+		return transformation;
+	}
+
+	/**
+	 * Does exactly the same thing as {@link #fromName(String)} but without logging
+	 * an error
+	 */
+	public static @Nullable Transformations fromNameWithoutError(String name) {
+		for (Transformations transformations : Helper.TRANSFORMATIONS)
+			if (transformations.getResourceLocation().toString().equals(name))
 				return transformations;
-			}
-		}
-		Main.LOGGER.error("The given string \"" + name
-				+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure\nStacktrace: "
-				+ (new ExecutionPath()).getAll());
 		return null;
 	}
 
 	public static Transformations fromResourceLocation(ResourceLocation resourceLocation) {
 		return fromName(resourceLocation.toString());
+	}
+
+	public static Transformations[] getAllTransformations() {
+		return Helper.TRANSFORMATIONS.toArray(new Transformations[0]);
 	}
 
 	/**
@@ -77,13 +91,7 @@ public enum Transformations {
 	 */
 	@Deprecated
 	public static Transformations fromID(int id) {
-		if (id == 0) {
-			return Transformations.HUMAN;
-		} else if (id == 1) {
-			return Transformations.WEREWOLF;
-		} else {
-			throw new UnexpectedBehaviorException("The id " + id + " couldn't be found");
-		}
+		return (id == 0) ? (Transformations.HUMAN) : ((id == 1) ? Transformations.WEREWOLF : null);
 	}
 
 	public ResourceLocation getResourceLocation() {
@@ -91,12 +99,11 @@ public enum Transformations {
 	}
 
 	public double getLevel(EntityPlayerMP player) {
-		if (!player.world.isRemote) {
+		if (!player.world.isRemote)
 			return this.getCalculateLevel().getLevel(player);
-		} else {
+		else
 			throw new WrongSideException("Can only obtain level on server side. Please use cap#getLevel instead",
 					player.world);
-		}
 	}
 
 	public boolean isSupernatural() {
@@ -120,9 +127,8 @@ public enum Transformations {
 	}
 
 	public void transformCreatureWhenPossible(EntityCreature creature) {
-		if (this.getTransformCreature() != null) {
+		if (this.getTransformCreature() != null)
 			this.getTransformCreature().transformCreature(creature);
-		}
 	}
 
 	private ITransformCreature getTransformCreature() {
@@ -188,8 +194,8 @@ public enum Transformations {
 		 * Caution! Domain defaults to huntersdream. If you're making an addon, use
 		 * {@link #create(ResourceLocation)}
 		 */
-		public static TransformationEntry create(String resourceLocation) {
-			return new TransformationEntry(new ResourceLocation(Reference.MODID, resourceLocation));
+		public static TransformationEntry create(String name) {
+			return new TransformationEntry(GeneralHelper.newResLoc(name));
 		}
 
 		public TransformationEntry setSupernatural(boolean supernatural) {
@@ -229,7 +235,7 @@ public enum Transformations {
 		public TransformationEntry setTexturesHD(String... textures) {
 			ResourceLocation[] resourceLocations = new ResourceLocation[textures.length];
 			for (int i = 0; i < textures.length; i++) {
-				resourceLocations[i] = new ResourceLocation(Reference.ENTITY_TEXTURE_PATH + textures[i] + ".png");
+				resourceLocations[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + textures[i] + ".png");
 			}
 			this.textures = resourceLocations;
 			return this;

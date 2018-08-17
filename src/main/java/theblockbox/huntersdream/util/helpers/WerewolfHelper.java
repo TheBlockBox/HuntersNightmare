@@ -39,7 +39,6 @@ public class WerewolfHelper {
 		return player.world.canBlockSeeSky(new BlockPos(player.posX, player.posY + 1, player.posZ));
 	}
 
-	// TODO: Add rituals that affect levelling
 	public static double getWerewolfLevel(EntityPlayer player) {
 		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
