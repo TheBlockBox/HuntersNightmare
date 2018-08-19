@@ -78,13 +78,18 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 				ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
 				if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT)) {
 					cap.addRitual(Rituals.LUPUS_ADVOCABIT);
-					Packets.TRANSFORMATION.sync(playerIn);
-					playerIn.sendMessage(new TextComponentTranslation("werewolf_enchanting_stone.onClick.werewolf"));
+				} else if (!cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE) && cap.getLevel() < 6) {
+					cap.addRitual(Rituals.WEREWOLF_SECOND_RITE);
 				} else {
 					return false;
 				}
+
+				Packets.TRANSFORMATION.sync(playerIn);
+				playerIn.sendMessage(
+						new TextComponentTranslation("huntersdream.werewolf_enchanting_stone.onClick.werewolf"));
 			} else {
-				playerIn.sendMessage(new TextComponentTranslation("werewolf_enchanting_stone.onClick.notWerewolf"));
+				playerIn.sendMessage(
+						new TextComponentTranslation("huntersdream.werewolf_enchanting_stone.onClick.notWerewolf"));
 			}
 		}
 		return true;

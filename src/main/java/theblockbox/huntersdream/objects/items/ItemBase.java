@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 
 public class ItemBase extends Item implements IHasModel {
@@ -14,7 +15,7 @@ public class ItemBase extends Item implements IHasModel {
 	}
 
 	public ItemBase(String name, CreativeTabs creativeTab) {
-		setUnlocalizedName(name);
+		setUnlocalizedName(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(creativeTab);
 

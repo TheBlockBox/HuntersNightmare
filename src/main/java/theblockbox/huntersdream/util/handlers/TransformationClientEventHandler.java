@@ -37,9 +37,15 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 public class TransformationClientEventHandler {
 	private static RenderLycantrophePlayer renderLycantrophePlayer = null;
 	private static RenderPlayer renderPlayerHand = null;
-	public static final ResourceLocation WEREWOLF_HAND = GeneralHelper
-			.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf_arms.png");
 	public static HashMap<String, RenderPlayer> skinMap;
+	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("black", false),
+			getHandTexture("brown", false), getHandTexture("white", false), getHandTexture("black", true),
+			getHandTexture("brown", true), getHandTexture("white", true) };
+
+	private static ResourceLocation getHandTexture(String variant, boolean slim) {
+		return GeneralHelper.newResLoc(
+				Reference.ENTITY_TEXTURE_PATH + "werewolf_arms_" + (slim ? "slim" : "normal") + "_" + variant + ".png");
+	}
 
 	@SubscribeEvent
 	public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
@@ -120,11 +126,14 @@ public class TransformationClientEventHandler {
 	public static void onRenderPlayerHand(RenderHandEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		if (ConfigHandler.customPlayerRender && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
-			String skinType = mc.player.getSkinType();
-			if (WerewolfHelper.transformedWerewolf(mc.player)) {
+			EntityPlayerSP player = mc.player;
+			String skinType = player.getSkinType();
+			if (WerewolfHelper.transformedWerewolf(player)) {
 				if (skinMap == null)
 					skinMap = ObfuscationReflectionHelper.getPrivateValue(RenderManager.class,
 							Minecraft.getMinecraft().getRenderManager(), 1);
+				final ResourceLocation WEREWOLF_HAND = WEREWOLF_HANDS[(skinType.equals("slim") ? 3 : 0)
+						+ TransformationHelper.getCap(player).getTextureIndex()];
 				if (renderPlayerHand == null) {
 					renderPlayerHand = new RenderPlayer(mc.getRenderManager(), skinType.equals("slim")) {
 						@Override

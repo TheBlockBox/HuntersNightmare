@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
@@ -31,7 +32,8 @@ import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
-public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IEntityAdditionalSpawnData {
+public class EntityGoblinTD extends EntityVillager
+		implements ITransformationCreature, IEntityAdditionalSpawnData, IMob {
 	/** The amount of textures available for the goblins */
 	public static final int TEXTURES = 7;
 	private int goblinTextureIndex;
@@ -57,6 +59,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		super.entityInit();
 		this.dataManager.register(TEXTURE_INDEX, 0);
 		this.dataManager.register(TRANSFORMATION_NAME, Transformations.HUMAN.toString());
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 	}
 
 	@Override
@@ -67,18 +70,18 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
+		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
 		this.applyEntityAI();
 	}
 
 	protected void applyEntityAI() {
-		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
 		Predicate<EntityCreature> predicateMob = input -> {
 			return !(input instanceof EntityGoblinTD);
 		};
 		Predicate<EntityPlayer> predicatePlayer = WerewolfHelper::transformedWerewolf;
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
 				true, false, predicatePlayer));
 	}
 
@@ -102,6 +105,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20);
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5);
 	}
 
 	@Override

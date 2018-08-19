@@ -51,12 +51,13 @@ public class TransformationEventHandler {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
-			if (WerewolfHelper.transformedWerewolf(player))
-				WerewolfEventHandler.onWerewolfTick(player);
-
-			if (player.ticksExisted % 20 == 0) {
-				if (WerewolfHelper.transformedWerewolf(player))
+			if (player.ticksExisted % 80 == 0) {
+				if (WerewolfHelper.transformedWerewolf(player)) {
 					WerewolfHelper.applyLevelBuffs(player);
+					if (!player.isCreative() && !player.isSpectator()) {
+						player.inventory.dropAllItems();
+					}
+				}
 
 				if (!player.world.isRemote) { // ensures that this is the server side
 
@@ -68,7 +69,23 @@ public class TransformationEventHandler {
 										cap.transformed() ? cap.getTransformation().getProtection() : 1);
 					}
 
-					WerewolfEventHandler.onPlayerTick(event, (EntityPlayerMP) player, cap);
+					EntityPlayerMP playerMP = (EntityPlayerMP) player;
+
+					if (cap.getTransformation() == Transformations.WEREWOLF) {
+						if (WerewolfHelper.isWerewolfTime(player)) {
+							if (!cap.transformed()) {
+								WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
+							} else {
+								WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap);
+							}
+						} else {
+							if (cap.transformed()) {
+								WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap);
+							} else {
+								WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap);
+							}
+						}
+					}
 
 					if (player.ticksExisted % 1200 == 0) {
 						// every minute when the player is not under a block, transformed and a
@@ -208,11 +225,8 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
-		if (!event.getEntityLiving().world.isRemote) {
-			if (event.getEntityLiving() instanceof EntityWerewolf) {
-				WerewolfEventHandler.onWerewolfTick(event.getEntityLiving());
-			}
-			if (event.getEntityLiving().ticksExisted % 80 == 0) {
+		if (event.getEntityLiving().ticksExisted % 100 == 0) {
+			if (!event.getEntityLiving().world.isRemote) {
 
 				EntityLivingBase entity = event.getEntityLiving();
 				try {

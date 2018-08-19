@@ -8,7 +8,8 @@ import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public enum Rituals {
-	LUPUS_ADVOCABIT("lupusadvocabit", Transformations.WEREWOLF);
+	LUPUS_ADVOCABIT("lupusadvocabit", Transformations.WEREWOLF),
+	WEREWOLF_SECOND_RITE("werewolfsecondrite", Transformations.WEREWOLF);
 
 	private ResourceLocation resourceLocation;
 	private Transformations[] forTransformations;

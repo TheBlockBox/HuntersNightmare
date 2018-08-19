@@ -13,6 +13,7 @@ import net.minecraft.item.ItemTool;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 
 public class ToolAxe extends ItemTool implements IHasModel {
@@ -23,7 +24,7 @@ public class ToolAxe extends ItemTool implements IHasModel {
 
 	public ToolAxe(String name, ToolMaterial material) {
 		super(material, EFFECTIVE_ON);
-		setUnlocalizedName(name);
+		setUnlocalizedName(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 		this.setHarvestLevel(name, material.getHarvestLevel());

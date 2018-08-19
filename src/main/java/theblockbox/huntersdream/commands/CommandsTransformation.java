@@ -24,7 +24,7 @@ public class CommandsTransformation extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "command.transformation.usage";
+		return "command.huntersdream.transformation.usage";
 	}
 
 	@Override
@@ -57,14 +57,14 @@ public class CommandsTransformation extends CommandBase {
 				player = (EntityPlayerMP) sender;
 			}
 			if (args[0].equals("get")) {
-				sender.sendMessage(new TextComponentTranslation("command.transformation.transformationGet",
+				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationGet",
 						player.getName(), TransformationHelper.getTransformation(player).toString()));
 			} else {
 				String transformation = args[0];
 				Transformations transformations = Transformations
 						.fromNameWithoutError(GeneralHelper.newResLoc(transformation).toString());
 				TransformationHelper.changeTransformation(player, transformations);
-				sender.sendMessage(new TextComponentTranslation("command.transformation.transformationSet",
+				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationSet",
 						player.getName(), transformations.toString()));
 			}
 		} catch (Exception e) {

@@ -3,29 +3,29 @@
 # Translated by: 
 
 # Armor
-item.helmet_silver.name=Silver Helmet
-item.chestplate_silver.name=Silver Chestplate
-item.leggings_silver.name=Silver Leggings
-item.boots_silver.name=Silver Boots
+item.huntersdream.helmet_silver.name=Silver Helmet
+item.huntersdream.chestplate_silver.name=Silver Chestplate
+item.huntersdream.leggings_silver.name=Silver Leggings
+item.huntersdream.boots_silver.name=Silver Boots
 
 # Weapons and Tools
-item.sword_silver.name=Silver Sword
-item.pickaxe_silver.name=Silver Pickaxe
-item.shovel_silver.name=Silver Shovel
-item.hoe_silver.name=Silver Hoe
-item.axe_silver.name=Silver Axe
+item.huntersdream.sword_silver.name=Silver Sword
+item.huntersdream.pickaxe_silver.name=Silver Pickaxe
+item.huntersdream.shovel_silver.name=Silver Shovel
+item.huntersdream.hoe_silver.name=Silver Hoe
+item.huntersdream.axe_silver.name=Silver Axe
 
 # Other items
-item.ingot_silver.name=Silver Ingot
+item.huntersdream.ingot_silver.name=Silver Ingot
 
 # Potions
-effect.fear=Fear
+effect.huntersdream.fear=Fear
 
 # Blocks
-tile.block_silver.name=Silver Block
-tile.overworld_ore_silver.name=Silver Ore
-tile.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
-tile.chair.name=Chair
+tile.huntersdream.block_silver.name=Silver Block
+tile.huntersdream.overworld_ore_silver.name=Silver Ore
+tile.huntersdream.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
+tile.huntersdream.chair.name=Chair
 
 # Entities
 entity.goblintd.name=Goblin
@@ -37,22 +37,22 @@ itemGroup.huntersdream.misc=Hunter's Dream Miscellaneous
 itemGroup.huntersdream.furniture=Hunter's Dream Furniture
 
 # Commands
-command.invalid=Invalid arguments
-command.transformationXP.usage=hdtransformationlevel <set|add|remove> <value> <player>
-command.transformationXP.set=%s's transformation xp was set to %s
-command.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
-command.moonphase.getCurrent=Current moonphase is %s
-command.moonphase.getSet=Moonphase is now %s
-command.transformation.usage=hdtransformation <transformation|get> <player>
-command.transformation.transformationSet=%s is now a %s
-command.transformation.transformationGet=%s's transformation is %s
-command.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
-command.transformationtexture.get=%s's texture index is %s
-command.transformationtexture.set=%s's texture was set to %s
+command.huntersdream.invalid=Invalid arguments
+command.huntersdream.transformationXP.usage=hdtransformationlevel <set|add|remove> <value> <player>
+command.huntersdream.transformationXP.set=%s's transformation xp was set to %s
+command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
+command.huntersdream.moonphase.getCurrent=Current moonphase is %s
+command.huntersdream.moonphase.getSet=Moonphase is now %s
+command.huntersdream.transformation.usage=hdtransformation <transformation|get> <player>
+command.huntersdream.transformation.transformationSet=%s is now a %s
+command.huntersdream.transformation.transformationGet=%s's transformation is %s
+command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
+command.huntersdream.transformationtexture.get=%s's texture index is %s
+command.huntersdream.transformationtexture.set=%s's texture was set to %s
 
 # Chat messages
-transformations.onLevelUp=You feel that you're getting stronger... You're now level %s
-transformations.infected.werewolf=You've been bitten but the wound is ... healing?
+transformations.huntersdream.onLevelUp=You feel that you're getting stronger... You're now level %s
+transformations.huntersdream.infected.werewolf=You've been bitten but the wound is ... healing?
 # FP = First Person, TP = Third Person, picked = by yourself, touch = someone touched you
 transformations.huntersdream:werewolf.fp.picked=You touch %s! Your skin burns as you hold it. Hope nobody saw that!
 transformations.huntersdream:werewolf.fp.touched=You've been touched with %s and it burns your skin
@@ -65,8 +65,8 @@ transformations.huntersdream:werewolf.transformingInto.4=You go blind, your eyes
 transformations.huntersdream:werewolf.transformingInto.5=Your body is now having dramatic changes, bones and muscle tissue breaking and reforming, your eyesight is back but different. Your mind can only think about killing
 transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf within is now free...
 transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
-werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
-werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
+huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
+huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
 huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
 
 # Config
@@ -93,9 +93,8 @@ huntersdream:hybrid=Hybrid
 huntersdream:hunter=Hunter
 
 # Sounds (Subtitles)
-transformation.heartbeat=Heartbeat of a werewolf
-mob.ghast.scream=Werewolf screaming in pain
-transformation.werewolf.howling=Howling werewolf
+huntersdream.transformation.heartbeat=Heartbeat of a werewolf
+huntersdream.transformation.werewolf.howling=Howling werewolf
 
 # Other stuff
 # the word you'd use in a list (like Werewolf,Vampire and Hybrid). Space before it needed

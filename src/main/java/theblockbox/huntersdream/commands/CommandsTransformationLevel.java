@@ -24,7 +24,7 @@ public class CommandsTransformationLevel extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "command.transformationXP.usage";
+		return "command.huntersdream.transformationXP.usage";
 	}
 
 	@Override
@@ -85,7 +85,8 @@ public class CommandsTransformationLevel extends CommandBase {
 			}
 
 			TransformationHelper.setXP(player, value, TransformationXPSentReason.COMMAND);
-			sender.sendMessage(new TextComponentTranslation("command.transformationXP.set", player.getName(), value));
+			sender.sendMessage(
+					new TextComponentTranslation("command.huntersdream.transformationXP.set", player.getName(), value));
 
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);

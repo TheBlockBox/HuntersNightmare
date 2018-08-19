@@ -34,32 +34,39 @@ public class PacketHandler {
 	public static int networkID = 0;
 
 	public static void register() {
-		for (Packets packet : Packets.values()) {
-			packet.register();
-		}
+		for (Packets packet : Packets.values())
+			if (packet.REGISTER)
+				packet.register();
 	}
 
 	public enum Packets {
 		TRANSFORMATION(new TransformationMessage()), NIGHT_OVER(new TransformationWerewolfNightOverMessage()),
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
 		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
-		TRANSFORMATION_REPLY(new TransformationReplyMessage()), PLAY_SOUND(new PlaySoundMessage());
+		TRANSFORMATION_REPLY(new TransformationReplyMessage()), PLAY_SOUND(new PlaySoundMessage()),
+		TRANSFORMATION_ONE_CLIENT(new TransformationMessage(), CLIENT, false);
 
 		private final MessageBase<?> MESSAGE_BASE;
 		/** Side that receives package */
 		public final Side SIDE;
 		/** The result of {@link MessageBase#getName()} */
 		public final String NAME;
+		public final boolean REGISTER;
 
 		private Packets(MessageBase<?> messageBase) {
 			this(messageBase, CLIENT);
 		}
 
 		// Remember: Don't trust the client
-		private Packets(MessageBase<?> messageBase, Side side) {
+		private Packets(MessageBase<?> messageBase, Side side, boolean register) {
 			this.MESSAGE_BASE = messageBase;
 			this.SIDE = side;
 			this.NAME = messageBase.getName();
+			this.REGISTER = register;
+		}
+
+		private Packets(MessageBase<?> messageBase, Side side) {
+			this(messageBase, side, true);
 		}
 
 		// not a really beautiful way of doing this, but "it just works"
@@ -113,6 +120,12 @@ public class PacketHandler {
 
 				case PLAY_SOUND:
 					sendMessageToPlayer(new PlaySoundMessage((String) args[0], (int) args[1], (int) args[2]), player);
+					break;
+
+				case TRANSFORMATION_ONE_CLIENT:
+					sendMessageToPlayer(new TransformationMessage(cap.getXP(), cap.transformed(),
+							cap.getTransformation(), player, cap.getTextureIndex(), cap.getRituals()),
+							(EntityPlayerMP) args[0]);
 					break;
 
 				default:

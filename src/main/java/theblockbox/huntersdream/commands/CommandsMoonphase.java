@@ -21,7 +21,7 @@ public class CommandsMoonphase extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "command.moonphase.usage";
+		return "command.huntersdream.moonphase.usage";
 	}
 
 	@Override
@@ -53,10 +53,10 @@ public class CommandsMoonphase extends CommandBase {
 				try {
 					// when there's a world parameter
 					if (args.length >= 2) {
-						sender.sendMessage(new TextComponentTranslation("command.moonphase.getCurrent",
+						sender.sendMessage(new TextComponentTranslation("command.huntersdream.moonphase.getCurrent",
 								server.getWorld(Integer.parseInt(args[1])).getCurrentMoonPhaseFactor()));
 					} else {
-						sender.sendMessage(new TextComponentTranslation("command.moonphase.getCurrent",
+						sender.sendMessage(new TextComponentTranslation("command.huntersdream.moonphase.getCurrent",
 								sender.getEntityWorld().getCurrentMoonPhaseFactor()));
 					}
 				} catch (Exception e) {
@@ -74,7 +74,7 @@ public class CommandsMoonphase extends CommandBase {
 					}
 					world.setWorldTime(world.getWorldTime() + (24000 * moonphasesToSkip));
 					// essentially /time add 24000
-					sender.sendMessage(new TextComponentTranslation("command.moonphase.getSet",
+					sender.sendMessage(new TextComponentTranslation("command.huntersdream.moonphase.getSet",
 							world.getCurrentMoonPhaseFactor()));
 				} catch (Exception e) {
 					CommandHelper.invalidCommand(sender);

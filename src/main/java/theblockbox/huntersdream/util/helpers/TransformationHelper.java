@@ -295,7 +295,7 @@ public class TransformationHelper {
 			cap.setLevel(cap.getTransformation().getLevel((EntityPlayerMP) player));
 			int levelAfter = cap.getLevelFloor();
 			if (levelBefore < levelAfter) {
-				player.sendMessage(new TextComponentTranslation("transformations.onLevelUp", levelAfter));
+				player.sendMessage(new TextComponentTranslation("transformations.huntersdream.onLevelUp", levelAfter));
 			}
 			Packets.XP.sync(player);
 		}

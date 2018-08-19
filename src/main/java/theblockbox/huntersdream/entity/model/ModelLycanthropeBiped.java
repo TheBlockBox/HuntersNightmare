@@ -344,7 +344,6 @@ public class ModelLycanthropeBiped extends ModelBiped {
 	@Override
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch, float scaleFactor, Entity entityIn) {
-		this.bipedHead.rotateAngleY = netHeadYaw * 0.017453292F;
 		this.bipedHead.rotateAngleX = headPitch * 0.017453292F;
 		this.bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount * 0.5F;
 		this.bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount

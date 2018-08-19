@@ -341,6 +341,7 @@ public class ModelLycanthropeQuadruped extends ModelQuadruped {
 			float headPitch, float scaleFactor, Entity entityIn) {
 		this.head.rotateAngleX = headPitch * 0.017453292F;
 		this.head.rotateAngleY = netHeadYaw * 0.017453292F;
+		// TODO: Make that werewolf has eyes
 		this.body.rotateAngleX = ((float) Math.PI / 2F);
 		this.leg1.rotateAngleX = (MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) / 2;
 		this.leg2.rotateAngleX = (MathHelper.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount) / 2;

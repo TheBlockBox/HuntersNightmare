@@ -24,7 +24,7 @@ public class CommandsTransformationTexture extends CommandBase {
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "command.transformationtexture.usage";
+		return "command.huntersdream.transformationtexture.usage";
 	}
 
 	@Override
@@ -62,16 +62,16 @@ public class CommandsTransformationTexture extends CommandBase {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
 			if (args[0].equals("get")) {
-				sender.sendMessage(new TextComponentTranslation("command.transformationtexture.get", player.getName(),
-						cap.getTextureIndex()));
+				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformationtexture.get",
+						player.getName(), cap.getTextureIndex()));
 			} else {
 				int index = Integer.parseInt(args[0]);
 				if (index >= cap.getTransformation().getTextures().length) {
 					throw new IllegalArgumentException("Wrong texture length");
 				}
 				cap.setTextureIndex(index);
-				sender.sendMessage(new TextComponentTranslation("command.transformationtexture.set", player.getName(),
-						cap.getTextureIndex()));
+				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformationtexture.set",
+						player.getName(), cap.getTextureIndex()));
 				Packets.TRANSFORMATION.sync(player);
 			}
 		} catch (Exception e) {

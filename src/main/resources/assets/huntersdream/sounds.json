@@ -2,7 +2,7 @@
 	"transformation.heartbeat":
 	{
 		"category": "transformation",
-		"subtitle": "transformation.heartbeat",
+		"subtitle": "huntersdream.transformation.heartbeat",
 		"sounds": 
 		[{
 			"name": "huntersdream:transformation/heartbeat", "stream": true
@@ -12,7 +12,7 @@
 	"transformation.werewolf.howling":
 	{
 		"category": "transformation",
-		"subtitle": "transformation.werewolf.howling",
+		"subtitle": "huntersdream.transformation.werewolf.howling",
 		"sounds": 
 		[{
 			"name": "huntersdream:transformation/werewolf/howl", "stream": true

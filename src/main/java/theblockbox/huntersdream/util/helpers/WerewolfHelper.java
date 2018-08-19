@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
@@ -44,14 +45,21 @@ public class WerewolfHelper {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			double level = ((double) cap.getXP()) / 500.0;
 
-			if (level >= 6) {
-				level = 5;
-			}
-
 			if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT))
 				level = 0;
 			else
 				level += 1;
+
+			if (level >= 6) {
+				if (!cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE))
+					level = 5.9D;
+				else
+					level += 1;
+			}
+
+			if (level > 8) {
+				level = 7.9D;
+			}
 
 			return level;
 		} else {
@@ -105,6 +113,9 @@ public class WerewolfHelper {
 	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
 				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
+			if (entityToBeInfected instanceof EntityPlayer)
+				entityToBeInfected
+						.sendMessage(new TextComponentTranslation("transformations.huntersdream.infected.werewolf"));
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 100, 0, false, true));
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 1, false, true));
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entityToBeInfected);
@@ -141,30 +152,21 @@ public class WerewolfHelper {
 	 * the entity is a werewolf and transformed!)
 	 */
 	public static boolean canInfect(EntityLivingBase entity) {
-		if (transformedWerewolf(entity)) {
-			// if entity is a player
-			if (entity instanceof EntityPlayer) {
-
-				EntityPlayer player = (EntityPlayer) entity;
-				// return true when level is higher than five
-				return TransformationHelper.getCap(player).getLevelFloor() >= 5;
-			} else {
-				return true;
-			}
-		}
-
-		return false;
+		// all werewolves (players included) can always infect (given they're
+		// transformed)
+		return transformedWerewolf(entity);
 	}
 
 	public static int getInfectionPercentage(EntityLivingBase entity) {
 		if (canInfect(entity)) {
 			if (entity instanceof EntityPlayer) {
-				return 100;
+				// TODO: could cause issues when player is higher than level 20
+				return TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
 			} else if (entity instanceof EntityLivingBase) {
-				return 100;
+				return 50;
 			} else {
 				Main.LOGGER.error("Found entity that can infect but has no infection percantage... Using 25%");
-				return 25;
+				return 50;
 			}
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf",

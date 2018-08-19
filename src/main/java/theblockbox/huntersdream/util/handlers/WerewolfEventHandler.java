@@ -20,7 +20,7 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -108,6 +108,32 @@ public class WerewolfEventHandler {
 				event.setAmount((event.getAmount() / Transformations.WEREWOLF.getProtection()));
 			}
 		}
+
+		if (transformationAttacker != null && WerewolfHelper.transformedWerewolf(attacker)) {
+			onWerewolfAttack(attacker, transformationAttacker, hurtWerewolf);
+		}
+	}
+
+	public static void onWerewolfAttack(EntityLivingBase attacker, ITransformation transformationAttacker,
+			EntityLivingBase attacked) {
+		// handle werewolf infection
+		// if the werewolf can infect
+		if (WerewolfHelper.canInfect(attacker)) {
+			if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
+				// and the entity can be infected
+				if (TransformationHelper.canChangeTransformation(attacked)
+						&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, attacked)
+						&& (!TransformationHelper.isInfected(attacked))) {
+					// infect the entity
+					WerewolfHelper.infectEntityAsWerewolf(attacked);
+				}
+			}
+		}
+		if (attacker instanceof EntityPlayer) {
+			// fill hunger
+			EntityPlayer player = (EntityPlayer) attacker;
+			player.getFoodStats().addStats(1, 1);
+		}
 	}
 
 	@SubscribeEvent
@@ -116,41 +142,6 @@ public class WerewolfEventHandler {
 			EntityPlayerMP player = (EntityPlayerMP) event.getSource().getTrueSource();
 			if (WerewolfHelper.transformedWerewolf(player) && WerewolfHelper.hasMainlyControl(player)) {
 				TransformationHelper.addXP(player, 10, TransformationXPSentReason.WEREWOLF_HAS_KILLED);
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void onWerewolfAttack(LivingHurtEvent event) {
-		// handle werewolf infection
-		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
-			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-			ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
-			EntityLivingBase attacked = event.getEntityLiving();
-
-			if (transformationAttacker != null) {
-				if (WerewolfHelper.transformedWerewolf(attacker)) {
-					// now it is ensured that the attacker is a werewolf
-
-					// if the werewolf can infect
-					if (WerewolfHelper.canInfect(attacker)) {
-						if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
-							// and the entity can be infected
-							if (TransformationHelper.canChangeTransformation(attacked)
-									&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, attacked)
-									&& (!TransformationHelper.isInfected(attacked))) {
-								// infect the entity
-								WerewolfHelper.infectEntityAsWerewolf(attacked);
-							}
-						}
-					}
-
-					if (attacker instanceof EntityPlayer) {
-						// fill hunger
-						EntityPlayer player = (EntityPlayer) attacker;
-						player.getFoodStats().addStats(1, 1);
-					}
-				}
 			}
 		}
 	}
@@ -180,51 +171,15 @@ public class WerewolfEventHandler {
 		}
 	}
 
-	/**
-	 * Called in {@link TransformationEventHandler#onPlayerTick(PlayerTickEvent)}
-	 */
-	public static void onPlayerTick(PlayerTickEvent event, EntityPlayerMP player, ITransformationPlayer cap) {
-		// werewolf time
-		if (WerewolfHelper.isWerewolfTime(player)) {
-			if (cap.getTransformation() == Transformations.WEREWOLF) {
-				if (!cap.transformed()) {
-					werewolfTimeNotTransformed(player, cap);
-				} else {
-					werewolfTimeTransformed(player, cap);
-				}
-				// remove werewolves
-			}
-// TODO: Remove this after the no control mechanic is completely done
-//			else if (!PLAYER_WEREWOLVES.isEmpty()) {
-//
-//				Iterator<EntityWerewolf> iterator = PLAYER_WEREWOLVES.iterator();
-//
-//				while (iterator.hasNext()) {
-//					EntityWerewolf werewolf = iterator.next();
-//					World world = werewolf.world;
-//					Packets.NIGHT_OVER.sync(WerewolfHelper.getPlayer(werewolf));
-//					world.removeEntity(werewolf);
-//					PLAYER_WEREWOLVES.remove(werewolf);
-//				}
-//			}
-			// not werewolf time
-		} else if (cap.getTransformation() == Transformations.WEREWOLF) {
-			if (cap.transformed())
-				notWerewolfTimeTransformed(player, cap);
-			else
-				notWerewolfTimeNotTransformed(player, cap);
-		}
-	}
-
 	// these methods are here for easier code understanding
 
-	private static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+	static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
 	}
 
-	private static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+	static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
 		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 
-		if (werewolf.getTransformationStage() == 0) {
+		if (werewolf.getTransformationStage() <= 0) {
 			werewolf.setTimeSinceTransformation(player.ticksExisted);
 			onStageChanged(player, werewolf, 1, cap);
 		}
@@ -232,8 +187,36 @@ public class WerewolfEventHandler {
 		// every five seconds (20 * 5 = 100) one stage up
 		int nextStage = MathHelper
 				.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
+
+		if (nextStage > 6 || nextStage < 0) {
+			Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
+			werewolf.setTimeSinceTransformation(-1);
+			werewolf.setTransformationStage(0);
+			Main.LOGGER.warn("Has the ingame time been changed or did the player leave the world? Player "
+					+ player.getName() + "'s transformation stage (" + nextStage + ") is invalid");
+		}
 		if (nextStage > werewolf.getTransformationStage()) {
 			onStageChanged(player, werewolf, nextStage, cap);
+		}
+	}
+
+	static void notWerewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		// currently does nothing
+	}
+
+	static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+		if (werewolf.getTransformationStage() <= 0) {
+			player.sendMessage(
+					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
+			cap.setTransformed(false);
+			Packets.TRANSFORMATION.sync(player);
+			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
+			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
+			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 4));
+			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
+			// night vision for better blindness effect
+			player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
 		}
 	}
 
@@ -290,42 +273,6 @@ public class WerewolfEventHandler {
 					"transformations.huntersdream:werewolf.transformingInto." + werewolf.getTransformationStage()));
 		}
 
-	}
-
-	private static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
-		if (werewolf.getTransformationStage() == 0) {
-			player.sendMessage(
-					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
-			cap.setTransformed(false);
-			Packets.TRANSFORMATION.sync(player);
-			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
-			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
-			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 4));
-			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
-			// night vision for better blindness effect
-			player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
-		}
-	}
-
-	private static void notWerewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-		// currently does nothing
-	}
-
-	/**
-	 * Called in {@link TransformationEventHandler#onPlayerTick(PlayerTickEvent)}
-	 * and
-	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
-	 * 
-	 * @param werewolf The werewolf ticking
-	 */
-	public static void onWerewolfTick(EntityLivingBase werewolf) {
-		if (werewolf instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) werewolf;
-			if (!player.isCreative() && !player.isSpectator()) {
-				player.inventory.dropAllItems();
-			}
-		}
 	}
 
 	/**
@@ -391,5 +338,13 @@ public class WerewolfEventHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Called from
+	 * {@link EventHandler#onPlayerJoin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent)}
+	 */
+	public static void resetTransformationStage(EntityPlayerMP player) {
+		WerewolfHelper.getIWerewolf(player).setTransformationStage(0);
 	}
 }

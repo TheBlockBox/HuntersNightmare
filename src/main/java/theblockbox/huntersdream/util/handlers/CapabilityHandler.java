@@ -85,7 +85,10 @@ public class CapabilityHandler {
 				} catch (InterruptedException e) {
 					Main.LOGGER.catching(e);
 				}
-				player.getServer().addScheduledTask(() -> Packets.TRANSFORMATION.sync(player));
+				player.getServer().addScheduledTask(() -> {
+					for (EntityPlayer p : player.getServer().getPlayerList().getPlayers())
+						Packets.TRANSFORMATION_ONE_CLIENT.sync(p, player);
+				});
 			}, "SyncCapAfterPlayerDeath1").start();
 			new Thread(() -> {
 				try {
@@ -93,7 +96,10 @@ public class CapabilityHandler {
 				} catch (InterruptedException e) {
 					Main.LOGGER.catching(e);
 				}
-				player.getServer().addScheduledTask(() -> Packets.TRANSFORMATION.sync(player));
+				player.getServer().addScheduledTask(() -> {
+					for (EntityPlayer p : player.getServer().getPlayerList().getPlayers())
+						Packets.TRANSFORMATION_ONE_CLIENT.sync(p, player);
+				});
 			}, "SyncCapAfterPlayerDeath2").start();
 		}
 	}
