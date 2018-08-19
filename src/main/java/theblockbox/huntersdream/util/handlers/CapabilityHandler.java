@@ -13,14 +13,12 @@ import theblockbox.huntersdream.capabilities.CapabilityProvider;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
@@ -60,18 +58,22 @@ public class CapabilityHandler {
 	public static void onPlayerClone(PlayerEvent.Clone event) throws InterruptedException {
 		if (event.isWasDeath()) {
 			EntityPlayer player = event.getEntityPlayer();
+			EntityPlayer originalPlayer = event.getOriginal();
+
 			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(player);
-			iit.setCurrentlyInfected(false);
-			iit.setInfectionTransformation(Transformations.HUMAN);
-			iit.setTime(-1);
+			IInfectInTicks iitOld = TransformationHelper.getIInfectInTicks(originalPlayer);
+			iit.setCurrentlyInfected(iitOld.currentlyInfected());
+			iit.setInfectionTransformation(iitOld.getInfectionTransformation());
+			iit.setTime(iitOld.getTime());
+
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(player);
-			ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
-			ionm.setInfectionTick(-1);
-			ionm.setInfectionTransformation(Transformations.HUMAN);
+			IInfectOnNextMoon ionmOld = WerewolfHelper.getIInfectOnNextMoon(originalPlayer);
+			ionm.setInfectionStatus(ionmOld.getInfectionStatus());
+			ionm.setInfectionTick(ionmOld.getInfectionTick());
+			ionm.setInfectionTransformation(ionmOld.getInfectionTransformation());
 
 			ITransformationPlayer transformationPlayer = TransformationHelper.getCap(player);
-			ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(event.getOriginal());
-
+			ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(originalPlayer);
 			transformationPlayer.setXP(oldTransformationPlayer.getXP());
 			transformationPlayer.setLevel(oldTransformationPlayer.getLevel());
 			transformationPlayer.setTransformed(false);

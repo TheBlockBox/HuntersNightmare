@@ -87,4 +87,8 @@ public class GeneralHelper {
 		else
 			return new ResourceLocation(Reference.MODID, resourcePath);
 	}
+
+	public static double getSixteenth(double numerator) {
+		return numerator / 16.0D;
+	}
 }

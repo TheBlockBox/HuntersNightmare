@@ -15,5 +15,4 @@ public abstract class PotionBase extends Potion {
 
 		PotionInit.POTIONS.add(this);
 	}
-
 }

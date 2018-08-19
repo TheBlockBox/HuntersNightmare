@@ -11,6 +11,7 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.objects.armor.SilverArmorBase;
 import theblockbox.huntersdream.objects.items.ItemPureSilver;
+import theblockbox.huntersdream.objects.items.ItemWolfsbane;
 import theblockbox.huntersdream.objects.tools.axe.ToolSilverAxe;
 import theblockbox.huntersdream.objects.tools.hoe.ToolSilverHoe;
 import theblockbox.huntersdream.objects.tools.pickaxe.ToolSilverPickaxe;
@@ -23,6 +24,7 @@ public class ItemInit {
 
 	// Items
 	public static final Item INGOT_SILVER = new ItemPureSilver("ingot_silver");
+	public static final Item WOLFSBANE = new ItemWolfsbane("wolfsbane");
 
 	// Materials
 	public static final ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,

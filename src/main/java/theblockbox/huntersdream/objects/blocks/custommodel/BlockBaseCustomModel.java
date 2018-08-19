@@ -34,8 +34,4 @@ public abstract class BlockBaseCustomModel extends BlockBase {
 
 	@Override
 	public abstract AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos);
-
-	public static double getSixteenth(double numerator) {
-		return numerator / 16.0D;
-	}
 }

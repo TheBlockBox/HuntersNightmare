@@ -4,8 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -66,6 +68,12 @@ public class RegistryHandler {
 	}
 
 	@SubscribeEvent
+	public static void onPotionTypeRegister(RegistryEvent.Register<PotionType> event) {
+		PotionInit.registerPotionTypes();
+		event.getRegistry().registerAll(PotionInit.POTION_TYPES.toArray(new PotionType[0]));
+	}
+
+	@SubscribeEvent
 	public static void onSoundRegister(RegistryEvent.Register<SoundEvent> event) {
 		event.getRegistry().registerAll(SoundInit.SOUND_EVENTS.toArray(new SoundEvent[0]));
 	}
@@ -100,6 +108,8 @@ public class RegistryHandler {
 	public static void initCommon(FMLInitializationEvent event) {
 		PacketHandler.register();
 		OreDictionaryCompat.registerOres();
+		GameRegistry.addSmelting(BlockInit.ORE_SILVER, new ItemStack(ItemInit.INGOT_SILVER), 0.9F);
+		MinecraftForge.addGrassSeed(new ItemStack(Item.getItemFromBlock(BlockInit.WOLFSBANE)), 5);
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {

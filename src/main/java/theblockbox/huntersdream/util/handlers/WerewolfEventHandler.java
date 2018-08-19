@@ -17,6 +17,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
@@ -24,6 +25,7 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
@@ -34,7 +36,6 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
-import theblockbox.huntersdream.util.interfaces.effective.IEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
@@ -177,26 +178,30 @@ public class WerewolfEventHandler {
 	}
 
 	static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+		if (!player.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+			IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 
-		if (werewolf.getTransformationStage() <= 0) {
-			werewolf.setTimeSinceTransformation(player.ticksExisted);
-			onStageChanged(player, werewolf, 1, cap);
-		}
+			if (werewolf.getTransformationStage() <= 0) {
+				werewolf.setTimeSinceTransformation(player.ticksExisted);
+				onStageChanged(player, werewolf, 1, cap);
+			}
 
-		// every five seconds (20 * 5 = 100) one stage up
-		int nextStage = MathHelper
-				.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
+			// every five seconds (20 * 5 = 100) one stage up
+			int nextStage = MathHelper
+					.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
 
-		if (nextStage > 6 || nextStage < 0) {
-			Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
-			werewolf.setTimeSinceTransformation(-1);
-			werewolf.setTransformationStage(0);
-			Main.LOGGER.warn("Has the ingame time been changed or did the player leave the world? Player "
-					+ player.getName() + "'s transformation stage (" + nextStage + ") is invalid");
-		}
-		if (nextStage > werewolf.getTransformationStage()) {
-			onStageChanged(player, werewolf, nextStage, cap);
+			if (nextStage > 6 || nextStage < 0) {
+				Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
+				werewolf.setTimeSinceTransformation(-1);
+				werewolf.setTransformationStage(0);
+				Main.LOGGER.warn(
+						"Has the ingame time been changed, did the player leave the world or did the player use wolfsbane? Player "
+								+ player.getName() + "'s transformation stage (" + nextStage + ") is invalid");
+				return;
+			}
+			if (nextStage > werewolf.getTransformationStage()) {
+				onStageChanged(player, werewolf, nextStage, cap);
+			}
 		}
 	}
 
@@ -317,26 +322,34 @@ public class WerewolfEventHandler {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			Item item = event.getStack().getItem();
-			if (item instanceof IEffectiveAgainstTransformation) {
-				if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation())) {
-					// now it is ensured that the item is effective against the player
-					String msg = "transformations." + cap.getTransformation().toString() + ".";
+			if (TransformationHelper.effectiveAgainstTransformation(cap.getTransformation(), item)) {
+				// now it is ensured that the item is effective against the player
+				String msg = "transformations." + cap.getTransformation().toString() + ".";
 
-					EntityPlayer thrower;
-					if (!(throwerName == null) && !(throwerName.equals("null"))
-							&& !(throwerName.equals(player.getName()))) {
-						thrower = originalEntity.world.getPlayerEntityByName(throwerName);
-						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
-						Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
-					} else {
-						Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.picked", player, item);
-						thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
-						if (thrower != null) {
-							Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.picked", player, item);
-						}
+				EntityPlayer thrower;
+				if (!(throwerName == null) && !(throwerName.equals("null"))
+						&& !(throwerName.equals(player.getName()))) {
+					thrower = originalEntity.world.getPlayerEntityByName(throwerName);
+					Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
+					Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
+				} else {
+					Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.picked", player, item);
+					thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
+					if (thrower != null) {
+						Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.picked", player, item);
 					}
 				}
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onRightClick(PlayerInteractEvent.RightClickItem event) {
+		EntityPlayer player = event.getEntityPlayer();
+		if (!player.world.isRemote) {
+			// Item item = event.getItemStack().getItem();
+			// if(TransformationHelper.effectiveAgainstTransformation(effectiveAgainst,
+			// object))
 		}
 	}
 

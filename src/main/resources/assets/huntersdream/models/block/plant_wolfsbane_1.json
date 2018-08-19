@@ -1,0 +1,6 @@
+{
+    "parent": "block/crop",
+    "textures": {
+        "crop": "huntersdream:blocks/plant_wolfsbane_1"
+    }
+}

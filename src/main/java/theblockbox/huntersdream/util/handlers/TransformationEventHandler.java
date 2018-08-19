@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.handlers;
 
 import com.google.common.base.Predicate;
 
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
@@ -210,6 +211,11 @@ public class TransformationEventHandler {
 							+ "\" caught.\nEntity class: " + elb.getClass().getName()
 							+ "\nImplements ITransformationCreature: " + (elb instanceof ITransformationCreature));
 				}
+			}
+			if (elb instanceof EntityAgeable) {
+				Predicate<EntityPlayer> predicate = WerewolfHelper::transformedWerewolf;
+				((EntityAgeable) elb).tasks.addTask(2, new EntityAIAvoidEntity<EntityPlayer>((EntityCreature) elb,
+						EntityPlayer.class, predicate, 8, elb.getAIMoveSpeed() + 0.2F, elb.getAIMoveSpeed() + 1F));
 			}
 		}
 	}

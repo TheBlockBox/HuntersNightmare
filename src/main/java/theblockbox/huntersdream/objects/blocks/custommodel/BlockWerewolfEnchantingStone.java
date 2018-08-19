@@ -20,13 +20,15 @@ import theblockbox.huntersdream.objects.items.ItemBlockWithMaxStackSize;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(getSixteenth(1), 0, getSixteenth(1),
-			getSixteenth(15), getSixteenth(10), getSixteenth(15));
+	private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(GeneralHelper.getSixteenth(1), 0,
+			GeneralHelper.getSixteenth(1), GeneralHelper.getSixteenth(15), GeneralHelper.getSixteenth(10),
+			GeneralHelper.getSixteenth(15));
 	public static final Material WEREWOLF_ENCHANTING_STONE = new Material(MapColor.STONE) {
 		@Override
 		public boolean isSolid() {

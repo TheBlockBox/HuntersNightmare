@@ -34,8 +34,6 @@ public class PotionFear extends PotionBase {
 	@Override
 	public List<ItemStack> getCurativeItems() {
 		ArrayList<ItemStack> items = new ArrayList<>();
-
 		return items;
 	}
-
 }
