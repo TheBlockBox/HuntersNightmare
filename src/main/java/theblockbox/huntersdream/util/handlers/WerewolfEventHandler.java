@@ -31,6 +31,7 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -322,7 +323,7 @@ public class WerewolfEventHandler {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			Item item = event.getStack().getItem();
-			if (TransformationHelper.effectiveAgainstTransformation(cap.getTransformation(), item)) {
+			if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), item)) {
 				// now it is ensured that the item is effective against the player
 				String msg = "transformations." + cap.getTransformation().toString() + ".";
 

@@ -1,11 +1,17 @@
 package theblockbox.huntersdream.util.helpers;
 
+import java.util.List;
+
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.Item;
+import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 
 /**
  * Util class for translations. All methods here are client side only!
  */
 public class TranslationHelper {
+
 	/**
 	 * Tries to translate the objects and generates a list of them. Client side
 	 * only!
@@ -55,5 +61,19 @@ public class TranslationHelper {
 		double calcPreciseness = Math.pow(10, preciseness);
 		return String.valueOf(Math.round((number * calcPreciseness)) / calcPreciseness).replace(".",
 				I18n.format("huntersdream.decimalpoint"));
+	}
+
+	// argument is item because only items and itemblocks have tooltips
+	public static void addEffectiveAgainstTransformationTooltips(Item item, List<String> tooltips) {
+		if (EffectivenessHelper.effectiveAgainstSomeTransformation(item)) {
+			EffectiveAgainstTransformation<Item> eat = EffectivenessHelper.getEAT(item);
+			tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip", getAsList(eat.transformations()),
+					translateNumber(eat.getEffectiveness())));
+		}
+		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(item)) {
+			ArmorEffectiveAgainstTransformation aeat = EffectivenessHelper.getAEAT(item);
+			tooltips.add(I18n.format("huntersdream.armorEffectiveAgainst.tooltip", getAsList(aeat.transformations()),
+					translateNumber(aeat.getArmorEffectiveness()), translateNumber(aeat.getProtection())));
+		}
 	}
 }

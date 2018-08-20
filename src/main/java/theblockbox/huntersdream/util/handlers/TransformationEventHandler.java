@@ -34,11 +34,11 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
-import theblockbox.huntersdream.util.interfaces.effective.IEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -56,7 +56,9 @@ public class TransformationEventHandler {
 				if (WerewolfHelper.transformedWerewolf(player)) {
 					WerewolfHelper.applyLevelBuffs(player);
 					if (!player.isCreative() && !player.isSpectator()) {
-						player.inventory.dropAllItems();
+						if (!player.inventory.isEmpty()) {
+							player.inventory.dropAllItems();
+						}
 					}
 				}
 
@@ -64,10 +66,9 @@ public class TransformationEventHandler {
 
 					for (ItemStack stack : player.getEquipmentAndArmor()) {
 						Item item = stack.getItem();
-						if (item instanceof IEffectiveAgainstTransformation)
-							if (((IEffectiveAgainstTransformation) item).effectiveAgainst(cap.getTransformation()))
-								player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
-										cap.transformed() ? cap.getTransformation().getProtection() : 1);
+						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), item))
+							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
+									cap.transformed() ? cap.getTransformation().getProtection() : 1);
 					}
 
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -153,14 +154,14 @@ public class TransformationEventHandler {
 							attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
 					for (ItemStack item : armor) {
 						Item armorPart = item.getItem();
-						if (TransformationHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
+						if (EffectivenessHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
 							// Attack the werewolf back (thorns). The werewolf will get (the damage *
 							// effectiveness) / 20 (protection)
 							attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
-									(TransformationHelper.armorGetEffectivenessAgainst(transformation, armorPart)
+									(EffectivenessHelper.armorGetEffectivenessAgainst(transformation, armorPart)
 											* event.getAmount()));
 							event.setAmount(event.getAmount()
-									/ TransformationHelper.armorGetProtectionAgainst(transformation, item.getItem()));
+									/ EffectivenessHelper.armorGetProtectionAgainst(transformation, item.getItem()));
 							item.damageItem(4, attacked);
 						}
 					}
@@ -188,18 +189,12 @@ public class TransformationEventHandler {
 					ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
 					tc.setTransformation(Transformations.WEREWOLF);
 				}
-				Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
-				villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class,
-						predicate, 8.0F, 0.6D, 0.6D));
 			} else if (elb instanceof EntityGoblinTD) {
 				EntityGoblinTD goblin = (EntityGoblinTD) elb;
 				if (ChanceHelper.chanceOf(1.5F)) {
 					ITransformationCreature tc = TransformationHelper.getITransformationCreature(goblin);
 					tc.setTransformation(Transformations.WEREWOLF);
 				}
-				Predicate<EntityLivingBase> predicate = WerewolfHelper::transformedWerewolf;
-				goblin.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(goblin, EntityLivingBase.class,
-						predicate, 8.0F, 0.6D, 0.6D));
 			}
 
 			ITransformationCreature tc = elb.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
@@ -213,9 +208,8 @@ public class TransformationEventHandler {
 				}
 			}
 			if (elb instanceof EntityAgeable) {
-				Predicate<EntityPlayer> predicate = WerewolfHelper::transformedWerewolf;
-				((EntityAgeable) elb).tasks.addTask(2, new EntityAIAvoidEntity<EntityPlayer>((EntityCreature) elb,
-						EntityPlayer.class, predicate, 8, elb.getAIMoveSpeed() + 0.2F, elb.getAIMoveSpeed() + 1F));
+				((EntityAgeable) elb).tasks.addTask(2, new EntityAIAvoidEntity<EntityLivingBase>((EntityCreature) elb,
+						EntityLivingBase.class, WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
 			}
 		}
 	}

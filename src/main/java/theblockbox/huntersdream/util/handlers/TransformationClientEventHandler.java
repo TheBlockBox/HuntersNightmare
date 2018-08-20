@@ -19,6 +19,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -27,6 +28,7 @@ import theblockbox.huntersdream.entity.renderer.RenderLycantrophePlayer;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.helpers.TranslationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -164,5 +166,10 @@ public class TransformationClientEventHandler {
 				}
 			}
 		}
+	}
+
+	@SubscribeEvent
+	public static void onTooltipAdded(ItemTooltipEvent event) {
+		TranslationHelper.addEffectiveAgainstTransformationTooltips(event.getItemStack().getItem(), event.getToolTip());
 	}
 }

@@ -49,6 +49,10 @@ command.huntersdream.transformation.transformationGet=%s's transformation is %s
 command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
 command.huntersdream.transformationtexture.get=%s's texture index is %s
 command.huntersdream.transformationtexture.set=%s's texture was set to %s
+command.huntersdream.ritual.usage=hdritual <clear|add|remove> <player> <ritual>
+command.huntersdream.usage.add=The ritual %s has been added to %s
+command.huntersdream.usage.remove=The ritual %s has been removed from %s
+command.huntersdream.usage.clear=%s's rituals have been removed
 
 # Chat messages
 transformations.huntersdream.onLevelUp=You feel that you're getting stronger... You're now level %s

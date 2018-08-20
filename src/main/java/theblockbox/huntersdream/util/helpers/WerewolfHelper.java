@@ -50,15 +50,11 @@ public class WerewolfHelper {
 			else
 				level += 1;
 
-			if (level >= 6) {
-				if (!cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE))
-					level = 5.9D;
-				else
-					level += 1;
-			}
+			if (level >= 6 && !cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE))
+				level = 5.99999D;
 
-			if (level > 8) {
-				level = 7.9D;
+			if (level >= 8) {
+				level = 7.99999D;
 			}
 
 			return level;
@@ -86,7 +82,7 @@ public class WerewolfHelper {
 				case 8:
 
 				case 7:
-					player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 20, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.HEALTH_BOOST, duration, 10, false, false));
 				case 6:
 
 				case 5:
@@ -272,7 +268,7 @@ public class WerewolfHelper {
 	 * {@link TransformationHelper#getEffectivenessAgainst(Transformations, Object)}
 	 */
 	public static float getEffectivenessAgainstWerewolf(Object object) {
-		return TransformationHelper.getEffectivenessAgainst(Transformations.WEREWOLF, object);
+		return EffectivenessHelper.getEffectivenessAgainst(Transformations.WEREWOLF, object);
 	}
 
 	/**
@@ -280,7 +276,7 @@ public class WerewolfHelper {
 	 * {@link TransformationHelper#effectiveAgainstTransformation(Transformations, Object)}
 	 */
 	public static boolean effectiveAgainstWerewolf(Object object) {
-		return TransformationHelper.effectiveAgainstTransformation(Transformations.WEREWOLF, object);
+		return EffectivenessHelper.effectiveAgainstTransformation(Transformations.WEREWOLF, object);
 	}
 
 	/**

@@ -2,15 +2,19 @@ package theblockbox.huntersdream.util.interfaces.effective;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.enums.Transformations;
 
-public class ArmorEffectiveAgainstTransformation implements IArmorEffectiveAgainstTransformation {
+public class ArmorEffectiveAgainstTransformation implements IEffective {
 	public static final ArrayList<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new ArrayList<>();
 	private Item armorPart;
 	private Transformations[] effectiveAgainst;
 	private float thorns;
 	private float protection;
+	public static final float DEFAULT_PROTECTION = 1.5F;
+	public static final float DEFAULT_EFFECTIVENESS = 2;
 
 	/**
 	 * 
@@ -29,20 +33,27 @@ public class ArmorEffectiveAgainstTransformation implements IArmorEffectiveAgain
 	 * @param effectiveAgainst The transformations against which the armor should be
 	 *                         effective
 	 */
-	public ArmorEffectiveAgainstTransformation(Item armorPart, float thorns, float protection,
-			Transformations... effectiveAgainst) {
+	public ArmorEffectiveAgainstTransformation(@Nonnull Item armorPart, float thorns, float protection,
+			@Nonnull Transformations... effectiveAgainst) {
 		this.armorPart = armorPart;
 		this.effectiveAgainst = effectiveAgainst;
 		this.thorns = thorns;
 		this.protection = protection;
+
+		if (armorPart == null || effectiveAgainst == null || effectiveAgainst.length < 1) {
+			throw new NullPointerException("Item and transformation parameter aren't allowed to be null");
+		}
+
+		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
+			if (aeat.getArmor() == armorPart)
+				throw new IllegalArgumentException("Object already registered");
+		ARMOR_PARTS.add(this);
 	}
 
-	@Override
 	public float getArmorEffectiveness() {
 		return this.thorns;
 	}
 
-	@Override
 	public float getProtection() {
 		return this.protection;
 	}

@@ -8,4 +8,9 @@ public class RenderWerewolf extends RenderLycantrophe<EntityWerewolf> {
 	public RenderWerewolf(RenderManager manager) {
 		super(manager);
 	}
+
+	@Override
+	protected boolean canRenderName(EntityWerewolf entity) {
+		return false;
+	}
 }

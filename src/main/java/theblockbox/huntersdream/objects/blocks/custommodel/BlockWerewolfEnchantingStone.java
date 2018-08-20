@@ -80,7 +80,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 				ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
 				if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT)) {
 					cap.addRitual(Rituals.LUPUS_ADVOCABIT);
-				} else if (!cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE) && cap.getLevel() < 6) {
+				} else if (!cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE) && cap.getLevelFloor() == 5) {
 					cap.addRitual(Rituals.WEREWOLF_SECOND_RITE);
 				} else {
 					return false;

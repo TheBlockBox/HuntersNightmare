@@ -2,6 +2,8 @@ package theblockbox.huntersdream.util.interfaces.effective;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -12,16 +14,25 @@ import theblockbox.huntersdream.util.enums.Transformations;
  * a specific item, entity etc. effective against a specific transformation
  * (currently only item and entity are supported)
  */
-public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAgainstTransformation {
+public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 	public static final ArrayList<EffectiveAgainstTransformation<?>> OBJECTS = new ArrayList<>();
 	private float effectiveness;
 	private Transformations[] effectiveAgainst;
 	private T object;
+	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 
-	public EffectiveAgainstTransformation(T object, float effectiveness, Transformations... effectiveAgainst) {
+	public EffectiveAgainstTransformation(T object, float effectiveness, @Nonnull Transformations... effectiveAgainst) {
 		this.effectiveness = effectiveness;
 		this.effectiveAgainst = effectiveAgainst;
 		this.object = object;
+
+		if (object == null || effectiveAgainst == null || effectiveAgainst.length < 1) {
+			throw new NullPointerException("Object and transformation parameter aren't allowed to be null");
+		}
+
+		for (EffectiveAgainstTransformation<?> eat : OBJECTS)
+			if (eat.getObject() == object)
+				throw new IllegalArgumentException("Object already registered");
 		OBJECTS.add(this);
 	}
 
@@ -30,7 +41,7 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 		return this.effectiveAgainst;
 	}
 
-	@Override
+	/** The damage multiplier when used against the specified creature */
 	public float getEffectiveness() {
 		return this.effectiveness;
 	}
@@ -50,10 +61,9 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 
 	@SuppressWarnings("unchecked")
 	public static <T> EffectiveAgainstTransformation<T> getFromObject(T object) {
-		for (EffectiveAgainstTransformation<?> eat : OBJECTS) {
+		for (EffectiveAgainstTransformation<?> eat : OBJECTS)
 			if (eat.getObject().equals(object))
 				return (EffectiveAgainstTransformation<T>) eat;
-		}
 
 		return null;
 	}
