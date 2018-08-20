@@ -11,8 +11,6 @@
 - make that you see player's transformation when clicking with silver at them
 - make that werewolves don't attack infected
 - find out what is making the mod's creatures lag
-- make smelting work
-- swap alex - steve, steve - alex
 - make that werewolves don't have name tags
 - add ritual command
 - add furniture

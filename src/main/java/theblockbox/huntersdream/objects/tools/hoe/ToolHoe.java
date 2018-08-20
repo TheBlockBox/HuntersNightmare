@@ -22,5 +22,4 @@ public class ToolHoe extends ItemHoe implements IHasModel {
 	public void registerModels() {
 		Main.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-
 }

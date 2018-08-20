@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationLevel;
@@ -113,10 +112,6 @@ public class RegistryHandler {
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
-		for (ItemStack stack : OreDictionary.getOres("ingotSilver")) {
-			ItemInit.TOOL_SILVER.setRepairItem(stack);
-			ItemInit.ARMOR_SILVER.setRepairItem(stack);
-		}
 	}
 
 	// Client

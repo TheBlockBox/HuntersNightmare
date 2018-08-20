@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.effective.IArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.ISilverEffectiveAgainstTransformation;
@@ -26,6 +27,21 @@ public class SilverArmorBase extends ArmorBase
 		super(name, materialIn, renderIndexIn, equipmentSlotIn);
 		this.EFFECTIVENESS = damageAgainstWerewolf;
 		this.PROTECTION = protection;
+	}
+
+	@Override
+	public boolean isRepairable() {
+		return true;
+	}
+
+	@Override
+	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+		int[] repairOredict = OreDictionary.getOreIDs(repair);
+		int oredict = OreDictionary.getOreID("ingotSilver");
+		for (int i : repairOredict)
+			if (i == oredict)
+				return true;
+		return false;
 	}
 
 	@Override
