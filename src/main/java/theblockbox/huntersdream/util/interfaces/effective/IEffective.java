@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.interfaces.effective;
 
 import theblockbox.huntersdream.util.enums.Transformations;
 
+@FunctionalInterface
 public interface IEffective {
 	/**
 	 * Should return the transformation against which the implementing class is

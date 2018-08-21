@@ -1,23 +1,24 @@
 package theblockbox.huntersdream.util.enums;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.function.ObjDoubleConsumer;
+import java.util.function.ToDoubleFunction;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.functional.ICalculateLevel;
-import theblockbox.huntersdream.util.interfaces.functional.IInfect;
 import theblockbox.huntersdream.util.interfaces.functional.ITransformCreature;
 
 public enum Transformations {
@@ -99,11 +100,7 @@ public enum Transformations {
 	}
 
 	public double getLevel(EntityPlayerMP player) {
-		if (!player.world.isRemote)
-			return this.getCalculateLevel().getLevel(player);
-		else
-			throw new WrongSideException("Can only obtain level on server side. Please use cap#getLevel instead",
-					player.world);
+		return this.getCalculateLevel().applyAsDouble(player);
 	}
 
 	public boolean isSupernatural() {
@@ -135,7 +132,7 @@ public enum Transformations {
 		return this.ENTRY.transformCreature;
 	}
 
-	public ICalculateLevel getCalculateLevel() {
+	public ToDoubleFunction<EntityPlayerMP> getCalculateLevel() {
 		return this.ENTRY.calculateLevel;
 	}
 
@@ -155,8 +152,12 @@ public enum Transformations {
 		return ChanceHelper.randomInt(this.getTextures().length);
 	}
 
-	public IInfect getInfect() {
+	public Consumer<EntityLivingBase> getInfect() {
 		return this.ENTRY.infect;
+	}
+
+	public void onLevelUp(EntityPlayerMP player, double newLevel) {
+		this.ENTRY.onLevelUp.accept(player, newLevel);
 	}
 
 	/** Used to make new transformations */
@@ -168,13 +169,15 @@ public enum Transformations {
 		 */
 		private int generalDamage = 1;
 		private ResourceLocation[] textures = new ResourceLocation[0];
-		private ICalculateLevel calculateLevel = player -> {
-			return TransformationHelper.getCap(player).getXP() / 500;
-		};
+		private ToDoubleFunction<EntityPlayerMP> calculateLevel = player -> TransformationHelper.getCap(player).getXP()
+				/ 500.0D;
 		private float protection = 1F;
 		private ITransformCreature transformCreature;
-		private IInfect infect;
+		private Consumer<EntityLivingBase> infect;
 		private ResourceLocation resourceLocation;
+		/** A runnable that is executed when the player levels up */
+		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
+		};
 
 		public TransformationEntry(ResourceLocation resourceLocation) {
 			this.resourceLocation = resourceLocation;
@@ -208,7 +211,7 @@ public enum Transformations {
 			return this;
 		}
 
-		public TransformationEntry setCalculateLevel(ICalculateLevel calculateLevel) {
+		public TransformationEntry setCalculateLevel(ToDoubleFunction<EntityPlayerMP> calculateLevel) {
 			this.calculateLevel = calculateLevel;
 			return this;
 		}
@@ -241,13 +244,22 @@ public enum Transformations {
 			return this;
 		}
 
-		public TransformationEntry setInfect(IInfect infect) {
+		public TransformationEntry setInfect(Consumer<EntityLivingBase> infect) {
 			this.infect = infect;
+			return this;
+		}
+
+		public TransformationEntry setOnLevelUp(ObjDoubleConsumer<EntityPlayerMP> onLevelUp) {
+			this.onLevelUp = onLevelUp;
 			return this;
 		}
 
 		public Transformations getTransformations(String name) {
 			return EnumHelper.addEnum(Transformations.class, name, new Class<?>[] { TransformationEntry.class }, this);
+		}
+
+		public ObjDoubleConsumer<EntityPlayerMP> getOnLevelUp() {
+			return this.onLevelUp;
 		}
 	}
 }

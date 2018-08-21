@@ -179,6 +179,7 @@ public class TransformationHelper {
 			int levelAfter = cap.getLevelFloor();
 			if (levelBefore < levelAfter) {
 				player.sendMessage(new TextComponentTranslation("transformations.huntersdream.onLevelUp", levelAfter));
+				cap.getTransformation().onLevelUp(player, levelAfter);
 			}
 			Packets.XP.sync(player);
 		}

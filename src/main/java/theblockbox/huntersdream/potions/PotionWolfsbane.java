@@ -2,7 +2,6 @@ package theblockbox.huntersdream.potions;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 
@@ -55,9 +54,8 @@ public class PotionWolfsbane extends PotionBase {
 			}
 
 			if (entityIn.ticksExisted % 10000 == 0)
-				for (Entry<EntityLivingBase, Integer> entry : APPLIED_AT_TIME.entrySet())
-					if (!entry.getKey().isPotionActive(this))
-						APPLIED_AT_TIME.remove(entry.getKey());
+				APPLIED_AT_TIME.entrySet().stream().filter(e -> !e.getKey().isPotionActive(this))
+						.forEach(e -> APPLIED_AT_TIME.remove(e.getKey()));
 		}
 	}
 }

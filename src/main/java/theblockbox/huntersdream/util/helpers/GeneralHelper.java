@@ -1,10 +1,15 @@
 package theblockbox.huntersdream.util.helpers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.Reference;
@@ -90,5 +95,27 @@ public class GeneralHelper {
 
 	public static double getSixteenth(double numerator) {
 		return numerator / 16.0D;
+	}
+
+	public static boolean canEntityExpandHeight(Entity entity, float newHeight) {
+		int currentY = MathHelper.ceil(entity.posY);
+		int newY = MathHelper.ceil(newHeight - entity.height) + currentY + 1;
+		if (currentY >= newY)
+			return true;
+		else
+			for (int i = currentY; i <= newY; i++) {
+				if (!entity.world.isAirBlock(new BlockPos(entity.posX, i, entity.posZ)))
+					return false;
+			}
+		return true;
+	}
+
+	public static <T> List<T> combineArraysToList(T[] array1, T[] array2) {
+		List<T> arrayList = new ArrayList<>();
+		for (T t : array1)
+			arrayList.add(t);
+		for (T t : array2)
+			arrayList.add(t);
+		return arrayList;
 	}
 }

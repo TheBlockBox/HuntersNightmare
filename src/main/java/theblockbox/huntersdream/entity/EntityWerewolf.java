@@ -74,13 +74,12 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	protected void applyEntityAI() {
 		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-		Predicate<EntityCreature> predicateMob = input -> {
-			return !(input instanceof EntityWerewolf);
-		};
+		Predicate<EntityCreature> predicateMob = input -> !((input instanceof EntityWerewolf)
+				|| TransformationHelper.isInfected(input));
 		Predicate<EntityPlayer> predicatePlayer = input -> {
 			ITransformation transformation = TransformationHelper.getITransformation(input);
-			return ((transformation.getTransformation() != Transformations.WEREWOLF)
-					&& !(transformation.transformed()));
+			return !(((transformation.getTransformation() == Transformations.WEREWOLF)
+					&& (transformation.transformed())) || TransformationHelper.isInfected(input));
 		};
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));

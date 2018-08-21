@@ -19,12 +19,36 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 	private float effectiveness;
 	private Transformations[] effectiveAgainst;
 	private T object;
+	private boolean effectiveAgainstUndead;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 
-	public EffectiveAgainstTransformation(T object, float effectiveness, @Nonnull Transformations... effectiveAgainst) {
+	/**
+	 * Registers an object (currently either item or entity) as effective against
+	 * specific transformations
+	 * 
+	 * @param object                 The object which should be effective against
+	 *                               specific transformations
+	 * @param effectiveness          The damage multiplier (for example against a
+	 *                               werewolf effectiveness 1.5 on a sword with 4
+	 *                               attack damage would deal 6 half hearts. Also
+	 *                               note that when you'd attack a werewolf with
+	 *                               that sword, the werewolf won't have its natural
+	 *                               armor, so even effectiveness 1 would deal more
+	 *                               damage than another item with the same attack
+	 *                               damage). Default value is 1.5
+	 * @param effectiveAgainstUndead If the item should also be effective against
+	 *                               undead, default for silver items. (effective
+	 *                               against undead = deals 2.5 half hearts more
+	 *                               damage against undead)
+	 * @param effectiveAgainst       The transformations against which the item
+	 *                               should be effective
+	 */
+	public EffectiveAgainstTransformation(T object, float effectiveness, boolean effectiveAgainstUndead,
+			@Nonnull Transformations... effectiveAgainst) {
 		this.effectiveness = effectiveness;
 		this.effectiveAgainst = effectiveAgainst;
 		this.object = object;
+		this.effectiveAgainstUndead = effectiveAgainstUndead;
 
 		if (object == null || effectiveAgainst == null || effectiveAgainst.length < 1) {
 			throw new NullPointerException("Object and transformation parameter aren't allowed to be null");
@@ -75,18 +99,25 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 		return OBJECTS;
 	}
 
+	/**
+	 * Returns true when the object is effective against undead
+	 */
+	public boolean effectiveAgainstUndead() {
+		return this.effectiveAgainstUndead;
+	}
+
 	public static class ItemEffectiveAgainstTransformation extends EffectiveAgainstTransformation<Item> {
 		public static final ArrayList<EffectiveAgainstTransformation<Item>> ITEMS = new ArrayList<>();
 
-		public ItemEffectiveAgainstTransformation(Item object, float effectiveness,
+		public ItemEffectiveAgainstTransformation(Item object, float effectiveness, boolean effectiveAgainstUndead,
 				Transformations... effectiveAgainst) {
-			super(object, effectiveness, effectiveAgainst);
+			super(object, effectiveness, effectiveAgainstUndead, effectiveAgainst);
 			ITEMS.add(this);
 		}
 
-		public ItemEffectiveAgainstTransformation(Block object, float effectiveness,
+		public ItemEffectiveAgainstTransformation(Block object, float effectiveness, boolean effectiveAgainstUndead,
 				Transformations... effectiveAgainst) {
-			this(Item.getItemFromBlock(object), effectiveness, effectiveAgainst);
+			this(Item.getItemFromBlock(object), effectiveness, effectiveAgainstUndead, effectiveAgainst);
 		}
 
 		@Override
@@ -98,9 +129,9 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 	public static class EntityEffectiveAgainstTransformation extends EffectiveAgainstTransformation<Entity> {
 		public static final ArrayList<EffectiveAgainstTransformation<Entity>> ENTITIES = new ArrayList<>();
 
-		public EntityEffectiveAgainstTransformation(Entity object, float effectiveness,
+		public EntityEffectiveAgainstTransformation(Entity object, float effectiveness, boolean effectiveAgainstUndead,
 				Transformations... effectiveAgainst) {
-			super(object, effectiveness, effectiveAgainst);
+			super(object, effectiveness, effectiveAgainstUndead, effectiveAgainst);
 			ENTITIES.add(this);
 		}
 

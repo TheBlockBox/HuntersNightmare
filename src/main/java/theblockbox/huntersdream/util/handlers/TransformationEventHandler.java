@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.util.handlers;
 
-import com.google.common.base.Predicate;
-
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -111,58 +109,67 @@ public class TransformationEventHandler {
 			// setting player size here (have to set every tick because it's also set every
 			// tick in the EntityPlayer class) We don't have to care about resetting the
 			// size because it gets resetted automatically every tick
-			if (WerewolfHelper.transformedWerewolf(player)) {
-				if (player.isSprinting()) {
-					// if quadruped
-					GeneralHelper.changePlayerSize(player, ModelLycanthropeQuadruped.WIDTH,
-							ModelLycanthropeQuadruped.HEIGHT);
-					player.eyeHeight = ModelLycanthropeQuadruped.EYE_HEIGHT;
-				} else {
-					// if biped
-					GeneralHelper.changePlayerSize(player, GeneralHelper.STANDARD_PLAYER_WIDTH,
-							ModelLycanthropeBiped.HEIGHT);
-					player.eyeHeight = ModelLycanthropeBiped.EYE_HEIGHT;
-				}
-			} else {
-				player.eyeHeight = player.getDefaultEyeHeight();
+			setPlayerSize(player);
+		}
+	}
+
+	public static void setPlayerSize(EntityPlayer player) {
+		if (WerewolfHelper.transformedWerewolf(player)) {
+			boolean quadruped = (player.isSprinting() || player.isSneaking());
+			float height = quadruped ? ModelLycanthropeQuadruped.HEIGHT : ModelLycanthropeBiped.HEIGHT;
+			float width = quadruped ? ModelLycanthropeQuadruped.WIDTH : GeneralHelper.STANDARD_PLAYER_WIDTH;
+			float eyeheight = quadruped ? ModelLycanthropeQuadruped.EYE_HEIGHT : ModelLycanthropeBiped.EYE_HEIGHT;
+
+			if (!quadruped && !GeneralHelper.canEntityExpandHeight(player, height)) {
+				quadruped = true;
+				height = ModelLycanthropeQuadruped.HEIGHT;
+				width = ModelLycanthropeQuadruped.WIDTH;
+				eyeheight = ModelLycanthropeQuadruped.EYE_HEIGHT;
 			}
+
+			GeneralHelper.changePlayerSize(player, width, height);
+			player.eyeHeight = eyeheight;
+		} else {
+			player.eyeHeight = player.getDefaultEyeHeight();
 		}
 	}
 
 	@SubscribeEvent
 	public static void onEntityHurt(LivingHurtEvent event) {
-		EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-		EntityLivingBase attacked = event.getEntityLiving();
-		ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
+		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
+			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+			EntityLivingBase attacked = event.getEntityLiving();
+			ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
 
-		// make that player deals more damage
-		if (transformationAttacker != null) {
-			ItemStack weapon = attacker.getHeldItemMainhand();
-			if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
-				event.setAmount(event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage());
+			// make that player deals more damage
+			if (transformationAttacker != null) {
+				ItemStack weapon = attacker.getHeldItemMainhand();
+				if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
+					event.setAmount(event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage());
+				}
 			}
-		}
 
-		// add thorns
-		if (attacked != null) {
-			if (attacker != null) {
-				Transformations transformation = TransformationHelper.getTransformation(attacker);
-				if (transformation != null) {
-					ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
-							attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
-							attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
-							attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
-					for (ItemStack item : armor) {
-						Item armorPart = item.getItem();
-						if (EffectivenessHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
-							// Attack the werewolf back (thorns). The werewolf will get (the damage *
-							// effectiveness) / 20 (protection)
-							attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
-									(EffectivenessHelper.armorGetEffectivenessAgainst(transformation, armorPart)
-											* event.getAmount()));
-							event.setAmount(event.getAmount()
-									/ EffectivenessHelper.armorGetProtectionAgainst(transformation, item.getItem()));
-							item.damageItem(4, attacked);
+			// add thorns
+			if (attacked != null) {
+				if (attacker != null) {
+					Transformations transformation = TransformationHelper.getTransformation(attacker);
+					if (transformation != null) {
+						ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
+								attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
+								attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
+								attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
+						for (ItemStack item : armor) {
+							Item armorPart = item.getItem();
+							if (EffectivenessHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
+								// Attack the werewolf back (thorns). The werewolf will get (the damage *
+								// effectiveness) / 20 (protection)
+								attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
+										(EffectivenessHelper.armorGetEffectivenessAgainst(transformation, armorPart)
+												* event.getAmount()));
+								event.setAmount(event.getAmount() / EffectivenessHelper
+										.armorGetProtectionAgainst(transformation, item.getItem()));
+								item.damageItem(4, attacked);
+							}
 						}
 					}
 				}
@@ -176,13 +183,10 @@ public class TransformationEventHandler {
 			EntityLivingBase elb = (EntityLivingBase) event.getEntity();
 			if (elb instanceof EntityGolem) {
 				EntityGolem entity = (EntityGolem) elb;
-				Predicate<EntityPlayer> predicate = input -> {
-					return WerewolfHelper.transformedWerewolf(input);
-				};
 				entity.targetTasks.addTask(2,
 						new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
 				entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
-						EntityPlayer.class, 10, true, false, predicate));
+						EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
 			} else if (elb instanceof EntityVillager) {
 				EntityVillager villager = (EntityVillager) elb;
 				if (ChanceHelper.chanceOf(5)) {
@@ -246,7 +250,7 @@ public class TransformationEventHandler {
 								// when already done,
 
 								// infect entity
-								iit.getInfectionTransformation().getInfect().infectEntity(entity);
+								iit.getInfectionTransformation().getInfect().accept(entity);
 
 								// set to standard (-1)
 								iit.setTime(-1);

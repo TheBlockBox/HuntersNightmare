@@ -94,4 +94,8 @@ public class EffectivenessHelper {
 					+ effectiveAgainst.toString() + ")");
 		}
 	}
+
+	public static boolean effectiveAgainstUndead(Object object) {
+		return effectiveAgainstSomeTransformation(object) ? getEAT(object).effectiveAgainstUndead() : false;
+	}
 }

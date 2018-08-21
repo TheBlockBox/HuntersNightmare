@@ -4,6 +4,7 @@ package theblockbox.huntersdream.util.handlers;
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 import static net.minecraftforge.fml.relauncher.Side.SERVER;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -113,9 +114,8 @@ public class PacketHandler {
 					break;
 
 				case TRANSFORMATION_REPLY:
-					sendMessageToPlayer(
-							new TransformationReplyMessage((String) args[0], (EntityPlayer) args[1], (Item) args[2]),
-							player);
+					sendMessageToPlayer(new TransformationReplyMessage((String) args[0], (EntityLivingBase) args[1],
+							(Item) args[2]), player);
 					break;
 
 				case PLAY_SOUND:

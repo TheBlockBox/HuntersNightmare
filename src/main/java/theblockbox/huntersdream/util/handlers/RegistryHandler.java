@@ -18,7 +18,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.registries.RegistryBuilder;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
@@ -30,11 +29,9 @@ import theblockbox.huntersdream.init.EntityInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
-import theblockbox.huntersdream.util.EffectiveAgainstTransformationRegistry;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation.ItemEffectiveAgainstTransformation;
@@ -62,14 +59,7 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onRegistryRegister(RegistryEvent.NewRegistry event) {
-		new RegistryBuilder<EffectiveAgainstTransformationRegistry>()
-				.setName(GeneralHelper.newResLoc("effectiveagainsttransformation"))
-				.setType(EffectiveAgainstTransformationRegistry.class).create();
-	}
-
-	@SubscribeEvent
-	public static void onEffectiveAgainstTransformationRegister(
-			RegistryEvent.Register<EffectiveAgainstTransformationRegistry> event) {
+		// new RegistryBuilder<?>();
 	}
 
 	@SubscribeEvent
@@ -130,19 +120,18 @@ public class RegistryHandler {
 	public static void postInitCommon(FMLPostInitializationEvent event) {
 		// register items that are effective against a specific transformation
 		OreDictionaryCompat.getSilver().forEach(item -> new ItemEffectiveAgainstTransformation(item,
-				EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS, Transformations.WEREWOLF));
-		OreDictionary.getOres("helmetSilver").parallelStream()
+				EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS, true, Transformations.WEREWOLF));
+		OreDictionary.getOres("helmetSilver").stream()
 				.forEach(stack -> new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.35F, 1.2F,
 						Transformations.WEREWOLF));
-		OreDictionary.getOres("chestplateSilver").parallelStream()
+		OreDictionary.getOres("chestplateSilver").stream()
 				.forEach(stack -> new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.85F, 1.6F,
 						Transformations.WEREWOLF));
-		OreDictionary.getOres("leggingsSilver").parallelStream()
+		OreDictionary.getOres("leggingsSilver").stream()
 				.forEach(stack -> new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.65F, 1.3F,
 						Transformations.WEREWOLF));
-		OreDictionary.getOres("bootsSilver").parallelStream().forEach(stack -> {
+		OreDictionary.getOres("bootsSilver").stream().forEach(stack -> {
 			new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.25F, 1.1F, Transformations.WEREWOLF);
-			System.out.println("oh one");
 		});
 	}
 

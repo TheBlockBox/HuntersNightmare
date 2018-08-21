@@ -1,5 +1,7 @@
 package theblockbox.huntersdream.event;
 
+import java.util.stream.Stream;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
@@ -60,12 +62,7 @@ public class TransformationXPEvent extends PlayerEvent {
 		}
 
 		public static boolean validReason(TransformationXPSentReason reason, Transformations transformation) {
-			for (Transformations t : reason.TRANSFORMATIONS) {
-				if (t == transformation) {
-					return true;
-				}
-			}
-			return false;
+			return Stream.of(reason.TRANSFORMATIONS).anyMatch(t -> t == transformation);
 		}
 	}
 }

@@ -64,30 +64,31 @@ public class CommandsRitual extends CommandBase {
 
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
-			Rituals ritual = (!args[0].equals("clear")) ? Rituals.fromName(args[2]) : null;
+			Rituals ritual = (!args[0].equals("clear")) ? Rituals.fromNameWithException(args[2]) : null;
 
 			switch (args[0]) {
 			case "clear":
 				cap.setRituals(new Rituals[0]);
-				return;
+				sender.sendMessage(new TextComponentTranslation("command.huntersdream.ritual.clear", player.getName()));
+				break;
 			case "add":
-				cap.addRitual(ritual);
+				if (!cap.hasRitual(ritual))
+					cap.addRitual(ritual);
+				sender.sendMessage(
+						new TextComponentTranslation("command.huntersdream.ritual.add", ritual, player.getName()));
 				break;
 			case "remove":
-				cap.removeRitual(ritual);
+				if (cap.hasRitual(ritual))
+					cap.removeRitual(ritual);
+				sender.sendMessage(
+						new TextComponentTranslation("command.huntersdream.ritual.remove", ritual, player.getName()));
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid argument index one");
 			}
 			Packets.TRANSFORMATION.sync(player);
-			if (ritual != null)
-				sender.sendMessage(
-						new TextComponentTranslation("command.huntersdream.ritual." + ritual, player.getName()));
-			else
-				sender.sendMessage(new TextComponentTranslation("command.huntersdream.ritual." + player.getName()));
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}
 	}
-
 }

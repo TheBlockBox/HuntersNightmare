@@ -50,9 +50,9 @@ command.huntersdream.transformationtexture.usage=hdtransformationtexture <textur
 command.huntersdream.transformationtexture.get=%s's texture index is %s
 command.huntersdream.transformationtexture.set=%s's texture was set to %s
 command.huntersdream.ritual.usage=hdritual <clear|add|remove> <player> <ritual>
-command.huntersdream.usage.add=The ritual %s has been added to %s
-command.huntersdream.usage.remove=The ritual %s has been removed from %s
-command.huntersdream.usage.clear=%s's rituals have been removed
+command.huntersdream.ritual.add=The ritual %s has been added to %s
+command.huntersdream.ritual.remove=The ritual %s has been removed from %s
+command.huntersdream.ritual.clear=%s's rituals have been cleared
 
 # Chat messages
 transformations.huntersdream.onLevelUp=You feel that you're getting stronger... You're now level %s
@@ -101,9 +101,13 @@ huntersdream.transformation.heartbeat=Heartbeat of a werewolf
 huntersdream.transformation.werewolf.howling=Howling werewolf
 
 # Other stuff
-# the word you'd use in a list (like Werewolf,Vampire and Hybrid). Space before it needed
-huntersdream.and= and
-huntersdream.effectiveAgainst.tooltip=Effective against %s with effectiveness %s
-huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s with thorns %s and protection %s
-# The character you use to split decimal values (in 11.56 the character is .)
+# the word you'd use in a list (like Werewolf, Vampire and Hybrid)
+huntersdream.and=and
+huntersdream.effectiveAgainst.tooltip=Effective against %s
+huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
+# The character you'd use to split decimal values (in 11.56 the character is .)
 huntersdream.decimalpoint=.
+# The character you'd use in a list (like Werewolf, Vampire and Hybrid)
+huntersdream.comma=,
+# Undead like used in the sentence "Effective against Werewolf and Undead"
+huntersdream.undead=Undead

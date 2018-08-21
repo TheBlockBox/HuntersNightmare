@@ -42,12 +42,19 @@ public enum Rituals {
 
 	public static Rituals fromName(String name) {
 		for (Rituals ritual : Helper.RITUALS)
-			if (ritual.getResourceLocation().toString().equals(name))
+			if (ritual.toString().equals(name))
 				return ritual;
 		Main.LOGGER.error("The given string \"" + name
 				+ "\" does not have a corresponding ritual. Please report this, NullPointerExceptions may occure\nStacktrace: "
 				+ (new ExecutionPath()).getAll());
 		return null;
+	}
+
+	public static Rituals fromNameWithException(String name) {
+		for (Rituals ritual : Helper.RITUALS)
+			if (ritual.toString().equals(name))
+				return ritual;
+		throw new IllegalArgumentException("The given string \"" + name + "\" does not have a corresponding ritual");
 	}
 
 	@Override

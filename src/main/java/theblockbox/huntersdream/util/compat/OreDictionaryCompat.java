@@ -35,6 +35,6 @@ public class OreDictionaryCompat {
 						OreDictionary.getOres("swordSilver"), OreDictionary.getOres("shovelSilver"),
 						OreDictionary.getOres("helmetSilver"), OreDictionary.getOres("chestplateSilver"),
 						OreDictionary.getOres("leggingsSilver"), OreDictionary.getOres("bootsSilver"))
-				.flatMap(list -> list.parallelStream()).map(ItemStack::getItem);
+				.flatMap(list -> list.stream()).map(ItemStack::getItem);
 	}
 }

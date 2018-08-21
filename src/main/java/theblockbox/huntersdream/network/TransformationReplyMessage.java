@@ -3,7 +3,7 @@ package theblockbox.huntersdream.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -18,28 +18,28 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 	private String reply = null;
 	private String pickedUp = null;
 	/** The touched player */
-	private int player;
+	private int entity;
 
 	public TransformationReplyMessage() {
 	}
 
-	public TransformationReplyMessage(String reply, EntityPlayer player, Item pickedUp) {
+	public TransformationReplyMessage(String reply, EntityLivingBase player, Item pickedUp) {
 		this.reply = reply;
-		this.player = player.getEntityId();
+		this.entity = player.getEntityId();
 		this.pickedUp = pickedUp.getUnlocalizedName() + ".name";
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.reply = readString(buf);
-		this.player = buf.readInt();
+		this.entity = buf.readInt();
 		this.pickedUp = readString(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		writeString(buf, reply);
-		buf.writeInt(player);
+		buf.writeInt(entity);
 		writeString(buf, pickedUp);
 	}
 
@@ -63,8 +63,8 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
 					if ((!(message.reply == null)) && (!message.reply.equals(""))) {
-						EntityPlayer player = (EntityPlayer) Minecraft.getMinecraft().world
-								.getEntityByID(message.player);
+						EntityLivingBase entity = (EntityLivingBase) Minecraft.getMinecraft().world
+								.getEntityByID(message.entity);
 						String reply = message.reply;
 						String pickedUp = I18n.format(message.pickedUp);
 						TextComponentTranslation tct = null;
@@ -77,9 +77,11 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 							}
 						} else if (reply.contains("tp")) {
 							if (reply.contains("picked")) {
-								tct = new TextComponentTranslation(reply, player.getName(), pickedUp);
+								tct = new TextComponentTranslation(reply, entity.getDisplayName().getFormattedText(),
+										pickedUp);
 							} else if (reply.contains("touched")) {
-								tct = new TextComponentTranslation(reply, player.getName(), pickedUp);
+								tct = new TextComponentTranslation(reply, entity.getDisplayName().getFormattedText(),
+										pickedUp);
 							}
 						}
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
-import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 
 /**
@@ -19,22 +18,26 @@ public class TranslationHelper {
 	 * @param toList The objects which should be made into a list
 	 * @return Returns the given words as a list
 	 */
-	public static String getAsList(Object[] toList) {
+	public static String getAsLocalizedList(final Object[] toList) {
 		if (toList == null || toList.length == 0) {
 			throw new NullPointerException("The array either has a length of 0 or is null itself");
 		} else {
 			String toReturn = "";
+			final String comma = I18n.format("huntersdream.comma");
 			for (int i = 0; i < toList.length; i++) {
 				String translated = I18n.format(toList[i].toString());
-				// if last index
-				if (i == (toList.length - 1)) {
-					toReturn += translated;
-				} else if (i == (toList.length - 2)) {
-					toReturn += ", " + translated + I18n.format("huntersdream.and") + " ";
+
+				// special case where array length is 2
+				if ((i == 0) && (i == toList.length - 2)) {
+					toReturn += translated + " " + I18n.format("huntersdream.and") + " ";
 				} else if (i == 0) {
 					toReturn += translated;
+				} else if (i == (toList.length - 2)) {
+					toReturn += comma + " " + translated + " " + I18n.format("huntersdream.and") + " ";
+				} else if (i == (toList.length - 1)) {
+					toReturn += translated;
 				} else {
-					toReturn += ", " + translated;
+					toReturn += comma + " " + translated;
 				}
 			}
 			return toReturn;
@@ -42,11 +45,11 @@ public class TranslationHelper {
 	}
 
 	/**
-	 * Does the same as {@link #translateNumber(double, int)} but with preciseness
-	 * 2. Client side only!
+	 * Does the same as {@link #localizeNumber(double, int)} but with preciseness 2.
+	 * Client side only!
 	 */
-	public static String translateNumber(double number) {
-		return translateNumber(number, 2);
+	public static String localizeNumber(double number) {
+		return localizeNumber(number, 2);
 	}
 
 	/**
@@ -57,7 +60,7 @@ public class TranslationHelper {
 	 * @param preciseness To how many digits the number shouldn't be rounded
 	 * @return Returns the translated and rounded number as a string
 	 */
-	public static String translateNumber(double number, int preciseness) {
+	public static String localizeNumber(double number, int preciseness) {
 		double calcPreciseness = Math.pow(10, preciseness);
 		return String.valueOf(Math.round((number * calcPreciseness)) / calcPreciseness).replace(".",
 				I18n.format("huntersdream.decimalpoint"));
@@ -67,13 +70,18 @@ public class TranslationHelper {
 	public static void addEffectiveAgainstTransformationTooltips(Item item, List<String> tooltips) {
 		if (EffectivenessHelper.effectiveAgainstSomeTransformation(item)) {
 			EffectiveAgainstTransformation<Item> eat = EffectivenessHelper.getEAT(item);
-			tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip", getAsList(eat.transformations()),
-					translateNumber(eat.getEffectiveness())));
+			if (eat.effectiveAgainstUndead()) {
+				tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip", getAsLocalizedList(GeneralHelper
+						.<Object>combineArraysToList(eat.transformations(), new String[] { "huntersdream.undead" })
+						.toArray(new Object[0]))));
+			} else {
+				tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip",
+						getAsLocalizedList(eat.transformations())));
+			}
 		}
 		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(item)) {
-			ArmorEffectiveAgainstTransformation aeat = EffectivenessHelper.getAEAT(item);
-			tooltips.add(I18n.format("huntersdream.armorEffectiveAgainst.tooltip", getAsList(aeat.transformations()),
-					translateNumber(aeat.getArmorEffectiveness()), translateNumber(aeat.getProtection())));
+			tooltips.add(I18n.format("huntersdream.armorEffectiveAgainst.tooltip",
+					getAsLocalizedList(EffectivenessHelper.getAEAT(item).transformations())));
 		}
 	}
 }

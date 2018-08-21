@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -56,63 +57,73 @@ public class WerewolfEventHandler {
 		// if attacker isn't supernatural use direct attacker, then weapon, then
 		// attacker
 
-		EntityLivingBase hurtWerewolf = event.getEntityLiving();
-		ITransformation transformationWerewolf = TransformationHelper.getITransformation(hurtWerewolf);
-		// this cast may cause exceptions, but we'll have to test
-		EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-		ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
+		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
+			EntityLivingBase hurtWerewolf = event.getEntityLiving();
+			ITransformation transformationWerewolf = TransformationHelper.getITransformation(hurtWerewolf);
+			// this cast may cause exceptions, but we'll have to test
+			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+			ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
 
-		if (transformationWerewolf != null) {
-			if (WerewolfHelper.transformedWerewolf(hurtWerewolf)) {
-				// now it is made sure that the attacked entity is a werewolf
+			if (transformationWerewolf != null) {
+				if (WerewolfHelper.transformedWerewolf(hurtWerewolf)) {
+					// now it is made sure that the attacked entity is a werewolf
 
-				if (!event.getSource().damageType.equals("thorns")) {
-					if (attacker != null) {
-						ItemStack weaponItemStack = attacker.getHeldItemMainhand();
-						Item weapon = weaponItemStack.getItem();
-						// when the attacker is supernatural,
-						if (transformationAttacker != null
-								&& transformationAttacker.getTransformation().isSupernatural()) {
-							// has no weapon and is effective against werewolf
-							if (weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
-								event.setAmount(
-										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
-								return;
-							} else if (!weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
-								event.setAmount(
-										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
-								return;
-							}
-						} else {
-							// when attacker is not supernatural
+					if (!event.getSource().damageType.equals("thorns")) {
+						if (attacker != null) {
+							ItemStack weaponItemStack = attacker.getHeldItemMainhand();
+							Item weapon = weaponItemStack.getItem();
+							// when the attacker is supernatural,
+							if (transformationAttacker != null
+									&& transformationAttacker.getTransformation().isSupernatural()) {
+								// has no weapon and is effective against werewolf
+								if (weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
+									event.setAmount(event.getAmount()
+											* WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
+									return;
+								} else if (!weaponItemStack.isEmpty()
+										&& WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
+									event.setAmount(
+											event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
+									return;
+								}
+							} else {
+								// when attacker is not supernatural
 
-							// first test if immediate source (for example arrow) is effective
-							Entity immediateSource = event.getSource().getImmediateSource();
-							if (WerewolfHelper.effectiveAgainstWerewolf(immediateSource)) {
-								event.setAmount(event.getAmount()
-										* WerewolfHelper.getEffectivenessAgainstWerewolf(immediateSource));
-								return;
-							} else if (!weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
-								event.setAmount(
-										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
-								return;
-							} else if (WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
-								event.setAmount(
-										event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
-								return;
+								// first test if immediate source (for example arrow) is effective
+								Entity immediateSource = event.getSource().getImmediateSource();
+								if (WerewolfHelper.effectiveAgainstWerewolf(immediateSource)) {
+									event.setAmount(event.getAmount()
+											* WerewolfHelper.getEffectivenessAgainstWerewolf(immediateSource));
+									return;
+								} else if (!weaponItemStack.isEmpty()
+										&& WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
+									event.setAmount(
+											event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
+									return;
+								} else if (WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
+									event.setAmount(event.getAmount()
+											* WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
+									return;
+								}
 							}
 						}
 					}
+
+					// when nothing applies (this should also reduce any other damage from other
+					// damage sources)
+					event.setAmount((event.getAmount() / Transformations.WEREWOLF.getProtection()));
 				}
-
-				// when nothing applies (this should also reduce any other damage from other
-				// damage sources)
-				event.setAmount((event.getAmount() / Transformations.WEREWOLF.getProtection()));
 			}
-		}
 
-		if (transformationAttacker != null && WerewolfHelper.transformedWerewolf(attacker)) {
-			onWerewolfAttack(attacker, transformationAttacker, hurtWerewolf);
+			if (transformationAttacker != null && WerewolfHelper.transformedWerewolf(attacker)) {
+				onWerewolfAttack(attacker, transformationAttacker, hurtWerewolf);
+			}
+
+			if ((attacker != null) && (hurtWerewolf != null)) {
+				if (attacker.getHeldItemMainhand().getItem() != null) {
+					applySmiteToSilver(attacker.getHeldItemMainhand().getItem(), hurtWerewolf, event);
+				}
+			}
 		}
 	}
 
@@ -135,6 +146,12 @@ public class WerewolfEventHandler {
 			// fill hunger
 			EntityPlayer player = (EntityPlayer) attacker;
 			player.getFoodStats().addStats(1, 1);
+		}
+	}
+
+	public static void applySmiteToSilver(Item attackedWith, EntityLivingBase attacked, LivingHurtEvent event) {
+		if (attacked.isEntityUndead() && EffectivenessHelper.effectiveAgainstUndead(attackedWith)) {
+			event.setAmount(event.getAmount() + 2.5F);
 		}
 	}
 
@@ -328,8 +345,7 @@ public class WerewolfEventHandler {
 				String msg = "transformations." + cap.getTransformation().toString() + ".";
 
 				EntityPlayer thrower;
-				if (!(throwerName == null) && !(throwerName.equals("null"))
-						&& !(throwerName.equals(player.getName()))) {
+				if ((throwerName != null) && !(throwerName.equals("null")) && !(throwerName.equals(player.getName()))) {
 					thrower = originalEntity.world.getPlayerEntityByName(throwerName);
 					Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
 					Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
@@ -345,12 +361,25 @@ public class WerewolfEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onRightClick(PlayerInteractEvent.RightClickItem event) {
+	public static void onRightClick(PlayerInteractEvent.EntityInteractSpecific event) {
 		EntityPlayer player = event.getEntityPlayer();
-		if (!player.world.isRemote) {
-			// Item item = event.getItemStack().getItem();
-			// if(TransformationHelper.effectiveAgainstTransformation(effectiveAgainst,
-			// object))
+		if (event.getTarget() instanceof EntityLivingBase) {
+			Item item = event.getItemStack().getItem();
+			EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
+			Transformations transformation = TransformationHelper.getTransformation(interactedWith);
+			if (EffectivenessHelper.effectiveAgainstTransformation(transformation, item)) {
+				if (!player.world.isRemote) {
+					String msg = "transformations." + transformation.toString() + ".";
+					Packets.TRANSFORMATION_REPLY.sync(player, msg + "tp.touched", interactedWith, item);
+					if (interactedWith instanceof EntityPlayer) {
+						Packets.TRANSFORMATION_REPLY.sync((EntityPlayer) interactedWith, msg + "fp.touched",
+								interactedWith, item);
+					}
+				}
+				// we don't want to open any gui, so we say that this interaction was a success
+				event.setCancellationResult(EnumActionResult.SUCCESS);
+				event.setCanceled(true);
+			}
 		}
 	}
 

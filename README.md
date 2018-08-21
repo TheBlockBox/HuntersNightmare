@@ -5,8 +5,8 @@ Hunter's Dream Mod is a minecraft modification which adds majority of folklore m
 In this mod, this also adds an afterlife system. Depending on what you do in the overworld, you'll either respawn in the Overworld or The Divine world or The 2nd Nether. The main idea of this is to make players think about what they're doing and care about dying and think twice on their actions, making the game be more or less like "Everything you do has two outcomes, the intention of the outcome and the consequence".
 
 ## Links
-Please check out our [YouTube]("https://www.youtube.com/c/PixelEyeStudios"), [Minecraft Forum Post]("https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/wip-mods/2910613-hunters-dream-mod-coders-needed"), [Planet Minecraft Post]("https://www.planetminecraft.com/mod/hunter-s-dream-mod-hunting-to-the-next-level/") and our [Curse]("https://minecraft.curseforge.com/projects/hunters-dream").
+Please check out our [YouTube](https://www.youtube.com/c/PixelEyeStudios), [Planet Minecraft Post](https://www.planetminecraft.com/mod/hunter-s-dream-mod-hunting-to-the-next-level/) and our [Curse](https://minecraft.curseforge.com/projects/hunters-dream).
 
 ### Download
-Download our mod on [Curse]("https://minecraft.curseforge.com/projects/hunters-dream")!  
+Download our mod on [Curse](https://www.minecraft.curseforge.com/projects/hunters-dream)!  
 (The mod is still W.I.P., so don't expect too much)

@@ -2,6 +2,8 @@ package theblockbox.huntersdream.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -37,9 +39,8 @@ public class CommandsTransformation extends CommandBase {
 			BlockPos targetPos) {
 		ArrayList<String> toReturn = new ArrayList<>();
 		if (args.length == 1) {
-			for (Transformations transformation : Transformations.values()) {
-				toReturn.add(transformation.toString());
-			}
+			toReturn.addAll(Stream.of(Transformations.getAllTransformations()).map(Transformations::toString)
+					.collect(Collectors.toList()));
 			toReturn.add("get");
 			return getListOfStringsMatchingLastWord(args, toReturn);
 		} else {

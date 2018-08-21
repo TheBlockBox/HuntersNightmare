@@ -29,7 +29,6 @@ public interface IWerewolf {
 	public static class Werewolf implements IWerewolf {
 		private int timeSinceTransformation = -1;
 		private int transformationStage = 0;
-		// private boolean transformingBack = false;
 
 		@Override
 		public void setTimeSinceTransformation(int time) {
@@ -55,7 +54,6 @@ public interface IWerewolf {
 	public static class WerewolfStorage implements IStorage<IWerewolf> {
 		public static final String TIME_SINCE_TRANSFORMATION = "timesincetransformation";
 		public static final String TRANSFORMATION_STAGE = "transformationstage";
-		// public static final String TRANSFORMING_BACK = "transformingback";
 
 		@Override
 		public NBTBase writeNBT(Capability<IWerewolf> capability, IWerewolf instance, EnumFacing side) {

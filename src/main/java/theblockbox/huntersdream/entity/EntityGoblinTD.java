@@ -21,8 +21,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
@@ -75,14 +80,11 @@ public class EntityGoblinTD extends EntityVillager
 	}
 
 	protected void applyEntityAI() {
-		Predicate<EntityCreature> predicateMob = input -> {
-			return !(input instanceof EntityGoblinTD);
-		};
-		Predicate<EntityPlayer> predicatePlayer = WerewolfHelper::transformedWerewolf;
+		Predicate<EntityCreature> predicateMob = input -> !(input instanceof EntityGoblinTD);
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
-				true, false, predicatePlayer));
+				true, false, WerewolfHelper::transformedWerewolf));
 	}
 
 	@Override
@@ -172,6 +174,26 @@ public class EntityGoblinTD extends EntityVillager
 			Main.LOGGER.warn("The method EntityGoblinTD#getName has been called on server side.\nPath: "
 					+ (new ExecutionPath()).getAll());
 			return "Goblin";
+		}
+	}
+
+	public ITextComponent getDisplayName() {
+		Team team = this.getTeam();
+		String s = this.getCustomNameTag();
+		if (s != null && !s.isEmpty()) {
+			TextComponentString textcomponentstring = new TextComponentString(
+					ScorePlayerTeam.formatPlayerName(team, s));
+			textcomponentstring.getStyle().setHoverEvent(this.getHoverEvent());
+			textcomponentstring.getStyle().setInsertion(this.getCachedUniqueIdString());
+			return textcomponentstring;
+		} else {
+			ITextComponent itextcomponent = new TextComponentTranslation("entity.goblintd.name", new Object[0]);
+			itextcomponent.getStyle().setHoverEvent(this.getHoverEvent());
+			itextcomponent.getStyle().setInsertion(this.getCachedUniqueIdString());
+			if (team != null) {
+				itextcomponent.getStyle().setColor(team.getColor());
+			}
+			return itextcomponent;
 		}
 	}
 }

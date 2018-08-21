@@ -17,6 +17,7 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 	public static final float DEFAULT_EFFECTIVENESS = 2;
 
 	/**
+	 * Registers an armor part as effective against specific transformations
 	 * 
 	 * @param armorPart        The armor that should be effective
 	 * @param thorns           The multiplier of the damage sent back (for example
@@ -33,16 +34,12 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 	 * @param effectiveAgainst The transformations against which the armor should be
 	 *                         effective
 	 */
-	public ArmorEffectiveAgainstTransformation(@Nonnull Item armorPart, float thorns, float protection,
+	public ArmorEffectiveAgainstTransformation(Item armorPart, float thorns, float protection,
 			@Nonnull Transformations... effectiveAgainst) {
 		this.armorPart = armorPart;
 		this.effectiveAgainst = effectiveAgainst;
 		this.thorns = thorns;
 		this.protection = protection;
-
-		if (armorPart == null || effectiveAgainst == null || effectiveAgainst.length < 1) {
-			throw new NullPointerException("Item and transformation parameter aren't allowed to be null");
-		}
 
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
 			if (aeat.getArmor() == armorPart)
