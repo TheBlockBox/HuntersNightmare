@@ -37,15 +37,23 @@ public interface ITransformationEntityTransformed extends ITransformation {
 		throw new UnsupportedOperationException("Can't set texture index");
 	}
 
-	/** Used to get the entity before the transformation */
-	public String getEntityName();
+	/**
+	 * Used to get the entity before the transformation. If the returned string
+	 * starts with "player", the entity's untransformed form is a player (Caution:
+	 * This may change after the new no control system is done). If the string
+	 * starts with $bycap, the extra data (texture index, transformation etc.) will
+	 * be written in the entity's TransformationCreature capability, otherwise if
+	 * the name doesn't start with $bycap, the information will be passed to the
+	 * constructor
+	 */
+	public String getUntransformedEntityName();
 
 	public static void transformBack(EntityCreature creature) {
 		if (creature instanceof ITransformationEntityTransformed) {
 			ITransformationEntityTransformed entity = (ITransformationEntityTransformed) creature;
 			if (!creature.world.isRemote) {
 				EntityLiving e = null;
-				String entityName = entity.getEntityName();
+				String entityName = entity.getUntransformedEntityName();
 
 				if (!entityName.startsWith("player")) {
 

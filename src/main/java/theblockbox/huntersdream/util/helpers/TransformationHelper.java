@@ -1,15 +1,18 @@
 package theblockbox.huntersdream.util.helpers;
 
 import java.util.HashMap;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
@@ -276,5 +279,17 @@ public class TransformationHelper {
 	public static void refreshLevel(EntityPlayerMP player) {
 		ITransformationPlayer cap = getCap(player);
 		cap.setLevel(cap.getTransformation().getLevel(player));
+	}
+
+	public static void transformCreature(EntityLiving entity,
+			Function<EntityLiving, EntityLivingBase> transformCreature) {
+		EntityLivingBase returned = transformCreature.apply(entity);
+		if (returned != null) {
+			World world = returned.world;
+			returned.setPositionAndUpdate(entity.posX, entity.posY, entity.posZ);
+			returned.setHealth((returned.getHealth() / (entity.getMaxHealth()) / entity.getHealth()));
+			world.removeEntity(entity);
+			world.spawnEntity(returned);
+		}
 	}
 }

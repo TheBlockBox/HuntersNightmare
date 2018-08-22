@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.handlers;
 
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -27,6 +28,7 @@ import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
@@ -37,8 +39,11 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
@@ -50,15 +55,18 @@ public class TransformationEventHandler {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
-			if (player.ticksExisted % 80 == 0) {
-				if (WerewolfHelper.transformedWerewolf(player)) {
-					WerewolfHelper.applyLevelBuffs(player);
-					if (!player.isCreative() && !player.isSpectator()) {
-						if (!player.inventory.isEmpty()) {
-							player.inventory.dropAllItems();
-						}
+			if (WerewolfHelper.transformedWerewolf(player)) {
+				if (!player.isCreative() && !player.isSpectator()) {
+					if (!player.inventory.isEmpty()) {
+						player.inventory.dropAllItems();
 					}
 				}
+				if (player.ticksExisted % 80 == 0) {
+					WerewolfHelper.applyLevelBuffs(player);
+				}
+			}
+
+			if (player.ticksExisted % 80 == 0) {
 
 				if (!player.world.isRemote) { // ensures that this is the server side
 
@@ -231,13 +239,23 @@ public class TransformationEventHandler {
 	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntityLiving().ticksExisted % 100 == 0) {
 			if (!event.getEntityLiving().world.isRemote) {
-
 				EntityLivingBase entity = event.getEntityLiving();
-				try {
-					EntityCreature creature = (EntityCreature) entity;
-					TransformationHelper.getITransformationCreature(creature).getTransformation()
-							.transformCreatureWhenPossible(creature);
-				} catch (NullPointerException | ClassCastException e) {
+
+				if (entity.isPotionActive(PotionInit.POTION_WOLFSBANE)
+						&& entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
+					IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
+					if (ionm.isInfected()) {
+						ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
+						ionm.setInfectionTick(-1);
+						ionm.setInfectionTransformation(Transformations.HUMAN);
+					}
+				}
+
+				if (!(entity instanceof ITransformationEntityTransformed) && entity instanceof EntityLiving) {
+					Transformations transformation = TransformationHelper.getTransformation(entity);
+					if (transformation != null) {
+						transformation.transformCreatureWhenPossible((EntityLiving) entity);
+					}
 				}
 
 				if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null)) {
@@ -261,7 +279,6 @@ public class TransformationEventHandler {
 						}
 					}
 				}
-
 				WerewolfEventHandler.handleInfection(entity);
 			}
 		}

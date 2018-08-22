@@ -23,6 +23,6 @@ public class PotionInit {
 
 	public static void registerPotionTypes() {
 		WOLFSBANE.setRegistryName(POTION_WOLFSBANE.getRegistryName());
-		PotionHelper.addMix(PotionTypes.AWKWARD, ItemInit.WOLFSBANE, WOLFSBANE);
+		PotionHelper.addMix(PotionTypes.AWKWARD, ItemInit.WOLFSBANE_FLOWER, WOLFSBANE);
 	}
 }

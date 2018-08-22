@@ -29,7 +29,7 @@ public class BlockInit {
 			ConfigHandler.silverMaxY, ConfigHandler.silverChance, Blocks.STONE, true);
 	public static final Block BLOCK_WEREWOLF_ENCHANTMENT_STONE = new BlockWerewolfEnchantingStone(
 			"werewolf_enchanting_stone");
-	public static final Block WOLFSBANE = new BlockWolfsbane("plant_wolfsbane");
+	public static final Block WOLFSBANE = BlockWolfsbane.create("plant_wolfsbane");
 	// public static final Block BLOCK_CHAIR = new BlockChair("chair");
 
 	// Ores

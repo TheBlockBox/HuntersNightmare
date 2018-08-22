@@ -2,6 +2,8 @@ package theblockbox.huntersdream.event;
 
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
@@ -61,8 +63,9 @@ public class TransformationXPEvent extends PlayerEvent {
 			this.TRANSFORMATIONS = transformations;
 		}
 
-		public static boolean validReason(TransformationXPSentReason reason, Transformations transformation) {
-			return Stream.of(reason.TRANSFORMATIONS).anyMatch(t -> t == transformation);
+		public static boolean validReason(@Nonnull TransformationXPSentReason reason,
+				@Nonnull Transformations transformation) {
+			return Stream.of(reason.TRANSFORMATIONS).anyMatch(transformation::equals);
 		}
 	}
 }

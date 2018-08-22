@@ -24,7 +24,7 @@ public class ItemInit {
 
 	// Items
 	public static final Item INGOT_SILVER = new ItemBase("ingot_silver", CreativeTabInit.HUNTERSDREAM_MISC);
-	public static final Item WOLFSBANE = new ItemWolfsbane("wolfsbane");
+	public static final Item WOLFSBANE_FLOWER = new ItemWolfsbane("wolfsbane");
 
 	// Materials
 	public static final ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,

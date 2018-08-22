@@ -30,10 +30,6 @@ public interface ITransformationPlayer extends ITransformation {
 	 */
 	public void setXP(int xp);
 
-	// getTextureIndex() already defined in ITransformation
-
-	public void setTextureIndex(int textureIndex);
-
 	public double getLevel();
 
 	public void setLevel(double level);

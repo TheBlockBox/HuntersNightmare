@@ -1,11 +1,12 @@
 # To-Do:
-- change goblin speed and AI
-- fix potions
 - make particle effects on player/villager transformation
 - fix entities vanishing when too far away
 - make new no control system
 - fix eyes
-- make that werewolves don't attack infected
 - find out what is making the mod's creatures lag
 - add furniture
 - make different item for furniture
+- improve four legged werewolf animation
+- make that when you run against blocks in werewolf form, you destroy them
+- change effects you get every transformation level
+- make that you get faster every transformation level

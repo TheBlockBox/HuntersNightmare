@@ -220,6 +220,9 @@ public class WerewolfEventHandler {
 			if (nextStage > werewolf.getTransformationStage()) {
 				onStageChanged(player, werewolf, nextStage, cap);
 			}
+		} else {
+			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100));
+			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));
 		}
 	}
 

@@ -4,8 +4,11 @@ import com.google.common.base.Predicate;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAILookIdle;
@@ -18,6 +21,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -25,6 +29,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -177,6 +182,7 @@ public class EntityGoblinTD extends EntityVillager
 		}
 	}
 
+	// now shows "Goblin" instead of the profession
 	public ITextComponent getDisplayName() {
 		Team team = this.getTeam();
 		String s = this.getCustomNameTag();
@@ -194,6 +200,57 @@ public class EntityGoblinTD extends EntityVillager
 				itextcomponent.getStyle().setColor(team.getColor());
 			}
 			return itextcomponent;
+		}
+	}
+
+	/**
+	 * Attacks a given entity (needed so that goblin can attack). Method copied from
+	 * {@link net.minecraft.entity.monster.EntityMob#attackEntityAsMob(Entity)}
+	 * 
+	 * @param entityIn The entity to be attacked
+	 */
+	@Override
+	public boolean attackEntityAsMob(Entity entityIn) {
+		float damage = (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+		int knockback = 0;
+		if (entityIn instanceof EntityLivingBase) {
+			damage += EnchantmentHelper.getModifierForCreature(this.getHeldItemMainhand(),
+					((EntityLivingBase) entityIn).getCreatureAttribute());
+			knockback += EnchantmentHelper.getKnockbackModifier(this);
+		}
+		if (entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), damage)) {
+			if (knockback > 0 && entityIn instanceof EntityLivingBase) {
+				((EntityLivingBase) entityIn).knockBack(this, (float) knockback * 0.5F,
+						(double) MathHelper.sin(this.rotationYaw * 0.017453292F),
+						(double) (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
+				this.motionX *= 0.6D;
+				this.motionZ *= 0.6D;
+			}
+
+			int fireaspect = EnchantmentHelper.getFireAspectModifier(this);
+			if (fireaspect > 0) {
+				entityIn.setFire(fireaspect * 4);
+			}
+			if (entityIn instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entityIn;
+				ItemStack heldItemStack = this.getHeldItemMainhand();
+				ItemStack itemstack1 = player.isHandActive() ? player.getActiveItemStack() : ItemStack.EMPTY;
+
+				if (!heldItemStack.isEmpty() && !itemstack1.isEmpty()
+						&& heldItemStack.getItem().canDisableShield(heldItemStack, itemstack1, player, this)
+						&& itemstack1.getItem().isShield(itemstack1, player)) {
+					float f1 = 0.25F + (float) EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
+
+					if (this.rand.nextFloat() < f1) {
+						player.getCooldownTracker().setCooldown(itemstack1.getItem(), 100);
+						this.world.setEntityState(player, (byte) 30);
+					}
+				}
+			}
+			this.applyEnchantments(this, entityIn);
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

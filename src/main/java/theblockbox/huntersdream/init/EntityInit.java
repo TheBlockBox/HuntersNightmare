@@ -33,7 +33,7 @@ public class EntityInit {
 		event.getRegistry().registerAll(
 				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255).tracker(20, 20, false).build(),
 				getEntityEntryBuilder("werewolf", EntityWerewolf.class).tracker(20, 20, false)
-						.spawn(EnumCreatureType.CREATURE, 6, 20, 150, FOREST, FOREST_HILLS, BIRCH_FOREST,
+						.spawn(EnumCreatureType.CREATURE, 3, 5, 150, FOREST, FOREST_HILLS, BIRCH_FOREST,
 								BIRCH_FOREST_HILLS, MUTATED_BIRCH_FOREST, MUTATED_BIRCH_FOREST_HILLS,
 								MUTATED_ROOFED_FOREST, MUTATED_FOREST, ROOFED_FOREST)
 						.build(),

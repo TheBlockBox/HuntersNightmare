@@ -2,16 +2,17 @@ package theblockbox.huntersdream.util.enums;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToDoubleFunction;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
@@ -19,7 +20,7 @@ import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.functional.ITransformCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
 public enum Transformations {
 
@@ -36,8 +37,8 @@ public enum Transformations {
 	// when an entity has no transformation, use null
 	// (no transformation meaning not infectable)
 
-	private static class Helper {
-		private static final ArrayList<Transformations> TRANSFORMATIONS = new ArrayList<>();
+	public static class Helper {
+		public static final ArrayList<Transformations> TRANSFORMATIONS = new ArrayList<>();
 	}
 
 	private final TransformationEntry ENTRY;
@@ -123,15 +124,6 @@ public enum Transformations {
 		return this.getResourceLocation().toString();
 	}
 
-	public void transformCreatureWhenPossible(EntityCreature creature) {
-		if (this.getTransformCreature() != null)
-			this.getTransformCreature().transformCreature(creature);
-	}
-
-	private ITransformCreature getTransformCreature() {
-		return this.ENTRY.transformCreature;
-	}
-
 	public ToDoubleFunction<EntityPlayerMP> getCalculateLevel() {
 		return this.ENTRY.calculateLevel;
 	}
@@ -160,6 +152,19 @@ public enum Transformations {
 		this.ENTRY.onLevelUp.accept(player, newLevel);
 	}
 
+	public void transformCreatureWhenPossible(@Nonnull EntityLiving creature) {
+		if (this.ENTRY.transformCreature != null) {
+			if (creature == null)
+				throw new NullPointerException("The given parameter creature is null");
+			else if (creature instanceof ITransformationEntityTransformed)
+				throw new IllegalArgumentException("The given entity " + creature.toString()
+						+ " is an instance of ITransformationEntityTransformed and can therefore not be transformed");
+			else {
+				TransformationHelper.transformCreature(creature, this.ENTRY.transformCreature);
+			}
+		}
+	}
+
 	/** Used to make new transformations */
 	public static class TransformationEntry {
 		private boolean supernatural = true;
@@ -172,9 +177,9 @@ public enum Transformations {
 		private ToDoubleFunction<EntityPlayerMP> calculateLevel = player -> TransformationHelper.getCap(player).getXP()
 				/ 500.0D;
 		private float protection = 1F;
-		private ITransformCreature transformCreature;
-		private Consumer<EntityLivingBase> infect;
-		private ResourceLocation resourceLocation;
+		private Function<EntityLiving, EntityLivingBase> transformCreature = null;
+		private Consumer<EntityLivingBase> infect = null;
+		private ResourceLocation resourceLocation = null;
 		/** A runnable that is executed when the player levels up */
 		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
 		};
@@ -206,6 +211,11 @@ public enum Transformations {
 			return this;
 		}
 
+		public TransformationEntry setTransformCreature(Function<EntityLiving, EntityLivingBase> transformCreature) {
+			this.transformCreature = transformCreature;
+			return this;
+		}
+
 		public TransformationEntry setGeneralDamage(int damage) {
 			this.generalDamage = damage;
 			return this;
@@ -218,11 +228,6 @@ public enum Transformations {
 
 		public TransformationEntry setProtection(float protection) {
 			this.protection = protection;
-			return this;
-		}
-
-		public TransformationEntry setTransformCreature(ITransformCreature transformCreature) {
-			this.transformCreature = transformCreature;
 			return this;
 		}
 
@@ -252,14 +257,6 @@ public enum Transformations {
 		public TransformationEntry setOnLevelUp(ObjDoubleConsumer<EntityPlayerMP> onLevelUp) {
 			this.onLevelUp = onLevelUp;
 			return this;
-		}
-
-		public Transformations getTransformations(String name) {
-			return EnumHelper.addEnum(Transformations.class, name, new Class<?>[] { TransformationEntry.class }, this);
-		}
-
-		public ObjDoubleConsumer<EntityPlayerMP> getOnLevelUp() {
-			return this.onLevelUp;
 		}
 	}
 }

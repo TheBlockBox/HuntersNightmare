@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 
+@Deprecated
 public class TransformationWerewolfNoControlMessage extends MessageBase<TransformationWerewolfNoControlMessage> {
 
 	private int player;

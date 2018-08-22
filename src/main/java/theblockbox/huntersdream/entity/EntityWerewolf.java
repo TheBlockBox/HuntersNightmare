@@ -29,6 +29,7 @@ import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
@@ -53,7 +54,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityLivingBase entity) {
-		this(worldIn, textureIndex, entity.getClass().getName());
+		this(worldIn, textureIndex, ((TransformationHelper.getITransformationCreature(entity) != null) ? "$bycap" : "")
+				+ entity.getClass().getName());
 	}
 
 	public EntityWerewolf(World worldIn) {
@@ -78,8 +80,9 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 				|| TransformationHelper.isInfected(input));
 		Predicate<EntityPlayer> predicatePlayer = input -> {
 			ITransformation transformation = TransformationHelper.getITransformation(input);
-			return !(((transformation.getTransformation() == Transformations.WEREWOLF)
-					&& (transformation.transformed())) || TransformationHelper.isInfected(input));
+			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(input);
+			return !((transformation.getTransformation() == Transformations.WEREWOLF)
+					|| ((ionm != null) && ionm.isInfected()));
 		};
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));
@@ -163,11 +166,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		this.textureIndex = buffer.readInt();
 	}
 
-	/**
-	 * Returns the name of the werewolf's normal form
-	 */
 	@Override
-	public String getEntityName() {
+	public String getUntransformedEntityName() {
 		return untransformedEntityName;
 	}
 }

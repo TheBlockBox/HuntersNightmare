@@ -1,15 +1,11 @@
 package theblockbox.huntersdream.objects.blocks;
 
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
@@ -23,13 +19,14 @@ public class BlockWolfsbane extends BlockCropBase {
 			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(13), 1.0D),
 			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(15), 1.0D) };
 
-	public BlockWolfsbane(String name) {
-		super(name, Item.getItemFromBlock(BlockInit.WOLFSBANE));
+	private BlockWolfsbane(String name) {
+		super(name, ItemInit.WOLFSBANE_FLOWER);
 	}
 
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, AGE);
+	public static BlockWolfsbane create(String name) {
+		BlockWolfsbane wolfsbane = new BlockWolfsbane(name);
+		wolfsbane.crop = ItemInit.WOLFSBANE_FLOWER;
+		return wolfsbane;
 	}
 
 	@Override
@@ -40,20 +37,6 @@ public class BlockWolfsbane extends BlockCropBase {
 	@Override
 	protected PropertyInteger getAgeProperty() {
 		return AGE;
-	}
-
-	@Override
-	protected Item getCrop() {
-		return ItemInit.WOLFSBANE;
-	}
-
-	@Override
-	public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, net.minecraft.world.IBlockAccess world,
-			BlockPos pos, IBlockState state, int fortune) {
-		super.getDrops(drops, world, pos, state, 0);
-		if (getAge(state) >= getMaxAge()) {
-			drops.add(new ItemStack(this.getSeed(), 1, 0));
-		}
 	}
 
 	@Override

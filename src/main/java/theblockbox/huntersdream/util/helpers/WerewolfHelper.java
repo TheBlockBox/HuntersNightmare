@@ -202,9 +202,9 @@ public class WerewolfHelper {
 	 */
 	@Deprecated
 	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {
-		if (werewolf.getEntityName().startsWith("player")) {
-			return werewolf.world
-					.getPlayerEntityByName(werewolf.getEntityName().substring(6, werewolf.getEntityName().length()));
+		if (werewolf.getUntransformedEntityName().startsWith("player")) {
+			return werewolf.world.getPlayerEntityByName(
+					werewolf.getUntransformedEntityName().substring(6, werewolf.getUntransformedEntityName().length()));
 		} else {
 			throw new IllegalArgumentException("Werewolf is not a player");
 		}
@@ -223,41 +223,39 @@ public class WerewolfHelper {
 	 */
 	public static EntityLivingBase toWerewolfWhenNight(EntityLiving entity) {
 		World world = entity.world;
-		if (entity.ticksExisted % 80 == 0) {
-			if (!world.isRemote) {
-				if (WerewolfHelper.isWerewolfTime(entity)) {
-					if (entity instanceof ITransformation) {
-						ITransformation transformation = (ITransformation) entity;
-						if (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF) {
-							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
-									entity.getClass().getName());
-							return werewolf;
-						} else {
-							throw new WrongTransformationException("Entity is not a werewolf",
-									TransformationHelper.getTransformation(entity));
-						}
+		if (!world.isRemote) {
+			if (WerewolfHelper.isWerewolfTime(entity)) {
+				if (entity instanceof ITransformation) {
+					ITransformation transformation = (ITransformation) entity;
+					if (transformation.getTransformation() == Transformations.WEREWOLF) {
+						EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
+								entity.getClass().getName());
+						return werewolf;
 					} else {
-						if (entity instanceof EntityCreature) {
-							EntityCreature creature = (EntityCreature) entity;
-							ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
-							if (tc != null) {
-								if (tc.getTransformation() == Transformations.WEREWOLF) {
-									EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
-											"$bycap" + entity.getClass().getName());
-									return werewolf;
-								} else {
-									throw new WrongTransformationException("Entity is not a werewolf",
-											tc.getTransformation());
-								}
+						throw new WrongTransformationException("Entity is not a werewolf",
+								TransformationHelper.getTransformation(entity));
+					}
+				} else {
+					if (entity instanceof EntityCreature) {
+						EntityCreature creature = (EntityCreature) entity;
+						ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
+						if (tc != null) {
+							if (tc.getTransformation() == Transformations.WEREWOLF) {
+								EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
+										"$bycap" + entity.getClass().getName());
+								return werewolf;
+							} else {
+								throw new WrongTransformationException("Entity is not a werewolf",
+										tc.getTransformation());
 							}
 						}
-						throw new IllegalArgumentException(
-								"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
 					}
+					throw new IllegalArgumentException(
+							"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
 				}
-			} else {
-				throw new WrongSideException("Can't transform entity to werewolf on client side", world);
 			}
+		} else {
+			throw new WrongSideException("Can't transform entity to werewolf on client side", world);
 		}
 
 		return null;
