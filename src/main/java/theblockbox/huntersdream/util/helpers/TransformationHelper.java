@@ -72,7 +72,7 @@ public class TransformationHelper {
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
 		if (ConfigHandler.showPacketMessages)
-			Main.LOGGER
+			Main.getLogger()
 					.info("Transformation of player " + player.getName() + " changed to " + transformation.toString());
 		Packets.TRANSFORMATION.sync(player); // sync data with client
 	}
@@ -286,10 +286,13 @@ public class TransformationHelper {
 		EntityLivingBase returned = transformCreature.apply(entity);
 		if (returned != null) {
 			World world = returned.world;
-			returned.setPositionAndUpdate(entity.posX, entity.posY, entity.posZ);
-			returned.setHealth((returned.getHealth() / (entity.getMaxHealth()) / entity.getHealth()));
+			returned.setPosition(entity.posX, entity.posY, entity.posZ);
+			returned.setHealth(returned.getMaxHealth() / (entity.getMaxHealth() / entity.getHealth()));
+			// 10 / 30 : 15 / 45
+			// 45 / ( 30 / 10 ) = 45 / 3 = 15
 			world.removeEntity(entity);
 			world.spawnEntity(returned);
+			returned.setPositionAndUpdate(entity.posX, entity.posY, entity.posZ);
 		}
 	}
 }

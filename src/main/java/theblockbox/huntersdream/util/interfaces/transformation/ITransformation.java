@@ -18,4 +18,18 @@ public interface ITransformation {
 	public int getTextureIndex();
 
 	public void setTextureIndex(int index);
+
+	default public boolean textureIndexInBounds() {
+		return (this.getTextureIndex() >= 0)
+				&& (this.getTextureIndex() < this.getTransformation().getTextures().length);
+	}
+
+	/**
+	 * When the texture index is not in the bounds, it will be set, otherwise not
+	 */
+	default public void setTextureIndexWhenNeeded() {
+		if (!textureIndexInBounds()) {
+			this.setTextureIndex(this.getTransformation().getRandomTextureIndex());
+		}
+	}
 }

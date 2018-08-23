@@ -212,7 +212,7 @@ public class WerewolfEventHandler {
 				Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
 				werewolf.setTimeSinceTransformation(-1);
 				werewolf.setTransformationStage(0);
-				Main.LOGGER.warn(
+				Main.getLogger().warn(
 						"Has the ingame time been changed, did the player leave the world or did the player use wolfsbane? Player "
 								+ player.getName() + "'s transformation stage (" + nextStage + ") is invalid");
 				return;
@@ -233,6 +233,7 @@ public class WerewolfEventHandler {
 	static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
 		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 		if (werewolf.getTransformationStage() <= 0) {
+			WerewolfHelper.resetPlayerSpeed(player);
 			player.sendMessage(
 					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
 			cap.setTransformed(false);

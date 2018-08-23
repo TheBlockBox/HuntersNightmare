@@ -16,7 +16,7 @@ public class ChanceHelper {
 	}
 
 	public static boolean chanceOf(Random random, float percentage) {
-		if (percentage > 1000 || percentage < 0) {
+		if (percentage > 100 || percentage < 0) {
 			throw new IllegalArgumentException("Percentage can't be over 100 / under 0");
 		}
 

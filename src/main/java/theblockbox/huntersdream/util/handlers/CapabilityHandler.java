@@ -85,7 +85,7 @@ public class CapabilityHandler {
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
-					Main.LOGGER.catching(e);
+					Main.getLogger().catching(e);
 				}
 				player.getServer().addScheduledTask(() -> {
 					for (EntityPlayer p : player.getServer().getPlayerList().getPlayers())
@@ -96,7 +96,7 @@ public class CapabilityHandler {
 				try {
 					Thread.sleep(40000);
 				} catch (InterruptedException e) {
-					Main.LOGGER.catching(e);
+					Main.getLogger().catching(e);
 				}
 				player.getServer().addScheduledTask(() -> {
 					for (EntityPlayer p : player.getServer().getPlayerList().getPlayers())

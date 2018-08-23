@@ -14,7 +14,7 @@ public class PotionFear extends PotionBase {
 	private BlockPos pos;
 
 	public PotionFear() {
-		super(true, 787878, "fear");
+		super(true, 787878, 1, "fear");
 	}
 
 	// TODO: Test if this even works
@@ -23,7 +23,7 @@ public class PotionFear extends PotionBase {
 		if (!performedEffectedOneTime) {
 			performedEffectedOneTime = true;
 			pos = new BlockPos(entity);
-			Main.LOGGER.debug("Effect performed for first time");
+			Main.getLogger().debug("Effect performed for first time");
 			return;
 		} else {
 			entity.setPosition(pos.getX(), pos.getY(), pos.getZ());

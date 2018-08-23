@@ -1,10 +1,12 @@
 package theblockbox.huntersdream.util.helpers;
 
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
@@ -13,10 +15,12 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
+import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
@@ -99,6 +103,9 @@ public class WerewolfHelper {
 					break;
 				}
 				player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
+				if (player.world.isRemote) {
+					setPlayerSpeed((AbstractClientPlayer) player, level * 0.1F);
+				}
 			} else {
 				throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
 						TransformationHelper.getTransformation(player));
@@ -161,7 +168,7 @@ public class WerewolfHelper {
 			} else if (entity instanceof EntityLivingBase) {
 				return 50;
 			} else {
-				Main.LOGGER.error("Found entity that can infect but has no infection percantage... Using 25%");
+				Main.getLogger().error("Found entity that can infect but has no infection percantage... Using 25%");
 				return 50;
 			}
 		} else {
@@ -211,57 +218,6 @@ public class WerewolfHelper {
 	}
 
 	/**
-	 * Caution! Your entity has to extend EntityLiving or a subclass and needs a
-	 * constructor World, int, Transformations (World = spawn world, int = texture
-	 * to use, Transformations = transformation that the entity should have) When
-	 * the werewolf transforms back, this constructor will be called and World will
-	 * be {@link EntityWerewolf#getEntityWorld()}, int will be
-	 * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
-	 * {@link Transformations#WEREWOLF}
-	 * 
-	 * @param entity The entity to be transformed
-	 */
-	public static EntityLivingBase toWerewolfWhenNight(EntityLiving entity) {
-		World world = entity.world;
-		if (!world.isRemote) {
-			if (WerewolfHelper.isWerewolfTime(entity)) {
-				if (entity instanceof ITransformation) {
-					ITransformation transformation = (ITransformation) entity;
-					if (transformation.getTransformation() == Transformations.WEREWOLF) {
-						EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
-								entity.getClass().getName());
-						return werewolf;
-					} else {
-						throw new WrongTransformationException("Entity is not a werewolf",
-								TransformationHelper.getTransformation(entity));
-					}
-				} else {
-					if (entity instanceof EntityCreature) {
-						EntityCreature creature = (EntityCreature) entity;
-						ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
-						if (tc != null) {
-							if (tc.getTransformation() == Transformations.WEREWOLF) {
-								EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
-										"$bycap" + entity.getClass().getName());
-								return werewolf;
-							} else {
-								throw new WrongTransformationException("Entity is not a werewolf",
-										tc.getTransformation());
-							}
-						}
-					}
-					throw new IllegalArgumentException(
-							"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
-				}
-			}
-		} else {
-			throw new WrongSideException("Can't transform entity to werewolf on client side", world);
-		}
-
-		return null;
-	}
-
-	/**
 	 * Shortcut method for
 	 * {@link TransformationHelper#getEffectivenessAgainst(Transformations, Object)}
 	 */
@@ -287,5 +243,70 @@ public class WerewolfHelper {
 
 	public static IWerewolf getIWerewolf(EntityPlayer player) {
 		return player.getCapability(CapabilitiesInit.CAPABILITY_WEREWOLF, null);
+	}
+
+	/**
+	 * Caution! Your entity has to extend EntityLiving or a subclass and needs a
+	 * constructor World, int, Transformations (World = spawn world, int = texture
+	 * to use, Transformations = transformation that the entity should have) When
+	 * the werewolf transforms back, this constructor will be called and World will
+	 * be {@link EntityWerewolf#getEntityWorld()}, int will be
+	 * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
+	 * {@link Transformations#WEREWOLF}
+	 * 
+	 * @param entity The entity to be transformed
+	 */
+	public static EntityLivingBase toWerewolfWhenNight(EntityLiving entity) {
+		World world = entity.world;
+		if (!world.isRemote) {
+			if (WerewolfHelper.isWerewolfTime(entity)) {
+				if (!entity.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+					if (entity instanceof ITransformation) {
+						ITransformation transformation = (ITransformation) entity;
+						if (transformation.getTransformation() == Transformations.WEREWOLF) {
+							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
+									entity.getClass().getName());
+							return werewolf;
+						} else {
+							throw new WrongTransformationException("Entity is not a werewolf",
+									TransformationHelper.getTransformation(entity));
+						}
+					} else {
+						if (entity instanceof EntityCreature) {
+							EntityCreature creature = (EntityCreature) entity;
+							ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
+							if (tc != null) {
+								if (tc.getTransformation() == Transformations.WEREWOLF) {
+									EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
+											"$bycap" + entity.getClass().getName());
+									return werewolf;
+								} else {
+									throw new WrongTransformationException("Entity is not a werewolf",
+											tc.getTransformation());
+								}
+							}
+						}
+						throw new IllegalArgumentException(
+								"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
+					}
+				} else {
+					entity.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100));
+					entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));
+				}
+			}
+		} else {
+			throw new WrongSideException("Can't transform entity to werewolf on client side", world);
+		}
+
+		return null;
+	}
+
+	public static void setPlayerSpeed(AbstractClientPlayer player, float speed) {
+		getIWerewolf(player).setStandardSpeed(player.capabilities.getWalkSpeed());
+		player.capabilities.setPlayerWalkSpeed(speed);
+	}
+
+	public static void resetPlayerSpeed(EntityPlayerMP player) {
+		Packets.PLAYER_SPEED_RESET.sync(player);
 	}
 }

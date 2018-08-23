@@ -176,7 +176,7 @@ public class EntityGoblinTD extends EntityVillager
 		if (world.isRemote) {
 			return I18n.format("entity.goblintd.name");
 		} else {
-			Main.LOGGER.warn("The method EntityGoblinTD#getName has been called on server side.\nPath: "
+			Main.getLogger().warn("The method EntityGoblinTD#getName has been called on server side.\nPath: "
 					+ (new ExecutionPath()).getAll());
 			return "Goblin";
 		}

@@ -24,8 +24,10 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -46,9 +48,13 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
-		this.textureIndex = (textureIndex >= 0 && textureIndex < getTransformation().getTextures().length)
-				? textureIndex
-				: getTransformation().getRandomTextureIndex();
+		if (textureIndex >= 0 && textureIndex < this.getTransformation().getTextures().length) {
+			this.textureIndex = textureIndex;
+		} else {
+			Main.getLogger().warn("A werewolf has been created with a texture index (" + textureIndex
+					+ ") that is out of bounds. This shouldn't happen.\nPath: " + (new ExecutionPath()).get(0, 3));
+			this.textureIndex = this.getTransformation().getRandomTextureIndex();
+		}
 		this.untransformedEntityName = entityName;
 		this.setSize(1F, ModelLycanthropeBiped.HEIGHT);
 	}
@@ -138,7 +144,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 				}
 			}
 		}
-		if (isSprinting())
+		if (isSprinting() || isSneaking())
 			setSize(ModelLycanthropeQuadruped.WIDTH, ModelLycanthropeQuadruped.HEIGHT);
 		else
 			setSize(1F, ModelLycanthropeBiped.HEIGHT);

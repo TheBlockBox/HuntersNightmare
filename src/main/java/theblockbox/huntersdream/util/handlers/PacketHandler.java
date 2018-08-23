@@ -17,6 +17,7 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
 import theblockbox.huntersdream.network.PlaySoundMessage;
+import theblockbox.huntersdream.network.PlayerSpeedResetMessage;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationReplyMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
@@ -47,7 +48,8 @@ public class PacketHandler {
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
 		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
 		TRANSFORMATION_REPLY(new TransformationReplyMessage()), PLAY_SOUND(new PlaySoundMessage()),
-		TRANSFORMATION_ONE_CLIENT(new TransformationMessage(), CLIENT, false);
+		TRANSFORMATION_ONE_CLIENT(new TransformationMessage(), CLIENT, false),
+		PLAYER_SPEED_RESET(new PlayerSpeedResetMessage());
 
 		private final MessageBase<?> MESSAGE_BASE;
 		/** Side that receives package */
@@ -130,6 +132,10 @@ public class PacketHandler {
 							(EntityPlayerMP) args[0]);
 					break;
 
+				case PLAYER_SPEED_RESET:
+					sendMessageToPlayer(new PlayerSpeedResetMessage(), player);
+					break;
+
 				default:
 					throw new IllegalArgumentException("Illegal arguments: Couldn't find packet " + this.toString()
 							+ "\nAdditional info:\nWrong side? "
@@ -143,7 +149,7 @@ public class PacketHandler {
 					throw new WrongSideException("Couldn't send packet " + this.NAME, player.world);
 
 				if (ConfigHandler.showPacketMessages)
-					Main.LOGGER.info(this.MESSAGE_BASE.getName() + " packet sent on side "
+					Main.getLogger().info(this.MESSAGE_BASE.getName() + " packet sent on side "
 							+ GeneralHelper.getSideFromEntity(player) + "\nPath: " + (new ExecutionPath()).get(1));
 			} else {
 				throw new WrongSideException(

@@ -18,7 +18,7 @@ public class PotionWolfsbane extends PotionBase {
 	public static final HashMap<EntityLivingBase, Integer> APPLIED_AT_TIME = new HashMap<>();
 
 	public PotionWolfsbane() {
-		super(false, 14811307, "wolfsbane");
+		super(false, 14811307, 0, "wolfsbane");
 	}
 
 	@Override

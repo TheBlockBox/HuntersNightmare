@@ -23,7 +23,7 @@ public class BlockWolfsbane extends BlockCropBase {
 		super(name, ItemInit.WOLFSBANE_FLOWER);
 	}
 
-	public static BlockWolfsbane create(String name) {
+	public static BlockWolfsbane of(String name) {
 		BlockWolfsbane wolfsbane = new BlockWolfsbane(name);
 		wolfsbane.crop = ItemInit.WOLFSBANE_FLOWER;
 		return wolfsbane;

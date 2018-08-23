@@ -207,7 +207,7 @@ public interface ITransformationPlayer extends ITransformation {
 
 			// pre-0.2.0 support
 			if (compound.hasKey("transformationID")) {
-				Main.LOGGER.warn(
+				Main.getLogger().warn(
 						"Seems like you're using a new version of the mod... Loading transformation from old format");
 				@SuppressWarnings("deprecation")
 				Transformations transformation = Transformations.fromID(compound.getInteger("transformationID"));

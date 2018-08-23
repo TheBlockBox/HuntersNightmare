@@ -32,7 +32,7 @@ public class WorldGenCustomOres implements IWorldGenerator {
 		BlockInit.ORES.stream().filter(e -> e.DIMENSION == world.provider.getDimension())
 				.filter(e -> e == BlockInit.ORE_SILVER ? ConfigHandler.generateSilverOre : true).forEach(e -> {
 					if (e.getWorldGenMinable() == null)
-						Main.LOGGER.error(
+						Main.getLogger().error(
 								"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated.");
 					else
 						runGenerator(e.getWorldGenMinable(), world, random, chunkX, chunkZ, e.CHANCE, e.MIN_HEIGHT,

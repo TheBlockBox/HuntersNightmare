@@ -44,7 +44,7 @@ public enum Rituals {
 		for (Rituals ritual : Helper.RITUALS)
 			if (ritual.toString().equals(name))
 				return ritual;
-		Main.LOGGER.error("The given string \"" + name
+		Main.getLogger().error("The given string \"" + name
 				+ "\" does not have a corresponding ritual. Please report this, NullPointerExceptions may occure\nStacktrace: "
 				+ (new ExecutionPath()).getAll());
 		return null;

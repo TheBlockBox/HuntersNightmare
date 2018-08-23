@@ -59,7 +59,7 @@ public enum Transformations {
 	public static Transformations fromName(String name) {
 		Transformations transformation = fromNameWithoutError(name);
 		if (transformation == null)
-			Main.LOGGER.error("The given string \"" + name
+			Main.getLogger().error("The given string \"" + name
 					+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure\nStacktrace: "
 					+ (new ExecutionPath()).getAll());
 		return transformation;

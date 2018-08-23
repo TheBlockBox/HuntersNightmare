@@ -36,7 +36,7 @@ public class EventHandler {
 					return;
 			player.sendMessage(new TextComponentTranslation("huntersdream.versionNotSupported", Reference.MC_VERSION));
 		} catch (Exception e) {
-			Main.LOGGER.error("Something went wrong while trying to test for supported minecraft versions");
+			Main.getLogger().error("Something went wrong while trying to test for supported minecraft versions");
 		}
 	}
 }

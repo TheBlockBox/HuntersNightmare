@@ -189,6 +189,8 @@ public class TransformationEventHandler {
 	public static void onEntityJoin(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof EntityLivingBase) {
 			EntityLivingBase elb = (EntityLivingBase) event.getEntity();
+			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
+
 			if (elb instanceof EntityGolem) {
 				EntityGolem entity = (EntityGolem) elb;
 				entity.targetTasks.addTask(2,
@@ -196,25 +198,20 @@ public class TransformationEventHandler {
 				entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
 						EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
 			} else if (elb instanceof EntityVillager) {
-				EntityVillager villager = (EntityVillager) elb;
-				if (ChanceHelper.chanceOf(5)) {
-					ITransformationCreature tc = TransformationHelper.getITransformationCreature(villager);
-					tc.setTransformation(Transformations.WEREWOLF);
+				if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
+					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF);
 				}
 			} else if (elb instanceof EntityGoblinTD) {
-				EntityGoblinTD goblin = (EntityGoblinTD) elb;
-				if (ChanceHelper.chanceOf(1.5F)) {
-					ITransformationCreature tc = TransformationHelper.getITransformationCreature(goblin);
-					tc.setTransformation(Transformations.WEREWOLF);
+				if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == Transformations.HUMAN)) {
+					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF);
 				}
 			}
 
-			ITransformationCreature tc = elb.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
 			if (tc != null && !(elb instanceof EntityPlayer)) {
 				try {
 					tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
 				} catch (UnsupportedOperationException e) {
-					Main.LOGGER.error("UnsupportedOperationException with message \"" + e.getMessage()
+					Main.getLogger().error("UnsupportedOperationException with message \"" + e.getMessage()
 							+ "\" caught.\nEntity class: " + elb.getClass().getName()
 							+ "\nImplements ITransformationCreature: " + (elb instanceof ITransformationCreature));
 				}
@@ -228,7 +225,7 @@ public class TransformationEventHandler {
 
 	private static Transformations[] setEntityTransformationsNotImmuneTo(EntityLivingBase entity,
 			ITransformationCreature tc) {
-		tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+		tc.setTextureIndexWhenNeeded();
 		if (entity instanceof EntityVillager) {
 			return new Transformations[] { Transformations.WEREWOLF, Transformations.VAMPIRE };
 		}

@@ -81,7 +81,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		public REPLY onMessage(T message, MessageContext ctx) {
 			REPLY answer = onMessageReceived(message, ctx);
 			if (ConfigHandler.showPacketMessages)
-				Main.LOGGER.info(name() + " packet received on side " + ctx.side.toString());
+				Main.getLogger().info(name() + " packet received on side " + ctx.side.toString());
 			return answer;
 		}
 
