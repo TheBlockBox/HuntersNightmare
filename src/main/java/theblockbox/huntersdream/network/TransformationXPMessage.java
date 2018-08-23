@@ -50,6 +50,8 @@ public class TransformationXPMessage extends MessageBase<TransformationXPMessage
 	}
 
 	public static class Handler extends MessageHandler<TransformationXPMessage, IMessage> {
+		public Handler() {
+		}
 
 		@Override
 		public IMessage onMessageReceived(TransformationXPMessage message, MessageContext ctx) {
@@ -63,6 +65,5 @@ public class TransformationXPMessage extends MessageBase<TransformationXPMessage
 			}
 			return null;
 		}
-
 	}
 }

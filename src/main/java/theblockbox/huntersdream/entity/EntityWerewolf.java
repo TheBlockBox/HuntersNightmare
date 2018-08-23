@@ -99,7 +99,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(TRANSFORMATION.getGeneralDamage());
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
+				.setBaseValue(TRANSFORMATION.getGeneralDamage(this));
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(SPEED);
 	}

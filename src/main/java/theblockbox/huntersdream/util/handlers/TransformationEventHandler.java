@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
@@ -74,7 +75,7 @@ public class TransformationEventHandler {
 						Item item = stack.getItem();
 						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), item))
 							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
-									cap.transformed() ? cap.getTransformation().getProtection() : 1);
+									cap.transformed() ? cap.getTransformation().getProtection(player) : 1);
 					}
 
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -153,13 +154,15 @@ public class TransformationEventHandler {
 			if (transformationAttacker != null) {
 				ItemStack weapon = attacker.getHeldItemMainhand();
 				if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
-					event.setAmount(event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage());
+					event.setAmount(
+							event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage(attacker));
 				}
 			}
 
-			// add thorns
 			if (attacked != null) {
 				if (attacker != null) {
+
+					// add thorns
 					Transformations transformation = TransformationHelper.getTransformation(attacker);
 					if (transformation != null) {
 						ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
@@ -179,6 +182,53 @@ public class TransformationEventHandler {
 								item.damageItem(4, attacked);
 							}
 						}
+					}
+
+					ITransformation transformationCapAttacked = TransformationHelper.getITransformation(attacked);
+					Transformations transformationAttacked = TransformationHelper.getTransformation(attacked);
+
+					// add protection
+					if (transformationAttacked != null) {
+						event.setAmount(event.getAmount() * transformationAttacked.getProtection(attacked));
+					}
+
+					// add effective against
+					Object effectiveAgainst = null;
+					if (!event.getSource().damageType.equals("thorns")) {
+						ItemStack weaponItemStack = attacker.getHeldItemMainhand();
+						Item weapon = weaponItemStack.getItem();
+						// when the attacker is supernatural,
+						if (transformationAttacker != null
+								&& transformationAttacker.getTransformation().isSupernatural()) {
+							// has no weapon and is effective against werewolf
+							if (weaponItemStack.isEmpty() && EffectivenessHelper
+									.effectiveAgainstTransformation(transformationAttacked, attacker)) {
+								effectiveAgainst = attacker;
+							} else if (!weaponItemStack.isEmpty() && EffectivenessHelper
+									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
+								effectiveAgainst = weapon;
+								return;
+							}
+						} else {
+							// when attacker is not supernatural
+
+							// first test if immediate source (for example arrow) is effective
+							Entity immediateSource = event.getSource().getImmediateSource();
+							if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
+									immediateSource)) {
+								effectiveAgainst = immediateSource;
+							} else if (!weaponItemStack.isEmpty() && EffectivenessHelper
+									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
+								effectiveAgainst = weapon;
+							} else if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
+									attacker)) {
+								effectiveAgainst = attacker;
+							}
+						}
+
+						event.setAmount(event.getAmount()
+								* EffectivenessHelper.getEffectivenessAgainst(transformationAttacked, effectiveAgainst)
+								* transformationAttacked.getProtection(attacked));
 					}
 				}
 			}
@@ -238,6 +288,7 @@ public class TransformationEventHandler {
 			if (!event.getEntityLiving().world.isRemote) {
 				EntityLivingBase entity = event.getEntityLiving();
 
+				// remove infection when wolfsbane active
 				if (entity.isPotionActive(PotionInit.POTION_WOLFSBANE)
 						&& entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
 					IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);

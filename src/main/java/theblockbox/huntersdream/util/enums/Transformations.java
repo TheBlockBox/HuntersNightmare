@@ -26,7 +26,8 @@ public enum Transformations {
 
 	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID and HUNTER
 	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
-	WEREWOLF(TransformationEntry.create("werewolf").setGeneralDamage(12).setProtection(20F)
+	WEREWOLF(TransformationEntry.create("werewolf").setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
+			.setCalculateProtection(WerewolfHelper::calculateProtection)
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
 			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
@@ -128,16 +129,16 @@ public enum Transformations {
 		return this.ENTRY.calculateLevel;
 	}
 
-	public int getGeneralDamage() {
-		return this.ENTRY.generalDamage;
-	}
-
 	public ResourceLocation[] getTextures() {
 		return this.ENTRY.textures;
 	}
 
-	public float getProtection() {
-		return this.ENTRY.protection;
+	public float getGeneralDamage(EntityLivingBase entity) {
+		return this.ENTRY.calculateDamage.apply(entity);
+	}
+
+	public float getProtection(EntityLivingBase entity) {
+		return this.ENTRY.calculateProtection.apply(entity);
 	}
 
 	public int getRandomTextureIndex() {
@@ -168,21 +169,17 @@ public enum Transformations {
 	/** Used to make new transformations */
 	public static class TransformationEntry {
 		private boolean supernatural = true;
-		/**
-		 * the damage that the entites should deal in half hearts or for player's the
-		 * damage multiplier
-		 */
-		private int generalDamage = 1;
 		private ResourceLocation[] textures = new ResourceLocation[0];
 		private ToDoubleFunction<EntityPlayerMP> calculateLevel = player -> TransformationHelper.getCap(player).getXP()
 				/ 500.0D;
-		private float protection = 1F;
 		private Function<EntityLiving, EntityLivingBase> transformCreature = null;
 		private Consumer<EntityLivingBase> infect = null;
 		private ResourceLocation resourceLocation = null;
 		/** A runnable that is executed when the player levels up */
 		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
 		};
+		private Function<EntityLivingBase, Float> calculateDamage;
+		private Function<EntityLivingBase, Float> calculateProtection;
 
 		public TransformationEntry(ResourceLocation resourceLocation) {
 			this.resourceLocation = resourceLocation;
@@ -216,18 +213,18 @@ public enum Transformations {
 			return this;
 		}
 
-		public TransformationEntry setGeneralDamage(int damage) {
-			this.generalDamage = damage;
+		public TransformationEntry setCalculateDamage(Function<EntityLivingBase, Float> calculateDamage) {
+			this.calculateDamage = calculateDamage;
+			return this;
+		}
+
+		public TransformationEntry setCalculateProtection(Function<EntityLivingBase, Float> calculateProtection) {
+			this.calculateProtection = calculateProtection;
 			return this;
 		}
 
 		public TransformationEntry setCalculateLevel(ToDoubleFunction<EntityPlayerMP> calculateLevel) {
 			this.calculateLevel = calculateLevel;
-			return this;
-		}
-
-		public TransformationEntry setProtection(float protection) {
-			this.protection = protection;
 			return this;
 		}
 

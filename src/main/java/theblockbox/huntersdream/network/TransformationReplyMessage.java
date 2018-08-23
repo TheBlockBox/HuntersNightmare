@@ -85,8 +85,7 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 							}
 						}
 
-						final TextComponentTranslation translation = tct;
-						Minecraft.getMinecraft().player.sendMessage(translation);
+						Minecraft.getMinecraft().player.sendMessage(tct);
 					}
 				});
 			}

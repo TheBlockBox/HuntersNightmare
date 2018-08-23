@@ -17,7 +17,6 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
 import theblockbox.huntersdream.network.PlaySoundMessage;
-import theblockbox.huntersdream.network.PlayerSpeedResetMessage;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationReplyMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
@@ -48,8 +47,7 @@ public class PacketHandler {
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
 		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
 		TRANSFORMATION_REPLY(new TransformationReplyMessage()), PLAY_SOUND(new PlaySoundMessage()),
-		TRANSFORMATION_ONE_CLIENT(new TransformationMessage(), CLIENT, false),
-		PLAYER_SPEED_RESET(new PlayerSpeedResetMessage());
+		TRANSFORMATION_ONE_CLIENT(new TransformationMessage(), CLIENT, false);
 
 		private final MessageBase<?> MESSAGE_BASE;
 		/** Side that receives package */
@@ -130,10 +128,6 @@ public class PacketHandler {
 					sendMessageToPlayer(new TransformationMessage(cap.getXP(), cap.transformed(),
 							cap.getTransformation(), player, cap.getTextureIndex(), cap.getRituals()),
 							(EntityPlayerMP) args[0]);
-					break;
-
-				case PLAYER_SPEED_RESET:
-					sendMessageToPlayer(new PlayerSpeedResetMessage(), player);
 					break;
 
 				default:

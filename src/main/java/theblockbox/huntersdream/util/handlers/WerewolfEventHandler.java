@@ -2,14 +2,12 @@ package theblockbox.huntersdream.util.handlers;
 
 import java.util.ArrayList;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
@@ -26,7 +24,6 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
@@ -59,61 +56,9 @@ public class WerewolfEventHandler {
 
 		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
 			EntityLivingBase hurtWerewolf = event.getEntityLiving();
-			ITransformation transformationWerewolf = TransformationHelper.getITransformation(hurtWerewolf);
 			// this cast may cause exceptions, but we'll have to test
 			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
 			ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
-
-			if (transformationWerewolf != null) {
-				if (WerewolfHelper.transformedWerewolf(hurtWerewolf)) {
-					// now it is made sure that the attacked entity is a werewolf
-
-					if (!event.getSource().damageType.equals("thorns")) {
-						if (attacker != null) {
-							ItemStack weaponItemStack = attacker.getHeldItemMainhand();
-							Item weapon = weaponItemStack.getItem();
-							// when the attacker is supernatural,
-							if (transformationAttacker != null
-									&& transformationAttacker.getTransformation().isSupernatural()) {
-								// has no weapon and is effective against werewolf
-								if (weaponItemStack.isEmpty() && WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
-									event.setAmount(event.getAmount()
-											* WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
-									return;
-								} else if (!weaponItemStack.isEmpty()
-										&& WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
-									event.setAmount(
-											event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
-									return;
-								}
-							} else {
-								// when attacker is not supernatural
-
-								// first test if immediate source (for example arrow) is effective
-								Entity immediateSource = event.getSource().getImmediateSource();
-								if (WerewolfHelper.effectiveAgainstWerewolf(immediateSource)) {
-									event.setAmount(event.getAmount()
-											* WerewolfHelper.getEffectivenessAgainstWerewolf(immediateSource));
-									return;
-								} else if (!weaponItemStack.isEmpty()
-										&& WerewolfHelper.effectiveAgainstWerewolf(weapon)) {
-									event.setAmount(
-											event.getAmount() * WerewolfHelper.getEffectivenessAgainstWerewolf(weapon));
-									return;
-								} else if (WerewolfHelper.effectiveAgainstWerewolf(attacker)) {
-									event.setAmount(event.getAmount()
-											* WerewolfHelper.getEffectivenessAgainstWerewolf(attacker));
-									return;
-								}
-							}
-						}
-					}
-
-					// when nothing applies (this should also reduce any other damage from other
-					// damage sources)
-					event.setAmount((event.getAmount() / Transformations.WEREWOLF.getProtection()));
-				}
-			}
 
 			if (transformationAttacker != null && WerewolfHelper.transformedWerewolf(attacker)) {
 				onWerewolfAttack(attacker, transformationAttacker, hurtWerewolf);
@@ -196,7 +141,7 @@ public class WerewolfEventHandler {
 	}
 
 	static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-		if (!player.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+		if (WerewolfHelper.canWerewolfTransform(player)) {
 			IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 
 			if (werewolf.getTransformationStage() <= 0) {
@@ -220,9 +165,6 @@ public class WerewolfEventHandler {
 			if (nextStage > werewolf.getTransformationStage()) {
 				onStageChanged(player, werewolf, nextStage, cap);
 			}
-		} else {
-			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100));
-			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));
 		}
 	}
 
@@ -233,7 +175,6 @@ public class WerewolfEventHandler {
 	static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
 		IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 		if (werewolf.getTransformationStage() <= 0) {
-			WerewolfHelper.resetPlayerSpeed(player);
 			player.sendMessage(
 					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
 			cap.setTransformed(false);

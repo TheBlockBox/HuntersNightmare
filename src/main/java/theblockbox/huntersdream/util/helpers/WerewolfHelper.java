@@ -1,12 +1,10 @@
 package theblockbox.huntersdream.util.helpers;
 
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +18,6 @@ import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
@@ -48,7 +45,6 @@ public class WerewolfHelper {
 		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			double level = ((double) cap.getXP()) / 500.0;
-
 			if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT))
 				level = 0;
 			else
@@ -103,13 +99,77 @@ public class WerewolfHelper {
 					break;
 				}
 				player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
-				if (player.world.isRemote) {
-					setPlayerSpeed((AbstractClientPlayer) player, level * 0.1F);
-				}
 			} else {
 				throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
 						TransformationHelper.getTransformation(player));
 			}
+		}
+	}
+
+	public static float calculateUnarmedDamage(EntityLivingBase entity) {
+		if (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF) {
+			if (TransformationHelper.getITransformation(entity).transformed()) {
+				if (entity instanceof EntityPlayer) {
+					return 12F;
+				} else {
+					// standard
+					return 12F;
+				}
+			} else {
+				// no extra damage when not transformed
+				return 1F;
+			}
+		} else {
+			throw new WrongTransformationException("The given entity is not a werewolf",
+					TransformationHelper.getTransformation(entity));
+		}
+	}
+
+	public static float calculateProtection(EntityLivingBase entity) {
+		if (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF) {
+			if (TransformationHelper.getITransformation(entity).transformed()) {
+				if (entity instanceof EntityPlayer) {
+					return 20F;
+				} else {
+					// standard
+					return 20F;
+				}
+			} else {
+				// no protection when not transformed
+				return 1F;
+			}
+		} else {
+			throw new WrongTransformationException("The given entity is not a werewolf",
+					TransformationHelper.getTransformation(entity));
+		}
+	}
+
+	/**
+	 * Returns true if the werewolf can transform and applies effects (for example
+	 * that werewolves get hunger when wolfsbane potion is active)
+	 */
+	public static boolean canWerewolfTransform(EntityLivingBase werewolf) {
+		if (!canWerewolfTransformWithoutEffects(werewolf)) {
+			if (werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+				werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100));
+				werewolf.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));
+			}
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * Does exactly the same as {@link #canWerewolfTransform(EntityLivingBase)}
+	 * except that no effects get applied
+	 */
+	public static boolean canWerewolfTransformWithoutEffects(EntityLivingBase werewolf) {
+		if (TransformationHelper.getTransformation(werewolf) == Transformations.WEREWOLF) {
+			return !werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE);
+		} else {
+			throw new WrongTransformationException("Entity is not a werewolf",
+					TransformationHelper.getTransformation(werewolf));
 		}
 	}
 
@@ -219,22 +279,6 @@ public class WerewolfHelper {
 
 	/**
 	 * Shortcut method for
-	 * {@link TransformationHelper#getEffectivenessAgainst(Transformations, Object)}
-	 */
-	public static float getEffectivenessAgainstWerewolf(Object object) {
-		return EffectivenessHelper.getEffectivenessAgainst(Transformations.WEREWOLF, object);
-	}
-
-	/**
-	 * Shortcut method for
-	 * {@link TransformationHelper#effectiveAgainstTransformation(Transformations, Object)}
-	 */
-	public static boolean effectiveAgainstWerewolf(Object object) {
-		return EffectivenessHelper.effectiveAgainstTransformation(Transformations.WEREWOLF, object);
-	}
-
-	/**
-	 * Shortcut method for
 	 * {@link TransformationHelper#transformedTransformation(EntityLivingBase, Transformations)}
 	 */
 	public static boolean transformedWerewolf(EntityLivingBase entity) {
@@ -260,7 +304,7 @@ public class WerewolfHelper {
 		World world = entity.world;
 		if (!world.isRemote) {
 			if (WerewolfHelper.isWerewolfTime(entity)) {
-				if (!entity.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+				if (canWerewolfTransform(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
 						if (transformation.getTransformation() == Transformations.WEREWOLF) {
@@ -289,24 +333,11 @@ public class WerewolfHelper {
 						throw new IllegalArgumentException(
 								"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
 					}
-				} else {
-					entity.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100));
-					entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));
 				}
 			}
 		} else {
 			throw new WrongSideException("Can't transform entity to werewolf on client side", world);
 		}
-
 		return null;
-	}
-
-	public static void setPlayerSpeed(AbstractClientPlayer player, float speed) {
-		getIWerewolf(player).setStandardSpeed(player.capabilities.getWalkSpeed());
-		player.capabilities.setPlayerWalkSpeed(speed);
-	}
-
-	public static void resetPlayerSpeed(EntityPlayerMP player) {
-		Packets.PLAYER_SPEED_RESET.sync(player);
 	}
 }
