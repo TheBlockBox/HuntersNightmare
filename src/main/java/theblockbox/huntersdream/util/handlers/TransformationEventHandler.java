@@ -25,8 +25,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
@@ -99,7 +98,7 @@ public class TransformationEventHandler {
 					if (player.ticksExisted % 1200 == 0) {
 						// every minute when the player is not under a block, transformed and a
 						// werewolf, one xp gets added
-						if (WerewolfHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)
+						if (GeneralHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)
 								&& WerewolfHelper.hasMainlyControl(player)) {
 							TransformationHelper.addXP((EntityPlayerMP) player, 5,
 									TransformationXPSentReason.WEREWOLF_UNDER_MOON);
@@ -118,28 +117,7 @@ public class TransformationEventHandler {
 			// setting player size here (have to set every tick because it's also set every
 			// tick in the EntityPlayer class) We don't have to care about resetting the
 			// size because it gets resetted automatically every tick
-			setPlayerSize(player);
-		}
-	}
-
-	public static void setPlayerSize(EntityPlayer player) {
-		if (WerewolfHelper.transformedWerewolf(player)) {
-			boolean quadruped = (player.isSprinting() || player.isSneaking());
-			float height = quadruped ? ModelLycanthropeQuadruped.HEIGHT : ModelLycanthropeBiped.HEIGHT;
-			float width = quadruped ? ModelLycanthropeQuadruped.WIDTH : GeneralHelper.STANDARD_PLAYER_WIDTH;
-			float eyeheight = quadruped ? ModelLycanthropeQuadruped.EYE_HEIGHT : ModelLycanthropeBiped.EYE_HEIGHT;
-
-			if (!quadruped && !GeneralHelper.canEntityExpandHeight(player, height)) {
-				quadruped = true;
-				height = ModelLycanthropeQuadruped.HEIGHT;
-				width = ModelLycanthropeQuadruped.WIDTH;
-				eyeheight = ModelLycanthropeQuadruped.EYE_HEIGHT;
-			}
-
-			GeneralHelper.changePlayerSize(player, width, height);
-			player.eyeHeight = eyeheight;
-		} else {
-			player.eyeHeight = player.getDefaultEyeHeight();
+			TransformationHelper.configurePlayerSize(player);
 		}
 	}
 
@@ -153,7 +131,7 @@ public class TransformationEventHandler {
 			// make that player deals more damage
 			if (transformationAttacker != null) {
 				ItemStack weapon = attacker.getHeldItemMainhand();
-				if (weapon.isEmpty() && transformationAttacker.transformed() && attacker instanceof EntityPlayer) {
+				if (weapon.isEmpty() && attacker instanceof EntityPlayer) {
 					event.setAmount(
 							event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage(attacker));
 				}
@@ -161,6 +139,13 @@ public class TransformationEventHandler {
 
 			if (attacked != null) {
 				if (attacker != null) {
+					// effective against undead
+					if (attacker.getHeldItemMainhand().getItem() != null) {
+						if (attacked.isEntityUndead() && EffectivenessHelper
+								.effectiveAgainstUndead(attacker.getHeldItemMainhand().getItem())) {
+							event.setAmount(event.getAmount() + 2.5F);
+						}
+					}
 
 					// add thorns
 					Transformations transformation = TransformationHelper.getTransformation(attacker);
@@ -184,12 +169,11 @@ public class TransformationEventHandler {
 						}
 					}
 
-					ITransformation transformationCapAttacked = TransformationHelper.getITransformation(attacked);
 					Transformations transformationAttacked = TransformationHelper.getTransformation(attacked);
 
 					// add protection
 					if (transformationAttacked != null) {
-						event.setAmount(event.getAmount() * transformationAttacked.getProtection(attacked));
+						event.setAmount(event.getAmount() / transformationAttacked.getProtection(attacked));
 					}
 
 					// add effective against
@@ -225,10 +209,11 @@ public class TransformationEventHandler {
 								effectiveAgainst = attacker;
 							}
 						}
-
-						event.setAmount(event.getAmount()
-								* EffectivenessHelper.getEffectivenessAgainst(transformationAttacked, effectiveAgainst)
-								* transformationAttacked.getProtection(attacked));
+						if (effectiveAgainst != null) {
+							event.setAmount(event.getAmount() * EffectivenessHelper
+									.getEffectivenessAgainst(transformationAttacked, effectiveAgainst)
+									* transformationAttacked.getProtection(attacked));
+						}
 					}
 				}
 			}
@@ -249,11 +234,13 @@ public class TransformationEventHandler {
 						EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
 			} else if (elb instanceof EntityVillager) {
 				if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
-					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF);
+					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
+							TransformationEventReason.SPAWN);
 				}
 			} else if (elb instanceof EntityGoblinTD) {
 				if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == Transformations.HUMAN)) {
-					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF);
+					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
+							TransformationEventReason.SPAWN);
 				}
 			}
 
@@ -327,7 +314,7 @@ public class TransformationEventHandler {
 						}
 					}
 				}
-				WerewolfEventHandler.handleInfection(entity);
+				WerewolfEventHandler.handleWerewolfInfection(entity);
 			}
 		}
 	}

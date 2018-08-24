@@ -6,12 +6,16 @@ import net.minecraft.util.text.TextFormatting;
 
 public class CommandHelper {
 	public static final TextComponentTranslation COMMAND_INVALID = new TextComponentTranslation(
-			"command.huntersdream.invalid", TextFormatting.RED);
+			"command.huntersdream.invalid");
 
 	static {
 		COMMAND_INVALID.getStyle().setColor(TextFormatting.RED);
 	}
 
+	/**
+	 * Sends the given command sender a message that the executed command had
+	 * invalid parameters
+	 */
 	public static void invalidCommand(ICommandSender sender) {
 		sender.sendMessage(COMMAND_INVALID);
 	}

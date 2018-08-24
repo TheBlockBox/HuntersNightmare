@@ -1,8 +1,11 @@
 package theblockbox.huntersdream.util.handlers;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,7 +25,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
+import theblockbox.huntersdream.event.TransformingEvent;
+import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -44,59 +50,53 @@ public class WerewolfEventHandler {
 	/** @deprecated Don't use. We're going to make a new system */
 	@Deprecated
 	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
+	public static final int[] LEVELS_WITH_EXTRA_HEARTS = { 7, 8, 9, 10, 11, 12 };
 
 	// use LivingDamage only for removing damage and LivingHurt for damage and
 	// damaged resources
 	@SubscribeEvent
-	public static void onWerewolfHurt(LivingHurtEvent event) {
-		// what this method should do:
-		// if attacker is supernatural, use ability or weapon
-		// if attacker isn't supernatural use direct attacker, then weapon, then
-		// attacker
-
+	public static void onEntityHurt(LivingHurtEvent event) {
+		EntityLivingBase attacked = event.getEntityLiving();
 		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
-			EntityLivingBase hurtWerewolf = event.getEntityLiving();
-			// this cast may cause exceptions, but we'll have to test
 			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
 			ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
 
 			if (transformationAttacker != null && WerewolfHelper.transformedWerewolf(attacker)) {
-				onWerewolfAttack(attacker, transformationAttacker, hurtWerewolf);
-			}
-
-			if ((attacker != null) && (hurtWerewolf != null)) {
-				if (attacker.getHeldItemMainhand().getItem() != null) {
-					applySmiteToSilver(attacker.getHeldItemMainhand().getItem(), hurtWerewolf, event);
+				// handle werewolf infection
+				// if the werewolf can infect
+				if (WerewolfHelper.canInfect(attacker)) {
+					if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
+						// and the entity can be infected
+						if (TransformationHelper.canChangeTransformation(attacked)
+								&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, attacked)
+								&& (!TransformationHelper.isInfected(attacked))) {
+							// infect the entity
+							WerewolfHelper.infectEntityAsWerewolf(attacked);
+						}
+					}
+				}
+				if (attacker instanceof EntityPlayer) {
+					// fill hunger
+					EntityPlayer player = (EntityPlayer) attacker;
+					player.getFoodStats().addStats(1, 1);
 				}
 			}
 		}
-	}
 
-	public static void onWerewolfAttack(EntityLivingBase attacker, ITransformation transformationAttacker,
-			EntityLivingBase attacked) {
-		// handle werewolf infection
-		// if the werewolf can infect
-		if (WerewolfHelper.canInfect(attacker)) {
-			if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
-				// and the entity can be infected
-				if (TransformationHelper.canChangeTransformation(attacked)
-						&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, attacked)
-						&& (!TransformationHelper.isInfected(attacked))) {
-					// infect the entity
-					WerewolfHelper.infectEntityAsWerewolf(attacked);
+		if (attacked instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) attacked;
+			if (!player.world.isRemote) {
+				ITransformationPlayer cap = TransformationHelper.getCap(player);
+				IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+				if (WerewolfHelper.isWerewolfTime(player) && !cap.transformed()
+						&& (cap.getTransformation() == Transformations.WEREWOLF)
+						&& werewolf.getTransformationStage() > 0) {
+					// cancel event if damage source isn't magic (including poison) or event can
+					// kill player
+					event.setCanceled(
+							(event.getSource() != DamageSource.MAGIC) || (event.getAmount() >= player.getHealth()));
 				}
 			}
-		}
-		if (attacker instanceof EntityPlayer) {
-			// fill hunger
-			EntityPlayer player = (EntityPlayer) attacker;
-			player.getFoodStats().addStats(1, 1);
-		}
-	}
-
-	public static void applySmiteToSilver(Item attackedWith, EntityLivingBase attacked, LivingHurtEvent event) {
-		if (attacked.isEntityUndead() && EffectivenessHelper.effectiveAgainstUndead(attackedWith)) {
-			event.setAmount(event.getAmount() + 2.5F);
 		}
 	}
 
@@ -114,7 +114,7 @@ public class WerewolfEventHandler {
 	 * Called in
 	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
 	 */
-	public static void handleInfection(EntityLivingBase entity) {
+	public static void handleWerewolfInfection(EntityLivingBase entity) {
 		if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
 			if (ionm.getInfectionTransformation() == Transformations.WEREWOLF) {
@@ -128,7 +128,8 @@ public class WerewolfEventHandler {
 						ionm.setInfectionTick(-1);
 						ionm.setInfectionTransformation(Transformations.HUMAN);
 						// change transformation
-						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF);
+						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF,
+								TransformationEventReason.INFECTION);
 					}
 				}
 			}
@@ -177,7 +178,7 @@ public class WerewolfEventHandler {
 		if (werewolf.getTransformationStage() <= 0) {
 			player.sendMessage(
 					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
-			cap.setTransformed(false);
+			TransformationHelper.transform(player, false, TransformingEventReason.ENVIROMENT);
 			Packets.TRANSFORMATION.sync(player);
 			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
 			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
@@ -218,7 +219,7 @@ public class WerewolfEventHandler {
 			Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
 			werewolf.setTimeSinceTransformation(-1);
 			werewolf.setTransformationStage(0);
-			cap.setTransformed(true);
+			TransformationHelper.transform(player, true, TransformingEventReason.ENVIROMENT);
 			Packets.TRANSFORMATION.sync(player);
 
 // TODO: Remove this after no control is done
@@ -249,25 +250,6 @@ public class WerewolfEventHandler {
 	@Deprecated
 	public static EntityWerewolf[] getPlayerWerewolves() {
 		return PLAYER_WEREWOLVES.toArray(new EntityWerewolf[0]);
-	}
-
-	@SubscribeEvent
-	public static void onEntityHurt(LivingHurtEvent event) {
-		if (event.getEntityLiving() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			if (!player.world.isRemote) {
-				ITransformationPlayer cap = TransformationHelper.getCap(player);
-				IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
-				if (WerewolfHelper.isWerewolfTime(player) && !cap.transformed()
-						&& (cap.getTransformation() == Transformations.WEREWOLF)
-						&& werewolf.getTransformationStage() > 0) {
-					// cancel event if damage source isn't magic (including poison) or event can
-					// kill player
-					event.setCanceled(
-							(event.getSource() != DamageSource.MAGIC) || (event.getAmount() > player.getHealth()));
-				}
-			}
-		}
 	}
 
 	@SubscribeEvent
@@ -309,30 +291,47 @@ public class WerewolfEventHandler {
 	public static void onRightClick(PlayerInteractEvent.EntityInteractSpecific event) {
 		EntityPlayer player = event.getEntityPlayer();
 		if (event.getTarget() instanceof EntityLivingBase) {
-			Item item = event.getItemStack().getItem();
 			EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
-			Transformations transformation = TransformationHelper.getTransformation(interactedWith);
-			if (EffectivenessHelper.effectiveAgainstTransformation(transformation, item)) {
-				if (!player.world.isRemote) {
-					String msg = "transformations." + transformation.toString() + ".";
-					Packets.TRANSFORMATION_REPLY.sync(player, msg + "tp.touched", interactedWith, item);
-					if (interactedWith instanceof EntityPlayer) {
-						Packets.TRANSFORMATION_REPLY.sync((EntityPlayer) interactedWith, msg + "fp.touched",
-								interactedWith, item);
+			if (!(interactedWith instanceof EntityWerewolf)) {
+				Item item = event.getItemStack().getItem();
+				Transformations transformation = TransformationHelper.getTransformation(interactedWith);
+				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, item)) {
+					if (!player.world.isRemote) {
+						String msg = "transformations." + transformation.toString() + ".";
+						Packets.TRANSFORMATION_REPLY.sync(player, msg + "tp.touched", interactedWith, item);
+						if (interactedWith instanceof EntityPlayer) {
+							Packets.TRANSFORMATION_REPLY.sync((EntityPlayer) interactedWith, msg + "fp.touched",
+									interactedWith, item);
+						}
 					}
+					// we don't want to open any gui, so we say that this interaction was a success
+					event.setCancellationResult(EnumActionResult.SUCCESS);
+					event.setCanceled(true);
 				}
-				// we don't want to open any gui, so we say that this interaction was a success
-				event.setCancellationResult(EnumActionResult.SUCCESS);
-				event.setCanceled(true);
 			}
 		}
 	}
 
-	/**
-	 * Called from
-	 * {@link EventHandler#onPlayerJoin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent)}
-	 */
-	public static void resetTransformationStage(EntityPlayerMP player) {
-		WerewolfHelper.getIWerewolf(player).setTransformationStage(0);
+	@SubscribeEvent
+	public static void onWerewolfTransformation(TransformingEvent.PlayerTransformingEvent event) {
+		if (event.getTransformation() == Transformations.WEREWOLF) {
+			EntityPlayer player = event.getEntityPlayer();
+			int level = TransformationHelper.getCap(player).getLevelFloor();
+			if (event.transformingBack()) {
+				player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+						.setBaseValue(WerewolfHelper.getIWerewolf(player).getStandardHealth());
+			} else {
+				WerewolfHelper.getIWerewolf(player).setStandardHealth(
+						player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue());
+				addHeartsToPlayer(player,
+						IntStream.of(LEVELS_WITH_EXTRA_HEARTS).filter(i -> level >= i).mapToLong(i -> 4).sum());
+				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 240, 2, false, false));
+			}
+		}
+	}
+
+	public static void addHeartsToPlayer(EntityPlayer player, double extraHalfHearts) {
+		IAttributeInstance attribute = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+		attribute.setBaseValue(attribute.getBaseValue() + extraHalfHearts);
 	}
 }

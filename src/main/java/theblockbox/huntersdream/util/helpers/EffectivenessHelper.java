@@ -1,29 +1,34 @@
 package theblockbox.huntersdream.util.helpers;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 
 public class EffectivenessHelper {
 
-	/**
-	 * Throws an exception if the given value is an itemstack
-	 */
-	private static void notItemstack(Object object) {
-		if (object instanceof ItemStack) {
-			throw new IllegalArgumentException("Use ItemStack#getItem, instead of ItemStack");
+	/** Shortcut for {@link EffectiveAgainstTransformation#getFromObject(Object)} */
+	public static <T> EffectiveAgainstTransformation<T> getEAT(@Nonnull T object) {
+		if (object != null) {
+			GeneralHelper.notItemstack(object);
+			return EffectiveAgainstTransformation.getFromObject(object);
+		} else {
+			throw new NullPointerException("The given object is not allowed to be null");
 		}
 	}
 
-	public static <T> EffectiveAgainstTransformation<T> getEAT(T object) {
-		notItemstack(object);
-		return EffectiveAgainstTransformation.getFromObject(object);
-	}
-
-	public static ArmorEffectiveAgainstTransformation getAEAT(Item armorPart) {
-		return ArmorEffectiveAgainstTransformation.getFromArmor(armorPart);
+	/**
+	 * Shortcut for {@link ArmorEffectiveAgainstTransformation#getFromArmor(Item)}
+	 */
+	public static ArmorEffectiveAgainstTransformation getAEAT(@Nonnull Item armorPart) {
+		if (armorPart != null) {
+			GeneralHelper.notItemstack(armorPart);
+			return ArmorEffectiveAgainstTransformation.getFromArmor(armorPart);
+		} else {
+			throw new NullPointerException("The given armor part is not allowed to be null");
+		}
 	}
 
 	/**
@@ -62,6 +67,7 @@ public class EffectivenessHelper {
 				: false;
 	}
 
+	/** Returns the given armor's protection against the given transformation */
 	public static float armorGetProtectionAgainst(Transformations against, Item armorPart) {
 		if (armorEffectiveAgainstTransformation(against, armorPart)) {
 			return getAEAT(armorPart).getProtection();
@@ -95,6 +101,7 @@ public class EffectivenessHelper {
 		}
 	}
 
+	/** Returns true if the given entity is effective against undead */
 	public static boolean effectiveAgainstUndead(Object object) {
 		return effectiveAgainstSomeTransformation(object) ? getEAT(object).effectiveAgainstUndead() : false;
 	}

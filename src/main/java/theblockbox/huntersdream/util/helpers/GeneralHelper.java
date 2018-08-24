@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -19,14 +20,19 @@ public class GeneralHelper {
 	public static final float STANDARD_PLAYER_WIDTH = 0.6F;
 	public static final float STANDARD_PLAYER_HEIGHT = 1.8F;
 
+	/** Returns the logical side from the given world */
 	public static Side getSideFromWorld(World world) {
 		return (world.isRemote ? Side.CLIENT : Side.SERVER);
 	}
 
+	/** Returns the logical side from the given entity */
 	public static Side getSideFromEntity(Entity entity) {
 		return getSideFromWorld(entity.world);
 	}
 
+	/**
+	 * Returns the opposite side (client becomes server and server becomes client)
+	 */
 	public static Side getOppositeSide(Side side) {
 		if (side != null) {
 			return side == Side.CLIENT ? Side.SERVER : Side.CLIENT;
@@ -35,6 +41,7 @@ public class GeneralHelper {
 		}
 	}
 
+	/** Returns the nearest player that is not the given entity */
 	public static EntityPlayer getNearestPlayer(World world, Entity entity, double range) {
 		double d0 = -1.0D;
 		EntityPlayer entityplayer = null;
@@ -44,7 +51,7 @@ public class GeneralHelper {
 
 			double distance = entityplayer1.getDistanceSq(entity.posX, entity.posY, entity.posZ);
 
-			if ((range < 0.0D || distance < range * range) && (d0 == -1.0D || distance < d0) && (distance > 1.1)) {
+			if ((range < 0.0D || distance < range * range) && (d0 == -1.0D || distance < d0) && (distance > 1.1D)) {
 				d0 = distance;
 				entityplayer = entityplayer1;
 			}
@@ -53,6 +60,7 @@ public class GeneralHelper {
 		return entityplayer;
 	}
 
+	/** Changes the player's size */
 	public static void changePlayerSize(EntityPlayer player, float width, float height) {
 		if (width != player.width || height != player.height) {
 			float f = player.width;
@@ -74,10 +82,15 @@ public class GeneralHelper {
 		}
 	}
 
+	/** Converts from a base (like 10) to another base (like 4) */
 	public static int convertFromBaseToBase(String toConvert, int fromBase, int toBase) {
 		return Integer.valueOf(Integer.toString(Integer.valueOf(toConvert, fromBase), toBase));
 	}
 
+	/**
+	 * Does the same as {@link #convertFromBaseToBase(String, int, int)}, except
+	 * that the first argument is an int
+	 */
 	public static int convertFromBaseToBase(int toConvert, int fromBase, int toBase) {
 		return convertFromBaseToBase(String.valueOf(toConvert), fromBase, toBase);
 	}
@@ -93,10 +106,15 @@ public class GeneralHelper {
 			return new ResourceLocation(Reference.MODID, resourcePath);
 	}
 
+	/** Shortcut for {@code numerator / 16.0D} */
 	public static double getSixteenth(double numerator) {
 		return numerator / 16.0D;
 	}
 
+	/**
+	 * Returns true if the given entity can expand its height to the given new
+	 * height without glitching through blocks
+	 */
 	public static boolean canEntityExpandHeight(Entity entity, float newHeight) {
 		int currentY = MathHelper.ceil(entity.posY);
 		int newY = MathHelper.ceil(newHeight - entity.height) + currentY + 1;
@@ -110,6 +128,7 @@ public class GeneralHelper {
 		return true;
 	}
 
+	/** Combines to arrays to one array */
 	public static <T> List<T> combineArraysToList(T[] array1, T[] array2) {
 		List<T> arrayList = new ArrayList<>();
 		for (T t : array1)
@@ -117,5 +136,19 @@ public class GeneralHelper {
 		for (T t : array2)
 			arrayList.add(t);
 		return arrayList;
+	}
+
+	/** Returns true if the given player is not under a block */
+	public static boolean playerNotUnderBlock(EntityPlayer player) {
+		return player.world.canBlockSeeSky(new BlockPos(player.posX, player.posY + 1, player.posZ));
+	}
+
+	/**
+	 * Throws an exception if the given value is an itemstack
+	 */
+	public static void notItemstack(Object object) {
+		if (object instanceof ItemStack) {
+			throw new IllegalArgumentException("Use ItemStack#getItem, instead of ItemStack");
+		}
 	}
 }

@@ -1,23 +1,25 @@
 package theblockbox.huntersdream.util.helpers;
 
 import java.util.HashMap;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
+import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.event.TransformationEvent;
+import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.TransformationXPEvent;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
+import theblockbox.huntersdream.event.TransformingEvent;
+import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -39,6 +41,7 @@ public class TransformationHelper {
 	 * entity can transform
 	 */
 	public final static HashMap<Class<? extends EntityLivingBase>, Transformations[]> INFECTABLE_ENTITES = new HashMap<>();
+
 	/**
 	 * special damage source for things that are effective against specific
 	 * transformations
@@ -61,7 +64,7 @@ public class TransformationHelper {
 	 * Changes the player's transformation also resets xp and transformed and sends
 	 * the data to the client (this method is only to be called server side!)
 	 */
-	public static void changeTransformation(EntityPlayerMP player, @Nonnull Transformations transformation) {
+	private static void changeTransformation(EntityPlayerMP player, @Nonnull Transformations transformation) {
 		if (transformation == null)
 			throw new NullPointerException("Null not allowed here");
 		ITransformationPlayer cap = getCap(player);
@@ -77,20 +80,23 @@ public class TransformationHelper {
 		Packets.TRANSFORMATION.sync(player); // sync data with client
 	}
 
-	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation) {
+	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation,
+			TransformationEventReason reason) {
 		if (entity != null && transformation != null) {
-			if (entity instanceof EntityPlayer) {
-				if (entity instanceof EntityPlayerMP) {
-					changeTransformation((EntityPlayerMP) entity, transformation);
-				} else {
-					throw new WrongSideException("You can only change transformation on server side", Side.CLIENT);
+			if (!entity.world.isRemote) {
+				if (!MinecraftForge.EVENT_BUS.post(new TransformationEvent(entity, transformation, reason))) {
+					if (entity instanceof EntityPlayer) {
+						changeTransformation((EntityPlayerMP) entity, transformation);
+					} else {
+						getITransformation(entity).setTransformation(transformation);
+						ITransformationCreature tc = getITransformationCreature(entity);
+						if (tc != null) {
+							tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
+						}
+					}
 				}
 			} else {
-				getITransformation(entity).setTransformation(transformation);
-				ITransformationCreature tc = getITransformationCreature(entity);
-				if (tc != null) {
-					tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
-				}
+				throw new WrongSideException("Can only change transformation on server side", entity.world);
 			}
 		} else {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
@@ -99,13 +105,13 @@ public class TransformationHelper {
 	}
 
 	public static void changeTransformationWhenPossible(@Nonnull EntityLivingBase entity,
-			@Nonnull Transformations transformation) {
+			@Nonnull Transformations transformation, TransformationEventReason reason) {
 		if (transformation == null || entity == null) {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
 					+ " Transformation null: " + (transformation == null));
 		}
 		if (canChangeTransformation(entity)) {
-			changeTransformation(entity, transformation);
+			changeTransformation(entity, transformation, reason);
 		}
 	}
 
@@ -117,25 +123,26 @@ public class TransformationHelper {
 		return canChangeTransformationOnInfection(entity) && !isInfected(entity);
 	}
 
+	/**
+	 * Returns true if the given entity can change it's transformation while not
+	 * accounting for infection
+	 */
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
 		Transformations transformation = getTransformation(entity);
 		return ((transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
 				|| (INFECTABLE_ENTITES.containsKey(entity.getClass())) && transformation != null);
 	}
 
+	/** Returns the entity's transformation */
 	public static Transformations getTransformation(EntityLivingBase entity) {
-		if (entity == null) {
-			return null;
-		} else {
-			ITransformation transformation = getITransformation(entity);
-			if (transformation == null) {
-				return null;
-			} else {
-				return transformation.getTransformation();
-			}
-		}
+		ITransformation transformation = getITransformation(entity);
+		return (transformation == null) ? null : transformation.getTransformation();
 	}
 
+	/**
+	 * This is a way to get the {@link ITransformation} interface from every entity
+	 * that has it in some form (capability or implemented)
+	 */
 	public static ITransformation getITransformation(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
 			return getCap((EntityPlayer) entity);
@@ -148,20 +155,25 @@ public class TransformationHelper {
 
 	public static ITransformationCreature getITransformationCreature(EntityLivingBase entity) {
 		if (entity instanceof EntityCreature && entity != null) {
-			if (entity instanceof ITransformationCreature) {
-				return (ITransformationCreature) entity;
-			} else {
-				return entity.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
-			}
+			return (entity instanceof ITransformationCreature) ? (ITransformationCreature) entity
+					: entity.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
 		} else {
 			return null;
 		}
 	}
 
+	/**
+	 * Shortcut for {@code addXP(player, 1, reason)}
+	 */
 	public static void incrementXP(EntityPlayerMP player, TransformationXPSentReason reason) {
 		addXP(player, 1, reason);
 	}
 
+	/**
+	 * Shortcut for {@code
+	 * ITransformationPlayer cap = getCap(player);
+	 * setXP(player, (cap.getXP() + xpToAdd), reason);}
+	 */
 	public static void addXP(EntityPlayerMP player, int xpToAdd, TransformationXPSentReason reason) {
 		ITransformationPlayer cap = getCap(player);
 		setXP(player, (cap.getXP() + xpToAdd), reason);
@@ -200,6 +212,10 @@ public class TransformationHelper {
 		}
 	}
 
+	/**
+	 * Returns the when the given entity is transformed and has is the given
+	 * transformation
+	 */
 	public static boolean transformedTransformation(EntityLivingBase entity, Transformations transformation) {
 		if (entity == null)
 			return false;
@@ -207,6 +223,10 @@ public class TransformationHelper {
 			return (getTransformation(entity) == (transformation)) && getITransformation(entity).transformed();
 	}
 
+	/**
+	 * Returns true when the given entity can be infected with the given
+	 * infection/transformation
+	 */
 	public static boolean canBeInfectedWith(Transformations infection, EntityLivingBase entity) {
 		if (canChangeTransformation(entity)) {
 			IInfectInTicks iit = getIInfectInTicks(entity);
@@ -229,6 +249,10 @@ public class TransformationHelper {
 		return false;
 	}
 
+	/**
+	 * Returns true when the given entity can be infected with the given
+	 * infection/transformation without accounting for current infections
+	 */
 	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityLivingBase entity) {
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
@@ -242,10 +266,15 @@ public class TransformationHelper {
 		}
 	}
 
+	/** Returns the {@link IInfectInTicks} capability of the given entity */
 	public static IInfectInTicks getIInfectInTicks(EntityLivingBase entity) {
 		return entity.getCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null);
 	}
 
+	/**
+	 * Infects the given entity in the given amount of ticks with the given
+	 * infection/transformation
+	 */
 	public static void infectIn(int ticksUntilInfection, EntityLivingBase entityToBeInfected,
 			Transformations infectTo) {
 		IInfectInTicks iit = getIInfectInTicks(entityToBeInfected);
@@ -259,6 +288,7 @@ public class TransformationHelper {
 		}
 	}
 
+	/** Returns true if the given entity is infected */
 	public static boolean isInfected(EntityLivingBase entity) {
 		IInfectInTicks iit = getIInfectInTicks(entity);
 		IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
@@ -281,18 +311,37 @@ public class TransformationHelper {
 		cap.setLevel(cap.getTransformation().getLevel(player));
 	}
 
-	public static void transformCreature(EntityLiving entity,
-			Function<EntityLiving, EntityLivingBase> transformCreature) {
-		EntityLivingBase returned = transformCreature.apply(entity);
-		if (returned != null) {
-			World world = returned.world;
-			returned.setPosition(entity.posX, entity.posY, entity.posZ);
-			returned.setHealth(returned.getMaxHealth() / (entity.getMaxHealth() / entity.getHealth()));
-			// 10 / 30 : 15 / 45
-			// 45 / ( 30 / 10 ) = 45 / 3 = 15
-			world.removeEntity(entity);
-			world.spawnEntity(returned);
-			returned.setPositionAndUpdate(entity.posX, entity.posY, entity.posZ);
+	/**
+	 * Sets the player size when the player is for example a transformed, sprinting
+	 * werewolf
+	 */
+	public static void configurePlayerSize(EntityPlayer player) {
+		if (WerewolfHelper.transformedWerewolf(player)) {
+			boolean quadruped = (player.isSprinting() || player.isSneaking());
+			float height = quadruped ? ModelLycanthropeQuadruped.HEIGHT : ModelLycanthropeBiped.HEIGHT;
+			float width = quadruped ? ModelLycanthropeQuadruped.WIDTH : GeneralHelper.STANDARD_PLAYER_WIDTH;
+			float eyeheight = quadruped ? ModelLycanthropeQuadruped.EYE_HEIGHT : ModelLycanthropeBiped.EYE_HEIGHT;
+
+			if (!quadruped && !GeneralHelper.canEntityExpandHeight(player, height)) {
+				quadruped = true;
+				height = ModelLycanthropeQuadruped.HEIGHT;
+				width = ModelLycanthropeQuadruped.WIDTH;
+				eyeheight = ModelLycanthropeQuadruped.EYE_HEIGHT;
+			}
+
+			GeneralHelper.changePlayerSize(player, width, height);
+			player.eyeHeight = eyeheight;
+		} else {
+			player.eyeHeight = player.getDefaultEyeHeight();
+		}
+	}
+
+	public static void transform(@Nonnull EntityLivingBase entity, boolean transformed,
+			TransformingEventReason reason) {
+		if (getITransformation(entity).transformed() != transformed) {
+			if (!MinecraftForge.EVENT_BUS.post(new TransformingEvent(entity, !transformed, reason))) {
+				getITransformation(entity).setTransformed(transformed);
+			}
 		}
 	}
 }

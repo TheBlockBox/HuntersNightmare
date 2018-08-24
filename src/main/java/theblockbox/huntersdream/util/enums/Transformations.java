@@ -13,7 +13,12 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.event.TransformingEvent;
+import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
@@ -24,7 +29,8 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEn
 
 public enum Transformations {
 
-	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID and HUNTER
+	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID, HYBRID and
+	// HUNTER
 	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
 	WEREWOLF(TransformationEntry.create("werewolf").setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
 			.setCalculateProtection(WerewolfHelper::calculateProtection)
@@ -81,6 +87,7 @@ public enum Transformations {
 		return fromName(resourceLocation.toString());
 	}
 
+	/** Returns an array of all currently registered transformations */
 	public static Transformations[] getAllTransformations() {
 		return Helper.TRANSFORMATIONS.toArray(new Transformations[0]);
 	}
@@ -109,6 +116,7 @@ public enum Transformations {
 		return this.ENTRY.supernatural;
 	}
 
+	/** Returns the xp bar texture for the given transformation */
 	public ResourceLocation getXPBarTexture() {
 		return new ResourceLocation(getResourceLocation().getResourceDomain(),
 				"textures/gui/transformation_xp_bar_" + getResourceLocation().getResourcePath() + ".png");
@@ -141,6 +149,10 @@ public enum Transformations {
 		return this.ENTRY.calculateProtection.apply(entity);
 	}
 
+	/**
+	 * Returns a random texture index within the bounds of the given
+	 * transformation's textures
+	 */
 	public int getRandomTextureIndex() {
 		return ChanceHelper.randomInt(this.getTextures().length);
 	}
@@ -161,7 +173,18 @@ public enum Transformations {
 				throw new IllegalArgumentException("The given entity " + creature.toString()
 						+ " is an instance of ITransformationEntityTransformed and can therefore not be transformed");
 			else {
-				TransformationHelper.transformCreature(creature, this.ENTRY.transformCreature);
+				EntityLivingBase returned = this.ENTRY.transformCreature.apply(creature);
+				if (!MinecraftForge.EVENT_BUS
+						.post(new TransformingEvent(creature, false, TransformingEventReason.ENVIROMENT))) {
+					if (returned != null) {
+						World world = returned.world;
+						returned.setPosition(creature.posX, creature.posY, creature.posZ);
+						returned.setHealth(returned.getMaxHealth() / (creature.getMaxHealth() / creature.getHealth()));
+						world.removeEntity(creature);
+						world.spawnEntity(returned);
+						returned.setPositionAndUpdate(creature.posX, creature.posY, creature.posZ);
+					}
+				}
 			}
 		}
 	}
@@ -178,10 +201,10 @@ public enum Transformations {
 		/** A runnable that is executed when the player levels up */
 		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
 		};
-		private Function<EntityLivingBase, Float> calculateDamage;
-		private Function<EntityLivingBase, Float> calculateProtection;
+		private Function<EntityLivingBase, Float> calculateDamage = e -> 1F;
+		private Function<EntityLivingBase, Float> calculateProtection = e -> 1F;
 
-		public TransformationEntry(ResourceLocation resourceLocation) {
+		private TransformationEntry(ResourceLocation resourceLocation) {
 			this.resourceLocation = resourceLocation;
 			if (resourceLocation.getResourceDomain().equals("") || resourceLocation.getResourcePath().equals("")
 					|| resourceLocation == null
@@ -190,7 +213,7 @@ public enum Transformations {
 						"A value or the resource location itself is either null or an empty string");
 		}
 
-		/** returns a new instance of type TransformationEntry */
+		/** Returns a new instance of type TransformationEntry */
 		public static TransformationEntry create(ResourceLocation resourceLocation) {
 			return new TransformationEntry(resourceLocation);
 		}
@@ -254,6 +277,11 @@ public enum Transformations {
 		public TransformationEntry setOnLevelUp(ObjDoubleConsumer<EntityPlayerMP> onLevelUp) {
 			this.onLevelUp = onLevelUp;
 			return this;
+		}
+
+		public Transformations createTransformation(String enumName) {
+			return EnumHelper.addEnum(Transformations.class, enumName, new Class<?>[] { TransformationEntry.class },
+					this);
 		}
 	}
 }

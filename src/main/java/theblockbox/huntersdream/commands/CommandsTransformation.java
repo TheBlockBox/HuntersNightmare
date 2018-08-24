@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -64,7 +65,7 @@ public class CommandsTransformation extends CommandBase {
 				String transformation = args[0];
 				Transformations transformations = Transformations
 						.fromNameWithoutError(GeneralHelper.newResLoc(transformation).toString());
-				TransformationHelper.changeTransformation(player, transformations);
+				TransformationHelper.changeTransformation(player, transformations, TransformationEventReason.COMMAND);
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationSet",
 						player.getName(), transformations.toString()));
 			}

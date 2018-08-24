@@ -22,11 +22,9 @@ public interface IWerewolf {
 
 	public void setTransformationStage(int stage);
 
-	/** Only called client side */
-	public float getStandardSpeed();
+	public double getStandardHealth();
 
-	/** Only called client side */
-	public void setStandardSpeed(float standardSpeed);
+	public void setStandardHealth(double newStandardHealth);
 
 	default public Transformations getTransformation() {
 		return Transformations.WEREWOLF;
@@ -35,7 +33,7 @@ public interface IWerewolf {
 	public static class Werewolf implements IWerewolf {
 		private int timeSinceTransformation = -1;
 		private int transformationStage = 0;
-		private float standardSpeed = 0F;
+		private double standardHealth = 0;
 
 		@Override
 		public void setTimeSinceTransformation(int time) {
@@ -58,27 +56,27 @@ public interface IWerewolf {
 		}
 
 		@Override
-		public float getStandardSpeed() {
-			return this.standardSpeed;
+		public double getStandardHealth() {
+			return this.standardHealth;
 		}
 
 		@Override
-		public void setStandardSpeed(float standardSpeed) {
-			this.standardSpeed = standardSpeed;
+		public void setStandardHealth(double newStandardHealth) {
+			this.standardHealth = newStandardHealth;
 		}
 	}
 
 	public static class WerewolfStorage implements IStorage<IWerewolf> {
 		public static final String TIME_SINCE_TRANSFORMATION = "timesincetransformation";
 		public static final String TRANSFORMATION_STAGE = "transformationstage";
-		public static final String STANDARD_SPEED = "standardspeed";
+		public static final String STANDARD_HEALTH = "standardhealth";
 
 		@Override
 		public NBTBase writeNBT(Capability<IWerewolf> capability, IWerewolf instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger(TIME_SINCE_TRANSFORMATION, instance.getTimeSinceTransformation());
 			compound.setInteger(TRANSFORMATION_STAGE, instance.getTransformationStage());
-			compound.setFloat(STANDARD_SPEED, instance.getStandardSpeed());
+			compound.setDouble(STANDARD_HEALTH, instance.getStandardHealth());
 			return compound;
 		}
 
@@ -87,7 +85,7 @@ public interface IWerewolf {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
 			instance.setTimeSinceTransformation(compound.getInteger(TIME_SINCE_TRANSFORMATION));
 			instance.setTransformationStage(compound.getInteger(TRANSFORMATION_STAGE));
-			instance.setStandardSpeed(compound.getFloat(STANDARD_SPEED));
+			instance.setStandardHealth(compound.getDouble(STANDARD_HEALTH));
 		}
 	}
 }

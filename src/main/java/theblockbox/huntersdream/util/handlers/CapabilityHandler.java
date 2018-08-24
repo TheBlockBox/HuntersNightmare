@@ -74,9 +74,10 @@ public class CapabilityHandler {
 
 			ITransformationPlayer transformationPlayer = TransformationHelper.getCap(player);
 			ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(originalPlayer);
-			transformationPlayer.setXP(oldTransformationPlayer.getXP());
+
 			transformationPlayer.setLevel(oldTransformationPlayer.getLevel());
 			transformationPlayer.setTransformed(false);
+			transformationPlayer.setXP(oldTransformationPlayer.getXP());
 			transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
