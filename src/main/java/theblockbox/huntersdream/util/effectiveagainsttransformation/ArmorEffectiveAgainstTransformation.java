@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces.effective;
+package theblockbox.huntersdream.util.effectiveagainsttransformation;
 
 import java.util.ArrayList;
 

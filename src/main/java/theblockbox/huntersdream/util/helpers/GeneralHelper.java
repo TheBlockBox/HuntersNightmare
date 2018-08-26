@@ -121,10 +121,9 @@ public class GeneralHelper {
 		if (currentY >= newY)
 			return true;
 		else
-			for (int i = currentY; i <= newY; i++) {
-				if (!entity.world.isAirBlock(new BlockPos(entity.posX, i, entity.posZ)))
+			for (int i = currentY; i <= newY; i++)
+				if (entity.world.getBlockState(new BlockPos(entity.posX, i, entity.posZ)).getMaterial().isSolid())
 					return false;
-			}
 		return true;
 	}
 

@@ -186,8 +186,8 @@ public class TransformationEventHandler {
 								&& transformationAttacker.getTransformation().isSupernatural()) {
 							// has no weapon and is effective against werewolf
 							if (weaponItemStack.isEmpty() && EffectivenessHelper
-									.effectiveAgainstTransformation(transformationAttacked, attacker)) {
-								effectiveAgainst = attacker;
+									.effectiveAgainstTransformation(transformationAttacked, attacker.getClass())) {
+								effectiveAgainst = attacker.getClass();
 							} else if (!weaponItemStack.isEmpty() && EffectivenessHelper
 									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
 								effectiveAgainst = weapon;
@@ -199,14 +199,14 @@ public class TransformationEventHandler {
 							// first test if immediate source (for example arrow) is effective
 							Entity immediateSource = event.getSource().getImmediateSource();
 							if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
-									immediateSource)) {
-								effectiveAgainst = immediateSource;
+									immediateSource.getClass())) {
+								effectiveAgainst = immediateSource.getClass();
 							} else if (!weaponItemStack.isEmpty() && EffectivenessHelper
 									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
 								effectiveAgainst = weapon;
 							} else if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
-									attacker)) {
-								effectiveAgainst = attacker;
+									attacker.getClass())) {
+								effectiveAgainst = attacker.getClass();
 							}
 						}
 						if (effectiveAgainst != null) {
@@ -226,33 +226,42 @@ public class TransformationEventHandler {
 			EntityLivingBase elb = (EntityLivingBase) event.getEntity();
 			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
 
-			if (elb instanceof EntityGolem) {
-				EntityGolem entity = (EntityGolem) elb;
-				entity.targetTasks.addTask(2,
-						new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
-				entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
-						EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
-			} else if (elb instanceof EntityVillager) {
-				if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
-					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
-							TransformationEventReason.SPAWN);
+			if (!elb.world.isRemote) {
+				if (elb instanceof EntityGolem) {
+					EntityGolem entity = (EntityGolem) elb;
+					entity.targetTasks.addTask(2,
+							new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
+					entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
+							EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
+				} else if (elb instanceof EntityGoblinTD) {
+					if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == Transformations.HUMAN)) {
+						TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
+								TransformationEventReason.SPAWN);
+					}
+				} else if (elb instanceof EntityVillager) {
+					if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
+						TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
+								TransformationEventReason.SPAWN);
+					}
 				}
-			} else if (elb instanceof EntityGoblinTD) {
-				if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == Transformations.HUMAN)) {
-					TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
-							TransformationEventReason.SPAWN);
+
+				if (tc != null) {
+					// set texture index when it's not in bounds
+					if (tc.getTransformation().getTextures().length > 0) {
+						tc.setTextureIndexWhenNeeded();
+					}
+
+					if (!((elb instanceof EntityPlayer) || (elb instanceof ITransformationCreature))) {
+						try {
+							tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
+						} catch (UnsupportedOperationException e) {
+							Main.getLogger().error("UnsupportedOperationException with message \"" + e.getMessage()
+									+ "\" caught.\nEntity class: " + elb.getClass().getName());
+						}
+					}
 				}
 			}
 
-			if (tc != null && !(elb instanceof EntityPlayer)) {
-				try {
-					tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
-				} catch (UnsupportedOperationException e) {
-					Main.getLogger().error("UnsupportedOperationException with message \"" + e.getMessage()
-							+ "\" caught.\nEntity class: " + elb.getClass().getName()
-							+ "\nImplements ITransformationCreature: " + (elb instanceof ITransformationCreature));
-				}
-			}
 			if (elb instanceof EntityAgeable) {
 				((EntityAgeable) elb).tasks.addTask(2, new EntityAIAvoidEntity<EntityLivingBase>((EntityCreature) elb,
 						EntityLivingBase.class, WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
@@ -262,7 +271,6 @@ public class TransformationEventHandler {
 
 	private static Transformations[] setEntityTransformationsNotImmuneTo(EntityLivingBase entity,
 			ITransformationCreature tc) {
-		tc.setTextureIndexWhenNeeded();
 		if (entity instanceof EntityVillager) {
 			return new Transformations[] { Transformations.WEREWOLF, Transformations.VAMPIRE };
 		}

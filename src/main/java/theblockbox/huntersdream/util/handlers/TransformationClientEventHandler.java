@@ -134,22 +134,26 @@ public class TransformationClientEventHandler {
 				if (skinMap == null)
 					skinMap = ObfuscationReflectionHelper.getPrivateValue(RenderManager.class,
 							Minecraft.getMinecraft().getRenderManager(), 1);
-				final ResourceLocation WEREWOLF_HAND = WEREWOLF_HANDS[(skinType.equals("slim") ? 3 : 0)
-						+ TransformationHelper.getCap(player).getTextureIndex()];
 				if (renderPlayerHand == null) {
 					renderPlayerHand = new RenderPlayer(mc.getRenderManager(), skinType.equals("slim")) {
 						@Override
 						public void renderLeftArm(AbstractClientPlayer clientPlayer) {
-							bindTexture(WEREWOLF_HAND);
-							mc.getTextureManager().bindTexture(WEREWOLF_HAND);
+							this.bindTextures(clientPlayer);
 							super.renderLeftArm(clientPlayer);
 						}
 
 						@Override
 						public void renderRightArm(AbstractClientPlayer clientPlayer) {
-							bindTexture(WEREWOLF_HAND);
-							mc.getTextureManager().bindTexture(WEREWOLF_HAND);
+							this.bindTextures(clientPlayer);
 							super.renderRightArm(clientPlayer);
+						}
+
+						public void bindTextures(AbstractClientPlayer clientPlayer) {
+							ResourceLocation werewolfHand = WEREWOLF_HANDS[((clientPlayer.getSkinType().equals("slim")
+									? 3
+									: 0) + TransformationHelper.getCap(clientPlayer).getTextureIndex())];
+							this.bindTexture(werewolfHand);
+							Minecraft.getMinecraft().getTextureManager().bindTexture(werewolfHand);
 						}
 					};
 				}

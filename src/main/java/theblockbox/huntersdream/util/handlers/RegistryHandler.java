@@ -31,10 +31,10 @@ import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
+import theblockbox.huntersdream.util.effectiveagainsttransformation.ArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 

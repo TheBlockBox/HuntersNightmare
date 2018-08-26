@@ -126,16 +126,20 @@ public class WerewolfHelper {
 			if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
 					&& TransformationHelper.getITransformation(player).transformed()) {
 				int level = TransformationHelper.getCap(player).getLevelFloor();
-				int duration = 80;
+				int duration = 120;
 
 				// Caution! Duration in ticks
 				if (level >= 1) {
 					player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
+					if (level >= 3) {
+						int speedAndJumpLevel = (int) (IntStream.of(3, 7, 9, 11, 12).filter(i -> level >= i).count()
+								- 1);
+						player.addPotionEffect(
+								new PotionEffect(MobEffects.SPEED, duration, speedAndJumpLevel, false, false));
+						player.addPotionEffect(
+								new PotionEffect(MobEffects.JUMP_BOOST, duration, speedAndJumpLevel, false, false));
+					}
 				}
-				int speedAndJumpLevel = (int) (IntStream.of(3, 7, 9, 11, 12).filter(i -> level >= i).count() - 1);
-				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, speedAndJumpLevel, false, false));
-				player.addPotionEffect(
-						new PotionEffect(MobEffects.JUMP_BOOST, duration, speedAndJumpLevel, false, false));
 
 				player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
 			} else {
@@ -154,6 +158,12 @@ public class WerewolfHelper {
 			if (werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
 				werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100));
 				werewolf.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));
+				if (werewolf instanceof EntityPlayer) {
+					// reset transformation
+					IWerewolf were = WerewolfHelper.getIWerewolf((EntityPlayer) werewolf);
+					were.setTransformationStage(0);
+					were.setTimeSinceTransformation(-1);
+				}
 			}
 			return false;
 		} else {
@@ -177,10 +187,12 @@ public class WerewolfHelper {
 	/** Infects the given entity with lycantrophy */
 	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
-				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)) {
-			if (entityToBeInfected instanceof EntityPlayer)
+				&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, entityToBeInfected)
+				&& !entityToBeInfected.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+			if (entityToBeInfected instanceof EntityPlayer) {
 				entityToBeInfected
 						.sendMessage(new TextComponentTranslation("transformations.huntersdream.infected.werewolf"));
+			}
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 100, 0, false, true));
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 1, false, true));
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0, false, false));

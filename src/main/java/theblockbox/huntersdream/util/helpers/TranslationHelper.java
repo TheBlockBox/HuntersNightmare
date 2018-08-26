@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
-import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
 
 /**
  * Util class for translations. All methods here are client side only!

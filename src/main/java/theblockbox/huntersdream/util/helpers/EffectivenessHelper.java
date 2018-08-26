@@ -2,18 +2,23 @@ package theblockbox.huntersdream.util.helpers;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import theblockbox.huntersdream.util.effectiveagainsttransformation.ArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.interfaces.effective.ArmorEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.interfaces.effective.EffectiveAgainstTransformation;
 
 public class EffectivenessHelper {
 
 	/** Shortcut for {@link EffectiveAgainstTransformation#getFromObject(Object)} */
 	public static <T> EffectiveAgainstTransformation<T> getEAT(@Nonnull T object) {
 		if (object != null) {
-			GeneralHelper.notItemstack(object);
-			return EffectiveAgainstTransformation.getFromObject(object);
+			if (object instanceof Entity) {
+				throw new IllegalArgumentException("Please use Class<? extends Entity> instead of Entity");
+			} else {
+				GeneralHelper.notItemstack(object);
+				return EffectiveAgainstTransformation.getFromObject(object);
+			}
 		} else {
 			throw new NullPointerException("The given object is not allowed to be null");
 		}

@@ -146,7 +146,11 @@ public class EntityGoblinTD extends EntityVillager
 			this.getTransformation().getTextures()[textureIndex].getClass();
 			return textureIndex;
 		} catch (ArrayIndexOutOfBoundsException e) {
-			setTextureIndex(this.getTransformation().getRandomTextureIndex());
+			this.setTextureIndex(this.getTransformation().getRandomTextureIndex());
+			Main.getLogger()
+					.error("Tried to get a goblin's texture index and failed. Texture index: " + textureIndex
+							+ " Bounds: " + this.getTransformation().getTextures().length
+							+ "Attempting to retry...\nStacktrace: " + (new ExecutionPath()).getAll());
 			return this.getTextureIndex();
 		}
 	}

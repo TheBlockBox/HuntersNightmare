@@ -18,6 +18,7 @@ item.huntersdream.axe_silver.name=Silver Axe
 # Other items
 item.huntersdream.ingot_silver.name=Silver Ingot
 item.huntersdream.wolfsbane.name=Wolfsbane
+item.huntersdream.hunters_journal.name=Hunter's Journal
 
 # Potions
 effect.huntersdream.fear=Fear

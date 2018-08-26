@@ -5,6 +5,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 
 @Config(modid = Reference.MODID)
@@ -56,8 +57,10 @@ public class ConfigHandler {
 	public static class ConfigEventHandler {
 		@SubscribeEvent
 		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
-			if (event.getModID().equals(Reference.MODID))
+			if (event.getModID().equals(Reference.MODID)) {
 				ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+				Main.getLogger().info("Hunter's Dream Config has been changed");
+			}
 		}
 	}
 }

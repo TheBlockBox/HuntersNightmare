@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces.effective;
+package theblockbox.huntersdream.util.effectiveagainsttransformation;
 
 import java.util.ArrayList;
 
@@ -88,7 +88,6 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 		for (EffectiveAgainstTransformation<?> eat : OBJECTS)
 			if (eat.getObject().equals(object))
 				return (EffectiveAgainstTransformation<T>) eat;
-
 		return null;
 	}
 
@@ -126,17 +125,18 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 		}
 	}
 
-	public static class EntityEffectiveAgainstTransformation extends EffectiveAgainstTransformation<Entity> {
-		public static final ArrayList<EffectiveAgainstTransformation<Entity>> ENTITIES = new ArrayList<>();
+	public static class EntityEffectiveAgainstTransformation
+			extends EffectiveAgainstTransformation<Class<? extends Entity>> {
+		public static final ArrayList<EffectiveAgainstTransformation<Class<? extends Entity>>> ENTITIES = new ArrayList<>();
 
-		public EntityEffectiveAgainstTransformation(Entity object, float effectiveness, boolean effectiveAgainstUndead,
-				Transformations... effectiveAgainst) {
+		public EntityEffectiveAgainstTransformation(Class<? extends Entity> object, float effectiveness,
+				boolean effectiveAgainstUndead, Transformations... effectiveAgainst) {
 			super(object, effectiveness, effectiveAgainstUndead, effectiveAgainst);
 			ENTITIES.add(this);
 		}
 
 		@Override
-		public ArrayList<EffectiveAgainstTransformation<Entity>> getObjects() {
+		public ArrayList<EffectiveAgainstTransformation<Class<? extends Entity>>> getObjects() {
 			return ENTITIES;
 		}
 	}
