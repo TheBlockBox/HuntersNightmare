@@ -11,6 +11,8 @@ To see every little change, please head to our [GitHub](https://github.com/TheGa
 - Werewolf hands now change colo(u)r when werewolf colo(u)r changes
 - You now don't get thousands of exceptions spaming your chat when a mob spawns
 - Werewolves now don't go on four legs when walking in non solid blocks
+- You now get hunger when level 0 in werewolf form
+- Werewolf goblins and villagers now save their texture, profession and career
 
 ## Removed Things
 
@@ -19,3 +21,6 @@ To see every little change, please head to our [GitHub](https://github.com/TheGa
 ## Code Changes
 
 - Moved `ArmorEffectiveAgainstTransformation` and `EffectiveAgainstTransformation` to `util/effectiveagainsttransformation`
+- Added Access Transformer to be able to access the fields `EntityVillager#careerId` and `RenderManager#skinMap` and the method `EntityVillager#populateBuyingList`
+- Made that `EntityGoblinTD#getName` can be accessed from the server without logging an error
+- Added `IUntransformedCreatureExtraData` to save and load extra data for entities that can transform (like villagers and goblins)
