@@ -19,10 +19,10 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
@@ -45,6 +45,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class TransformationEventHandler {
@@ -220,13 +221,26 @@ public class TransformationEventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onEntityJoin(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof EntityLivingBase) {
 			EntityLivingBase elb = (EntityLivingBase) event.getEntity();
 			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
 
 			if (!elb.world.isRemote) {
+				if (tc != null) {
+					if (elb instanceof EntityCreature) {
+						IUntransformedCreatureExtraData<?> uced = IUntransformedCreatureExtraData
+								.getFromEntity((EntityCreature) elb);
+						if (uced != null) {
+							Transformations[] transformations = uced.getTransformationsNotImmuneTo();
+							if (transformations != null && transformations.length > 0) {
+								tc.setTransformationsNotImmuneTo(transformations);
+							}
+						}
+					}
+				}
+
 				if (elb instanceof EntityGolem) {
 					EntityGolem entity = (EntityGolem) elb;
 					entity.targetTasks.addTask(2,
@@ -250,15 +264,6 @@ public class TransformationEventHandler {
 					if (tc.getTransformation().getTextures().length > 0) {
 						tc.setTextureIndexWhenNeeded();
 					}
-
-					if (!((elb instanceof EntityPlayer) || (elb instanceof ITransformationCreature))) {
-						try {
-							tc.setTransformationsNotImmuneTo(setEntityTransformationsNotImmuneTo(elb, tc));
-						} catch (UnsupportedOperationException e) {
-							Main.getLogger().error("UnsupportedOperationException with message \"" + e.getMessage()
-									+ "\" caught.\nEntity class: " + elb.getClass().getName());
-						}
-					}
 				}
 			}
 
@@ -267,14 +272,6 @@ public class TransformationEventHandler {
 						EntityLivingBase.class, WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
 			}
 		}
-	}
-
-	private static Transformations[] setEntityTransformationsNotImmuneTo(EntityLivingBase entity,
-			ITransformationCreature tc) {
-		if (entity instanceof EntityVillager) {
-			return new Transformations[] { Transformations.WEREWOLF, Transformations.VAMPIRE };
-		}
-		return new Transformations[0];
 	}
 
 	@SubscribeEvent

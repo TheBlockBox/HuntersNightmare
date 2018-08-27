@@ -19,6 +19,8 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -29,6 +31,7 @@ import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -45,6 +48,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	private String untransformedEntityName;
 	public static final double SPEED = 0.5D;
 	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
+	public static final DataParameter<byte[]> EXTRA_DATA = EntityDataManager.createKey(EntityWerewolf.class,
+			GeneralHelper.BYTE_ARRAY_DATA_SERIALIZER);
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
@@ -66,6 +71,12 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	public EntityWerewolf(World worldIn) {
 		this(worldIn, TRANSFORMATION.getRandomTextureIndex(), "$bycap" + EntityVillager.class.getName());
+	}
+
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		this.dataManager.register(EXTRA_DATA, new byte[0]);
 	}
 
 	@Override
@@ -176,5 +187,15 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	public String getUntransformedEntityName() {
 		return untransformedEntityName;
+	}
+
+	@Override
+	public byte[] getExtraData() {
+		return this.dataManager.get(EXTRA_DATA);
+	}
+
+	@Override
+	public void setExtraData(byte[] extraData) {
+		this.dataManager.set(EXTRA_DATA, extraData);
 	}
 }

@@ -110,7 +110,10 @@ public class TransformationHelper {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
 					+ " Transformation null: " + (transformation == null));
 		}
-		if (canChangeTransformation(entity)) {
+		ITransformationCreature tc = getITransformationCreature(entity);
+		boolean flag = canChangeTransformation(entity)
+				&& (tc != null ? tc.notImmuneToTransformation(transformation) : true);
+		if (flag) {
 			changeTransformation(entity, transformation, reason);
 		}
 	}

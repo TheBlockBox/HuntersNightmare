@@ -2,7 +2,6 @@ package theblockbox.huntersdream.entity;
 
 import com.google.common.base.Predicate;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -34,7 +33,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -42,20 +40,19 @@ import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
-public class EntityGoblinTD extends EntityVillager
-		implements ITransformationCreature, IEntityAdditionalSpawnData, IMob {
+public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IMob {
 	/** The amount of textures available for the goblins */
-	public static final int TEXTURES = 7;
-	private int goblinTextureIndex;
+	public static final byte TEXTURES = 7;
 	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager
 			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
 	private static final DataParameter<String> TRANSFORMATION_NAME = EntityDataManager
 			.<String>createKey(EntityGoblinTD.class, DataSerializers.STRING);
+	private static final DataParameter<Byte> GOBLIN_TEXTURE_INDEX = EntityDataManager
+			.<Byte>createKey(EntityGoblinTD.class, DataSerializers.BYTE);
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
-		this.goblinTextureIndex = ChanceHelper.randomInt(TEXTURES);
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 		this.dataManager.set(TEXTURE_INDEX, transformation.getRandomTextureIndex());
 	}
@@ -69,6 +66,7 @@ public class EntityGoblinTD extends EntityVillager
 		super.entityInit();
 		this.dataManager.register(TEXTURE_INDEX, 0);
 		this.dataManager.register(TRANSFORMATION_NAME, Transformations.HUMAN.toString());
+		this.dataManager.register(GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(TEXTURES));
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 	}
 
@@ -120,18 +118,12 @@ public class EntityGoblinTD extends EntityVillager
 		return 1.2F;
 	}
 
-	@Override
-	public void writeSpawnData(ByteBuf buffer) {
-		buffer.writeInt(this.goblinTextureIndex);
+	public byte getTexture() {
+		return this.dataManager.get(GOBLIN_TEXTURE_INDEX);
 	}
 
-	@Override
-	public void readSpawnData(ByteBuf buffer) {
-		this.goblinTextureIndex = buffer.readInt();
-	}
-
-	public int getTexture() {
-		return this.goblinTextureIndex;
+	public void setTexture(byte texture) {
+		this.dataManager.set(GOBLIN_TEXTURE_INDEX, texture);
 	}
 
 	@Override
@@ -177,12 +169,14 @@ public class EntityGoblinTD extends EntityVillager
 
 	@Override
 	public String getName() {
-		if (world.isRemote) {
-			return I18n.format("entity.goblintd.name");
+		if (this.hasCustomName()) {
+			return this.getCustomNameTag();
 		} else {
-			Main.getLogger().warn("The method EntityGoblinTD#getName has been called on server side.\nPath: "
-					+ (new ExecutionPath()).getAll());
-			return "Goblin";
+			if (world.isRemote) {
+				return I18n.format("entity.goblintd.name");
+			} else {
+				return "Goblin";
+			}
 		}
 	}
 

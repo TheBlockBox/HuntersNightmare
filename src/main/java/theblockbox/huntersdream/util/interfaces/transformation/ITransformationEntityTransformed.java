@@ -40,6 +40,12 @@ public interface ITransformationEntityTransformed extends ITransformation {
 		throw new UnsupportedOperationException("Can't set texture index");
 	}
 
+	/** Returns the untransformed entity's extra data */
+	public byte[] getExtraData();
+
+	/** Sets the untransformed entity's extra data */
+	public void setExtraData(byte[] extraData);
+
 	/**
 	 * Used to get the entity before the transformation. If the returned string
 	 * starts with "player", the entity's untransformed form is a player (Caution:
@@ -113,7 +119,9 @@ public interface ITransformationEntityTransformed extends ITransformation {
 
 						e.setPosition(creature.posX, creature.posY, creature.posZ);
 						e.setHealth(e.getHealth() / (creature.getMaxHealth() / creature.getHealth()));
+						applyExtraData(e, entity);
 						creature.world.spawnEntity(e);
+						applyExtraData(e, entity);
 					}
 
 					creature.world.removeEntity(creature);
@@ -124,6 +132,14 @@ public interface ITransformationEntityTransformed extends ITransformation {
 		} else {
 			throw new IllegalArgumentException(
 					"The given entity's class does not implement interface ITransformationEntityTransformed");
+		}
+	}
+
+	public static void applyExtraData(Entity entity, ITransformationEntityTransformed otherEntity) {
+		if (entity instanceof EntityCreature) {
+			EntityCreature ec = (EntityCreature) entity;
+			IUntransformedCreatureExtraData<EntityCreature> uced = IUntransformedCreatureExtraData.getFromEntity(ec);
+			uced.applyExtraData(ec, otherEntity.getExtraData());
 		}
 	}
 }

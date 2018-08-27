@@ -122,31 +122,30 @@ public class WerewolfHelper {
 
 	/** Applies potion effects to transformed werewolf players */
 	public static void applyLevelBuffs(EntityPlayer player) {
-		if (hasControl(player)) {
-			if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
-					&& TransformationHelper.getITransformation(player).transformed()) {
-				int level = TransformationHelper.getCap(player).getLevelFloor();
-				int duration = 120;
+		// if (hasControl(player)) { // TODO: Uncomment this when no control is done
+		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF
+				&& TransformationHelper.getITransformation(player).transformed()) {
+			int level = TransformationHelper.getCap(player).getLevelFloor();
+			int duration = 120;
 
-				// Caution! Duration in ticks
-				if (level >= 1) {
-					player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
-					if (level >= 3) {
-						int speedAndJumpLevel = (int) (IntStream.of(3, 7, 9, 11, 12).filter(i -> level >= i).count()
-								- 1);
-						player.addPotionEffect(
-								new PotionEffect(MobEffects.SPEED, duration, speedAndJumpLevel, false, false));
-						player.addPotionEffect(
-								new PotionEffect(MobEffects.JUMP_BOOST, duration, speedAndJumpLevel, false, false));
-					}
+			// Caution! Duration in ticks
+			if (level >= 1) {
+				player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
+				if (level >= 3) {
+					int speedAndJumpLevel = (int) (IntStream.of(3, 7, 9, 11, 12).filter(i -> level >= i).count() - 1);
+					player.addPotionEffect(
+							new PotionEffect(MobEffects.SPEED, duration, speedAndJumpLevel, false, false));
+					player.addPotionEffect(
+							new PotionEffect(MobEffects.JUMP_BOOST, duration, speedAndJumpLevel, false, false));
 				}
-
-				player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
-			} else {
-				throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
-						TransformationHelper.getTransformation(player));
 			}
+
+			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
+		} else {
+			throw new WrongTransformationException("The given player isn't a werewolf and/or transformed",
+					TransformationHelper.getTransformation(player));
 		}
+		// }
 	}
 
 	/**

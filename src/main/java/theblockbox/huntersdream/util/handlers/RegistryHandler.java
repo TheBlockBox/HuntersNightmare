@@ -1,6 +1,10 @@
 package theblockbox.huntersdream.util.handlers;
 
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+
 import net.minecraft.block.Block;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -23,6 +27,7 @@ import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationLevel;
 import theblockbox.huntersdream.commands.CommandsTransformationTexture;
+import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.EntityInit;
@@ -36,6 +41,7 @@ import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAga
 import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
+import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
 /**
@@ -117,6 +123,7 @@ public class RegistryHandler {
 		MinecraftForge.addGrassSeed(new ItemStack(Item.getItemFromBlock(BlockInit.WOLFSBANE)), 5);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void postInitCommon(FMLPostInitializationEvent event) {
 		// register items that are effective against a specific transformation
 		OreDictionaryCompat.getSilver().forEach(item -> new ItemEffectiveAgainstTransformation(item,
@@ -133,6 +140,41 @@ public class RegistryHandler {
 		OreDictionary.getOres("bootsSilver").stream().forEach(stack -> {
 			new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.25F, 1.1F, Transformations.WEREWOLF);
 		});
+
+		IUntransformedCreatureExtraData.<EntityVillager>of((villager, bytes) -> {
+			try {
+				ByteBuffer buffer = ByteBuffer.wrap(bytes.clone()).asReadOnlyBuffer();
+				villager.setProfession(buffer.getInt());
+				// accessing fields with AT
+				villager.careerId = buffer.getInt();
+				villager.populateBuyingList();
+			} catch (BufferUnderflowException e) {
+				// just do nothing, villager automatically gets a profession
+			}
+		}, villager -> {
+			ByteBuffer buffer = ByteBuffer.allocate(8);
+			buffer.putInt(villager.getProfession());
+			// accessing fields with AT
+			buffer.putInt(villager.careerId);
+			return buffer.array();
+		}, c -> (c instanceof EntityVillager) && !(c instanceof EntityGoblinTD), Transformations.WEREWOLF,
+				Transformations.VAMPIRE);
+
+		IUntransformedCreatureExtraData.<EntityGoblinTD>of((goblin, bytes) -> {
+			ByteBuffer buffer = ByteBuffer.wrap(bytes.clone()).asReadOnlyBuffer();
+			goblin.setProfession(buffer.getInt());
+			goblin.setTexture(buffer.get());
+			// accessing fields with AT
+			goblin.careerId = buffer.getInt();
+			goblin.populateBuyingList();
+		}, goblin -> {
+			ByteBuffer buffer = ByteBuffer.allocate(9);
+			buffer.putInt(goblin.getProfession());
+			buffer.put(goblin.getTexture());
+			// accessing fields with AT
+			buffer.putInt(goblin.careerId);
+			return buffer.array();
+		}, c -> c instanceof EntityGoblinTD);
 	}
 
 	// Client

@@ -9,6 +9,7 @@ import java.util.function.ToDoubleFunction;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -26,6 +27,7 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
+import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
 
 public enum Transformations {
 
@@ -181,6 +183,18 @@ public enum Transformations {
 						returned.setPosition(creature.posX, creature.posY, creature.posZ);
 						returned.setHealth(returned.getMaxHealth() / (creature.getMaxHealth() / creature.getHealth()));
 						world.removeEntity(creature);
+
+						// apply extra data
+						if (creature instanceof EntityCreature) {
+							// the returned creature always has to be an instanve of
+							// ITransformationEntityTransformed
+							IUntransformedCreatureExtraData<EntityCreature> uced = IUntransformedCreatureExtraData
+									.getFromEntity((EntityCreature) creature);
+							if (uced != null) {
+								((ITransformationEntityTransformed) returned)
+										.setExtraData(uced.getExtraData((EntityCreature) creature));
+							}
+						}
 						world.spawnEntity(returned);
 						returned.setPositionAndUpdate(creature.posX, creature.posY, creature.posZ);
 					}

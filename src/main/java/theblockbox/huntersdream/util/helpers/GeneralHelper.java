@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.helpers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializer;
+import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +24,32 @@ import theblockbox.huntersdream.util.Reference;
 public class GeneralHelper {
 	public static final float STANDARD_PLAYER_WIDTH = 0.6F;
 	public static final float STANDARD_PLAYER_HEIGHT = 1.8F;
+	public static final DataSerializer<byte[]> BYTE_ARRAY_DATA_SERIALIZER = new DataSerializer<byte[]>() {
+
+		@Override
+		public void write(PacketBuffer buf, byte[] value) {
+			buf.writeByteArray(value);
+		}
+
+		@Override
+		public byte[] read(PacketBuffer buf) throws IOException {
+			return buf.readByteArray();
+		}
+
+		@Override
+		public DataParameter<byte[]> createKey(int id) {
+			return new DataParameter<byte[]>(id, this);
+		}
+
+		@Override
+		public byte[] copyValue(byte[] value) {
+			return value.clone();
+		}
+	};
+
+	static {
+		DataSerializers.registerSerializer(BYTE_ARRAY_DATA_SERIALIZER);
+	}
 
 	/** Returns the logical side from the given world */
 	public static Side getSideFromWorld(World world) {

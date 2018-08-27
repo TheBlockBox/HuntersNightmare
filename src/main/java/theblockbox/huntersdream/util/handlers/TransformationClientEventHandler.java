@@ -1,13 +1,12 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -21,7 +20,6 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.renderer.RenderLycantrophePlayer;
@@ -39,7 +37,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 public class TransformationClientEventHandler {
 	private static RenderLycantrophePlayer renderLycantrophePlayer = null;
 	private static RenderPlayer renderPlayerHand = null;
-	public static HashMap<String, RenderPlayer> skinMap;
 	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("black", false),
 			getHandTexture("brown", false), getHandTexture("white", false), getHandTexture("black", true),
 			getHandTexture("brown", true), getHandTexture("white", true) };
@@ -131,9 +128,6 @@ public class TransformationClientEventHandler {
 			EntityPlayerSP player = mc.player;
 			String skinType = player.getSkinType();
 			if (WerewolfHelper.transformedWerewolf(player)) {
-				if (skinMap == null)
-					skinMap = ObfuscationReflectionHelper.getPrivateValue(RenderManager.class,
-							Minecraft.getMinecraft().getRenderManager(), 1);
 				if (renderPlayerHand == null) {
 					renderPlayerHand = new RenderPlayer(mc.getRenderManager(), skinType.equals("slim")) {
 						@Override
@@ -159,6 +153,7 @@ public class TransformationClientEventHandler {
 				}
 				event.setCanceled(true);
 				if (mc.gameSettings.thirdPersonView == 0) {
+					Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().skinMap;
 					RenderPlayer normalRender = skinMap.get(skinType);
 					skinMap.put(skinType, renderPlayerHand);
 

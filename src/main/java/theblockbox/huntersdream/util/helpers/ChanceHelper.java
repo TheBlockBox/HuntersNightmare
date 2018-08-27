@@ -15,6 +15,16 @@ public class ChanceHelper {
 		return -1;
 	}
 
+	public static byte randomByte(byte bound) {
+		if (bound > 0) {
+			return (byte) ChanceHelper.RANDOM.nextInt(bound);
+		} else if (bound < 0) {
+			throw new IllegalArgumentException("Bound must be positive");
+		}
+
+		return -1;
+	}
+
 	public static boolean chanceOf(Random random, float percentage) {
 		if (percentage > 100 || percentage < 0) {
 			throw new IllegalArgumentException("Percentage can't be over 100 / under 0");
