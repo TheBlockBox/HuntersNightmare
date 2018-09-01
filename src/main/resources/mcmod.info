@@ -7,8 +7,8 @@
   "mcversion": "${mcversion}",
   "url": "https://github.com/TheGamingLord/HuntersDream",
   "updateUrl": "https://minecraft.curseforge.com/projects/hunters-dream",
-  "authorList": ["VampireRedEye", "RedstoneTim", "Mr. Random", "Andrew.", "Members of the The Block Box Discord Server", "Members of the Hunter's Dream Discord Server"],
-  "credits": "Director: VampireRedEye, Ideas: VampireRedEye, Code: RedstoneTim and Mr. Random, Models: VampireRedEye, Textures: VampireRedEye and Andrew., Help for the code: Snakefangox and Mr. Random\nOther help through voting and giving ideas: Members of the The Block Box and the Hunter's Dream discord server",
+  "authorList": ["VampireRedEye", "RedstoneTim", "Mr. Random", "Members of the The Block Box Discord Server", "Members of the Hunter's Dream Discord Server"],
+  "credits": "Director: VampireRedEye, Ideas: VampireRedEye, Code: RedstoneTim and Mr. Random, Models: VampireRedEye, Textures: VampireRedEye, Help for the code: Snakefangox and Mr. Random\nOther help through voting and giving ideas: Members of the The Block Box and the Hunter's Dream discord server",
   "logoFile": "assets/huntersdream/hunters_dream_logo.png",
   "screenshots": [],
   "dependencies": []

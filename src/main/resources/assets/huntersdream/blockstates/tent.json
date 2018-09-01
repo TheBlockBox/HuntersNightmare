@@ -1,0 +1,9 @@
+{
+    "variants": 
+    {
+        "facing=east": { "model": "huntersdream:tent", "y": 90 },
+        "facing=south": { "model": "huntersdream:tent", "y": 180 },
+        "facing=west": { "model": "huntersdream:tent", "y": 270 },
+        "facing=north": { "model": "huntersdream:tent", "y": 0 }
+    }
+}

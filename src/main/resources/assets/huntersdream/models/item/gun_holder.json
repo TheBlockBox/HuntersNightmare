@@ -1,0 +1,9 @@
+{
+    "parent": "huntersdream:block/gun_holder",
+    "display": {
+    	"firstperson_righthand": {
+    		"scale" : [0.4, 0.4, 0.4],
+    		"translation": [0, 4, 0]
+    	}
+    }
+}

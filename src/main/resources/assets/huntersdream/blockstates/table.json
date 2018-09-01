@@ -1,0 +1,9 @@
+{
+    "variants": 
+    {
+        "facing=east": { "model": "huntersdream:table", "y": 90 },
+        "facing=south": { "model": "huntersdream:table", "y": 180 },
+        "facing=west": { "model": "huntersdream:table", "y": 270 },
+        "facing=north": { "model": "huntersdream:table", "y": 0 }
+    }
+}

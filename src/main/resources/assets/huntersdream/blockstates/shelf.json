@@ -1,0 +1,9 @@
+{
+    "variants": 
+    {
+        "facing=east": { "model": "huntersdream:shelf", "y": 90 },
+        "facing=south": { "model": "huntersdream:shelf", "y": 180 },
+        "facing=west": { "model": "huntersdream:shelf", "y": 270 },
+        "facing=north": { "model": "huntersdream:shelf", "y": 0 }
+    }
+}

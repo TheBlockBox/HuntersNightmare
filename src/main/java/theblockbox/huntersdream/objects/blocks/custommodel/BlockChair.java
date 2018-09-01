@@ -2,49 +2,28 @@ package theblockbox.huntersdream.objects.blocks.custommodel;
 
 import java.util.List;
 
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityChair;
-import theblockbox.huntersdream.init.CreativeTabInit;
-import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.objects.items.ItemBlockWithMaxStackSize;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.util.Reference;
 
-public class BlockChair extends BlockBaseCustomModel {
-	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	public static final PropertyInteger VARIANT = PropertyInteger.create("variant", 0, 2);
+public class BlockChair extends BlockBaseCustomModelWithDirection {
 	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
 
 	public BlockChair(String name) {
 		super(name, Material.WOOD, 1F);
-		setCreativeTab(CreativeTabInit.HUNTERSDREAM_FURNITURE);
-		setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-
-		ItemInit.ITEMS.add(getItemBlock().setRegistryName(this.getRegistryName() + "1")
-				.setUnlocalizedName(this.getUnlocalizedName()));
-		ItemInit.ITEMS.add(getItemBlock().setRegistryName(this.getRegistryName() + "2")
-				.setUnlocalizedName(this.getUnlocalizedName()));
+		setUnlocalizedName(Reference.MODID + ".chair");
 	}
 
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING, VARIANT);
+	protected BlockChair(String name, Material materialIn, float hardness) {
+		super(name, materialIn, hardness);
 	}
 
 	@Override
@@ -85,27 +64,7 @@ public class BlockChair extends BlockBaseCustomModel {
 	}
 
 	@Override
-	protected ItemBlock getItemBlock() {
-		return new ItemBlockWithMaxStackSize(this, 1);
-	}
-
-	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return BOUNDING_BOX;
-	}
-
-	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-	}
-
-	// TODO: Add getMetaFromState and getStateFromMeta methods
-
-	@Override
-	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-		for (int i = 0; i <= 3; i++)
-			for (int j = 0; j <= 4; j++)
-				items.add(new ItemStack(this, GeneralHelper.convertFromBaseToBase(i + "" + j, 4, 10)));
 	}
 }

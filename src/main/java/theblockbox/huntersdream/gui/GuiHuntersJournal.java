@@ -9,12 +9,14 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiHuntersJournal extends GuiScreen {
 	public final EntityPlayer PLAYER;
-	private int currentPage = 1;
-	private int maxPages = 10;
+	private int currentPage = 0;
+	private HuntersJournalPage[] pages = {
+			new HuntersJournalPage("Test page", null, "Please tell us when you see this screen") };
 	private GuiButton nextPage;
 	private GuiButton pageBefore;
 
@@ -36,8 +38,20 @@ public class GuiHuntersJournal extends GuiScreen {
 
 	@Override
 	public void updateScreen() {
-		this.nextPage.visible = currentPage < maxPages;
+		this.nextPage.visible = currentPage < pages.length - 1;
 		this.pageBefore.visible = currentPage > 0;
+	}
+
+	public void drawInBounds(int x, int y, int width, int height) {
+		// title
+		this.drawCenteredString(this.fontRenderer, this.pages[currentPage].getTitle(), x + (width / 2), y,
+				TextFormatting.BLUE.getColorIndex());
+
+		y += (this.pages[currentPage].getImagePath() != null ? 75 : 10);
+
+		// description
+		this.fontRenderer.drawSplitString(this.pages[currentPage].getDescription(), x, y, width,
+				TextFormatting.BLUE.getColorIndex());
 	}
 
 	@Override
@@ -47,9 +61,16 @@ public class GuiHuntersJournal extends GuiScreen {
 		int height = 180;
 		int middle = (this.width / 2);
 		this.drawTexturedModalRect(middle - (width / 2), 3, 20, 0, width, height);
-		this.pageBefore.x = middle - (width / 2) + 10;
-		this.nextPage.x = middle + (width / 2) - 10 - nextPage.width;
+		this.pageBefore.x = (int) (middle - (width / 2.5D));
+		this.nextPage.x = (int) (middle + (width / 2.5D)) - this.nextPage.width;
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		int x = middle - (width / 2) + 15;
+		int w = width - 28;
+		if (pages[currentPage].getImagePath() != null) {
+			mc.getTextureManager().bindTexture(pages[currentPage].getImagePath());
+			this.drawTexturedModalRect(x - 1, 24, 0, 0, w, 64);
+		}
+		this.drawInBounds(x, 15, w, height - 20);
 	}
 
 	@Override
@@ -59,8 +80,8 @@ public class GuiHuntersJournal extends GuiScreen {
 			if (currentPage < 0) {
 				currentPage = 0;
 			}
-			if (currentPage > maxPages) {
-				currentPage = maxPages;
+			if (currentPage > pages.length - 1) {
+				currentPage = pages.length - 1;
 			}
 		}
 	}
@@ -69,7 +90,8 @@ public class GuiHuntersJournal extends GuiScreen {
 		private boolean isNextPageButton;
 
 		public NextButton(int buttonId, boolean isNextPageButton) {
-			super(buttonId, 0, 165, "");
+			super(buttonId, 0, 163, 18, 10, "");
+			this.visible = false;
 			this.isNextPageButton = isNextPageButton;
 		}
 

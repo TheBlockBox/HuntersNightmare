@@ -23,11 +23,10 @@ public class CreativeTabInit {
 		}
 	};
 
-	public static final CreativeTabs HUNTERSDREAM_FURNITURE = null;
-//			new CreativeTabs("huntersdream.furniture") {
-//		@Override
-//		public ItemStack getTabIconItem() {
-//			return new ItemStack(BlockInit.ORE_SILVER);
-//		}
-//	};
+	public static final CreativeTabs HUNTERSDREAM_FURNITURE = new CreativeTabs("huntersdream.furniture") {
+		@Override
+		public ItemStack getTabIconItem() {
+			return new ItemStack(BlockInit.BLOCK_CHAIR_0);
+		}
+	};
 }

@@ -1,14 +1,9 @@
 package theblockbox.huntersdream.objects.blocks.custommodel;
 
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -16,19 +11,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.objects.items.ItemBlockWithMaxStackSize;
+import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
-	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(GeneralHelper.getSixteenth(1), 0,
-			GeneralHelper.getSixteenth(1), GeneralHelper.getSixteenth(15), GeneralHelper.getSixteenth(10),
-			GeneralHelper.getSixteenth(15));
+public class BlockWerewolfEnchantingStone extends BlockBaseCustomModelWithDirection {
+	private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(sixteenth(1), 0, sixteenth(1), sixteenth(15),
+			sixteenth(10), sixteenth(15));
 	public static final Material WEREWOLF_ENCHANTING_STONE = new Material(MapColor.STONE) {
 		@Override
 		public boolean isSolid() {
@@ -64,7 +56,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 	public BlockWerewolfEnchantingStone(String name) {
 		super(name, WEREWOLF_ENCHANTING_STONE, 3.5F);
 		setHarvestLevel("pickaxe", 2);
-		setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 	}
 
 	@Override
@@ -95,32 +87,6 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModel {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	protected ItemBlock getItemBlock() {
-		return new ItemBlockWithMaxStackSize(this, 1);
-	}
-
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getHorizontalIndex();
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta));
-	}
-
-	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	@Override

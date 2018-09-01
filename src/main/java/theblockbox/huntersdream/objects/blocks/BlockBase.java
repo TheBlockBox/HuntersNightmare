@@ -14,10 +14,6 @@ import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 public class BlockBase extends Block implements IHasModel {
 
 	public BlockBase(String name, Material materialIn, float hardness) {
-		this(name, materialIn, hardness, false);
-	}
-
-	public BlockBase(String name, Material materialIn, float hardness, boolean silver) {
 		super(materialIn);
 		setUnlocalizedName(Reference.MODID + "." + name);
 		setRegistryName(name);

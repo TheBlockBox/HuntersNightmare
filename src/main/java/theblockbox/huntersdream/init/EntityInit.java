@@ -31,13 +31,13 @@ public class EntityInit {
 
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
 		event.getRegistry().registerAll(
-				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255).tracker(20, 20, false).build(),
-				getEntityEntryBuilder("werewolf", EntityWerewolf.class).tracker(20, 20, false)
+				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255).tracker(20, 1, false).build(),
+				getEntityEntryBuilder("werewolf", EntityWerewolf.class).tracker(20, 1, false)
 						.spawn(EnumCreatureType.CREATURE, 1, 1, 3, FOREST, FOREST_HILLS, BIRCH_FOREST,
 								BIRCH_FOREST_HILLS, MUTATED_BIRCH_FOREST, MUTATED_BIRCH_FOREST_HILLS,
 								MUTATED_ROOFED_FOREST, MUTATED_FOREST, ROOFED_FOREST)
 						.build(),
-				getEntityEntryBuilder("chair", EntityChair.class).build());
+				getEntityEntryBuilder("chair", EntityChair.class).tracker(0, 1, false).build());
 	}
 
 	public static void registerEntityRenders() {

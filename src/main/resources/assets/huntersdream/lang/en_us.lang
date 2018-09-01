@@ -34,6 +34,25 @@ tile.huntersdream.overworld_ore_silver.name=Silver Ore
 tile.huntersdream.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
 tile.huntersdream.chair.name=Chair
 tile.huntersdream.plant_wolfsbane.name=Wolfsbane Seed
+tile.huntersdream.advanced_crafting_table.name=Advanced Crafting Table
+tile.huntersdream.blessing_table.name=Blessing Table
+tile.huntersdream.nature_table.name=Nature Table
+tile.huntersdream.cursing_table.name=Cursing Table
+tile.huntersdream.summoning_table.name=Summoning Table
+tile.huntersdream.table.name=Table
+tile.huntersdream.vampire_altar.name=Vampire Altar
+tile.huntersdream.crate.name=Crate
+tile.huntersdream.throne.name=Throne
+tile.huntersdream.shelf.name=Shelf
+tile.huntersdream.plate.name=Plate
+tile.huntersdream.candle.name=Candle
+tile.huntersdream.witch_cauldron.name=Witch Cauldron
+tile.huntersdream.tent.name=Tent
+tile.huntersdream.coffin.name=Coffin
+tile.huntersdream.campfire.name=Campfire
+tile.huntersdream.gun_holder.name=Gunholder
+tile.huntersdream.lantern.name=Lantern
+tile.huntersdream.plack.name=Plack
 
 # Entities
 entity.goblintd.name=Goblin
