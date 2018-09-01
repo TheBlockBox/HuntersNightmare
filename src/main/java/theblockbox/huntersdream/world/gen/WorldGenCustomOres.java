@@ -11,8 +11,8 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.blocks.BlockOreBase;
 import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.objects.blocks.BlockOreBase;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 

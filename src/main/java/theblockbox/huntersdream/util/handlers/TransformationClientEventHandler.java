@@ -6,7 +6,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -14,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -23,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.renderer.RenderLycantrophePlayer;
+import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -170,5 +175,15 @@ public class TransformationClientEventHandler {
 	@SubscribeEvent
 	public static void onTooltipAdded(ItemTooltipEvent event) {
 		TranslationHelper.addEffectiveAgainstTransformationTooltips(event.getItemStack().getItem(), event.getToolTip());
+	}
+
+	@SubscribeEvent
+	public static void onGuiDraw(GuiScreenEvent.InitGuiEvent.Post event) {
+		if (event.getGui() instanceof GuiInventory) {
+			GuiContainer gui = (GuiContainer) event.getGui();
+			GuiButton button = new GuiButtonSurvivalTab(event.getButtonList().size(), gui.getGuiLeft() + 2,
+					gui.getGuiTop() - 18);
+			event.getButtonList().add(button);
+		}
 	}
 }

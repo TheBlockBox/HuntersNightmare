@@ -3,7 +3,6 @@ package theblockbox.huntersdream.init;
 import java.util.ArrayList;
 
 import net.minecraft.util.SoundEvent;
-import theblockbox.huntersdream.objects.SoundEventBase;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class SoundInit {
@@ -17,5 +16,12 @@ public class SoundInit {
 		HEART_BEAT.setRegistryName(GeneralHelper.newResLoc("transformation.heartbeat"));
 		WEREWOLF_HOWLING = new SoundEventBase("transformation.werewolf.howling");
 		WEREWOLF_HOWLING.setRegistryName(GeneralHelper.newResLoc("transformation.werewolf.howling"));
+	}
+
+	public static class SoundEventBase extends SoundEvent {
+		public SoundEventBase(String soundNameIn) {
+			super(GeneralHelper.newResLoc(soundNameIn));
+			SoundInit.SOUND_EVENTS.add(this);
+		}
 	}
 }

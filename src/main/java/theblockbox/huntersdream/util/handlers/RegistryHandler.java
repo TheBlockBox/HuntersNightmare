@@ -19,9 +19,11 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
@@ -114,6 +116,7 @@ public class RegistryHandler {
 
 	public static void preInitCommon(FMLPreInitializationEvent event) {
 		CapabilitiesInit.registerCapabilities();
+		NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
 	}
 
 	public static void initCommon(FMLInitializationEvent event) {

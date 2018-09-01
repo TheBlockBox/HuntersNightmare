@@ -75,7 +75,7 @@ public class EffectivenessHelper {
 	/** Returns the given armor's protection against the given transformation */
 	public static float armorGetProtectionAgainst(Transformations against, Item armorPart) {
 		if (armorEffectiveAgainstTransformation(against, armorPart)) {
-			return getAEAT(armorPart).getProtection();
+			return getAEAT(armorPart).getProtectionAgainstTransformation(against);
 		} else {
 			throw new IllegalArgumentException("Given armor is not effective against the given transformation");
 		}
@@ -87,7 +87,7 @@ public class EffectivenessHelper {
 	 */
 	public static float armorGetEffectivenessAgainst(Transformations against, Item armorPart) {
 		if (armorEffectiveAgainstTransformation(against, armorPart)) {
-			return getAEAT(armorPart).getArmorEffectiveness();
+			return getAEAT(armorPart).getArmorEffectivenessAgainstTransformation(against);
 		} else {
 			throw new IllegalArgumentException("Given armor is not effective against the given transformation");
 		}
@@ -99,7 +99,7 @@ public class EffectivenessHelper {
 	 */
 	public static float getEffectivenessAgainst(Transformations effectiveAgainst, Object object) {
 		if (effectiveAgainstTransformation(effectiveAgainst, object)) {
-			return getEAT(object).getEffectiveness();
+			return getEAT(object).getEffectivenessAgainstTransformation(effectiveAgainst);
 		} else {
 			throw new IllegalArgumentException("The given object is not effective against the given transformation ("
 					+ effectiveAgainst.toString() + ")");

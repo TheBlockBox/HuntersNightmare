@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 
 public class ArmorEffectiveAgainstTransformation implements IEffective {
 	public static final ArrayList<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new ArrayList<>();
@@ -47,12 +48,22 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 		ARMOR_PARTS.add(this);
 	}
 
-	public float getArmorEffectiveness() {
-		return this.thorns;
+	public float getArmorEffectivenessAgainstTransformation(Transformations transformation) {
+		if (effectiveAgainst(transformation)) {
+			return this.thorns;
+		} else {
+			throw new WrongTransformationException("The object is not effective against the given transformation",
+					transformation);
+		}
 	}
 
-	public float getProtection() {
-		return this.protection;
+	public float getProtectionAgainstTransformation(Transformations transformation) {
+		if (effectiveAgainst(transformation)) {
+			return this.protection;
+		} else {
+			throw new WrongTransformationException("The object is not effective against the given transformation",
+					transformation);
+		}
 	}
 
 	/**

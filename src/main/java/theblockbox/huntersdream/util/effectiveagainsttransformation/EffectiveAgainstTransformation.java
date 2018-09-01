@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 
 /**
  * Create a new instance of this class (preferably from the subclasses) to make
@@ -66,8 +67,13 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 	}
 
 	/** The damage multiplier when used against the specified creature */
-	public float getEffectiveness() {
-		return this.effectiveness;
+	public float getEffectivenessAgainstTransformation(Transformations transformation) {
+		if (effectiveAgainst(transformation)) {
+			return this.effectiveness;
+		} else {
+			throw new WrongTransformationException("The object is not effective against the given transformation",
+					transformation);
+		}
 	}
 
 	/**

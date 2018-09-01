@@ -9,15 +9,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraftforge.common.util.EnumHelper;
-import theblockbox.huntersdream.objects.armor.SilverArmorBase;
-import theblockbox.huntersdream.objects.items.ItemBase;
-import theblockbox.huntersdream.objects.items.ItemHuntersJournal;
-import theblockbox.huntersdream.objects.items.ItemWolfsbane;
-import theblockbox.huntersdream.objects.tools.axe.ToolSilverAxe;
-import theblockbox.huntersdream.objects.tools.hoe.ToolSilverHoe;
-import theblockbox.huntersdream.objects.tools.pickaxe.ToolSilverPickaxe;
-import theblockbox.huntersdream.objects.tools.shovel.ToolSilverShovel;
-import theblockbox.huntersdream.objects.tools.sword.ToolSilverSword;
+import theblockbox.huntersdream.armor.SilverArmorBase;
+import theblockbox.huntersdream.items.ItemBase;
+import theblockbox.huntersdream.items.ItemHuntersJournal;
+import theblockbox.huntersdream.items.ItemWolfsbane;
+import theblockbox.huntersdream.items.tools.axe.ToolSilverAxe;
+import theblockbox.huntersdream.items.tools.hoe.ToolSilverHoe;
+import theblockbox.huntersdream.items.tools.pickaxe.ToolSilverPickaxe;
+import theblockbox.huntersdream.items.tools.shovel.ToolSilverShovel;
+import theblockbox.huntersdream.items.tools.sword.ToolSilverSword;
 import theblockbox.huntersdream.util.Reference;
 
 public class ItemInit {
