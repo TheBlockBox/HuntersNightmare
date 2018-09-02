@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
 
 /**
@@ -67,9 +68,10 @@ public class TranslationHelper {
 	}
 
 	// argument is item because only items and itemblocks have tooltips
-	public static void addEffectiveAgainstTransformationTooltips(Item item, List<String> tooltips) {
+	public static void addEffectiveAgainstTransformationTooltips(ItemStack stack, List<String> tooltips) {
+		Item item = stack.getItem();
 		if (EffectivenessHelper.effectiveAgainstSomeTransformation(item)) {
-			EffectiveAgainstTransformation<Item> eat = EffectivenessHelper.getEAT(item);
+			EffectiveAgainstTransformation eat = EffectivenessHelper.getEAT(item);
 			if (eat.effectiveAgainstUndead()) {
 				tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip", getAsLocalizedList(GeneralHelper
 						.<Object>combineArraysToList(eat.transformations(), new String[] { "huntersdream.undead" })
@@ -79,9 +81,9 @@ public class TranslationHelper {
 						getAsLocalizedList(eat.transformations())));
 			}
 		}
-		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(item)) {
+		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(stack)) {
 			tooltips.add(I18n.format("huntersdream.armorEffectiveAgainst.tooltip",
-					getAsLocalizedList(EffectivenessHelper.getAEAT(item).transformations())));
+					getAsLocalizedList(EffectivenessHelper.getAEAT(stack).transformations())));
 		}
 	}
 }

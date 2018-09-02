@@ -1,63 +1,62 @@
 package theblockbox.huntersdream.util.effectiveagainsttransformation;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 
 /**
  * Create a new instance of this class (preferably from the subclasses) to make
  * a specific item, entity etc. effective against a specific transformation
  * (currently only item and entity are supported)
  */
-public abstract class EffectiveAgainstTransformation<T> implements IEffective {
-	public static final ArrayList<EffectiveAgainstTransformation<?>> OBJECTS = new ArrayList<>();
-	private float effectiveness;
+public class EffectiveAgainstTransformation implements IEffective {
+	public static final ArrayList<EffectiveAgainstTransformation> OBJECTS = new ArrayList<>();
 	private Transformations[] effectiveAgainst;
-	private T object;
+	private Predicate<Object> isForObject;
+	private float[] effectiveness;
 	private boolean effectiveAgainstUndead;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 
 	/**
-	 * Registers an object (currently either item or entity) as effective against
-	 * specific transformations
+	 * Creates a new EffectiveAgainstTransformation object from the given arguments
 	 * 
-	 * @param object                 The object which should be effective against
-	 *                               specific transformations
-	 * @param effectiveness          The damage multiplier (for example against a
-	 *                               werewolf effectiveness 1.5 on a sword with 4
-	 *                               attack damage would deal 6 half hearts. Also
-	 *                               note that when you'd attack a werewolf with
-	 *                               that sword, the werewolf won't have its natural
-	 *                               armor, so even effectiveness 1 would deal more
-	 *                               damage than another item with the same attack
-	 *                               damage). Default value is 1.5
-	 * @param effectiveAgainstUndead If the item should also be effective against
-	 *                               undead, default for silver items. (effective
-	 *                               against undead = deals 2.5 half hearts more
-	 *                               damage against undead)
-	 * @param effectiveAgainst       The transformations against which the item
-	 *                               should be effective
+	 * @param isForObject            A predicate that is used to determine if an
+	 *                               object should have this object's properties
+	 *                               (like extra damage against werewolves)
+	 * @param effectiveAgainstUndead If this should be effective against undead
+	 *                               (does as much damage as Smite I)
+	 * @param effectiveAgainst       An array of transformations against which this
+	 *                               is effective
+	 * @param effectiveness          An array of floats with the effectiveness
+	 *                               values (has to have the same length as the
+	 *                               effectiveAgainst array. When the effectiveness
+	 *                               against a transformation is searched, the one
+	 *                               at the same index as the transformation in the
+	 *                               effectiveAgainst array will be used)
 	 */
-	public EffectiveAgainstTransformation(T object, float effectiveness, boolean effectiveAgainstUndead,
-			@Nonnull Transformations... effectiveAgainst) {
+	public EffectiveAgainstTransformation(Predicate<Object> isForObject, boolean effectiveAgainstUndead,
+			@Nonnull Transformations[] effectiveAgainst, @Nonnull float[] effectiveness) {
+		this.isForObject = isForObject;
 		this.effectiveness = effectiveness;
 		this.effectiveAgainst = effectiveAgainst;
-		this.object = object;
 		this.effectiveAgainstUndead = effectiveAgainstUndead;
 
-		if (object == null || effectiveAgainst == null || effectiveAgainst.length < 1) {
-			throw new NullPointerException("Object and transformation parameter aren't allowed to be null");
+		if (effectiveAgainst.length != effectiveness.length) {
+			throw new IllegalArgumentException(
+					"The array of effectiveness values needs to have the same length as the array of transformations");
 		}
 
-		for (EffectiveAgainstTransformation<?> eat : OBJECTS)
-			if (eat.getObject() == object)
+		if (effectiveAgainst.length < 1) {
+			throw new IllegalArgumentException("The given arrays have to contain at least one object");
+		}
+
+		for (EffectiveAgainstTransformation eat : OBJECTS)
+			if (eat.isForObject == isForObject)
 				throw new IllegalArgumentException("Object already registered");
+
 		OBJECTS.add(this);
 	}
 
@@ -68,40 +67,25 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 
 	/** The damage multiplier when used against the specified creature */
 	public float getEffectivenessAgainstTransformation(Transformations transformation) {
-		if (effectiveAgainst(transformation)) {
-			return this.effectiveness;
-		} else {
-			throw new WrongTransformationException("The object is not effective against the given transformation",
-					transformation);
-		}
+		return this.effectiveness[this.getTransformationArrayIndex(transformation)];
 	}
 
-	/**
-	 * Returns the object that is effective against the transformations returned in
-	 * {@link #transformations()}
-	 */
-	public T getObject() {
-		return object;
-	}
-
-	/**
-	 * Returns the ArrayList which stores all instances of that class
-	 */
-	public abstract ArrayList<EffectiveAgainstTransformation<T>> getObjects();
-
-	@SuppressWarnings("unchecked")
-	public static <T> EffectiveAgainstTransformation<T> getFromObject(T object) {
-		for (EffectiveAgainstTransformation<?> eat : OBJECTS)
-			if (eat.getObject().equals(object))
-				return (EffectiveAgainstTransformation<T>) eat;
+	public static EffectiveAgainstTransformation getFromObject(Object object) {
+		for (EffectiveAgainstTransformation eat : OBJECTS)
+			if (eat.isForObject(object))
+				return eat;
 		return null;
 	}
 
 	/**
 	 * Returns all instances of this class and subclasses
 	 */
-	public static ArrayList<EffectiveAgainstTransformation<?>> getAllObjects() {
+	public static ArrayList<EffectiveAgainstTransformation> getObjects() {
 		return OBJECTS;
+	}
+
+	public boolean isForObject(Object object) {
+		return this.isForObject.test(object);
 	}
 
 	/**
@@ -109,41 +93,5 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffective {
 	 */
 	public boolean effectiveAgainstUndead() {
 		return this.effectiveAgainstUndead;
-	}
-
-	public static class ItemEffectiveAgainstTransformation extends EffectiveAgainstTransformation<Item> {
-		public static final ArrayList<EffectiveAgainstTransformation<Item>> ITEMS = new ArrayList<>();
-
-		public ItemEffectiveAgainstTransformation(Item object, float effectiveness, boolean effectiveAgainstUndead,
-				Transformations... effectiveAgainst) {
-			super(object, effectiveness, effectiveAgainstUndead, effectiveAgainst);
-			ITEMS.add(this);
-		}
-
-		public ItemEffectiveAgainstTransformation(Block object, float effectiveness, boolean effectiveAgainstUndead,
-				Transformations... effectiveAgainst) {
-			this(Item.getItemFromBlock(object), effectiveness, effectiveAgainstUndead, effectiveAgainst);
-		}
-
-		@Override
-		public ArrayList<EffectiveAgainstTransformation<Item>> getObjects() {
-			return ITEMS;
-		}
-	}
-
-	public static class EntityEffectiveAgainstTransformation
-			extends EffectiveAgainstTransformation<Class<? extends Entity>> {
-		public static final ArrayList<EffectiveAgainstTransformation<Class<? extends Entity>>> ENTITIES = new ArrayList<>();
-
-		public EntityEffectiveAgainstTransformation(Class<? extends Entity> object, float effectiveness,
-				boolean effectiveAgainstUndead, Transformations... effectiveAgainst) {
-			super(object, effectiveness, effectiveAgainstUndead, effectiveAgainst);
-			ENTITIES.add(this);
-		}
-
-		@Override
-		public ArrayList<EffectiveAgainstTransformation<Class<? extends Entity>>> getObjects() {
-			return ENTITIES;
-		}
 	}
 }

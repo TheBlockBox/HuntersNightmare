@@ -174,7 +174,7 @@ public class TransformationClientEventHandler {
 
 	@SubscribeEvent
 	public static void onTooltipAdded(ItemTooltipEvent event) {
-		TranslationHelper.addEffectiveAgainstTransformationTooltips(event.getItemStack().getItem(), event.getToolTip());
+		TranslationHelper.addEffectiveAgainstTransformationTooltips(event.getItemStack(), event.getToolTip());
 	}
 
 	@SubscribeEvent

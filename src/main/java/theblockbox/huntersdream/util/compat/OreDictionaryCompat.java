@@ -9,6 +9,12 @@ import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.ItemInit;
 
 public class OreDictionaryCompat {
+	/**
+	 * A string array of four strings for the conventional ore dictionary names for
+	 * armor parts (helmet, chestplate, leggings and boots)
+	 */
+	public static final String[] ARMOR_PART_NAMES = { "helmet", "chestplate", "leggings", "boots" };
+
 	public static void registerOres() {
 		// Silver
 		OreDictionary.registerOre("blockSilver", BlockInit.BLOCK_SILVER);

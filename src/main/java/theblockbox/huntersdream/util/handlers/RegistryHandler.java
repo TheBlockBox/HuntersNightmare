@@ -5,9 +5,12 @@ import java.nio.ByteBuffer;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -22,7 +25,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
@@ -40,7 +42,6 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.effectiveagainsttransformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
@@ -128,56 +129,55 @@ public class RegistryHandler {
 
 	@SuppressWarnings("deprecation")
 	public static void postInitCommon(FMLPostInitializationEvent event) {
-		// register items that are effective against a specific transformation
-		OreDictionaryCompat.getSilver().forEach(item -> new ItemEffectiveAgainstTransformation(item,
-				EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS, true, Transformations.WEREWOLF));
-		OreDictionary.getOres("helmetSilver").stream()
-				.forEach(stack -> new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.35F, 1.2F,
-						Transformations.WEREWOLF));
-		OreDictionary.getOres("chestplateSilver").stream()
-				.forEach(stack -> new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.85F, 1.6F,
-						Transformations.WEREWOLF));
-		OreDictionary.getOres("leggingsSilver").stream()
-				.forEach(stack -> new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.65F, 1.3F,
-						Transformations.WEREWOLF));
-		OreDictionary.getOres("bootsSilver").stream().forEach(stack -> {
-			new ArmorEffectiveAgainstTransformation(stack.getItem(), 1.25F, 1.1F, Transformations.WEREWOLF);
-		});
+		// register objects that are effective against a specific transformation
+		OreDictionaryCompat.getSilver().forEach(item -> new EffectiveAgainstTransformation(object -> {
+			return (object == item || (object instanceof ItemStack && ((ItemStack) object).getItem() == item));
+		}, true, new Transformations[] { Transformations.WEREWOLF },
+				new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS }));
+		ArmorEffectiveAgainstTransformation.registerArmorSet("Silver",
+				new float[][] { new float[] { 1.35F }, new float[] { 1.85F }, new float[] { 1.65F },
+						new float[] { 1.25F } },
+				new float[][] { new float[] { 1.2F }, new float[] { 1.6F }, new float[] { 1.3F },
+						new float[] { 1.1F } },
+				Transformations.WEREWOLF);
+		new EffectiveAgainstTransformation(obj -> {
+			if (obj instanceof EntityTippedArrow) {
+				EntityTippedArrow arrow = (EntityTippedArrow) obj;
+				// using AT to access fields
+				for (PotionEffect effect : arrow.potion.getEffects())
+					if (effect.getPotion() == MobEffects.POISON || effect.getPotion() == PotionInit.POTION_WOLFSBANE)
+						return true;
+				for (PotionEffect effect : arrow.customPotionEffects)
+					if (effect.getPotion() == MobEffects.POISON || effect.getPotion() == PotionInit.POTION_WOLFSBANE)
+						return true;
+			}
+			return false;
+		}, false, new Transformations[] { Transformations.WEREWOLF },
+				// new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS });
+				new float[] { 1F });
 
-		IUntransformedCreatureExtraData.<EntityVillager>of((villager, bytes) -> {
+		// To avoid confusion: In the following code the field EntityVillager#careerId
+		// and the method EntityVillager#populateBuyingList are accessed with Access
+		// Transformers
+		IUntransformedCreatureExtraData.<EntityVillager>ofWithBuffer((villager, buffer) -> {
 			try {
-				ByteBuffer buffer = ByteBuffer.wrap(bytes.clone()).asReadOnlyBuffer();
 				villager.setProfession(buffer.getInt());
-				// accessing fields with AT
 				villager.careerId = buffer.getInt();
 				villager.populateBuyingList();
 			} catch (BufferUnderflowException e) {
 				// just do nothing, villager automatically gets a profession
 			}
-		}, villager -> {
-			ByteBuffer buffer = ByteBuffer.allocate(8);
-			buffer.putInt(villager.getProfession());
-			// accessing fields with AT
-			buffer.putInt(villager.careerId);
-			return buffer.array();
-		}, c -> (c instanceof EntityVillager) && !(c instanceof EntityGoblinTD), Transformations.WEREWOLF,
+		}, villager -> ByteBuffer.allocate(8).putInt(villager.getProfession()).putInt(villager.careerId),
+				c -> (c instanceof EntityVillager) && !(c instanceof EntityGoblinTD), Transformations.WEREWOLF,
 				Transformations.VAMPIRE);
 
-		IUntransformedCreatureExtraData.<EntityGoblinTD>of((goblin, bytes) -> {
-			ByteBuffer buffer = ByteBuffer.wrap(bytes.clone()).asReadOnlyBuffer();
+		IUntransformedCreatureExtraData.<EntityGoblinTD>ofWithBuffer((goblin, buffer) -> {
 			goblin.setProfession(buffer.getInt());
 			goblin.setTexture(buffer.get());
-			// accessing fields with AT
 			goblin.careerId = buffer.getInt();
 			goblin.populateBuyingList();
-		}, goblin -> {
-			ByteBuffer buffer = ByteBuffer.allocate(9);
-			buffer.putInt(goblin.getProfession());
-			buffer.put(goblin.getTexture());
-			// accessing fields with AT
-			buffer.putInt(goblin.careerId);
-			return buffer.array();
-		}, c -> c instanceof EntityGoblinTD);
+		}, goblin -> ByteBuffer.allocate(9).putInt(goblin.getProfession()).put(goblin.getTexture())
+				.putInt(goblin.careerId), c -> c instanceof EntityGoblinTD);
 	}
 
 	// Client

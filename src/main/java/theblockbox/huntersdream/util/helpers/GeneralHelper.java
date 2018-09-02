@@ -1,8 +1,9 @@
 package theblockbox.huntersdream.util.helpers;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
@@ -160,7 +161,7 @@ public class GeneralHelper {
 
 	/** Combines to arrays to one array */
 	public static <T> List<T> combineArraysToList(T[] array1, T[] array2) {
-		List<T> arrayList = new ArrayList<>();
+		List<T> arrayList = new LinkedList<>();
 		for (T t : array1)
 			arrayList.add(t);
 		for (T t : array2)
@@ -174,11 +175,11 @@ public class GeneralHelper {
 	}
 
 	/**
-	 * Throws an exception if the given value is an itemstack
+	 * Returns a Predicate that returns true when the given itemstack's (see
+	 * parameter toCompare) item equals the item of the itemstack that is being
+	 * tested with the predicate
 	 */
-	public static void notItemstack(Object object) {
-		if (object instanceof ItemStack) {
-			throw new IllegalArgumentException("Use ItemStack#getItem, instead of ItemStack");
-		}
+	public static Predicate<ItemStack> getItemStackItemsEqual(ItemStack toCompare) {
+		return stack -> stack.getItem() == toCompare.getItem();
 	}
 }

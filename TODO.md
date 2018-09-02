@@ -8,5 +8,3 @@
 - make that when you run against blocks in werewolf form, you destroy them
 - change effects you get every transformation level
 - make that you get faster every level
-- redo effective against system
-- Make that wolfsbane and poison arrows deal extra damage

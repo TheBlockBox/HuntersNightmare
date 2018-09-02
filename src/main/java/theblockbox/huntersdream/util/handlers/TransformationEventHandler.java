@@ -12,7 +12,6 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -72,8 +71,7 @@ public class TransformationEventHandler {
 				if (!player.world.isRemote) { // ensures that this is the server side
 
 					for (ItemStack stack : player.getEquipmentAndArmor()) {
-						Item item = stack.getItem();
-						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), item))
+						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), stack))
 							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
 									cap.transformed() ? cap.getTransformation().getProtection(player) : 1);
 					}
@@ -141,9 +139,9 @@ public class TransformationEventHandler {
 			if (attacked != null) {
 				if (attacker != null) {
 					// effective against undead
-					if (attacker.getHeldItemMainhand().getItem() != null) {
-						if (attacked.isEntityUndead() && EffectivenessHelper
-								.effectiveAgainstUndead(attacker.getHeldItemMainhand().getItem())) {
+					if (attacker.getHeldItemMainhand() != null) {
+						if (attacked.isEntityUndead()
+								&& EffectivenessHelper.effectiveAgainstUndead(attacker.getHeldItemMainhand())) {
 							event.setAmount(event.getAmount() + 2.5F);
 						}
 					}
@@ -155,17 +153,16 @@ public class TransformationEventHandler {
 								attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
 								attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
 								attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
-						for (ItemStack item : armor) {
-							Item armorPart = item.getItem();
+						for (ItemStack armorPart : armor) {
 							if (EffectivenessHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
 								// Attack the werewolf back (thorns). The werewolf will get (the damage *
 								// effectiveness) / 20 (protection)
 								attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
 										(EffectivenessHelper.armorGetEffectivenessAgainst(transformation, armorPart)
 												* event.getAmount()));
-								event.setAmount(event.getAmount() / EffectivenessHelper
-										.armorGetProtectionAgainst(transformation, item.getItem()));
-								item.damageItem(4, attacked);
+								event.setAmount(event.getAmount()
+										/ EffectivenessHelper.armorGetProtectionAgainst(transformation, armorPart));
+								armorPart.damageItem(4, attacked);
 							}
 						}
 					}
@@ -180,16 +177,15 @@ public class TransformationEventHandler {
 					// add effective against
 					Object effectiveAgainst = null;
 					if (!event.getSource().damageType.equals("thorns")) {
-						ItemStack weaponItemStack = attacker.getHeldItemMainhand();
-						Item weapon = weaponItemStack.getItem();
+						ItemStack weapon = attacker.getHeldItemMainhand();
 						// when the attacker is supernatural,
 						if (transformationAttacker != null
 								&& transformationAttacker.getTransformation().isSupernatural()) {
 							// has no weapon and is effective against werewolf
-							if (weaponItemStack.isEmpty() && EffectivenessHelper
-									.effectiveAgainstTransformation(transformationAttacked, attacker.getClass())) {
-								effectiveAgainst = attacker.getClass();
-							} else if (!weaponItemStack.isEmpty() && EffectivenessHelper
+							if (weapon.isEmpty() && EffectivenessHelper
+									.effectiveAgainstTransformation(transformationAttacked, attacker)) {
+								effectiveAgainst = attacker;
+							} else if (!weapon.isEmpty() && EffectivenessHelper
 									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
 								effectiveAgainst = weapon;
 								return;
@@ -200,14 +196,14 @@ public class TransformationEventHandler {
 							// first test if immediate source (for example arrow) is effective
 							Entity immediateSource = event.getSource().getImmediateSource();
 							if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
-									immediateSource.getClass())) {
-								effectiveAgainst = immediateSource.getClass();
-							} else if (!weaponItemStack.isEmpty() && EffectivenessHelper
+									immediateSource)) {
+								effectiveAgainst = immediateSource;
+							} else if (!weapon.isEmpty() && EffectivenessHelper
 									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
 								effectiveAgainst = weapon;
 							} else if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
-									attacker.getClass())) {
-								effectiveAgainst = attacker.getClass();
+									attacker)) {
+								effectiveAgainst = attacker;
 							}
 						}
 						if (effectiveAgainst != null) {
