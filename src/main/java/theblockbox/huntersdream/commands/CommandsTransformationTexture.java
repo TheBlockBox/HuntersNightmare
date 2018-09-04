@@ -7,10 +7,11 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -72,7 +73,7 @@ public class CommandsTransformationTexture extends CommandBase {
 				cap.setTextureIndex(index);
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformationtexture.set",
 						player.getName(), cap.getTextureIndex()));
-				Packets.TRANSFORMATION.sync(player);
+				PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
 			}
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);

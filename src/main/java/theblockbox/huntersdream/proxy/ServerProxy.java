@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.proxy;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
@@ -28,4 +29,8 @@ public class ServerProxy implements IProxy {
 		return false;
 	}
 
+	@Override
+	public EntityPlayer getPlayer() {
+		return null;
+	}
 }

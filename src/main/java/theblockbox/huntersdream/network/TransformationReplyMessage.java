@@ -9,7 +9,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.Main;
 
+@Deprecated
 public class TransformationReplyMessage extends MessageBase<TransformationReplyMessage> {
 	public static final String WERE_FP_PICKED = "transformations.werewolf.fp.picked";
 	public static final String WERE_FP_TOUCHED = "transformations.werewolf.fp.touched";
@@ -89,6 +91,7 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 					}
 				});
 			}
+			Main.getLogger().warn("Don't call this packet! Use WerewolfHelper#sendItemPickupMessage");
 			return null;
 		}
 	}

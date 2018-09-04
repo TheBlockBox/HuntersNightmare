@@ -9,7 +9,9 @@ import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 
 public class HuntersJournalPage {
 	public static final List<HuntersJournalPage> PAGES = new ArrayList<>();
-	public static final HuntersJournalPage TEST_PAGE = HuntersJournalPage.of("Test page", null,
+	// Don't use the normal constructor, it's only used here because it's a test
+	// page that you shouldn't be able to get
+	public static final HuntersJournalPage TEST_PAGE = new HuntersJournalPage("Test page", null,
 			"This page is only for test purposes");
 	public static final HuntersJournalPage WEREWOLF = HuntersJournalPage.of("Werewolf", null, "W.I.P.");
 	private String title;

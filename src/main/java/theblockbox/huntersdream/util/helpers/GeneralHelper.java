@@ -22,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 
 /** A utility class for all things that don't fit into the other helpers */
@@ -231,6 +232,7 @@ public class GeneralHelper {
 			}
 			return objects;
 		} else {
+			Main.getLogger().warn("Couldn't load array, returning array with size 0");
 			return createEmptyArrayWithSize.apply(0);
 		}
 	}

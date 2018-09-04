@@ -33,13 +33,12 @@ public class CapabilitiesInit {
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
-				() -> new TransformationPlayer());
+				TransformationPlayer::new);
 		CapabilityManager.INSTANCE.register(ITransformationCreature.class, new TransformationCreatureStorage(),
-				() -> new TransformationCreature());
-		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectInTicksStorage(),
-				() -> new InfectInTicks());
+				TransformationCreature::new);
+		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectInTicksStorage(), InfectInTicks::new);
 		CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new InfectOnNextMoonStorage(),
-				() -> new InfectOnNextMoon());
-		CapabilityManager.INSTANCE.register(IWerewolf.class, new WerewolfStorage(), () -> new Werewolf());
+				InfectOnNextMoon::new);
+		CapabilityManager.INSTANCE.register(IWerewolf.class, new WerewolfStorage(), Werewolf::new);
 	}
 }

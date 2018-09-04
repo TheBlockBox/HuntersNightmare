@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.handlers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -13,7 +14,6 @@ import theblockbox.huntersdream.capabilities.CapabilityProvider;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -89,8 +89,8 @@ public class CapabilityHandler {
 					Main.getLogger().catching(e);
 				}
 				player.getServer().addScheduledTask(() -> {
-					for (EntityPlayer p : player.getServer().getPlayerList().getPlayers())
-						Packets.TRANSFORMATION_ONE_CLIENT.sync(p, player);
+					for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
+						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
 				});
 			}, "SyncCapAfterPlayerDeath1").start();
 			new Thread(() -> {
@@ -100,8 +100,8 @@ public class CapabilityHandler {
 					Main.getLogger().catching(e);
 				}
 				player.getServer().addScheduledTask(() -> {
-					for (EntityPlayer p : player.getServer().getPlayerList().getPlayers())
-						Packets.TRANSFORMATION_ONE_CLIENT.sync(p, player);
+					for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
+						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
 				});
 			}, "SyncCapAfterPlayerDeath2").start();
 		}

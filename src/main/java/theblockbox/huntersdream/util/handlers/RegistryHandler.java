@@ -176,8 +176,8 @@ public class RegistryHandler {
 			goblin.setTexture(buffer.get());
 			goblin.careerId = buffer.getInt();
 			goblin.populateBuyingList();
-		}, goblin -> ByteBuffer.allocate(9).putInt(goblin.getProfession()).put(goblin.getTexture()).putInt(goblin.careerId),
-				c -> c instanceof EntityGoblinTD);
+		}, goblin -> ByteBuffer.allocate(9).putInt(goblin.getProfession()).put(goblin.getTexture())
+				.putInt(goblin.careerId), c -> c instanceof EntityGoblinTD);
 	}
 
 	// Client

@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -350,5 +351,32 @@ public class WerewolfHelper {
 	 */
 	public static void resetTransformationStage(EntityPlayerMP player) {
 		WerewolfHelper.getIWerewolf(player).setTransformationStage(0);
+	}
+
+	/**
+	 * This method is called when an entity picks up an item that is effective
+	 * against the entity and then sends a specific message to everyone involved
+	 */
+	public static void sendItemPickupMessage(EntityPlayerMP sendTo, String reply, EntityLivingBase entity,
+			Item pickedUp) {
+		if ((!(reply == null)) && (!reply.equals(""))) {
+			TextComponentTranslation message = null;
+			TextComponentTranslation item = new TextComponentTranslation(pickedUp.getUnlocalizedName() + ".name");
+
+			if (reply.contains("fp")) {
+				if (reply.contains("picked")) {
+					message = new TextComponentTranslation(reply, item);
+				} else if (reply.contains("touched")) {
+					message = new TextComponentTranslation(reply, item);
+				}
+			} else if (reply.contains("tp")) {
+				if (reply.contains("picked")) {
+					message = new TextComponentTranslation(reply, entity.getDisplayName().getFormattedText(), item);
+				} else if (reply.contains("touched")) {
+					message = new TextComponentTranslation(reply, entity.getDisplayName().getFormattedText(), item);
+				}
+			}
+			sendTo.sendMessage(message);
+		}
 	}
 }

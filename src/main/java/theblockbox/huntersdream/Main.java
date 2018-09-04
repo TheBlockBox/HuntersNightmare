@@ -18,7 +18,6 @@ import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, acceptedMinecraftVersions = Reference.MC_VERSION, updateJSON = Reference.UPDATE_JSON)
 public class Main {
-
 	private static File config;
 
 	@Instance

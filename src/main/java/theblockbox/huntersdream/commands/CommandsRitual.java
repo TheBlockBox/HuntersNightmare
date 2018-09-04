@@ -13,7 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -88,7 +88,7 @@ public class CommandsRitual extends CommandBase {
 			default:
 				throw new IllegalArgumentException("Invalid argument index one");
 			}
-			Packets.TRANSFORMATION.sync(player);
+			PacketHandler.sendTransformationMessage(player);
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);
 		}

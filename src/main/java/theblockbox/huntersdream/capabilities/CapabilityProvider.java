@@ -34,5 +34,4 @@ public class CapabilityProvider<T> implements ICapabilitySerializable<NBTTagComp
 	public void deserializeNBT(NBTTagCompound nbt) {
 		CAP.getStorage().readNBT(CAP, INSTANCE, null, nbt);
 	}
-
 }

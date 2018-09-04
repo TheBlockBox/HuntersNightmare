@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.proxy;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -21,4 +22,6 @@ public interface IProxy {
 			return Side.SERVER;
 		}
 	}
+
+	public EntityPlayer getPlayer();
 }

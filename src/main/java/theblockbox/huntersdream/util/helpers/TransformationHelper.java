@@ -25,7 +25,7 @@ import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
@@ -77,7 +77,7 @@ public class TransformationHelper {
 		if (ConfigHandler.showPacketMessages)
 			Main.getLogger()
 					.info("Transformation of player " + player.getName() + " changed to " + transformation.toString());
-		Packets.TRANSFORMATION.sync(player); // sync data with client
+		PacketHandler.sendTransformationMessage(player); // sync data with client
 	}
 
 	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation,
@@ -199,7 +199,7 @@ public class TransformationHelper {
 				player.sendMessage(new TextComponentTranslation("transformations.huntersdream.onLevelUp", levelAfter));
 				cap.getTransformation().onLevelUp(player, levelAfter);
 			}
-			Packets.XP.sync(player);
+			PacketHandler.sendTransformationXPMessage(player);
 		}
 	}
 

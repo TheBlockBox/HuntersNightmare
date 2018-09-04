@@ -4,6 +4,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -14,7 +15,7 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
+import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -78,7 +79,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModelWithDirect
 					return false;
 				}
 
-				Packets.TRANSFORMATION.sync(playerIn);
+				PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
 				playerIn.sendMessage(
 						new TextComponentTranslation("huntersdream.werewolf_enchanting_stone.onClick.werewolf"));
 			} else {

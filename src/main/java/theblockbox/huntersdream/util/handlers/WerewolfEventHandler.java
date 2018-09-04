@@ -33,7 +33,6 @@ import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -155,7 +154,7 @@ public class WerewolfEventHandler {
 					.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
 
 			if (nextStage > 6 || nextStage < 0) {
-				Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
+				PacketHandler.sendSoundMessage(player, "howl", 1_000_000_000, 1);
 				werewolf.setTimeSinceTransformation(-1);
 				werewolf.setTransformationStage(0);
 				Main.getLogger().warn(
@@ -179,7 +178,7 @@ public class WerewolfEventHandler {
 			player.sendMessage(
 					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
 			TransformationHelper.transform(player, false, TransformingEventReason.ENVIROMENT);
-			Packets.TRANSFORMATION.sync(player);
+			PacketHandler.sendTransformationMessage(player);
 			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
 			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
 			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 4));
@@ -197,7 +196,7 @@ public class WerewolfEventHandler {
 
 		switch (werewolf.getTransformationStage()) {
 		case 1:
-			Packets.PLAY_SOUND.sync(player, "heartbeat", 100, 1);
+			PacketHandler.sendSoundMessage((EntityPlayerMP) player, "heartbeat", 100, 1);
 			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 550, 1));
 			player.addPotionEffect(new PotionEffect(MobEffects.POISON, 550, 0));
 			break;
@@ -216,11 +215,11 @@ public class WerewolfEventHandler {
 			// nothing happens
 			break;
 		case 6:
-			Packets.PLAY_SOUND.sync(player, "howl", 1000000000, 1);
+			PacketHandler.sendSoundMessage((EntityPlayerMP) player, "howl", 1_000_000_000, 1);
 			werewolf.setTimeSinceTransformation(-1);
 			werewolf.setTransformationStage(0);
 			TransformationHelper.transform(player, true, TransformingEventReason.ENVIROMENT);
-			Packets.TRANSFORMATION.sync(player);
+			PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
 
 // TODO: Remove this after no control is done
 //			if (!WerewolfHelper.hasControl(player)) {
@@ -274,13 +273,13 @@ public class WerewolfEventHandler {
 				EntityPlayer thrower;
 				if ((throwerName != null) && !(throwerName.equals("null")) && !(throwerName.equals(player.getName()))) {
 					thrower = originalEntity.world.getPlayerEntityByName(throwerName);
-					Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.touched", player, item);
-					Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.touched", player, item);
+					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.touched", player, item);
+					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.touched", player, item);
 				} else {
-					Packets.TRANSFORMATION_REPLY.sync(player, msg + "fp.picked", player, item);
+					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.picked", player, item);
 					thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
 					if (thrower != null) {
-						Packets.TRANSFORMATION_REPLY.sync(thrower, msg + "tp.picked", player, item);
+						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.picked", player, item);
 					}
 				}
 			}
@@ -298,9 +297,10 @@ public class WerewolfEventHandler {
 				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, item)) {
 					if (!player.world.isRemote) {
 						String msg = "transformations." + transformation.toString() + ".";
-						Packets.TRANSFORMATION_REPLY.sync(player, msg + "tp.touched", interactedWith, item);
+						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "tp.touched",
+								interactedWith, item);
 						if (interactedWith instanceof EntityPlayer) {
-							Packets.TRANSFORMATION_REPLY.sync((EntityPlayer) interactedWith, msg + "fp.touched",
+							WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) interactedWith, msg + "fp.touched",
 									interactedWith, item);
 						}
 					}

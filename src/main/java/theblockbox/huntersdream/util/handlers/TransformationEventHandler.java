@@ -31,7 +31,6 @@ import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
-import theblockbox.huntersdream.util.handlers.PacketHandler.Packets;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -107,7 +106,7 @@ public class TransformationEventHandler {
 						// don't have to sync the data every time you change something
 						// (though it is recommended)
 						if (player.ticksExisted % 7200 == 0) {
-							Packets.TRANSFORMATION.sync(player);
+							PacketHandler.sendTransformationMessage(playerMP);
 						}
 					}
 				}

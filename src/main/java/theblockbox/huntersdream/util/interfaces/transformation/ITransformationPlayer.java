@@ -207,7 +207,7 @@ public interface ITransformationPlayer extends ITransformation {
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TEXTURE_INDEX = "textureindex";
 		public static final String LEVEL = "level";
-		public static final String RITUALS = "rituals";
+		public static final String RITUALS = "ritualsnbt";
 		public static final String PAGES = "pages";
 
 		@Override
@@ -232,15 +232,16 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setXP(compound.getInteger(XP));
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
 			instance.setLevel(compound.getDouble(LEVEL));
-			instance.setRituals(GeneralHelper.readArrayFromNBT(compound, RITUALS, Rituals::fromName, Rituals[]::new));
 			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
 			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
+			instance.setRituals(GeneralHelper.readArrayFromNBT(compound, RITUALS, Rituals::fromName, Rituals[]::new));
 
 			// pre-0.2.0 support
+
 			if (compound.hasKey("transformationID")) {
-				Main.getLogger().warn(
-						"Seems like you're using a new version of the mod... Loading transformation from old format");
+				Main.getLogger()
+						.warn("Seems like you've updated Hunter's Dream... Loading transformation from old format");
 				@SuppressWarnings("deprecation")
 				Transformations transformation = Transformations.fromID(compound.getInteger("transformationID"));
 				instance.setTransformation(transformation);
