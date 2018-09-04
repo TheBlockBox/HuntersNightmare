@@ -1,6 +1,9 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
@@ -10,10 +13,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
-import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
+import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;;
 
 /**
@@ -42,51 +47,27 @@ public interface ITransformationPlayer extends ITransformation {
 		return (getLevel() - getLevelFloor());
 	}
 
+	public void setUnlockedPages(HuntersJournalPage[] pages);
+
+	public HuntersJournalPage[] getUnlockedPages();
+
+	public void unlockPage(HuntersJournalPage page);
+
+	public void lockPage(HuntersJournalPage page);
+
+	public boolean hasUnlockedPage(HuntersJournalPage page);
+
+	public HuntersJournalPage getRandomNotUnlockedPage();
+
 	public Rituals[] getRituals();
 
 	public void setRituals(Rituals[] rituals);
 
-	default public void addRitual(Rituals ritual) {
-		Rituals[] currentRituals = getRituals();
-		Rituals[] rituals = new Rituals[currentRituals.length + 1];
-		for (int i = 0; i < currentRituals.length; i++) {
-			rituals[i] = currentRituals[i];
-			if (rituals[i] == ritual)
-				throw new IllegalArgumentException(
-						"The ritual " + ritual.toString() + " is already in the array at index " + i);
-		}
-		rituals[currentRituals.length] = ritual;
-		setRituals(rituals);
-	}
+	public void addRitual(Rituals ritual);
 
-	default public void removeRitual(Rituals ritual) {
-		if (hasRitual(ritual)) {
-			Rituals[] currentRituals = getRituals();
-			ArrayList<Rituals> rituals = new ArrayList<>();
-			for (Rituals r : currentRituals) {
-				if (r != ritual)
-					rituals.add(r);
-			}
-			Rituals[] newRituals = rituals.toArray(new Rituals[0]);
-			if (newRituals.length != (currentRituals.length - 1))
-				throw new UnexpectedBehaviorException(
-						"Should remove one ritual, but array size is different then expected (old array size: "
-								+ currentRituals.length + " expected array size: " + (currentRituals.length - 1)
-								+ " gotten array size: " + newRituals.length);
-			setRituals(newRituals);
-		} else {
-			throw new IllegalArgumentException(
-					"The ritual " + ritual.toString() + " couldn't be found in the array and therefore not be removed");
-		}
-	}
+	public void removeRitual(Rituals ritual);
 
-	default public boolean hasRitual(Rituals ritual) {
-		for (Rituals r : getRituals()) {
-			if (r == ritual)
-				return true;
-		}
-		return false;
-	}
+	public boolean hasRitual(Rituals ritual);
 
 	public static class TransformationPlayer implements ITransformationPlayer {
 		private boolean transformed = false;
@@ -95,7 +76,10 @@ public interface ITransformationPlayer extends ITransformation {
 		private int textureIndex = 0;
 		private double level = 0;
 		/** Rituals that the player has done */
-		private Rituals[] rituals = new Rituals[0];
+		// private Rituals[] rituals = new Rituals[0];
+		// private HuntersJournalPage[] unlockedPages;
+		private Set<Rituals> rituals = new HashSet<>();
+		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
 
 		@Override
 		public boolean transformed() {
@@ -149,12 +133,71 @@ public interface ITransformationPlayer extends ITransformation {
 
 		@Override
 		public Rituals[] getRituals() {
-			return this.rituals;
+			return this.rituals.toArray(new Rituals[0]);
 		}
 
 		@Override
 		public void setRituals(Rituals[] rituals) {
-			this.rituals = rituals;
+			this.rituals = Arrays.stream(rituals).collect(Collectors.toCollection(HashSet::new));
+		}
+
+		@Override
+		public void setUnlockedPages(HuntersJournalPage[] pages) {
+			this.unlockedPages = Arrays.stream(pages).collect(Collectors.toCollection(HashSet::new));
+		}
+
+		@Override
+		public HuntersJournalPage[] getUnlockedPages() {
+			return this.unlockedPages.toArray(new HuntersJournalPage[0]);
+		}
+
+		@Override
+		public void unlockPage(HuntersJournalPage page) {
+			if (!this.unlockedPages.add(page)) {
+				throw new IllegalArgumentException("The player has already unlocked this page");
+			}
+		}
+
+		@Override
+		public void lockPage(HuntersJournalPage page) {
+			if (!this.unlockedPages.remove(page)) {
+				throw new IllegalArgumentException("The player hasn't unlocked this page yet");
+			}
+		}
+
+		@Override
+		public boolean hasUnlockedPage(HuntersJournalPage page) {
+			return this.unlockedPages.contains(page);
+		}
+
+		@Override
+		public HuntersJournalPage getRandomNotUnlockedPage() {
+			int size = HuntersJournalPage.PAGES.size();
+			if (this.unlockedPages.size() >= size) {
+				return null;
+			} else {
+				HuntersJournalPage random = HuntersJournalPage.PAGES.get(ChanceHelper.randomInt(size));
+				return this.hasUnlockedPage(random) ? this.getRandomNotUnlockedPage() : random;
+			}
+		}
+
+		@Override
+		public void addRitual(Rituals ritual) {
+			if (!this.rituals.add(ritual)) {
+				throw new IllegalArgumentException("The player already has this ritual");
+			}
+		}
+
+		@Override
+		public void removeRitual(Rituals ritual) {
+			if (!this.rituals.remove(ritual)) {
+				throw new IllegalArgumentException("The player didn't have the ritual that should be removed");
+			}
+		}
+
+		@Override
+		public boolean hasRitual(Rituals ritual) {
+			return this.rituals.contains(ritual);
 		}
 	}
 
@@ -164,9 +207,8 @@ public interface ITransformationPlayer extends ITransformation {
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TEXTURE_INDEX = "textureindex";
 		public static final String LEVEL = "level";
-		public static final String LENGTH = "length";
 		public static final String RITUALS = "rituals";
-		public static final String RITUAL_CHAR = "r";
+		public static final String PAGES = "pages";
 
 		@Override
 		public NBTBase writeNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
@@ -176,14 +218,9 @@ public interface ITransformationPlayer extends ITransformation {
 			compound.setInteger(XP, instance.getXP());
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
 			compound.setDouble(LEVEL, instance.getLevel());
-			Rituals[] rituals = instance.getRituals();
-			NBTTagCompound ritualStorage = new NBTTagCompound();
-			ritualStorage.setInteger(LENGTH, rituals.length);
-			for (int i = 0; i < rituals.length; i++) {
-				ritualStorage.setString(RITUAL_CHAR + i, rituals[i].toString());
-			}
-			compound.setTag(RITUALS, ritualStorage);
+			GeneralHelper.writeArrayToNBT(compound, instance.getRituals(), RITUALS, Rituals::toString);
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
+			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), PAGES, HuntersJournalPage::toString);
 			return compound;
 		}
 
@@ -195,15 +232,10 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setXP(compound.getInteger(XP));
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
 			instance.setLevel(compound.getDouble(LEVEL));
-			NBTTagCompound ritualStorage = (NBTTagCompound) compound.getTag(RITUALS);
-			// pre-0.2.0 support
-			int length = ritualStorage != null ? ritualStorage.getInteger(LENGTH) : 0;
-			Rituals[] rituals = new Rituals[length];
-			for (int i = 0; i < length; i++) {
-				rituals[i] = Rituals.fromName(ritualStorage.getString(RITUAL_CHAR + i));
-			}
-			instance.setRituals(rituals);
+			instance.setRituals(GeneralHelper.readArrayFromNBT(compound, RITUALS, Rituals::fromName, Rituals[]::new));
 			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
+			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
+					HuntersJournalPage[]::new));
 
 			// pre-0.2.0 support
 			if (compound.hasKey("transformationID")) {

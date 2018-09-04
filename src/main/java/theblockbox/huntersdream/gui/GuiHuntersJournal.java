@@ -10,20 +10,21 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiHuntersJournal extends GuiScreen {
 	public final EntityPlayer PLAYER;
 	private int currentPage = 0;
-	private HuntersJournalPage[] pages = {
-			new HuntersJournalPage("Test page", null, "Please tell us when you see this screen") };
+	private HuntersJournalPage[] pages;
 	private GuiButton nextPage;
 	private GuiButton pageBefore;
 
 	public static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/hunters_journal.png");
 
-	public GuiHuntersJournal(EntityPlayer player) {
+	public GuiHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
 		this.PLAYER = player;
+		this.pages = pages;
 	}
 
 	@Override

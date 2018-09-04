@@ -1,5 +1,8 @@
 package theblockbox.huntersdream.network;
 
+import java.util.function.Function;
+import java.util.function.IntFunction;
+
 import javax.annotation.Nonnull;
 
 import io.netty.buffer.ByteBuf;
@@ -10,7 +13,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -53,17 +55,18 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 			throw new IllegalArgumentException("The transformation argument is null which it isn't allowed to be");
 	}
 
-	public static void writeRitualArray(ByteBuf buf, @Nonnull Rituals[] rituals) {
-		buf.writeInt(rituals.length); // rituals length
-		for (int i = 0; i < rituals.length; i++)
-			writeString(buf, rituals[i].toString());
+	public static <T> void writeArray(ByteBuf buf, @Nonnull T[] array, Function<T, String> tToString) {
+		buf.writeInt(array.length);
+		for (int i = 0; i < array.length; i++)
+			writeString(buf, tToString.apply(array[i]));
 	}
 
-	public static Rituals[] readRitualArray(ByteBuf buf) {
-		Rituals[] rituals = new Rituals[buf.readInt()];
-		for (int i = 0; i < rituals.length; i++)
-			rituals[i] = Rituals.fromName(readString(buf));
-		return rituals;
+	public static <T> T[] readArray(ByteBuf buf, Function<String, T> stringToT,
+			IntFunction<T[]> newEmptyArrayWithSize) {
+		T[] array = newEmptyArrayWithSize.apply(buf.readInt());
+		for (int i = 0; i < array.length; i++)
+			array[i] = stringToT.apply(readString(buf));
+		return array;
 	}
 
 	public static void addScheduledTask(MessageContext ctx, Runnable runnableToSchedule) {

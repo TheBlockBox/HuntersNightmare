@@ -10,6 +10,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.gui.GuiHuntersJournal;
+import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class ItemHuntersJournal extends ItemBase {
 
@@ -31,7 +33,8 @@ public class ItemHuntersJournal extends ItemBase {
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		if (worldIn.isRemote) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiHuntersJournal(playerIn));
+			ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
+			Minecraft.getMinecraft().displayGuiScreen(new GuiHuntersJournal(playerIn, cap.getUnlockedPages()));
 		}
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 	}

@@ -72,16 +72,18 @@ public class CommandsRitual extends CommandBase {
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.ritual.clear", player.getName()));
 				break;
 			case "add":
-				if (!cap.hasRitual(ritual))
+				if (!cap.hasRitual(ritual)) {
 					cap.addRitual(ritual);
-				sender.sendMessage(
-						new TextComponentTranslation("command.huntersdream.ritual.add", ritual, player.getName()));
+					sender.sendMessage(
+							new TextComponentTranslation("command.huntersdream.ritual.add", ritual, player.getName()));
+				}
 				break;
 			case "remove":
-				if (cap.hasRitual(ritual))
+				if (cap.hasRitual(ritual)) {
 					cap.removeRitual(ritual);
-				sender.sendMessage(
-						new TextComponentTranslation("command.huntersdream.ritual.remove", ritual, player.getName()));
+					sender.sendMessage(new TextComponentTranslation("command.huntersdream.ritual.remove", ritual,
+							player.getName()));
+				}
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid argument index one");

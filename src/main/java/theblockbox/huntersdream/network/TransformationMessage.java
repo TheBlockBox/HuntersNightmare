@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -21,12 +22,13 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private int player;
 	private double level;
 	private Rituals[] rituals;
+	private HuntersJournalPage[] pages;
 
 	public TransformationMessage() {
 	}
 
 	public TransformationMessage(int xp, boolean transformed, Transformations transformation, EntityPlayer player,
-			int textureIndex, Rituals[] rituals) {
+			int textureIndex, Rituals[] rituals, HuntersJournalPage[] pages) {
 		this.xp = xp;
 		this.transformed = transformed;
 		this.transformation = transformation;
@@ -34,6 +36,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.player = player.getEntityId();
 		this.level = transformation.getLevel((EntityPlayerMP) player);
 		this.rituals = rituals;
+		this.pages = pages;
 	}
 
 	@Override
@@ -44,7 +47,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.player = buf.readInt();
 		this.textureIndex = buf.readInt();
 		this.level = buf.readDouble();
-		this.rituals = readRitualArray(buf);
+		this.rituals = readArray(buf, Rituals::fromName, Rituals[]::new);
+		this.pages = readArray(buf, HuntersJournalPage::fromName, HuntersJournalPage[]::new);
 	}
 
 	@Override
@@ -55,7 +59,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		buf.writeInt(player);
 		buf.writeInt(textureIndex);
 		buf.writeDouble(level);
-		writeRitualArray(buf, rituals);
+		writeArray(buf, rituals, Rituals::toString);
+		writeArray(buf, pages, HuntersJournalPage::toString);
 	}
 
 	@Override
@@ -84,6 +89,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 					cap.setTextureIndex(message.textureIndex);
 					cap.setLevel(message.level);
 					cap.setRituals(message.rituals);
+					cap.setUnlockedPages(message.pages);
 				});
 			}
 			return null;

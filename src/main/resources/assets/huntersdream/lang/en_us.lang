@@ -19,6 +19,7 @@ item.huntersdream.axe_silver.name=Silver Axe
 item.huntersdream.ingot_silver.name=Silver Ingot
 item.huntersdream.wolfsbane.name=Wolfsbane
 item.huntersdream.hunters_journal.name=Hunter's Journal
+item.huntersdream.hunters_journal_page.name=Hunter's Note
 
 # Potions
 effect.huntersdream.fear=Fear
@@ -99,6 +100,9 @@ transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and y
 huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
 huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
 huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
+item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
+item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
+item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
 
 # Config
 huntersdream.config.title=Hunter's Dream Config

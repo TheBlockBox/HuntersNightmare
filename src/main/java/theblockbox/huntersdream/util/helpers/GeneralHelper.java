@@ -3,12 +3,15 @@ package theblockbox.huntersdream.util.helpers;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
@@ -181,5 +184,54 @@ public class GeneralHelper {
 	 */
 	public static Predicate<ItemStack> getItemStackItemsEqual(ItemStack toCompare) {
 		return stack -> stack.getItem() == toCompare.getItem();
+	}
+
+	/**
+	 * Writes an array to an NBTTagCompound
+	 * 
+	 * @param writeTo      The NBTTagCompound to which to write the array
+	 * @param array        The array that should be written
+	 * @param nestedNBTKey A key that hasn't been used in the NBTTagCompound yet to
+	 *                     store the array
+	 * @param tToString    A function that converts the given object of type T to a
+	 *                     string
+	 */
+	public static <T> void writeArrayToNBT(NBTTagCompound writeTo, T[] array, String nestedNBTKey,
+			Function<T, String> tToString) {
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setInteger("length", array.length);
+		for (int i = 0; i < array.length; i++) {
+			compound.setString("val" + i, tToString.apply(array[i]));
+		}
+		writeTo.setTag(nestedNBTKey, compound);
+	}
+
+	/**
+	 * Reads an array from an NBTTagCompound
+	 * 
+	 * @param readFrom                 The NBTTagCompound from where to read the
+	 *                                 array
+	 * @param nestedNBTKey             The key that has been used to save the array
+	 * @param stringToT                A function that accepts a string and returns
+	 *                                 an object of type T (converts string to t)
+	 * @param createEmptyArrayWithSize A function to create an empty array with a
+	 *                                 specific size (because you can't make generic
+	 *                                 arrays in java). Just use
+	 *                                 {@code ClassName[]::new} here
+	 * @return Returns the read array
+	 */
+	public static <T> T[] readArrayFromNBT(NBTTagCompound readFrom, String nestedNBTKey, Function<String, T> stringToT,
+			IntFunction<T[]> createEmptyArrayWithSize) {
+		NBTTagCompound compound = (NBTTagCompound) readFrom.getTag(nestedNBTKey);
+		if (compound != null) {
+			T[] objects = createEmptyArrayWithSize.apply(compound.getInteger("length"));
+			for (int i = 0; i < objects.length; i++) {
+				objects[i] = stringToT.apply(compound.getString("val" + i));
+				System.out.println(objects[i]);
+			}
+			return objects;
+		} else {
+			return createEmptyArrayWithSize.apply(0);
+		}
 	}
 }

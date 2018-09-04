@@ -90,8 +90,9 @@ public class PacketHandler {
 				// Server
 				case TRANSFORMATION:
 					// could contain render changes
-					INSTANCE.sendToDimension(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformation(), player, cap.getTextureIndex(), cap.getRituals()),
+					INSTANCE.sendToDimension(
+							new TransformationMessage(cap.getXP(), cap.transformed(), cap.getTransformation(), player,
+									cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages()),
 							player.world.provider.getDimension());
 					cap.setLevel(cap.getTransformation().getLevel((EntityPlayerMP) player));
 					break;
@@ -125,8 +126,9 @@ public class PacketHandler {
 					break;
 
 				case TRANSFORMATION_ONE_CLIENT:
-					sendMessageToPlayer(new TransformationMessage(cap.getXP(), cap.transformed(),
-							cap.getTransformation(), player, cap.getTextureIndex(), cap.getRituals()),
+					sendMessageToPlayer(
+							new TransformationMessage(cap.getXP(), cap.transformed(), cap.getTransformation(), player,
+									cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages()),
 							(EntityPlayerMP) args[0]);
 					break;
 
