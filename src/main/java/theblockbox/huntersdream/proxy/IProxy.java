@@ -16,11 +16,7 @@ public interface IProxy {
 	public boolean physicalClient();
 
 	default public Side getPhysicalSide() {
-		if (physicalClient()) {
-			return Side.CLIENT;
-		} else {
-			return Side.SERVER;
-		}
+		return this.physicalClient() ? Side.CLIENT : Side.SERVER;
 	}
 
 	public EntityPlayer getPlayer();

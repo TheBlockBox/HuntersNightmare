@@ -11,47 +11,74 @@ import theblockbox.huntersdream.util.Reference;
 @Config(modid = Reference.MODID)
 @Config.LangKey(Reference.CFG_LANG + "title")
 public class ConfigHandler {
-	@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
-	public static boolean customPlayerRender = true;
 
-	@Config.LangKey(Reference.CFG_LANG + "renderXPBar")
-	public static boolean renderXPBar = true;
+	@Config.LangKey(Reference.CFG_LANG + "client")
+	public static Client client = new Client();
 
-	@Config.LangKey(Reference.CFG_LANG + "xpBarLeft")
-	public static boolean xpBarLeft = false;
+	@Config.LangKey(Reference.CFG_LANG + "server")
+	public static Server server = new Server();
 
-	@Config.LangKey(Reference.CFG_LANG + "xpBarTop")
-	public static boolean xpBarTop = false;
+	@Config.LangKey(Reference.CFG_LANG + "common")
+	public static Common common = new Common();
 
-	@Config.LangKey(Reference.CFG_LANG + "showPacketMessages")
-	public static boolean showPacketMessages = false;
+	public static class Client {
+		@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
+		public boolean customPlayerRender = true;
 
-	@Config.LangKey(Reference.CFG_LANG + "veinSize")
-	@Config.RequiresWorldRestart
-	@Config.RangeInt(min = 0, max = 20)
-	public static int veinSize = 4;
+		@Config.LangKey(Reference.CFG_LANG + "xpBarPosition")
+		public XPBarPosition xpBarPosition = XPBarPosition.BOTTOM_LEFT;
 
-	@Config.LangKey(Reference.CFG_LANG + "generateSilverOre")
-	@Config.RequiresWorldRestart
-	public static boolean generateSilverOre = true;
+		public static enum XPBarPosition {
+			DONT_RENDER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
+		}
+	}
 
-	@Config.LangKey(Reference.CFG_LANG + "silverMinY")
-	@Config.RequiresWorldRestart
-	@Config.RangeInt(min = 1, max = 70)
-	public static int silverMinY = 5;
+	public static class Common {
+		@Config.LangKey(Reference.CFG_LANG + "showFullStackTrace")
+		public boolean showFullStackTrace = false;
 
-	@Config.LangKey(Reference.CFG_LANG + "silverMaxY")
-	@Config.RequiresWorldRestart
-	@Config.RangeInt(min = 1, max = 70)
-	public static int silverMaxY = 35;
+		@Config.LangKey(Reference.CFG_LANG + "showPacketMessages")
+		public boolean showPacketMessages = false;
+	}
 
-	@Config.LangKey(Reference.CFG_LANG + "silverChance")
-	@Config.RequiresWorldRestart
-	@Config.RangeInt(min = 0, max = 70)
-	public static int silverChance = 4;
+	public static class Server {
+		@Config.LangKey(Reference.CFG_LANG + "ores")
+		public Ores ores = new Ores();
 
-	@Config.LangKey(Reference.CFG_LANG + "showFullStackTrace")
-	public static boolean showFullStackTrace = false;
+		@Config.LangKey(Reference.CFG_LANG + "generateCastle")
+		@Config.RequiresWorldRestart
+		public boolean generateCastle = true;
+
+		@Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
+		@Config.RequiresWorldRestart
+		public boolean generateHuntersCabin = true;
+
+		public static class Ores {
+			@Config.LangKey(Reference.CFG_LANG + "veinSize")
+			@Config.RequiresWorldRestart
+			@Config.RangeInt(min = 0, max = 20)
+			public int veinSize = 4;
+
+			@Config.LangKey(Reference.CFG_LANG + "generateSilverOre")
+			@Config.RequiresWorldRestart
+			public boolean generateSilverOre = true;
+
+			@Config.LangKey(Reference.CFG_LANG + "silverMinY")
+			@Config.RequiresWorldRestart
+			@Config.RangeInt(min = 1, max = 70)
+			public int silverMinY = 5;
+
+			@Config.LangKey(Reference.CFG_LANG + "silverMaxY")
+			@Config.RequiresWorldRestart
+			@Config.RangeInt(min = 1, max = 70)
+			public int silverMaxY = 35;
+
+			@Config.LangKey(Reference.CFG_LANG + "silverChance")
+			@Config.RequiresWorldRestart
+			@Config.RangeInt(min = 0, max = 70)
+			public int silverChance = 4;
+		}
+	}
 
 	@Mod.EventBusSubscriber(modid = Reference.MODID)
 	public static class ConfigEventHandler {

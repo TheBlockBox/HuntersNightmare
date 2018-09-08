@@ -7,7 +7,7 @@ import net.minecraftforge.oredict.OreDictionary;
 public class SilverArmorBase extends ArmorBase {
 
 	public SilverArmorBase(String name, ArmorMaterial materialIn, int renderIndexIn,
-			EntityEquipmentSlot equipmentSlotIn, float damageAgainstWerewolf, float protection) {
+			EntityEquipmentSlot equipmentSlotIn) {
 		super(name, materialIn, renderIndexIn, equipmentSlotIn);
 	}
 
@@ -23,6 +23,6 @@ public class SilverArmorBase extends ArmorBase {
 		for (int i : repairOredict)
 			if (i == oredict)
 				return true;
-		return false;
+		return super.getIsRepairable(toRepair, repair);
 	}
 }

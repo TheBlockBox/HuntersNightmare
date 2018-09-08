@@ -46,8 +46,9 @@ public class BlockInit {
 			return 5F;
 		}
 	};
-	public static final Block ORE_SILVER = new BlockOreBase("silver", Dimensions.OVERWORLD, ConfigHandler.silverMinY,
-			ConfigHandler.silverMaxY, ConfigHandler.silverChance, Blocks.STONE);
+	public static final Block ORE_SILVER = new BlockOreBase("silver", Dimensions.OVERWORLD,
+			ConfigHandler.server.ores.silverMinY, ConfigHandler.server.ores.silverMaxY,
+			ConfigHandler.server.ores.silverChance, Blocks.STONE);
 	public static final Block WOOL_GREEN_NATURE = new BlockTableWool("green_nature");
 	public static final Block WOOL_LIGHT_BLUE_BLESSING = new BlockTableWool("light_blue_blessing");
 	public static final Block WOOL_PURPLE_CURSING = new BlockTableWool("purple_cursing");

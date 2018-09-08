@@ -1,6 +1,7 @@
-package theblockbox.huntersdream.util.effectiveagainsttransformation;
+package theblockbox.huntersdream.util.effective_against_transformation;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -12,7 +13,7 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class ArmorEffectiveAgainstTransformation implements IEffective {
-	public static final ArrayList<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new ArrayList<>();
+	public static final List<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new ArrayList<>();
 	private Predicate<ItemStack> isForArmor;
 	public static final float DEFAULT_PROTECTION = 1.5F;
 	public static final float DEFAULT_EFFECTIVENESS = 2;
@@ -85,9 +86,11 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 	}
 
 	public static ArmorEffectiveAgainstTransformation getFromArmor(ItemStack armor) {
-		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
-			if (aeat.isForArmor(armor))
+		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS) {
+			if (aeat.isForArmor(armor)) {
 				return aeat;
+			}
+		}
 		return null;
 	}
 

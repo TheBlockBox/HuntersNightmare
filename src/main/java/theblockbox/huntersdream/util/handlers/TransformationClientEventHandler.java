@@ -29,6 +29,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.renderer.RenderLycantrophePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.handlers.ConfigHandler.Client.XPBarPosition;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
@@ -54,7 +55,7 @@ public class TransformationClientEventHandler {
 	@SubscribeEvent
 	public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if (ConfigHandler.customPlayerRender && !mc.playerController.isSpectator()) {
+		if (ConfigHandler.client.customPlayerRender && !mc.playerController.isSpectator()) {
 			EntityPlayer player = event.getEntityPlayer();
 			// werewolf
 			if (WerewolfHelper.transformedWerewolf(player)) {
@@ -70,7 +71,10 @@ public class TransformationClientEventHandler {
 	@SubscribeEvent
 	public static void onRenderGameOverlayPost(RenderGameOverlayEvent.Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if (ConfigHandler.renderXPBar && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
+		XPBarPosition position = ConfigHandler.client.xpBarPosition;
+		if ((position != XPBarPosition.DONT_RENDER) && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
+			boolean xpBarLeft = position == XPBarPosition.BOTTOM_LEFT || position == XPBarPosition.TOP_LEFT;
+			boolean xpBarTop = position == XPBarPosition.TOP_LEFT || position == XPBarPosition.TOP_RIGHT;
 			EntityPlayerSP player = mc.player;
 			GameType gameType = mc.playerController.getCurrentGameType();
 			if (gameType != GameType.CREATIVE && gameType != GameType.SPECTATOR) {
@@ -79,12 +83,12 @@ public class TransformationClientEventHandler {
 					if (cap.getLevel() > 0.0D) {
 						mc.renderEngine.bindTexture(cap.getTransformation().getXPBarTexture());
 
-						int x = ConfigHandler.xpBarLeft ? event.getResolution().getScaledWidth() / 2 - 90
+						int x = xpBarLeft ? event.getResolution().getScaledWidth() / 2 - 90
 								: event.getResolution().getScaledWidth() / 2 + 10;
-						int y = configureXPBarHeight(player, event.getResolution());
+						int y = configureXPBarHeight(player, event.getResolution(), xpBarTop, xpBarLeft);
 
-						if (ConfigHandler.xpBarTop)
-							x = ConfigHandler.xpBarLeft ? 1 : event.getResolution().getScaledWidth() - 82;
+						if (xpBarTop)
+							x = xpBarLeft ? 1 : event.getResolution().getScaledWidth() - 82;
 
 						// make support for absorbtion and extra hearts
 
@@ -99,19 +103,20 @@ public class TransformationClientEventHandler {
 		}
 	}
 
-	public static int configureXPBarHeight(EntityPlayerSP player, ScaledResolution resolution) {
-		int y = ConfigHandler.xpBarTop ? 8 : resolution.getScaledHeight() - 48;
+	public static int configureXPBarHeight(EntityPlayerSP player, ScaledResolution resolution, boolean xpBarTop,
+			boolean xpBarLeft) {
+		int y = xpBarTop ? 8 : resolution.getScaledHeight() - 48;
 		int moveUp = 0;
 
 		// when there are bubbles aka the player is under water, move the bar up
-		if (!ConfigHandler.xpBarLeft && !ConfigHandler.xpBarTop) {
+		if (!xpBarLeft && !xpBarTop) {
 			Block block = player.world.getBlockState(new BlockPos(player.posX, Math.ceil(player.posY + 1), player.posZ))
 					.getBlock();
 			if (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
 				moveUp++;
 
 		}
-		if (ConfigHandler.xpBarLeft && !ConfigHandler.xpBarTop) {
+		if (xpBarLeft && !xpBarTop) {
 			for (ItemStack stack : player.getArmorInventoryList())
 				if (!stack.isEmpty()) {
 					moveUp++;
@@ -129,7 +134,7 @@ public class TransformationClientEventHandler {
 	@SubscribeEvent
 	public static void onRenderPlayerHand(RenderHandEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if (ConfigHandler.customPlayerRender && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
+		if (ConfigHandler.client.customPlayerRender && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
 			EntityPlayerSP player = mc.player;
 			String skinType = player.getSkinType();
 			if (WerewolfHelper.transformedWerewolf(player)) {

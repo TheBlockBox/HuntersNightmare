@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
@@ -327,6 +328,18 @@ public class WerewolfEventHandler {
 						IntStream.of(LEVELS_WITH_EXTRA_HEARTS).filter(i -> level >= i).mapToLong(i -> 4).sum());
 				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 240, 2, false, false));
 			}
+		}
+	}
+
+	// TODO: Decide if wolfsbane players should also not be able to sleep
+	@SubscribeEvent
+	public static void onPlayerSleep(PlayerSleepInBedEvent event) {
+		EntityPlayer player = event.getEntityPlayer();
+		if (WerewolfHelper.transformedWerewolf(player)) {
+			event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
+			if (!player.world.isRemote)
+				player.sendStatusMessage(new TextComponentTranslation(Reference.MODID + ".werewolfNotAllowedToSleep"),
+						true);
 		}
 	}
 

@@ -6,8 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.util.enums.Transformations;
@@ -41,10 +43,10 @@ public interface ITransformationEntityTransformed extends ITransformation {
 	}
 
 	/** Returns the untransformed entity's extra data */
-	public byte[] getExtraData();
+	public NBTTagCompound getExtraData();
 
 	/** Sets the untransformed entity's extra data */
-	public void setExtraData(byte[] extraData);
+	public void setExtraData(NBTTagCompound extraData);
 
 	/**
 	 * Used to get the entity before the transformation. If the returned string
@@ -117,11 +119,10 @@ public interface ITransformationEntityTransformed extends ITransformation {
 							}
 						}
 
-						e.setPosition(creature.posX, creature.posY, creature.posZ);
-						e.setHealth(e.getHealth() / (creature.getMaxHealth() / creature.getHealth()));
 						applyExtraData(e, entity);
 						creature.world.spawnEntity(e);
-						applyExtraData(e, entity);
+						e.setPosition(creature.posX, creature.posY, creature.posZ);
+						e.setHealth(e.getHealth() / (creature.getMaxHealth() / creature.getHealth()));
 					}
 
 					creature.world.removeEntity(creature);
@@ -138,8 +139,9 @@ public interface ITransformationEntityTransformed extends ITransformation {
 	public static void applyExtraData(Entity entity, ITransformationEntityTransformed otherEntity) {
 		if (entity instanceof EntityCreature) {
 			EntityCreature ec = (EntityCreature) entity;
-			IUntransformedCreatureExtraData<EntityCreature> uced = IUntransformedCreatureExtraData.getFromEntity(ec);
-			uced.applyExtraData(ec, otherEntity.getExtraData());
+			ExtraDataEvent extraDataEvent = new ExtraDataEvent(ec, otherEntity.getExtraData(), false);
+			MinecraftForge.EVENT_BUS.post(extraDataEvent);
+			ec.readEntityFromNBT(extraDataEvent.getExtraData());
 		}
 	}
 }

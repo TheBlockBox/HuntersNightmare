@@ -13,7 +13,7 @@ public class ExecutionPath extends Exception {
 	}
 
 	public String get(int index) {
-		return ConfigHandler.showFullStackTrace ? getAll() : getFromIndex(index);
+		return ConfigHandler.common.showFullStackTrace ? getAll() : getFromIndex(index);
 	}
 
 	/**
@@ -21,7 +21,7 @@ public class ExecutionPath extends Exception {
 	 * @param endIndex   exclusive
 	 */
 	public String get(int beginIndex, int endIndex) {
-		if (ConfigHandler.showFullStackTrace) {
+		if (ConfigHandler.common.showFullStackTrace) {
 			return getAll();
 		} else {
 			String toReturn = "";

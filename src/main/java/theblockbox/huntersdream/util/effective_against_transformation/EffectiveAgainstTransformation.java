@@ -1,6 +1,7 @@
-package theblockbox.huntersdream.util.effectiveagainsttransformation;
+package theblockbox.huntersdream.util.effective_against_transformation;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -13,7 +14,7 @@ import theblockbox.huntersdream.util.enums.Transformations;
  * (currently only item and entity are supported)
  */
 public class EffectiveAgainstTransformation implements IEffective {
-	public static final ArrayList<EffectiveAgainstTransformation> OBJECTS = new ArrayList<>();
+	public static final List<EffectiveAgainstTransformation> OBJECTS = new ArrayList<>();
 	private Transformations[] effectiveAgainst;
 	private Predicate<Object> isForObject;
 	private float[] effectiveness;
@@ -71,16 +72,18 @@ public class EffectiveAgainstTransformation implements IEffective {
 	}
 
 	public static EffectiveAgainstTransformation getFromObject(Object object) {
-		for (EffectiveAgainstTransformation eat : OBJECTS)
-			if (eat.isForObject(object))
+		for (EffectiveAgainstTransformation eat : OBJECTS) {
+			if (eat.isForObject(object)) {
 				return eat;
+			}
+		}
 		return null;
 	}
 
 	/**
 	 * Returns all instances of this class and subclasses
 	 */
-	public static ArrayList<EffectiveAgainstTransformation> getObjects() {
+	public static List<EffectiveAgainstTransformation> getObjects() {
 		return OBJECTS;
 	}
 

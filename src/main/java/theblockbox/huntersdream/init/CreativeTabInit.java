@@ -2,6 +2,7 @@ package theblockbox.huntersdream.init;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import theblockbox.huntersdream.util.Reference;
 
 /**
  * @author Mr. Random
@@ -9,21 +10,22 @@ import net.minecraft.item.ItemStack;
 
 public class CreativeTabInit {
 
-	public static final CreativeTabs HUNTERSDREAM_TOOLS_AND_WEAPONS = new CreativeTabs("huntersdream.toolsandcombat") {
+	public static final CreativeTabs HUNTERSDREAM_TOOLS_AND_WEAPONS = new CreativeTabs(
+			Reference.MODID + ".toolsandcombat") {
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(ItemInit.SWORD_SILVER);
 		}
 	};
 
-	public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs("huntersdream.misc") {
+	public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs(Reference.MODID + ".misc") {
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(ItemInit.INGOT_SILVER);
 		}
 	};
 
-	public static final CreativeTabs HUNTERSDREAM_FURNITURE = new CreativeTabs("huntersdream.furniture") {
+	public static final CreativeTabs HUNTERSDREAM_FURNITURE = new CreativeTabs(Reference.MODID + ".furniture") {
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(BlockInit.LANTERN);

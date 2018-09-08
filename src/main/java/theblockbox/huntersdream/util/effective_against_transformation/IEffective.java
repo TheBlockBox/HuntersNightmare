@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.effectiveagainsttransformation;
+package theblockbox.huntersdream.util.effective_against_transformation;
 
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;

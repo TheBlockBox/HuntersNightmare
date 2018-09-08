@@ -13,11 +13,13 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.util.ExecutionPath;
@@ -27,7 +29,6 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
-import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
 
 public enum Transformations {
 
@@ -167,7 +168,7 @@ public enum Transformations {
 		this.ENTRY.onLevelUp.accept(player, newLevel);
 	}
 
-	public void transformCreatureWhenPossible(@Nonnull EntityLiving creature) {
+	public void transformCreatureWhenPossible(@Nonnull EntityCreature creature) {
 		if (this.ENTRY.transformCreature != null) {
 			if (creature == null)
 				throw new NullPointerException("The given parameter creature is null");
@@ -185,16 +186,14 @@ public enum Transformations {
 						world.removeEntity(creature);
 
 						// apply extra data
-						if (creature instanceof EntityCreature) {
-							// the returned creature always has to be an instanve of
-							// ITransformationEntityTransformed
-							IUntransformedCreatureExtraData<EntityCreature> uced = IUntransformedCreatureExtraData
-									.getFromEntity((EntityCreature) creature);
-							if (uced != null) {
-								((ITransformationEntityTransformed) returned)
-										.setExtraData(uced.getExtraData((EntityCreature) creature));
-							}
-						}
+						// the returned creature always has to be an instance of
+						// ITransformationEntityTransformed
+
+						NBTTagCompound compound = new NBTTagCompound();
+						creature.writeEntityToNBT(compound);
+						ExtraDataEvent event = new ExtraDataEvent(creature, compound, true);
+						MinecraftForge.EVENT_BUS.post(event);
+						((ITransformationEntityTransformed) returned).setExtraData(event.getExtraData());
 						world.spawnEntity(returned);
 						returned.setPositionAndUpdate(creature.posX, creature.posY, creature.posZ);
 					}

@@ -1,10 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
-
 import net.minecraft.block.Block;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -31,20 +27,20 @@ import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationLevel;
 import theblockbox.huntersdream.commands.CommandsTransformationTexture;
-import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.EntityInit;
 import theblockbox.huntersdream.init.ItemInit;
+import theblockbox.huntersdream.init.LootTableInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
+import theblockbox.huntersdream.init.StructureInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
-import theblockbox.huntersdream.util.effectiveagainsttransformation.ArmorEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
-import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
 /**
@@ -53,6 +49,7 @@ import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
  */
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class RegistryHandler {
+	public static final String[] LOOT_TABLE_NAMES = {};
 
 	// Registry events
 
@@ -125,15 +122,17 @@ public class RegistryHandler {
 		OreDictionaryCompat.registerOres();
 		GameRegistry.addSmelting(BlockInit.ORE_SILVER, new ItemStack(ItemInit.INGOT_SILVER), 0.9F);
 		MinecraftForge.addGrassSeed(new ItemStack(Item.getItemFromBlock(BlockInit.WOLFSBANE)), 5);
+		LootTableInit.register();
+		StructureInit.register();
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void postInitCommon(FMLPostInitializationEvent event) {
 		// register objects that are effective against a specific transformation
 		OreDictionaryCompat.getSilver().forEach(item -> new EffectiveAgainstTransformation(object -> {
 			return (object == item || (object instanceof ItemStack && ((ItemStack) object).getItem() == item));
 		}, true, new Transformations[] { Transformations.WEREWOLF },
 				new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS }));
+
 		ArmorEffectiveAgainstTransformation.registerArmorSet("Silver",
 				new float[][] { new float[] { 1.35F }, new float[] { 1.85F }, new float[] { 1.65F },
 						new float[] { 1.25F } },
@@ -155,29 +154,6 @@ public class RegistryHandler {
 		}, false, new Transformations[] { Transformations.WEREWOLF },
 				// new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS });
 				new float[] { 1F });
-
-		// To avoid confusion: In the following code the field EntityVillager#careerId
-		// and the method EntityVillager#populateBuyingList are accessed with Access
-		// Transformers
-		IUntransformedCreatureExtraData.<EntityVillager>ofWithBuffer((villager, buffer) -> {
-			try {
-				villager.setProfession(buffer.getInt());
-				villager.careerId = buffer.getInt();
-				villager.populateBuyingList();
-			} catch (BufferUnderflowException e) {
-				// just do nothing, villager automatically gets a profession
-			}
-		}, villager -> ByteBuffer.allocate(8).putInt(villager.getProfession()).putInt(villager.careerId),
-				c -> (c instanceof EntityVillager) && !(c instanceof EntityGoblinTD), Transformations.WEREWOLF,
-				Transformations.VAMPIRE);
-
-		IUntransformedCreatureExtraData.<EntityGoblinTD>ofWithBuffer((goblin, buffer) -> {
-			goblin.setProfession(buffer.getInt());
-			goblin.setTexture(buffer.get());
-			goblin.careerId = buffer.getInt();
-			goblin.populateBuyingList();
-		}, goblin -> ByteBuffer.allocate(9).putInt(goblin.getProfession()).put(goblin.getTexture())
-				.putInt(goblin.careerId), c -> c instanceof EntityGoblinTD);
 	}
 
 	// Client

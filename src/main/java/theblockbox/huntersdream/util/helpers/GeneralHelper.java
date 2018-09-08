@@ -228,11 +228,10 @@ public class GeneralHelper {
 			T[] objects = createEmptyArrayWithSize.apply(compound.getInteger("length"));
 			for (int i = 0; i < objects.length; i++) {
 				objects[i] = stringToT.apply(compound.getString("val" + i));
-				System.out.println(objects[i]);
 			}
 			return objects;
 		} else {
-			Main.getLogger().warn("Couldn't load array, returning array with size 0");
+			Main.getLogger().error("Couldn't load array, returning array with size 0");
 			return createEmptyArrayWithSize.apply(0);
 		}
 	}

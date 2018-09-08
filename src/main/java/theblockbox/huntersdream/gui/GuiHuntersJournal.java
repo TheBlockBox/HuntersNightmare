@@ -43,20 +43,20 @@ public class GuiHuntersJournal extends GuiScreen {
 		this.pageBefore.visible = currentPage > 0;
 	}
 
-	public void drawInBounds(int x, int y, int width, int height) {
+	public void drawInBounds(int x, int y, int width, int height, HuntersJournalPage page) {
 		// title
-		this.drawCenteredString(this.fontRenderer, this.pages[currentPage].getTitle(), x + (width / 2), y,
+		this.drawCenteredString(this.fontRenderer, page.getTitle(), x + (width / 2), y,
 				TextFormatting.BLUE.getColorIndex());
 
-		y += (this.pages[currentPage].getImagePath() != null ? 75 : 10);
+		y += (page.hasImage() ? 75 : 10);
 
 		// description
-		this.fontRenderer.drawSplitString(this.pages[currentPage].getDescription(), x, y, width,
-				TextFormatting.BLUE.getColorIndex());
+		this.fontRenderer.drawSplitString(page.getDescription(), x, y, width, TextFormatting.BLUE.getColorIndex());
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		HuntersJournalPage page = pages[currentPage];
 		mc.getTextureManager().bindTexture(TEXTURE);
 		int width = 146;
 		int height = 180;
@@ -67,11 +67,11 @@ public class GuiHuntersJournal extends GuiScreen {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		int x = middle - (width / 2) + 15;
 		int w = width - 28;
-		if (pages[currentPage].getImagePath() != null) {
-			mc.getTextureManager().bindTexture(pages[currentPage].getImagePath());
+		if (page.hasImage()) {
+			mc.getTextureManager().bindTexture(page.getImagePath());
 			this.drawTexturedModalRect(x - 1, 24, 0, 0, w, 64);
 		}
-		this.drawInBounds(x, 15, w, height - 20);
+		this.drawInBounds(x, 15, w, height - 20, page);
 	}
 
 	@Override

@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import theblockbox.huntersdream.util.effectiveagainsttransformation.ArmorEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
 
 public class EffectivenessHelper {

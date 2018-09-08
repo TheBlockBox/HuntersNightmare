@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -30,6 +31,8 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 public class WerewolfHelper {
+	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
+	public static final Capability<IWerewolf> CAPABILITY_WEREWOLF = CapabilitiesInit.CAPABILITY_WEREWOLF;
 
 	/**
 	 * Returns true when a werewolf can transform in this world (Caution! This
@@ -204,7 +207,7 @@ public class WerewolfHelper {
 	}
 
 	public static IInfectOnNextMoon getIInfectOnNextMoon(EntityLivingBase entity) {
-		return entity.getCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null);
+		return entity.getCapability(CAPABILITY_INFECT_ON_NEXT_MOON, null);
 	}
 
 	/**
@@ -226,8 +229,8 @@ public class WerewolfHelper {
 	public static int getInfectionPercentage(EntityLivingBase entity) {
 		if (canInfect(entity)) {
 			if (entity instanceof EntityPlayer) {
-				// TODO: could cause issues when player is higher than level 20
-				return TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
+				int percentage = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
+				return (percentage > 100) ? 100 : percentage;
 			} else if (entity instanceof EntityLivingBase) {
 				return 50;
 			} else {
@@ -290,7 +293,7 @@ public class WerewolfHelper {
 
 	/** Shortcut method for getting the IWerewolf capability */
 	public static IWerewolf getIWerewolf(EntityPlayer player) {
-		return player.getCapability(CapabilitiesInit.CAPABILITY_WEREWOLF, null);
+		return player.getCapability(CAPABILITY_WEREWOLF, null);
 	}
 
 	/**

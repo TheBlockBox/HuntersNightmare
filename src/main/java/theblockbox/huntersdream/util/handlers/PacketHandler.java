@@ -54,7 +54,7 @@ public class PacketHandler {
 			MessageBase<? extends MessageBase<?>> message, Runnable send) {
 		if (receivingSide == GeneralHelper.getOppositeSide(currentSide)) {
 			send.run();
-			if (ConfigHandler.showPacketMessages)
+			if (ConfigHandler.common.showPacketMessages)
 				Main.getLogger().info(message.getName() + " packet sent on side " + currentSide + "\nPath: "
 						+ (new ExecutionPath()).get(1));
 		} else {
@@ -104,6 +104,11 @@ public class PacketHandler {
 				() -> INSTANCE.sendTo(message, sendTo));
 	}
 
+	// TODO: Remove when new no control system is done
+	/**
+	 * @deprecated This will be removed soon. Instead use the methods in
+	 *             {@link PacketHandler}
+	 */
 	@Deprecated
 	public enum Packets {
 		TRANSFORMATION(new TransformationMessage()), @Deprecated
@@ -208,7 +213,7 @@ public class PacketHandler {
 				if (GeneralHelper.getSideFromEntity(player) == this.SIDE)
 					throw new WrongSideException("Couldn't send packet " + this.NAME, player.world);
 
-				if (ConfigHandler.showPacketMessages)
+				if (ConfigHandler.common.showPacketMessages)
 					Main.getLogger().info(this.MESSAGE_BASE.getName() + " packet sent on side "
 							+ GeneralHelper.getSideFromEntity(player) + "\nPath: " + (new ExecutionPath()).get(1));
 			} else {

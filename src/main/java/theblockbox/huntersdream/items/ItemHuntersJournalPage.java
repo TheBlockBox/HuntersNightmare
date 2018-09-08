@@ -26,10 +26,10 @@ public class ItemHuntersJournalPage extends ItemBase {
 			ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
 			HuntersJournalPage page = cap.getRandomNotUnlockedPage();
 			if (page != null) {
-				cap.unlockPage(page);
 				if (!playerIn.capabilities.isCreativeMode) {
 					stack.shrink(1);
 				}
+				cap.unlockPage(page);
 				PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
 				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".onPageUnlock",
 						new TextComponentTranslation(page.getTitle())));

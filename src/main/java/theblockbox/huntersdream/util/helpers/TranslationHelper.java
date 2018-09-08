@@ -5,7 +5,8 @@ import java.util.List;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import theblockbox.huntersdream.util.effectiveagainsttransformation.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 
 /**
  * Util class for translations. All methods here are client side only!
@@ -24,17 +25,17 @@ public class TranslationHelper {
 			throw new NullPointerException("The array either has a length of 0 or is null itself");
 		} else {
 			String toReturn = "";
-			final String comma = I18n.format("huntersdream.comma");
+			final String comma = I18n.format(Reference.MODID + ".comma");
 			for (int i = 0; i < toList.length; i++) {
 				String translated = I18n.format(toList[i].toString());
 
 				// special case where array length is 2
 				if ((i == 0) && (i == toList.length - 2)) {
-					toReturn += translated + " " + I18n.format("huntersdream.and") + " ";
+					toReturn += translated + " " + I18n.format(Reference.MODID + ".and") + " ";
 				} else if (i == 0) {
 					toReturn += translated;
 				} else if (i == (toList.length - 2)) {
-					toReturn += comma + " " + translated + " " + I18n.format("huntersdream.and") + " ";
+					toReturn += comma + " " + translated + " " + I18n.format(Reference.MODID + ".and") + " ";
 				} else if (i == (toList.length - 1)) {
 					toReturn += translated;
 				} else {
@@ -64,7 +65,7 @@ public class TranslationHelper {
 	public static String localizeNumber(double number, int preciseness) {
 		double calcPreciseness = Math.pow(10, preciseness);
 		return String.valueOf(Math.round((number * calcPreciseness)) / calcPreciseness).replace(".",
-				I18n.format("huntersdream.decimalpoint"));
+				I18n.format(Reference.MODID + ".decimalpoint"));
 	}
 
 	// argument is item because only items and itemblocks have tooltips
@@ -73,16 +74,20 @@ public class TranslationHelper {
 		if (EffectivenessHelper.effectiveAgainstSomeTransformation(item)) {
 			EffectiveAgainstTransformation eat = EffectivenessHelper.getEAT(item);
 			if (eat.effectiveAgainstUndead()) {
-				tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip", getAsLocalizedList(GeneralHelper
-						.<Object>combineArraysToList(eat.transformations(), new String[] { "huntersdream.undead" })
-						.toArray(new Object[0]))));
+				tooltips.add(
+						I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
+								getAsLocalizedList(
+										GeneralHelper
+												.<Object>combineArraysToList(eat.transformations(),
+														new String[] { Reference.MODID + ".undead" })
+												.toArray(new Object[0]))));
 			} else {
-				tooltips.add(I18n.format("huntersdream.effectiveAgainst.tooltip",
+				tooltips.add(I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
 						getAsLocalizedList(eat.transformations())));
 			}
 		}
 		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(stack)) {
-			tooltips.add(I18n.format("huntersdream.armorEffectiveAgainst.tooltip",
+			tooltips.add(I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
 					getAsLocalizedList(EffectivenessHelper.getAEAT(stack).transformations())));
 		}
 	}

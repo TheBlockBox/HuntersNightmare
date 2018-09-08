@@ -4,8 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.item.ItemStack;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class GuiButtonSurvivalTab extends GuiButton {
 	private boolean hasMouseBeenPressed = false;
@@ -19,8 +19,8 @@ public class GuiButtonSurvivalTab extends GuiButton {
 		if (visible) {
 			super.drawButton(mc, mouseX, mouseY, partialTicks);
 			if (this.mousePressed(mc, mouseX, mouseY) && this.hasMouseBeenPressed) {
-				mc.displayGuiScreen(
-						new GuiHuntersJournal(mc.player, TransformationHelper.getCap(mc.player).getUnlockedPages()));
+				// TODO: Add opening of survival tab here
+				Main.getLogger().debug("Survival tab button has been clicked");
 				this.hasMouseBeenPressed = false;
 			}
 			mc.getRenderItem().renderItemIntoGUI(new ItemStack(ItemInit.HUNTERS_JOURNAL), x + 1, y + 1);

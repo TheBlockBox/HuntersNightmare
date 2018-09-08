@@ -20,8 +20,8 @@ public class WorldGenCustomOres implements IWorldGenerator {
 
 	public WorldGenCustomOres() {
 		for (BlockOreBase blockOreBase : BlockInit.ORES) {
-			blockOreBase.setWorldGenMinable(new WorldGenMinable(blockOreBase.getDefaultState(), ConfigHandler.veinSize,
-					BlockMatcher.forBlock(blockOreBase.SPAWN_ON)));
+			blockOreBase.setWorldGenMinable(new WorldGenMinable(blockOreBase.getDefaultState(),
+					ConfigHandler.server.ores.veinSize, BlockMatcher.forBlock(blockOreBase.SPAWN_ON)));
 		}
 	}
 
@@ -30,7 +30,8 @@ public class WorldGenCustomOres implements IWorldGenerator {
 			IChunkProvider chunkProvider) {
 
 		BlockInit.ORES.stream().filter(e -> e.DIMENSION == world.provider.getDimension())
-				.filter(e -> e == BlockInit.ORE_SILVER ? ConfigHandler.generateSilverOre : true).forEach(e -> {
+				.filter(e -> e == BlockInit.ORE_SILVER ? ConfigHandler.server.ores.generateSilverOre : true)
+				.forEach(e -> {
 					if (e.getWorldGenMinable() == null)
 						Main.getLogger().error(
 								"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated.");

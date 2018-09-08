@@ -46,13 +46,13 @@ public class ItemInit {
 	// Armor
 	// These are the weirdest values in the whole world
 	public static final Item HELMET_SILVER = new SilverArmorBase("helmet_silver", ARMOR_SILVER, 1,
-			EntityEquipmentSlot.HEAD, 1.35F, 1.2F);
+			EntityEquipmentSlot.HEAD);
 	public static final Item CHESTPLATE_SILVER = new SilverArmorBase("chestplate_silver", ARMOR_SILVER, 1,
-			EntityEquipmentSlot.CHEST, 1.85F, 1.6F);
+			EntityEquipmentSlot.CHEST);
 	public static final Item LEGGINGS_SILVER = new SilverArmorBase("leggings_silver", ARMOR_SILVER, 2,
-			EntityEquipmentSlot.LEGS, 1.65F, 1.3F);
+			EntityEquipmentSlot.LEGS);
 	public static final Item BOOTS_SILVER = new SilverArmorBase("boots_silver", ARMOR_SILVER, 1,
-			EntityEquipmentSlot.FEET, 1.25F, 1.1F);
+			EntityEquipmentSlot.FEET);
 
 	/*
 	 * How to make normal item: - create JSON file in models/item - create item

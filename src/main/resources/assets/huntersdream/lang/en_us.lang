@@ -54,6 +54,10 @@ tile.huntersdream.campfire.name=Campfire
 tile.huntersdream.gun_holder.name=Gunholder
 tile.huntersdream.lantern.name=Lantern
 tile.huntersdream.plack.name=Plack
+tile.huntersdream.wool_colored_light_blue_blessing.name=Wool of Blessing
+tile.huntersdream.wool_colored_red_summoning.name=Wool of Summoning
+tile.huntersdream.wool_colored_green_nature.name=Wool of Nature
+tile.huntersdream.wool_colored_purple_cursing.name=Wool of Cursing
 
 # Entities
 entity.goblintd.name=Goblin
@@ -97,19 +101,17 @@ transformations.huntersdream:werewolf.transformingInto.4=You go blind, your eyes
 transformations.huntersdream:werewolf.transformingInto.5=Your body is now having dramatic changes, bones and muscle tissue breaking and reforming, your eyesight is back but different. Your mind can only think about killing
 transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf within is now free...
 transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
-huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
-huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
-huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
+tile.huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
+tile.huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
+tile.huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
 item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
 item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
 item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
+huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 
 # Config
 huntersdream.config.title=Hunter's Dream Config
 huntersdream.config.customPlayerRender=Custom Player Render
-huntersdream.config.renderXPBar=Render transformation xp bar
-huntersdream.config.xpBarLeft=Render transformation xp bar on the left hand side
-huntersdream.config.xpBarTop=Render transformation xp bar on the top
 huntersdream.config.showPacketMessages=Show Packet Messages
 huntersdream.config.veinSize=Veins of ore per chunk
 huntersdream.config.generateSilverOre=Generate Silver Ore
@@ -117,6 +119,13 @@ huntersdream.config.silverMinY=Minimum height of silver
 huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverChance=Average silver ores per vein
 huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
+huntersdream.config.ores=Ore Generation Settings
+huntersdream.config.xpBarPosition=Transformation XP Bar Position
+huntersdream.config.client=Client
+huntersdream.config.server=Server
+huntersdream.config.common=Client and Server
+huntersdream.config.generateCastle=Generate Castle in Villages
+huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in Villages
 
 # Transformations
 huntersdream:human=Human
@@ -131,12 +140,18 @@ huntersdream:hunter=Hunter
 huntersdream.transformation.heartbeat=Heartbeat of a werewolf
 huntersdream.transformation.werewolf.howling=Howling werewolf
 
+# Hunter's Journal
+huntersdream.hunters_journal.test.title=Test Page
+huntersdream.hunters_journal.test.description=This is a test page and shouldn't be visible in normal gameplay
+huntersdream.hunters_journal.werewolf.title=Werewolves
+huntersdream.hunters_journal.werewolf.description=W.I.P.
+
 # Other stuff
 # the word you'd use in a list (like Werewolf, Vampire and Hybrid)
 huntersdream.and=and
 huntersdream.effectiveAgainst.tooltip=Effective against %s
 huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
-# The character you'd use to split decimal values (in 11.56 the character is .)
+# The character you'd use to split decimal values (in 11.56 the character is .) (currently unused)
 huntersdream.decimalpoint=.
 # The character you'd use in a list (like Werewolf, Vampire and Hybrid)
 huntersdream.comma=,

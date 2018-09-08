@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
@@ -34,6 +35,9 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCr
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class TransformationHelper {
+	public static final Capability<ITransformationPlayer> CAPABILITY_TRANSFORMATION_PLAYER = CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER;
+	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
+	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS;
 
 	/**
 	 * Contains entities that can be infected. The class is the entity's class and
@@ -55,7 +59,7 @@ public class TransformationHelper {
 	 */
 	public static ITransformationPlayer getCap(EntityPlayer player) {
 		if (player != null)
-			return player.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER, null);
+			return player.getCapability(CAPABILITY_TRANSFORMATION_PLAYER, null);
 		else
 			throw new NullPointerException("Player is null");
 	}
@@ -74,7 +78,7 @@ public class TransformationHelper {
 		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
-		if (ConfigHandler.showPacketMessages)
+		if (ConfigHandler.common.showPacketMessages)
 			Main.getLogger()
 					.info("Transformation of player " + player.getName() + " changed to " + transformation.toString());
 		PacketHandler.sendTransformationMessage(player); // sync data with client
@@ -87,12 +91,15 @@ public class TransformationHelper {
 				if (!MinecraftForge.EVENT_BUS.post(new TransformationEvent(entity, transformation, reason))) {
 					if (entity instanceof EntityPlayer) {
 						changeTransformation((EntityPlayerMP) entity, transformation);
-					} else {
+					} else if (entity instanceof EntityCreature) {
 						getITransformation(entity).setTransformation(transformation);
-						ITransformationCreature tc = getITransformationCreature(entity);
+						ITransformationCreature tc = getITransformationCreature((EntityCreature) entity);
 						if (tc != null) {
 							tc.setTextureIndex(tc.getTransformation().getRandomTextureIndex());
 						}
+					} else {
+						throw new IllegalArgumentException("Can't transform entity " + entity.toString()
+								+ " (it is neither a player nor an instance of EntityCreature)");
 					}
 				}
 			} else {
@@ -104,7 +111,7 @@ public class TransformationHelper {
 		}
 	}
 
-	public static void changeTransformationWhenPossible(@Nonnull EntityLivingBase entity,
+	public static void changeTransformationWhenPossible(@Nonnull EntityCreature entity,
 			@Nonnull Transformations transformation, TransformationEventReason reason) {
 		if (transformation == null || entity == null) {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
@@ -151,15 +158,17 @@ public class TransformationHelper {
 			return getCap((EntityPlayer) entity);
 		} else if (entity instanceof ITransformation) {
 			return (ITransformation) entity;
+		} else if (entity instanceof EntityCreature) {
+			return getITransformationCreature((EntityCreature) entity);
 		} else {
-			return getITransformationCreature(entity);
+			return null;
 		}
 	}
 
-	public static ITransformationCreature getITransformationCreature(EntityLivingBase entity) {
-		if (entity instanceof EntityCreature && entity != null) {
+	public static ITransformationCreature getITransformationCreature(EntityCreature entity) {
+		if (entity != null) {
 			return (entity instanceof ITransformationCreature) ? (ITransformationCreature) entity
-					: entity.getCapability(CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE, null);
+					: entity.getCapability(CAPABILITY_TRANSFORMATION_CREATURE, null);
 		} else {
 			return null;
 		}
@@ -240,12 +249,13 @@ public class TransformationHelper {
 				}
 			}
 			if (iit != null) {
-				ITransformationCreature tc = getITransformationCreature(entity);
-				if (tc != null) {
-					return tc.notImmuneToTransformation(infection);
-				} else {
-					return true;
+				if (entity instanceof EntityCreature) {
+					ITransformationCreature tc = getITransformationCreature((EntityCreature) entity);
+					if (tc != null) {
+						return tc.notImmuneToTransformation(infection);
+					}
 				}
+				return true;
 			}
 
 		}
@@ -256,7 +266,7 @@ public class TransformationHelper {
 	 * Returns true when the given entity can be infected with the given
 	 * infection/transformation without accounting for current infections
 	 */
-	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityLivingBase entity) {
+	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityCreature entity) {
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
 			if (tc != null) {
@@ -271,7 +281,7 @@ public class TransformationHelper {
 
 	/** Returns the {@link IInfectInTicks} capability of the given entity */
 	public static IInfectInTicks getIInfectInTicks(EntityLivingBase entity) {
-		return entity.getCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null);
+		return entity.getCapability(CAPABILITY_INFECT_IN_TICKS, null);
 	}
 
 	/**

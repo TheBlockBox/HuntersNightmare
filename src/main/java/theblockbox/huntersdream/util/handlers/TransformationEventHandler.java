@@ -3,7 +3,6 @@ package theblockbox.huntersdream.util.handlers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -43,7 +42,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.IUntransformedCreatureExtraData;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class TransformationEventHandler {
@@ -216,40 +214,29 @@ public class TransformationEventHandler {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onEntityJoin(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityLivingBase) {
-			EntityLivingBase elb = (EntityLivingBase) event.getEntity();
-			ITransformationCreature tc = TransformationHelper.getITransformationCreature(elb);
+		if (event.getEntity() instanceof EntityCreature) {
+			EntityCreature creature = (EntityCreature) event.getEntity();
+			ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
 
-			if (!elb.world.isRemote) {
-				if (tc != null) {
-					if (elb instanceof EntityCreature) {
-						IUntransformedCreatureExtraData<?> uced = IUntransformedCreatureExtraData
-								.getFromEntity((EntityCreature) elb);
-						if (uced != null) {
-							Transformations[] transformations = uced.getTransformationsNotImmuneTo();
-							if (transformations != null && transformations.length > 0) {
-								tc.setTransformationsNotImmuneTo(transformations);
-							}
-						}
-					}
-				}
+			if (!creature.world.isRemote) {
 
-				if (elb instanceof EntityGolem) {
-					EntityGolem entity = (EntityGolem) elb;
+				if (creature instanceof EntityGolem) {
+					EntityGolem entity = (EntityGolem) creature;
 					entity.targetTasks.addTask(2,
 							new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
 					entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
 							EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
-				} else if (elb instanceof EntityGoblinTD) {
+				} else if (creature instanceof EntityGoblinTD) {
 					if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == Transformations.HUMAN)) {
-						TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
+						TransformationHelper.changeTransformationWhenPossible(creature, Transformations.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
-				} else if (elb instanceof EntityVillager) {
+				} else if (creature instanceof EntityVillager) {
+					tc.setTransformationsNotImmuneTo(Transformations.WEREWOLF, Transformations.VAMPIRE);
 					if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
-						TransformationHelper.changeTransformationWhenPossible(elb, Transformations.WEREWOLF,
+						TransformationHelper.changeTransformationWhenPossible(creature, Transformations.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
 				}
@@ -262,9 +249,10 @@ public class TransformationEventHandler {
 				}
 			}
 
-			if (elb instanceof EntityAgeable) {
-				((EntityAgeable) elb).tasks.addTask(2, new EntityAIAvoidEntity<EntityLivingBase>((EntityCreature) elb,
-						EntityLivingBase.class, WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
+			if (creature instanceof EntityAgeable) {
+				((EntityAgeable) creature).tasks.addTask(2,
+						new EntityAIAvoidEntity<EntityLivingBase>((EntityCreature) creature, EntityLivingBase.class,
+								WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
 			}
 		}
 	}
@@ -286,10 +274,10 @@ public class TransformationEventHandler {
 					}
 				}
 
-				if (!(entity instanceof ITransformationEntityTransformed) && entity instanceof EntityLiving) {
+				if (!(entity instanceof ITransformationEntityTransformed) && entity instanceof EntityCreature) {
 					Transformations transformation = TransformationHelper.getTransformation(entity);
 					if (transformation != null) {
-						transformation.transformCreatureWhenPossible((EntityLiving) entity);
+						transformation.transformCreatureWhenPossible((EntityCreature) entity);
 					}
 				}
 

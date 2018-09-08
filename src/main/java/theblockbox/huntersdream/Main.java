@@ -2,6 +2,7 @@ package theblockbox.huntersdream;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.common.Mod;
@@ -26,7 +27,7 @@ public class Main {
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.SERVER)
 	public static IProxy proxy;
 
-	private static Logger logger;
+	private static Logger logger = LogManager.getLogger(Reference.MODID);
 
 	public static synchronized Logger getLogger() {
 		return logger;
@@ -37,7 +38,6 @@ public class Main {
 		RegistryHandler.gameRegistry(event);
 		RegistryHandler.preInitCommon(event);
 		proxy.preInit();
-		logger = event.getModLog();
 	}
 
 	@EventHandler
