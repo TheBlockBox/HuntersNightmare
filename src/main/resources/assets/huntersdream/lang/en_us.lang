@@ -108,6 +108,7 @@ item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all
 item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
 item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
+death.attack.vampireDrankBlood=%s got drank dried by a vampire
 
 # Config
 huntersdream.config.title=Hunter's Dream Config

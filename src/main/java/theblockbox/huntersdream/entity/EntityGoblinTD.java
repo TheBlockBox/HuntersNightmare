@@ -21,6 +21,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -134,16 +135,18 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public int getTextureIndex() {
 		int textureIndex = this.dataManager.get(TEXTURE_INDEX);
-		try {
-			this.getTransformation().getTextures()[textureIndex].getClass();
-			return textureIndex;
-		} catch (ArrayIndexOutOfBoundsException e) {
+		int length = this.getTransformation().getTextures().length;
+
+		if (length > 0 && !(textureIndex >= 0 && textureIndex < length)) {
 			this.setTextureIndex(this.getTransformation().getRandomTextureIndex());
 			Main.getLogger()
 					.error("Tried to get a goblin's texture index and failed. Texture index: " + textureIndex
 							+ " Bounds: " + this.getTransformation().getTextures().length
-							+ "Attempting to retry...\nStacktrace: " + (new ExecutionPath()).getAll());
+							+ "\nAttempting to retry...\nStacktrace: " + (new ExecutionPath()).getAll());
 			return this.getTextureIndex();
+		} else {
+			// return texture index if either length is 0 or texture index is in bounds
+			return textureIndex;
 		}
 	}
 
@@ -250,5 +253,21 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound) {
+		super.writeEntityToNBT(compound);
+		compound.setByte("goblinTextureIndex", this.getTexture());
+		compound.setInteger("transformedTextureIndex", this.getTextureIndex());
+		compound.setString("transformationName", this.dataManager.get(TRANSFORMATION_NAME));
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound) {
+		super.readEntityFromNBT(compound);
+		this.setTexture(compound.getByte("goblinTextureIndex"));
+		this.setTextureIndex(compound.getInteger("transformedTextureIndex"));
+		this.dataManager.set(TRANSFORMATION_NAME, compound.getString("transformationName"));
 	}
 }

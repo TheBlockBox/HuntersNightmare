@@ -60,7 +60,6 @@ public class WerewolfHelper {
 			if (level >= 9) {
 				level = 8.99999D;
 			}
-
 			return level;
 		} else {
 			throw new WrongTransformationException("Given player is not a werewolf",

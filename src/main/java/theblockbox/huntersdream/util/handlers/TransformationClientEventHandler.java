@@ -67,7 +67,7 @@ public class TransformationClientEventHandler {
 			}
 		}
 	}
-
+	
 	@SubscribeEvent
 	public static void onRenderGameOverlayPost(RenderGameOverlayEvent.Post event) {
 		Minecraft mc = Minecraft.getMinecraft();

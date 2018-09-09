@@ -8,8 +8,8 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.enums.Transformations;
 
-@CapabilityInterface
 /** For player werewolves */
+@CapabilityInterface
 public interface IWerewolf {
 
 	public void setTimeSinceTransformation(int time);

@@ -11,9 +11,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.capabilities.CapabilityProvider;
+import theblockbox.huntersdream.capabilities.TransformationCreatureProvider;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -21,6 +23,7 @@ import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
@@ -32,6 +35,7 @@ public class CapabilityHandler {
 	public static final ResourceLocation INFECT_IN_TICKS_CAPABILITY = GeneralHelper.newResLoc("infectinticks");
 	public static final ResourceLocation INFECT_ON_NEXT_MOON = GeneralHelper.newResLoc("infectonnextmoon");
 	public static final ResourceLocation WEREWOLF = GeneralHelper.newResLoc("werewolf");
+	public static final ResourceLocation VAMPIRE = GeneralHelper.newResLoc("vampire");
 
 	@SubscribeEvent
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
@@ -40,9 +44,10 @@ public class CapabilityHandler {
 			event.addCapability(TRANSFORMATION_PLAYER_CAPABILITIY,
 					new CapabilityProvider<ITransformationPlayer>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
 			event.addCapability(WEREWOLF, new CapabilityProvider<IWerewolf>(CapabilitiesInit.CAPABILITY_WEREWOLF));
+			event.addCapability(VAMPIRE, new CapabilityProvider<IVampire>(CapabilitiesInit.CAPABILITY_VAMPIRE));
 		} else if (entity instanceof EntityVillager) {
-			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY, new CapabilityProvider<ITransformationCreature>(
-					CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE));
+			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY,
+					new TransformationCreatureProvider(Transformations.WEREWOLF, Transformations.VAMPIRE));
 		}
 
 		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD || entity instanceof EntityPlayer

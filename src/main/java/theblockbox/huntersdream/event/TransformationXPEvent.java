@@ -75,7 +75,8 @@ public class TransformationXPEvent extends PlayerEvent {
 	}
 
 	public enum TransformationXPSentReason {
-		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF), COMMAND, RESPAWN;
+		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF),
+		VAMPIRE_DRANK_BLOOD(Transformations.VAMPIRE), COMMAND, RESPAWN;
 
 		/** The transformations that can receive xp through this cause */
 		public final Transformations[] TRANSFORMATIONS;

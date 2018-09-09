@@ -1,5 +1,9 @@
 package theblockbox.huntersdream.util.handlers;
 
+import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.MobEffects;
@@ -21,6 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
@@ -128,10 +133,18 @@ public class RegistryHandler {
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
 		// register objects that are effective against a specific transformation
-		OreDictionaryCompat.getSilver().forEach(item -> new EffectiveAgainstTransformation(object -> {
-			return (object == item || (object instanceof ItemStack && ((ItemStack) object).getItem() == item));
+		new EffectiveAgainstTransformation(object -> {
+			if (object instanceof Item || object instanceof ItemStack) {
+				ItemStack stack = (object instanceof Item) ? new ItemStack((Item) object) : (ItemStack) object;
+				if (!stack.isEmpty()) {
+					int[] ids = OreDictionary.getOreIDs(stack);
+					return (ids.length > 0) ? IntStream.of(ids).mapToObj(OreDictionary::getOreName)
+							.anyMatch(name -> ArrayUtils.contains(OreDictionaryCompat.SILVER_NAMES, name)) : false;
+				}
+			}
+			return false;
 		}, true, new Transformations[] { Transformations.WEREWOLF },
-				new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS }));
+				new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS });
 
 		ArmorEffectiveAgainstTransformation.registerArmorSet("Silver",
 				new float[][] { new float[] { 1.35F }, new float[] { 1.85F }, new float[] { 1.65F },

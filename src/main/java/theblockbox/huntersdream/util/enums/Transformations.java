@@ -32,7 +32,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEn
 
 public enum Transformations {
 
-	// TODO: Add levelling system for VAMPIRE, WITCH, CLOCKWORKANDROID, HYBRID and
+	// TODO: Add levelling system for WITCH, CLOCKWORKANDROID, HYBRID and
 	// HUNTER
 	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
 	WEREWOLF(TransformationEntry.create("werewolf").setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)

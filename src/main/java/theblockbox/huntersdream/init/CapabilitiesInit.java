@@ -15,6 +15,9 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCr
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer.TransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer.TransformationPlayerStorage;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampire.Vampire;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampire.VampireStorage;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf.Werewolf;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf.WerewolfStorage;
@@ -30,6 +33,8 @@ public class CapabilitiesInit {
 	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = null;
 	@CapabilityInject(IWerewolf.class)
 	public static final Capability<IWerewolf> CAPABILITY_WEREWOLF = null;
+	@CapabilityInject(IVampire.class)
+	public static final Capability<IVampire> CAPABILITY_VAMPIRE = null;
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
@@ -40,5 +45,6 @@ public class CapabilitiesInit {
 		CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new InfectOnNextMoonStorage(),
 				InfectOnNextMoon::new);
 		CapabilityManager.INSTANCE.register(IWerewolf.class, new WerewolfStorage(), Werewolf::new);
+		CapabilityManager.INSTANCE.register(IVampire.class, new VampireStorage(), Vampire::new);
 	}
 }

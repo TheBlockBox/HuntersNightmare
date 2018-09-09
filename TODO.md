@@ -10,3 +10,4 @@
 - add more animation to werewolves
 - add entries to Hunter's Journal
 - finish Survival Tab
+- make that entities don't get knockback when vampire is drinking

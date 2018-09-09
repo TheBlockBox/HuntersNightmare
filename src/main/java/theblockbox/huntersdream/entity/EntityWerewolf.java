@@ -42,14 +42,14 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEn
  * A werewolf
  */
 public class EntityWerewolf extends EntityMob implements ITransformationEntityTransformed, IEntityAdditionalSpawnData {
-	/** the werewolf texture to be used */
-	private int textureIndex;
-	/** name of the entity the werewolf was before transformation */
-	private String untransformedEntityName;
 	public static final double SPEED = 0.5D;
 	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
 	public static final DataParameter<NBTTagCompound> EXTRA_DATA = EntityDataManager.createKey(EntityWerewolf.class,
 			DataSerializers.COMPOUND_TAG);
+	/** the werewolf texture to be used */
+	private int textureIndex;
+	/** name of the entity the werewolf was before transformation */
+	private String untransformedEntityName;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName) {
 		super(worldIn);
@@ -197,5 +197,21 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	public void setExtraData(NBTTagCompound extraData) {
 		this.dataManager.set(EXTRA_DATA, extraData);
+	}
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound) {
+		super.writeEntityToNBT(compound);
+		compound.setInteger("textureIndex", this.getTextureIndex());
+		compound.setString("untransformedEntityName", this.getUntransformedEntityName());
+		compound.setTag("untransformedEntityExtraData", this.getExtraData());
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound) {
+		super.readEntityFromNBT(compound);
+		this.setTextureIndex(compound.getInteger("textureIndex"));
+		this.untransformedEntityName = compound.getString("untransformedEntityName");
+		this.setExtraData((NBTTagCompound) compound.getTag("untransformedEntityExtraData"));
 	}
 }

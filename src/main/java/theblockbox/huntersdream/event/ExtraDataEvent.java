@@ -22,7 +22,11 @@ public class ExtraDataEvent extends Event {
 	/**
 	 * The extra data that is going to be saved/applied. If {@link #onDataSave} is
 	 * true, the data should be the exact same data gotten through the method
-	 * {@link EntityCreature#writeEntityToNBT(NBTTagCompound)}
+	 * {@link EntityCreature#writeEntityToNBT(NBTTagCompound)} except for the health
+	 * (the untransformed entity has the same percentage of health as the
+	 * transformed one to make things a bit more realistic) and other parameters
+	 * that have been changed by an event handler that received the event before the
+	 * current event handler
 	 */
 	private NBTTagCompound extraData;
 	/**

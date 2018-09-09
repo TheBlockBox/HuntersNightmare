@@ -292,7 +292,7 @@ public class WerewolfEventHandler {
 		EntityPlayer player = event.getEntityPlayer();
 		if (event.getTarget() instanceof EntityLivingBase) {
 			EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
-			if (!(interactedWith instanceof EntityWerewolf)) {
+			if (!(WerewolfHelper.transformedWerewolf(interactedWith))) {
 				Item item = event.getItemStack().getItem();
 				Transformations transformation = TransformationHelper.getTransformation(interactedWith);
 				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, item)) {

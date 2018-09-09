@@ -234,7 +234,6 @@ public class TransformationEventHandler {
 								TransformationEventReason.SPAWN);
 					}
 				} else if (creature instanceof EntityVillager) {
-					tc.setTransformationsNotImmuneTo(Transformations.WEREWOLF, Transformations.VAMPIRE);
 					if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
 						TransformationHelper.changeTransformationWhenPossible(creature, Transformations.WEREWOLF,
 								TransformationEventReason.SPAWN);

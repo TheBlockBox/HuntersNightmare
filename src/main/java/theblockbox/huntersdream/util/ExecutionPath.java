@@ -34,8 +34,23 @@ public class ExecutionPath extends Exception {
 
 	public String getAll() {
 		String toReturn = "";
+		String last = "";
+		int repetitions = 0;
 		for (int i = 0; i < getStackTrace().length; i++) {
-			toReturn += "\n" + "	at " + getFromIndex(i);
+			String str = "\n" + "	at " + getFromIndex(i);
+			if (!str.equals(last)) {
+				if (repetitions > 0) {
+					toReturn += "\n" + "	(times " + repetitions + ")";
+					repetitions = 0;
+				}
+				toReturn += str;
+			} else {
+				repetitions++;
+			}
+			last = str;
+		}
+		if (repetitions > 0) {
+			toReturn += "\n" + "	(times " + repetitions + ")";
 		}
 		return toReturn;
 	}

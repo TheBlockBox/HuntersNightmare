@@ -14,7 +14,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 
-public class StructureVillageComponent extends StructureVillagePieces.Village {
+public class StructureVillageComponent extends StructureVillagePieces.House1 {
 	protected ResourceLocation structureLocation;
 	protected int avgGroundLevel = -1;
 	protected int xSize;
@@ -51,8 +51,7 @@ public class StructureVillageComponent extends StructureVillagePieces.Village {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < zSize; j++) {
 				this.clearCurrentPositionBlocksUpwards(worldIn, i, ySize, j, boundingBoxIn);
-				this.replaceAirAndLiquidDownwards(worldIn, Blocks.COBBLESTONE.getDefaultState(), i, -1, j,
-						boundingBoxIn);
+				this.replaceAirAndLiquidDownwards(worldIn, Blocks.DIRT.getDefaultState(), i, -1, j, boundingBoxIn);
 			}
 		}
 		return true;

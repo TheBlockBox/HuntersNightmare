@@ -58,10 +58,7 @@ public class TransformationHelper {
 	 * method)
 	 */
 	public static ITransformationPlayer getCap(EntityPlayer player) {
-		if (player != null)
-			return player.getCapability(CAPABILITY_TRANSFORMATION_PLAYER, null);
-		else
-			throw new NullPointerException("Player is null");
+		return player.getCapability(CAPABILITY_TRANSFORMATION_PLAYER, null);
 	}
 
 	/**
