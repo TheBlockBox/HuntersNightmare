@@ -331,11 +331,10 @@ public class WerewolfEventHandler {
 		}
 	}
 
-	// TODO: Decide if wolfsbane players should also not be able to sleep
 	@SubscribeEvent
 	public static void onPlayerSleep(PlayerSleepInBedEvent event) {
 		EntityPlayer player = event.getEntityPlayer();
-		if (WerewolfHelper.transformedWerewolf(player)) {
+		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
 			event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
 			if (!player.world.isRemote)
 				player.sendStatusMessage(new TextComponentTranslation(Reference.MODID + ".werewolfNotAllowedToSleep"),

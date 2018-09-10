@@ -23,7 +23,6 @@ public class VampireEventHandler {
 			if (!player.world.isRemote && (player.ticksExisted - vampire.getTimeDrinking()) > 20) {
 				vampire.setTimeDrinking(player.ticksExisted);
 				VampireHelper.drinkBlood(player, (EntityLivingBase) event.getTarget());
-				System.out.println("Your blood: " + vampire.getBlood()); // TODO: Remove
 			}
 		}
 	}

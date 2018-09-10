@@ -27,6 +27,7 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
@@ -40,9 +41,11 @@ public enum Transformations {
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
 			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
 			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
-	VAMPIRE(TransformationEntry.create("vampire")), WITCH(TransformationEntry.create("witch")),
-	CLOCKWORKANDROID(TransformationEntry.create("clockworkandroid")), HYBRID(TransformationEntry.create("hybrid")),
-	HUNTER(TransformationEntry.create("hunter").setSupernatural(false));
+	VAMPIRE(TransformationEntry.create("vampire").setCalculateDamage(VampireHelper::calculateDamage)
+			.setCalculateProtection(VampireHelper::calculateProtection)
+			.setCalculateLevel(VampireHelper::calculateLevel)),
+	WITCH(TransformationEntry.create("witch")), CLOCKWORKANDROID(TransformationEntry.create("clockworkandroid")),
+	HYBRID(TransformationEntry.create("hybrid")), HUNTER(TransformationEntry.create("hunter").setSupernatural(false));
 
 	// when an entity has no transformation, use null
 	// (no transformation meaning not infectable)

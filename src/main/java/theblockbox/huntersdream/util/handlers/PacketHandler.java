@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.network.BloodMessage;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
 import theblockbox.huntersdream.network.PlaySoundMessage;
@@ -43,6 +44,7 @@ public class PacketHandler {
 		INSTANCE.registerMessage(TransformationTextureIndexMessage.Handler.class,
 				TransformationTextureIndexMessage.class, networkID++, Side.SERVER);
 		registerMessage(PlaySoundMessage.Handler.class, PlaySoundMessage.class);
+		registerMessage(BloodMessage.Handler.class, BloodMessage.class);
 	}
 
 	private static <REQ extends IMessage> void registerMessage(
@@ -102,6 +104,12 @@ public class PacketHandler {
 		PlaySoundMessage message = new PlaySoundMessage(sound, volume, pitch);
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(sendTo), message,
 				() -> INSTANCE.sendTo(message, sendTo));
+	}
+
+	public static void sendBloodMessage(EntityPlayerMP player) {
+		BloodMessage message = new BloodMessage(player);
+		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(player), message,
+				() -> INSTANCE.sendTo(message, player));
 	}
 
 	// TODO: Remove when new no control system is done

@@ -29,7 +29,12 @@ public class ConfigHandler {
 		public XPBarPosition xpBarPosition = XPBarPosition.BOTTOM_LEFT;
 
 		public static enum XPBarPosition {
-			DONT_RENDER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
+			@Config.LangKey(Reference.CFG_LANG + "dontRender")
+			DONT_RENDER, @Config.LangKey(Reference.CFG_LANG + "topLeft")
+			TOP_LEFT, @Config.LangKey(Reference.CFG_LANG + "topRight")
+			TOP_RIGHT, @Config.LangKey(Reference.CFG_LANG + "bottomLeft")
+			BOTTOM_LEFT, @Config.LangKey(Reference.CFG_LANG + "bottomRight")
+			BOTTOM_RIGHT;
 		}
 	}
 

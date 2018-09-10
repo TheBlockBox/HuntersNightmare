@@ -6,8 +6,7 @@
 - make different item for furniture
 - make that when you run against blocks in werewolf form, you destroy them
 - change effects you get every transformation level
-- make that you get faster every level
+- make that werewolves get faster every level
 - add more animation to werewolves
 - add entries to Hunter's Journal
 - finish Survival Tab
-- make that entities don't get knockback when vampire is drinking

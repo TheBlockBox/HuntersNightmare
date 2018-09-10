@@ -222,17 +222,6 @@ public class TransformationHelper {
 	}
 
 	/**
-	 * Returns the when the given entity is transformed and has is the given
-	 * transformation
-	 */
-	public static boolean transformedTransformation(EntityLivingBase entity, Transformations transformation) {
-		if (entity == null)
-			return false;
-		else
-			return (getTransformation(entity) == (transformation)) && getITransformation(entity).transformed();
-	}
-
-	/**
 	 * Returns true when the given entity can be infected with the given
 	 * infection/transformation
 	 */

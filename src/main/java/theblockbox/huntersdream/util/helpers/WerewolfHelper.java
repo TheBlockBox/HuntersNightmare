@@ -54,8 +54,9 @@ public class WerewolfHelper {
 			else
 				level += 1;
 
-			if (level >= 6 && !cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE))
+			if (level >= 6 && !cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE)) {
 				level = 5.99999D;
+			}
 
 			if (level >= 9) {
 				level = 8.99999D;
@@ -74,7 +75,10 @@ public class WerewolfHelper {
 	 */
 	public static float calculateUnarmedDamage(EntityLivingBase entity) {
 		if (TransformationHelper.getTransformation(entity) == Transformations.WEREWOLF) {
-			if (TransformationHelper.getITransformation(entity).transformed()) {
+			// if the werewolf is either not transformed or has something in its hands
+			// (shouldn't happen for players)
+			if (TransformationHelper.getITransformation(entity).transformed()
+					|| !entity.getActiveItemStack().isEmpty()) {
 				if (entity instanceof EntityPlayer) {
 					int level = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor();
 					float unarmedDamage = IntStream.of(1, 7, 9, 11, 12).filter(i -> level >= i).mapToLong(i -> 3).sum();
@@ -287,7 +291,9 @@ public class WerewolfHelper {
 	 * {@link TransformationHelper#transformedTransformation(EntityLivingBase, Transformations)}
 	 */
 	public static boolean transformedWerewolf(EntityLivingBase entity) {
-		return TransformationHelper.transformedTransformation(entity, Transformations.WEREWOLF);
+		ITransformation transformation = TransformationHelper.getITransformation(entity);
+		return (transformation != null) && (transformation.getTransformation() == Transformations.WEREWOLF)
+				&& transformation.transformed();
 	}
 
 	/** Shortcut method for getting the IWerewolf capability */

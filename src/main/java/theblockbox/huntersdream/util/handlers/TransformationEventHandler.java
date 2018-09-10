@@ -1,5 +1,7 @@
 package theblockbox.huntersdream.util.handlers;
 
+import java.util.stream.Stream;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
@@ -12,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -38,7 +39,6 @@ import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -70,7 +70,7 @@ public class TransformationEventHandler {
 					for (ItemStack stack : player.getEquipmentAndArmor()) {
 						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), stack))
 							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
-									cap.transformed() ? cap.getTransformation().getProtection(player) : 1);
+									cap.getTransformation().getProtection(player));
 					}
 
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -121,95 +121,76 @@ public class TransformationEventHandler {
 	public static void onEntityHurt(LivingHurtEvent event) {
 		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
 			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-			EntityLivingBase attacked = event.getEntityLiving();
-			ITransformation transformationAttacker = TransformationHelper.getITransformation(attacker);
+			EntityLivingBase hurt = event.getEntityLiving();
+			Transformations transformationAtt = TransformationHelper.getITransformation(attacker).getTransformation();
+			Transformations transformationHurt = TransformationHelper.getTransformation(hurt);
 
 			// make that player deals more damage
-			if (transformationAttacker != null) {
-				ItemStack weapon = attacker.getHeldItemMainhand();
-				if (weapon.isEmpty() && attacker instanceof EntityPlayer) {
-					event.setAmount(
-							event.getAmount() * transformationAttacker.getTransformation().getGeneralDamage(attacker));
+			if (transformationAtt != null) {
+				if (attacker instanceof EntityPlayer) {
+					event.setAmount(event.getAmount() * transformationAtt.getGeneralDamage(attacker));
 				}
 			}
 
-			if (attacked != null) {
+			if (hurt != null) {
 				if (attacker != null) {
-					// effective against undead
+					// add effectiveness against undead
 					if (attacker.getHeldItemMainhand() != null) {
-						if (attacked.isEntityUndead()
+						if (hurt.isEntityUndead()
 								&& EffectivenessHelper.effectiveAgainstUndead(attacker.getHeldItemMainhand())) {
 							event.setAmount(event.getAmount() + 2.5F);
 						}
 					}
 
-					// add thorns
-					Transformations transformation = TransformationHelper.getTransformation(attacker);
-					if (transformation != null) {
-						ItemStack[] armor = { attacked.getItemStackFromSlot(EntityEquipmentSlot.HEAD),
-								attacked.getItemStackFromSlot(EntityEquipmentSlot.CHEST),
-								attacked.getItemStackFromSlot(EntityEquipmentSlot.LEGS),
-								attacked.getItemStackFromSlot(EntityEquipmentSlot.FEET) };
-						for (ItemStack armorPart : armor) {
-							if (EffectivenessHelper.armorEffectiveAgainstTransformation(transformation, armorPart)) {
-								// Attack the werewolf back (thorns). The werewolf will get (the damage *
-								// effectiveness) / 20 (protection)
-								attacker.attackEntityFrom(DamageSource.causeThornsDamage(attacked),
-										(EffectivenessHelper.armorGetEffectivenessAgainst(transformation, armorPart)
-												* event.getAmount()));
-								event.setAmount(event.getAmount()
-										/ EffectivenessHelper.armorGetProtectionAgainst(transformation, armorPart));
-								armorPart.damageItem(4, attacked);
-							}
-						}
-					}
-
-					Transformations transformationAttacked = TransformationHelper.getTransformation(attacked);
-
 					// add protection
-					if (transformationAttacked != null) {
-						event.setAmount(event.getAmount() / transformationAttacked.getProtection(attacked));
+					if (transformationHurt != null) {
+						event.setAmount(event.getAmount() / transformationHurt.getProtection(hurt));
 					}
 
-					// add effective against
-					Object effectiveAgainst = null;
-					if (!event.getSource().damageType.equals("thorns")) {
-						ItemStack weapon = attacker.getHeldItemMainhand();
-						// when the attacker is supernatural,
-						if (transformationAttacker != null
-								&& transformationAttacker.getTransformation().isSupernatural()) {
-							// has no weapon and is effective against werewolf
-							if (weapon.isEmpty() && EffectivenessHelper
-									.effectiveAgainstTransformation(transformationAttacked, attacker)) {
-								effectiveAgainst = attacker;
-							} else if (!weapon.isEmpty() && EffectivenessHelper
-									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
-								effectiveAgainst = weapon;
-								return;
-							}
-						} else {
-							// when attacker is not supernatural
-
-							// first test if immediate source (for example arrow) is effective
-							Entity immediateSource = event.getSource().getImmediateSource();
-							if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
-									immediateSource)) {
-								effectiveAgainst = immediateSource;
-							} else if (!weapon.isEmpty() && EffectivenessHelper
-									.effectiveAgainstTransformation(transformationAttacked, weapon)) {
-								effectiveAgainst = weapon;
-							} else if (EffectivenessHelper.effectiveAgainstTransformation(transformationAttacked,
-									attacker)) {
-								effectiveAgainst = attacker;
-							}
-						}
-						if (effectiveAgainst != null) {
-							event.setAmount(event.getAmount() * EffectivenessHelper
-									.getEffectivenessAgainst(transformationAttacked, effectiveAgainst)
-									* transformationAttacked.getProtection(attacked));
-						}
-					}
+					addEffectiveAgainst(event, attacker, hurt, transformationHurt);
 				}
+			}
+		}
+	}
+
+	private static void addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase hurt,
+			Transformations transformationHurt) {
+		// don't apply when it was thorns damage
+		if (!event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME)) {
+			// first check if immediate source is effective, then weapon and then attacker
+			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getActiveItemStack(), attacker).filter(
+					obj -> obj != null && EffectivenessHelper.effectiveAgainstTransformation(transformationHurt, obj))
+					.findFirst().ifPresent(object -> {
+						event.setAmount(event.getAmount()
+								* EffectivenessHelper.getEffectivenessAgainst(transformationHurt, object)
+								* transformationHurt.getProtection(hurt));
+					});
+		}
+	}
+
+	// do this at the end so the real damage can be seen
+	@SubscribeEvent(priority = EventPriority.LOW)
+	public static void addThorns(LivingHurtEvent event) {
+		Entity source = event.getSource().getTrueSource();
+		EntityLivingBase hurt = event.getEntityLiving();
+		if (source != null && source instanceof EntityLivingBase && hurt != null) {
+			EntityLivingBase attacker = (EntityLivingBase) source;
+			Transformations transformationHurt = TransformationHelper.getTransformation(hurt);
+			if (transformationHurt != null) {
+				Stream.of(EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
+						EntityEquipmentSlot.FEET).map(hurt::getItemStackFromSlot)
+						.filter(is -> EffectivenessHelper.armorEffectiveAgainstTransformation(transformationHurt, is))
+						.forEach(armorPart -> {
+							// attack entity with thorns
+							attacker.attackEntityFrom(EffectivenessHelper.causeEffectivenessThornsDamage(hurt),
+									(EffectivenessHelper.armorGetEffectivenessAgainst(transformationHurt, armorPart)
+											* event.getAmount()));
+							// add protection
+							event.setAmount(event.getAmount()
+									/ EffectivenessHelper.armorGetProtectionAgainst(transformationHurt, armorPart));
+							// damage armor
+							armorPart.damageItem(4, hurt);
+						});
 			}
 		}
 	}

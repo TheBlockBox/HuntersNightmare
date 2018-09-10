@@ -127,6 +127,11 @@ huntersdream.config.server=Server
 huntersdream.config.common=Client and Server
 huntersdream.config.generateCastle=Generate Castle in Villages
 huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in Villages
+huntersdream.config.dontRender=Don't render
+huntersdream.config.topLeft=Top Left
+huntersdream.config.topRight=Top Right
+huntersdream.config.bottomLeft=Bottom Left
+huntersdream.config.bottomRight=Bottom Right
 
 # Transformations
 huntersdream:human=Human

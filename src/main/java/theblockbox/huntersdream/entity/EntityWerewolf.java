@@ -173,6 +173,11 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
+	public void setTextureIndex(int index) {
+		this.textureIndex = index;
+	}
+
+	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		ByteBufUtils.writeUTF8String(buffer, untransformedEntityName);
 		buffer.writeInt(textureIndex);

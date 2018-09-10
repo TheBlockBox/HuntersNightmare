@@ -10,18 +10,22 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
+import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -33,8 +37,10 @@ import theblockbox.huntersdream.util.handlers.ConfigHandler.Client.XPBarPosition
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
+import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
 
 /**
  * Handles events which are important for transforming
@@ -43,6 +49,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 public class TransformationClientEventHandler {
 	private static RenderLycantrophePlayer renderLycantrophePlayer = null;
 	private static RenderPlayer renderPlayerHand = null;
+	public static final ResourceLocation BLOOD_BAR = GeneralHelper.newResLoc("textures/gui/blood_bar.png");
 	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("black", false),
 			getHandTexture("brown", false), getHandTexture("white", false), getHandTexture("black", true),
 			getHandTexture("brown", true), getHandTexture("white", true) };
@@ -67,7 +74,7 @@ public class TransformationClientEventHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void onRenderGameOverlayPost(RenderGameOverlayEvent.Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
@@ -189,6 +196,53 @@ public class TransformationClientEventHandler {
 			GuiButton button = new GuiButtonSurvivalTab(event.getButtonList().size(), gui.getGuiLeft() + 2,
 					gui.getGuiTop() - 18);
 			event.getButtonList().add(button);
+		}
+	}
+
+	@SubscribeEvent
+	public static void onHungerBarRendered(RenderGameOverlayEvent.Pre event) {
+		Minecraft mc = Minecraft.getMinecraft();
+		EntityPlayerSP player = mc.player;
+		if ((event.getType() == ElementType.FOOD) && VampireHelper.isVampire(player)) {
+			IVampire vampire = VampireHelper.getIVampire(player);
+			event.setCanceled(true);
+			GuiIngameForge ingGUI = (GuiIngameForge) mc.ingameGUI;
+			GlStateManager.enableBlend();
+			{
+				mc.renderEngine.bindTexture(BLOOD_BAR);
+				int left = event.getResolution().getScaledWidth() / 2 + 91;
+				int top = event.getResolution().getScaledHeight() - GuiIngameForge.right_height;
+				GuiIngameForge.right_height += 10;
+				int blood = vampire.getBlood();
+
+				for (int i = 0; i < 10; ++i) {
+					int idx = i * 2 + 1;
+					int x = left - i * 8 - 9;
+					int y = top - 3;
+					int icon = 16;
+					byte background = 0;
+
+					if (player.isPotionActive(MobEffects.HUNGER)) {
+						icon += 36;
+						background = 13;
+					}
+
+					// none
+					ingGUI.drawTexturedModalRect(x, y, 16 + background * 9, 24, 9, 12);
+
+					if (idx < blood) {
+						// half
+						ingGUI.drawTexturedModalRect(x, y, icon + 36, 24, 9, 12);
+					} else if (idx == blood) {
+						// full
+						ingGUI.drawTexturedModalRect(x, y, icon + 45, 24, 9, 12);
+					}
+				}
+			}
+			GlStateManager.disableBlend();
+
+			// post new post event so gui rendering from other mods doesn't get canceled
+			MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(event, event.getType()));
 		}
 	}
 }

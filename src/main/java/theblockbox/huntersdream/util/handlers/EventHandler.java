@@ -31,6 +31,7 @@ public class EventHandler {
 			EntityPlayer player = event.player;
 			if (!player.world.isRemote) {
 				WerewolfHelper.resetTransformationStage((EntityPlayerMP) player);
+				PacketHandler.sendBloodMessage((EntityPlayerMP) player);
 			}
 			JsonReader reader = new JsonReader(new InputStreamReader(new URL(Reference.UPDATE_JSON).openStream()));
 			JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
