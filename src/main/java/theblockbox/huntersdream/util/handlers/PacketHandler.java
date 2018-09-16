@@ -19,7 +19,6 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.network.BloodMessage;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
-import theblockbox.huntersdream.network.PlaySoundMessage;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationReplyMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
@@ -28,6 +27,8 @@ import theblockbox.huntersdream.network.TransformationWerewolfNoControlMessage;
 import theblockbox.huntersdream.network.TransformationXPMessage;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.VampireFoodStats;
+import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -43,7 +44,6 @@ public class PacketHandler {
 		registerMessage(TransformationXPMessage.Handler.class, TransformationXPMessage.class);
 		INSTANCE.registerMessage(TransformationTextureIndexMessage.Handler.class,
 				TransformationTextureIndexMessage.class, networkID++, Side.SERVER);
-		registerMessage(PlaySoundMessage.Handler.class, PlaySoundMessage.class);
 		registerMessage(BloodMessage.Handler.class, BloodMessage.class);
 	}
 
@@ -81,6 +81,8 @@ public class PacketHandler {
 		cap.setLevel(cap.getTransformation().getLevel(applyOn));
 		TransformationMessage message = new TransformationMessage(cap.getXP(), cap.transformed(),
 				cap.getTransformation(), applyOn, cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
+		if (cap.getTransformation() == Transformations.VAMPIRE)
+			applyOn.foodStats = VampireFoodStats.INSTANCE;
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendTo(message, sendTo));
 	}
@@ -100,12 +102,6 @@ public class PacketHandler {
 				() -> INSTANCE.sendToServer(message));
 	}
 
-	public static void sendSoundMessage(EntityPlayerMP sendTo, String sound, int volume, int pitch) {
-		PlaySoundMessage message = new PlaySoundMessage(sound, volume, pitch);
-		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(sendTo), message,
-				() -> INSTANCE.sendTo(message, sendTo));
-	}
-
 	public static void sendBloodMessage(EntityPlayerMP player) {
 		BloodMessage message = new BloodMessage(player);
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(player), message,
@@ -123,7 +119,7 @@ public class PacketHandler {
 		NIGHT_OVER(new TransformationWerewolfNightOverMessage()), @Deprecated
 		NO_CONTROL(new TransformationWerewolfNoControlMessage()), XP(new TransformationXPMessage()),
 		TEXTURE_INDEX(new TransformationTextureIndexMessage(), SERVER),
-		TRANSFORMATION_REPLY(new TransformationReplyMessage()), PLAY_SOUND(new PlaySoundMessage()),
+		TRANSFORMATION_REPLY(new TransformationReplyMessage()),
 		TRANSFORMATION_ONE_CLIENT(new TransformationMessage(), CLIENT, false);
 
 		private final MessageBase<?> MESSAGE_BASE;
@@ -196,10 +192,6 @@ public class PacketHandler {
 				case TRANSFORMATION_REPLY:
 					sendMessageToPlayer(new TransformationReplyMessage((String) args[0], (EntityLivingBase) args[1],
 							(Item) args[2]), player);
-					break;
-
-				case PLAY_SOUND:
-					sendMessageToPlayer(new PlaySoundMessage((String) args[0], (int) args[1], (int) args[2]), player);
 					break;
 
 				case TRANSFORMATION_ONE_CLIENT:

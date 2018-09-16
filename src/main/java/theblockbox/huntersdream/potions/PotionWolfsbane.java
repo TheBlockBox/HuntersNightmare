@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.potions;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -15,8 +14,6 @@ import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class PotionWolfsbane extends PotionBase {
-	public static final HashMap<EntityLivingBase, Integer> APPLIED_AT_TIME = new HashMap<>();
-
 	public PotionWolfsbane() {
 		super(false, 14811307, 0, "wolfsbane");
 	}

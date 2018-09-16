@@ -24,6 +24,10 @@ public interface IVampire {
 		this.setBlood(this.getBlood() + 1);
 	}
 
+	default public void decrementBlood() {
+		this.setBlood(this.getBlood() - 1);
+	}
+
 	public int getTimeDrinking();
 
 	public void setTimeDrinking(int time);

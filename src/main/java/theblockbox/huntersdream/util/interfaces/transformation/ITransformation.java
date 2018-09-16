@@ -1,6 +1,8 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
+import net.minecraft.entity.EntityLivingBase;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
  * This interface is for entites that can transform
@@ -31,5 +33,20 @@ public interface ITransformation {
 		if (!textureIndexInBounds()) {
 			this.setTextureIndex(this.getTransformation().getRandomTextureIndex());
 		}
+	}
+
+	/**
+	 * If the entity can change transformation. It's recommended to prefer
+	 * {@link TransformationHelper#canChangeTransformation(EntityLivingBase)} or
+	 * {@link TransformationHelper#canChangeTransformationOnInfection(EntityLivingBase)}
+	 * over this method. This method is NOT used to determine if an entity can
+	 * transform, but if its transformation can change
+	 * 
+	 * @return Returns true if the transformation is changeable without accounting
+	 *         for infection
+	 */
+	default public boolean isTransformationChangeable() {
+		return this.getTransformation() != null && (this.getTransformation() == Transformations.HUMAN
+				|| this.getTransformation() == Transformations.WEREWOLF);
 	}
 }

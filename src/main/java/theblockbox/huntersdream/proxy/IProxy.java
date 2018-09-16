@@ -3,6 +3,7 @@ package theblockbox.huntersdream.proxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.util.HuntersJournalPage;
 
 public interface IProxy {
 	public void registerItemRenderer(Item item, int meta, String id);
@@ -20,4 +21,6 @@ public interface IProxy {
 	}
 
 	public EntityPlayer getPlayer();
+
+	public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages);
 }

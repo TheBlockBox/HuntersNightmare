@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -31,6 +32,7 @@ import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSent
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
@@ -155,7 +157,6 @@ public class WerewolfEventHandler {
 					.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
 
 			if (nextStage > 6 || nextStage < 0) {
-				PacketHandler.sendSoundMessage(player, "howl", 1_000_000_000, 1);
 				werewolf.setTimeSinceTransformation(-1);
 				werewolf.setTransformationStage(0);
 				Main.getLogger().warn(
@@ -197,7 +198,7 @@ public class WerewolfEventHandler {
 
 		switch (werewolf.getTransformationStage()) {
 		case 1:
-			PacketHandler.sendSoundMessage((EntityPlayerMP) player, "heartbeat", 100, 1);
+			player.world.playSound(null, player.getPosition(), SoundInit.HEART_BEAT, SoundCategory.PLAYERS, 100, 1);
 			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 550, 1));
 			player.addPotionEffect(new PotionEffect(MobEffects.POISON, 550, 0));
 			break;
@@ -216,7 +217,8 @@ public class WerewolfEventHandler {
 			// nothing happens
 			break;
 		case 6:
-			PacketHandler.sendSoundMessage((EntityPlayerMP) player, "howl", 1_000_000_000, 1);
+			player.world.playSound(null, player.getPosition(), SoundInit.WEREWOLF_HOWLING, SoundCategory.PLAYERS, 100,
+					1);
 			werewolf.setTimeSinceTransformation(-1);
 			werewolf.setTransformationStage(0);
 			TransformationHelper.transform(player, true, TransformingEventReason.ENVIROMENT);
@@ -267,7 +269,7 @@ public class WerewolfEventHandler {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 			Item item = event.getStack().getItem();
-			if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), item)) {
+			if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), event.getStack())) {
 				// now it is ensured that the item is effective against the player
 				String msg = "transformations." + cap.getTransformation().toString() + ".";
 
@@ -295,7 +297,7 @@ public class WerewolfEventHandler {
 			if (!(WerewolfHelper.transformedWerewolf(interactedWith))) {
 				Item item = event.getItemStack().getItem();
 				Transformations transformation = TransformationHelper.getTransformation(interactedWith);
-				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, item)) {
+				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, event.getItemStack())) {
 					if (!player.world.isRemote) {
 						String msg = "transformations." + transformation.toString() + ".";
 						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "tp.touched",

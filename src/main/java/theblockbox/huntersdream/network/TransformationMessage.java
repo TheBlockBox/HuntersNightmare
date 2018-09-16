@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.HuntersJournalPage;
+import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -90,6 +91,8 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 					cap.setLevel(message.level);
 					cap.setRituals(message.rituals);
 					cap.setUnlockedPages(message.pages);
+					if (message.transformation == Transformations.VAMPIRE)
+						player.foodStats = VampireFoodStats.INSTANCE;
 				});
 			}
 			return null;

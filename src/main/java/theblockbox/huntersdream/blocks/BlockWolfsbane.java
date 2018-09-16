@@ -7,17 +7,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class BlockWolfsbane extends BlockCropBase {
 	public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 4);
 
 	public static final AxisAlignedBB[] WOLFSBANE_AABB = {
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(2), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(6), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(9), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(13), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, GeneralHelper.getSixteenth(15), 1.0D) };
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(2), 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(6), 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(9), 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(13), 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(15), 1.0D) };
 
 	private BlockWolfsbane(String name) {
 		super(name, ItemInit.WOLFSBANE_FLOWER);
@@ -47,5 +46,9 @@ public class BlockWolfsbane extends BlockCropBase {
 	@Override
 	public int getMaxAge() {
 		return 4;
+	}
+
+	private static double getSixteenth(double numerator) {
+		return numerator / 16.0D;
 	}
 }

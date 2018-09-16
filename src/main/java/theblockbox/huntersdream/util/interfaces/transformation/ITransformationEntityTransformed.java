@@ -36,6 +36,12 @@ public interface ITransformationEntityTransformed extends ITransformation {
 		throw new UnsupportedOperationException("This creature's transformation is already determined");
 	}
 
+	@Override
+	default boolean isTransformationChangeable() {
+		// werewolf can't change transformation because it's always a werewolf
+		return false;
+	}
+
 	/** Returns the untransformed entity's extra data */
 	public NBTTagCompound getExtraData();
 
@@ -126,12 +132,9 @@ public interface ITransformationEntityTransformed extends ITransformation {
 	}
 
 	public static void applyExtraData(EntityCreature entity, NBTTagCompound extraData, EntityCreature otherEntity) {
-		if (entity instanceof EntityCreature) {
-			extraData.setFloat("Health",
-					entity.getMaxHealth() / (otherEntity.getMaxHealth() / otherEntity.getHealth()));
-			ExtraDataEvent extraDataEvent = new ExtraDataEvent(entity, extraData, false);
-			MinecraftForge.EVENT_BUS.post(extraDataEvent);
-			entity.readEntityFromNBT(extraDataEvent.getExtraData());
-		}
+		extraData.setFloat("Health", entity.getMaxHealth() / (otherEntity.getMaxHealth() / otherEntity.getHealth()));
+		ExtraDataEvent extraDataEvent = new ExtraDataEvent(entity, extraData, false);
+		MinecraftForge.EVENT_BUS.post(extraDataEvent);
+		entity.readEntityFromNBT(extraDataEvent.getExtraData());
 	}
 }

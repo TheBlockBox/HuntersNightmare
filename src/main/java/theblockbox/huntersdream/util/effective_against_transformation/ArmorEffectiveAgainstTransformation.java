@@ -1,25 +1,28 @@
 package theblockbox.huntersdream.util.effective_against_transformation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
-public class ArmorEffectiveAgainstTransformation implements IEffective {
-	public static final List<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new ArrayList<>();
-	private Predicate<ItemStack> isForArmor;
+public class ArmorEffectiveAgainstTransformation {
+	public static final Set<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new HashSet<>();
+	private final Predicate<ItemStack> isForArmor;
 	public static final float DEFAULT_PROTECTION = 1.5F;
 	public static final float DEFAULT_EFFECTIVENESS = 2;
-	private Transformations[] effectiveAgainst;
-	private float[] thorns;
-	private float[] protection;
+	/**
+	 * EnumMap holding the thorns and protection values against a specific
+	 * transformation. First index in the array are the thorns values, second are
+	 * the protection values
+	 */
+	private final EnumMap<Transformations, float[]> effectivenessMap;
 
 	/**
 	 * Creates a new ArmorEffectiveAgainstTransformation object from the given
@@ -41,19 +44,12 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 	 *                         the same index as the transformation will be used)
 	 */
 	public ArmorEffectiveAgainstTransformation(@Nonnull Predicate<ItemStack> isForArmor,
-			@Nonnull Transformations[] effectiveAgainst, @Nonnull float[] thorns, @Nonnull float[] protection) {
-		this.effectiveAgainst = effectiveAgainst;
-		this.thorns = thorns;
-		this.protection = protection;
+			EnumMap<Transformations, float[]> effectivenessMap) {
 		this.isForArmor = isForArmor;
+		this.effectivenessMap = effectivenessMap;
 
-		if (thorns.length != effectiveAgainst.length || protection.length != effectiveAgainst.length) {
-			throw new IllegalArgumentException(
-					"The array of thorns values and the array of protection values need to have the same length as the array of transformations");
-		}
-
-		if (effectiveAgainst.length < 1) {
-			throw new IllegalArgumentException("The given arrays have to contain at least one object");
+		if (effectivenessMap.isEmpty()) {
+			throw new IllegalArgumentException("The given map has to contain at least one object");
 		}
 
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
@@ -64,8 +60,14 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 
 	public ArmorEffectiveAgainstTransformation(@Nonnull Predicate<ItemStack> isForArmor,
 			@Nonnull Transformations effectiveAgainst, @Nonnull float thorns, @Nonnull float protection) {
-		this(isForArmor, new Transformations[] { effectiveAgainst }, new float[] { thorns },
-				new float[] { protection });
+		this(isForArmor, newEnumMap(effectiveAgainst, thorns, protection));
+	}
+
+	private static EnumMap<Transformations, float[]> newEnumMap(@Nonnull Transformations effectiveAgainst, float thorns,
+			float protection) {
+		EnumMap<Transformations, float[]> map = new EnumMap<>(Transformations.class);
+		map.put(effectiveAgainst, new float[] { thorns, protection });
+		return map;
 	}
 
 	public boolean isForArmor(ItemStack armor) {
@@ -73,16 +75,19 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 	}
 
 	public float getArmorEffectivenessAgainstTransformation(Transformations transformation) {
-		return this.thorns[this.getTransformationArrayIndex(transformation)];
+		return this.effectivenessMap.get(transformation)[0];
 	}
 
 	public float getProtectionAgainstTransformation(Transformations transformation) {
-		return this.protection[this.getTransformationArrayIndex(transformation)];
+		return this.effectivenessMap.get(transformation)[1];
 	}
 
-	@Override
-	public Transformations[] transformations() {
-		return this.effectiveAgainst;
+	public boolean effectiveAgainst(Transformations transformation) {
+		return this.effectivenessMap.containsKey(transformation);
+	}
+
+	public Set<Transformations> transformations() {
+		return this.effectivenessMap.keySet();
 	}
 
 	public static ArmorEffectiveAgainstTransformation getFromArmor(ItemStack armor) {
@@ -102,34 +107,33 @@ public class ArmorEffectiveAgainstTransformation implements IEffective {
 	 *                         ore dict. For example if you use "Silver", the method
 	 *                         will search for "helmetSilver", "chestplateSilver",
 	 *                         "leggingsSilver" and "bootsSilver" in the ore dict
-	 * @param thorns           An array of float arrays with a size of 4. Index 0
-	 *                         are the thorns values for the helmet, 1 for the
-	 *                         chestplate, 2 for the leggings and 3 for the boots.
-	 *                         For more info look below in the "see" chapter
-	 * @param protection       An array of float arrays with a size of 4. Index 0
-	 *                         are the protection values for the helmet, 1 for the
-	 *                         chestplate, 2 for the leggings and 3 for the boots.
-	 *                         For more info look below in the "see" chapter
+	 * @param effectiveness    A three dimensional array of floats. The first
+	 *                         dimension needs to have a length of four (one for
+	 *                         every armor part). The second dimensions length has
+	 *                         to be the same as the length of the effectiveAgainst.
+	 *                         The last array has to have a size of 2. Index 0 is
+	 *                         the thorns value, the second one the protection value
 	 * @param effectiveAgainst An array of transformations against which every armor
 	 *                         part should be effective
-	 * @return Returns an array of an ArmorEffectiveAgainstTransformation array. The
-	 *         array holds all the registered armor first index are all helmets, the
-	 *         second one are all the chestplates, third leggings and fourth boots.
+	 * @return Returns an array of ArmorEffectiveAgainstTransformation objects with
+	 *         a length of four. Index 0 is the one for the helmets, 1 for the
+	 *         chestplates, 2 for the leggings and 3 for the boots
 	 */
-	public static ArmorEffectiveAgainstTransformation[][] registerArmorSet(String armorName, float[][] thorns,
-			float[][] protection, Transformations... effectiveAgainst) {
-		if (thorns.length != 4 || protection.length != 4) {
-			throw new IllegalArgumentException("The given two float array arrays' size has to be 4");
+	public static ArmorEffectiveAgainstTransformation[] registerArmorSet(String armorName, float[][][] effectiveness,
+			Transformations... effectiveAgainst) {
+		if (effectiveness.length != 4) {
+			throw new IllegalArgumentException(
+					"The size of the given three dimensional float array's first dimension has to be 4");
 		}
-		ArmorEffectiveAgainstTransformation[][] toReturn = new ArmorEffectiveAgainstTransformation[4][];
+		ArmorEffectiveAgainstTransformation[] toReturn = new ArmorEffectiveAgainstTransformation[4];
 		for (int i = 0; i < 4; i++) {
-			final ItemStack[] stacks = OreDictionary.getOres(OreDictionaryCompat.ARMOR_PART_NAMES[i] + armorName)
-					.toArray(new ItemStack[0]);
-			toReturn[i] = new ArmorEffectiveAgainstTransformation[stacks.length];
-			for (int j = 0; j < stacks.length; j++) {
-				toReturn[i][j] = new ArmorEffectiveAgainstTransformation(
-						GeneralHelper.getItemStackItemsEqual(stacks[j]), effectiveAgainst, thorns[i], protection[i]);
+			EnumMap<Transformations, float[]> effectivenessMap = new EnumMap<>(Transformations.class);
+			for (int j = 0; j < effectiveAgainst.length; j++) {
+				effectivenessMap.put(effectiveAgainst[j], effectiveness[i][j]);
 			}
+			toReturn[i] = new ArmorEffectiveAgainstTransformation(
+					GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.ARMOR_PART_NAMES[i] + armorName),
+					effectivenessMap);
 		}
 		return toReturn;
 	}

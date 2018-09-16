@@ -2,6 +2,7 @@ package theblockbox.huntersdream.proxy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
 public class ServerProxy implements IProxy {
@@ -32,5 +33,9 @@ public class ServerProxy implements IProxy {
 	@Override
 	public EntityPlayer getPlayer() {
 		return null;
+	}
+
+	@Override
+	public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
 	}
 }

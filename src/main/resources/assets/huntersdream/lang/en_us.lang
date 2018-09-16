@@ -103,7 +103,7 @@ transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf wi
 transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
 tile.huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
 tile.huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
-tile.huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
+huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
 item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
 item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
@@ -145,6 +145,7 @@ huntersdream:hunter=Hunter
 # Sounds (Subtitles)
 huntersdream.transformation.heartbeat=Heartbeat of a werewolf
 huntersdream.transformation.werewolf.howling=Howling werewolf
+huntersdream.transformation.vampire.gulp=Vampire drinking blood
 
 # Hunter's Journal
 huntersdream.hunters_journal.test.title=Test Page

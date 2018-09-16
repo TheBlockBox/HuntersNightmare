@@ -50,9 +50,8 @@ public class BloodMessage extends MessageBase<BloodMessage> {
 		public IMessage onMessageReceived(BloodMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					VampireHelper
-							.getIVampire((EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player))
-							.setBlood(message.blood);
+					EntityPlayer player = (EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player);
+					VampireHelper.getIVampire(player).setBlood(message.blood);
 				});
 			}
 			return null;

@@ -156,6 +156,11 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
+	public boolean notImmuneToTransformation(Transformations transformation) {
+		return (transformation == Transformations.VAMPIRE) || (transformation == Transformations.WEREWOLF);
+	}
+
+	@Override
 	public Transformations getTransformation() {
 		return Transformations.fromName(this.dataManager.get(TRANSFORMATION_NAME));
 	}
@@ -235,15 +240,15 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 			if (entityIn instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) entityIn;
 				ItemStack heldItemStack = this.getHeldItemMainhand();
-				ItemStack itemstack1 = player.isHandActive() ? player.getActiveItemStack() : ItemStack.EMPTY;
+				ItemStack activeItemStack = player.isHandActive() ? player.getActiveItemStack() : ItemStack.EMPTY;
 
-				if (!heldItemStack.isEmpty() && !itemstack1.isEmpty()
-						&& heldItemStack.getItem().canDisableShield(heldItemStack, itemstack1, player, this)
-						&& itemstack1.getItem().isShield(itemstack1, player)) {
+				if (!heldItemStack.isEmpty() && !activeItemStack.isEmpty()
+						&& heldItemStack.getItem().canDisableShield(heldItemStack, activeItemStack, player, this)
+						&& activeItemStack.getItem().isShield(activeItemStack, player)) {
 					float f1 = 0.25F + (float) EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
 
 					if (this.rand.nextFloat() < f1) {
-						player.getCooldownTracker().setCooldown(itemstack1.getItem(), 100);
+						player.getCooldownTracker().setCooldown(activeItemStack.getItem(), 100);
 						this.world.setEntityState(player, (byte) 30);
 					}
 				}
@@ -266,8 +271,11 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		this.setTexture(compound.getByte("goblinTextureIndex"));
-		this.setTextureIndex(compound.getInteger("transformedTextureIndex"));
-		this.dataManager.set(TRANSFORMATION_NAME, compound.getString("transformationName"));
+		if (compound.hasKey("goblinTextureIndex"))
+			this.setTexture(compound.getByte("goblinTextureIndex"));
+		if (compound.hasKey("transformedTextureIndex"))
+			this.setTextureIndex(compound.getInteger("transformedTextureIndex"));
+		if (compound.hasKey("transformationName"))
+			this.dataManager.set(TRANSFORMATION_NAME, compound.getString("transformationName"));
 	}
 }

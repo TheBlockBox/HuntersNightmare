@@ -4,7 +4,6 @@ import java.util.stream.IntStream;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -78,7 +77,7 @@ public class WerewolfHelper {
 			// if the werewolf is either not transformed or has something in its hands
 			// (shouldn't happen for players)
 			if (TransformationHelper.getITransformation(entity).transformed()
-					|| !entity.getActiveItemStack().isEmpty()) {
+					|| !entity.getHeldItemMainhand().isEmpty()) {
 				if (entity instanceof EntityPlayer) {
 					int level = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor();
 					float unarmedDamage = IntStream.of(1, 7, 9, 11, 12).filter(i -> level >= i).mapToLong(i -> 3).sum();
@@ -235,7 +234,7 @@ public class WerewolfHelper {
 				int percentage = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
 				return (percentage > 100) ? 100 : percentage;
 			} else if (entity instanceof EntityLivingBase) {
-				return 50;
+				return 0; // TODO: Set to 50
 			} else {
 				Main.getLogger().error("Found entity that can infect but has no infection percantage... Using 25%");
 				return 50;
@@ -312,7 +311,7 @@ public class WerewolfHelper {
 	 * 
 	 * @param entity The entity to be transformed
 	 */
-	public static EntityLivingBase toWerewolfWhenNight(EntityLiving entity) {
+	public static EntityWerewolf toWerewolfWhenNight(EntityCreature entity) {
 		World world = entity.world;
 		if (!world.isRemote) {
 			if (WerewolfHelper.isWerewolfTime(entity)) {
@@ -321,7 +320,7 @@ public class WerewolfHelper {
 						ITransformation transformation = (ITransformation) entity;
 						if (transformation.getTransformation() == Transformations.WEREWOLF) {
 							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
-									entity.getClass().getName());
+									entity.getClass().getName(), TransformationHelper.postExtraDataEvent(entity, true));
 							return werewolf;
 						} else {
 							throw new WrongTransformationException("Entity is not a werewolf",
@@ -334,7 +333,8 @@ public class WerewolfHelper {
 							if (tc != null) {
 								if (tc.getTransformation() == Transformations.WEREWOLF) {
 									EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
-											"$bycap" + entity.getClass().getName());
+											"$bycap" + entity.getClass().getName(),
+											TransformationHelper.postExtraDataEvent(entity, true));
 									return werewolf;
 								} else {
 									throw new WrongTransformationException("Entity is not a werewolf",

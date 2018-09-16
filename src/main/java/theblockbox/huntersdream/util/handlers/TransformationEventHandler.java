@@ -119,11 +119,11 @@ public class TransformationEventHandler {
 
 	@SubscribeEvent
 	public static void onEntityHurt(LivingHurtEvent event) {
+		EntityLivingBase hurt = event.getEntityLiving();
+		Transformations transformationHurt = TransformationHelper.getTransformation(hurt);
 		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
 			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-			EntityLivingBase hurt = event.getEntityLiving();
-			Transformations transformationAtt = TransformationHelper.getITransformation(attacker).getTransformation();
-			Transformations transformationHurt = TransformationHelper.getTransformation(hurt);
+			Transformations transformationAtt = TransformationHelper.getTransformation(attacker);
 
 			// make that player deals more damage
 			if (transformationAtt != null) {
@@ -133,6 +133,7 @@ public class TransformationEventHandler {
 			}
 
 			if (hurt != null) {
+
 				if (attacker != null) {
 					// add effectiveness against undead
 					if (attacker.getHeldItemMainhand() != null) {
@@ -142,14 +143,15 @@ public class TransformationEventHandler {
 						}
 					}
 
-					// add protection
-					if (transformationHurt != null) {
-						event.setAmount(event.getAmount() / transformationHurt.getProtection(hurt));
-					}
-
 					addEffectiveAgainst(event, attacker, hurt, transformationHurt);
 				}
 			}
+		}
+
+		// add protection
+		if (transformationHurt != null
+				&& !(event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME))) {
+			event.setAmount(event.getAmount() / transformationHurt.getProtection(hurt));
 		}
 	}
 
@@ -158,7 +160,7 @@ public class TransformationEventHandler {
 		// don't apply when it was thorns damage
 		if (!event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME)) {
 			// first check if immediate source is effective, then weapon and then attacker
-			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getActiveItemStack(), attacker).filter(
+			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker).filter(
 					obj -> obj != null && EffectivenessHelper.effectiveAgainstTransformation(transformationHurt, obj))
 					.findFirst().ifPresent(object -> {
 						event.setAmount(event.getAmount()
@@ -173,24 +175,31 @@ public class TransformationEventHandler {
 	public static void addThorns(LivingHurtEvent event) {
 		Entity source = event.getSource().getTrueSource();
 		EntityLivingBase hurt = event.getEntityLiving();
-		if (source != null && source instanceof EntityLivingBase && hurt != null) {
+		if ((!event.getSource().getDamageType().equals(EffectivenessHelper.THORNS_DAMAGE_NAME))
+				&& source instanceof EntityLivingBase && hurt != null) {
 			EntityLivingBase attacker = (EntityLivingBase) source;
-			Transformations transformationHurt = TransformationHelper.getTransformation(hurt);
-			if (transformationHurt != null) {
-				Stream.of(EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
-						EntityEquipmentSlot.FEET).map(hurt::getItemStackFromSlot)
-						.filter(is -> EffectivenessHelper.armorEffectiveAgainstTransformation(transformationHurt, is))
-						.forEach(armorPart -> {
-							// attack entity with thorns
-							attacker.attackEntityFrom(EffectivenessHelper.causeEffectivenessThornsDamage(hurt),
-									(EffectivenessHelper.armorGetEffectivenessAgainst(transformationHurt, armorPart)
-											* event.getAmount()));
-							// add protection
-							event.setAmount(event.getAmount()
-									/ EffectivenessHelper.armorGetProtectionAgainst(transformationHurt, armorPart));
-							// damage armor
-							armorPart.damageItem(4, hurt);
-						});
+			Transformations transformationAttacker = TransformationHelper.getTransformation(attacker);
+			if (transformationAttacker != null) {
+				ItemStack[] stacks = Stream
+						.of(EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
+								EntityEquipmentSlot.FEET)
+						.map(hurt::getItemStackFromSlot).filter(is -> EffectivenessHelper
+								.armorEffectiveAgainstTransformation(transformationAttacker, is))
+						.toArray(ItemStack[]::new);
+				if (stacks.length > 0) {
+					float thorns = 0;
+					float protection = 0;
+					for (ItemStack stack : stacks) {
+						thorns += EffectivenessHelper.armorGetEffectivenessAgainst(transformationAttacker, stack);
+						protection += EffectivenessHelper.armorGetProtectionAgainst(transformationAttacker, stack);
+						stack.damageItem(4, hurt);
+					}
+					float thorn = thorns * event.getAmount();
+					if (thorns > 0)
+						attacker.attackEntityFrom(EffectivenessHelper.causeEffectivenessThornsDamage(hurt), thorn);
+					if (protection > 0)
+						event.setAmount(event.getAmount() / protection);
+				}
 			}
 		}
 	}

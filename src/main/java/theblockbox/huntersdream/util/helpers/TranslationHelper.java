@@ -1,9 +1,9 @@
 package theblockbox.huntersdream.util.helpers;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
@@ -70,25 +70,19 @@ public class TranslationHelper {
 
 	// argument is item because only items and itemblocks have tooltips
 	public static void addEffectiveAgainstTransformationTooltips(ItemStack stack, List<String> tooltips) {
-		Item item = stack.getItem();
-		if (EffectivenessHelper.effectiveAgainstSomeTransformation(item)) {
-			EffectiveAgainstTransformation eat = EffectivenessHelper.getEAT(item);
+		if (EffectivenessHelper.effectiveAgainstSomeTransformation(stack)) {
+			EffectiveAgainstTransformation<ItemStack> eat = EffectivenessHelper.getEAT(stack);
 			if (eat.effectiveAgainstUndead()) {
-				tooltips.add(
-						I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-								getAsLocalizedList(
-										GeneralHelper
-												.<Object>combineArraysToList(eat.transformations(),
-														new String[] { Reference.MODID + ".undead" })
-												.toArray(new Object[0]))));
+				tooltips.add(I18n.format(Reference.MODID + ".effectiveAgainst.tooltip", getAsLocalizedList(Stream
+						.concat(eat.transformations().stream(), Stream.of(Reference.MODID + ".undead")).toArray())));
 			} else {
 				tooltips.add(I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-						getAsLocalizedList(eat.transformations())));
+						getAsLocalizedList(eat.transformations().toArray())));
 			}
 		}
 		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(stack)) {
 			tooltips.add(I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
-					getAsLocalizedList(EffectivenessHelper.getAEAT(stack).transformations())));
+					getAsLocalizedList(EffectivenessHelper.getAEAT(stack).transformations().toArray())));
 		}
 	}
 }

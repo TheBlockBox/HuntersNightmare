@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.gui;
 
+import java.awt.Color;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
@@ -9,7 +10,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
@@ -45,13 +45,12 @@ public class GuiHuntersJournal extends GuiScreen {
 
 	public void drawInBounds(int x, int y, int width, int height, HuntersJournalPage page) {
 		// title
-		this.drawCenteredString(this.fontRenderer, page.getTitle(), x + (width / 2), y,
-				TextFormatting.BLUE.getColorIndex());
+		this.drawCenteredString(this.fontRenderer, page.getTitle(), x + (width / 2), y, Color.BLUE.getRGB());
 
 		y += (page.hasImage() ? 75 : 10);
 
 		// description
-		this.fontRenderer.drawSplitString(page.getDescription(), x, y, width, TextFormatting.BLUE.getColorIndex());
+		this.fontRenderer.drawSplitString(page.getDescription(), x, y, width, Color.BLACK.getRGB());
 	}
 
 	@Override

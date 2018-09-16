@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,9 +77,7 @@ public interface ITransformationPlayer extends ITransformation {
 		private int textureIndex = 0;
 		private double level = 0;
 		/** Rituals that the player has done */
-		// private Rituals[] rituals = new Rituals[0];
-		// private HuntersJournalPage[] unlockedPages;
-		private Set<Rituals> rituals = new HashSet<>();
+		private Set<Rituals> rituals = EnumSet.noneOf(Rituals.class);
 		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
 
 		@Override

@@ -1,5 +1,8 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -20,12 +23,7 @@ public interface ITransformationCreature extends ITransformation {
 		throw new UnsupportedOperationException("Can't set transformations not immune to");
 	}
 
-	default public boolean notImmuneToTransformation(Transformations transformation) {
-		for (Transformations t : getTransformationsNotImmuneTo())
-			if (t == transformation)
-				return true;
-		return false;
-	}
+	public boolean notImmuneToTransformation(Transformations transformation);
 
 	@Override
 	default boolean transformed() {
@@ -38,7 +36,7 @@ public interface ITransformationCreature extends ITransformation {
 	}
 
 	public static class TransformationCreature implements ITransformationCreature {
-		private Transformations[] transformationsNotImmuneTo = new Transformations[] { Transformations.HUMAN };
+		private Set<Transformations> transformationsNotImmuneTo = EnumSet.of(Transformations.HUMAN);
 		private Transformations transformation = Transformations.HUMAN;
 		private int textureIndex = 0;
 
@@ -49,12 +47,12 @@ public interface ITransformationCreature extends ITransformation {
 
 		@Override
 		public Transformations[] getTransformationsNotImmuneTo() {
-			return this.transformationsNotImmuneTo;
+			return this.transformationsNotImmuneTo.toArray(new Transformations[0]);
 		}
 
 		@Override
 		public void setTransformationsNotImmuneTo(Transformations... transformationsNotImmuneTo) {
-			this.transformationsNotImmuneTo = transformationsNotImmuneTo;
+			this.transformationsNotImmuneTo = EnumSet.of(Transformations.HUMAN, transformationsNotImmuneTo);
 		}
 
 		@Override
@@ -70,6 +68,11 @@ public interface ITransformationCreature extends ITransformation {
 		@Override
 		public void setTextureIndex(int textureIndex) {
 			this.textureIndex = textureIndex;
+		}
+
+		@Override
+		public boolean notImmuneToTransformation(Transformations transformation) {
+			return this.transformationsNotImmuneTo.contains(transformation);
 		}
 	}
 

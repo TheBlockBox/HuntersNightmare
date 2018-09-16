@@ -10,16 +10,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.util.ExecutionPath;
@@ -174,29 +171,19 @@ public enum Transformations {
 	public void transformCreatureWhenPossible(@Nonnull EntityCreature creature) {
 		if (this.ENTRY.transformCreature != null) {
 			if (creature == null)
-				throw new NullPointerException("The given parameter creature is null");
+				throw new NullPointerException("The given \"parameter\" creature is null");
 			else if (creature instanceof ITransformationEntityTransformed)
 				throw new IllegalArgumentException("The given entity " + creature.toString()
 						+ " is an instance of ITransformationEntityTransformed and can therefore not be transformed");
 			else {
-				EntityLivingBase returned = this.ENTRY.transformCreature.apply(creature);
 				if (!MinecraftForge.EVENT_BUS
 						.post(new TransformingEvent(creature, false, TransformingEventReason.ENVIROMENT))) {
+					EntityLivingBase returned = this.ENTRY.transformCreature.apply(creature);
 					if (returned != null) {
 						World world = returned.world;
 						returned.setPosition(creature.posX, creature.posY, creature.posZ);
 						returned.setHealth(returned.getMaxHealth() / (creature.getMaxHealth() / creature.getHealth()));
 						world.removeEntity(creature);
-
-						// apply extra data
-						// the returned creature always has to be an instance of
-						// ITransformationEntityTransformed
-
-						NBTTagCompound compound = new NBTTagCompound();
-						creature.writeEntityToNBT(compound);
-						ExtraDataEvent event = new ExtraDataEvent(creature, compound, true);
-						MinecraftForge.EVENT_BUS.post(event);
-						((ITransformationEntityTransformed) returned).setExtraData(event.getExtraData());
 						world.spawnEntity(returned);
 						returned.setPositionAndUpdate(creature.posX, creature.posY, creature.posZ);
 					}
@@ -211,7 +198,7 @@ public enum Transformations {
 		private ResourceLocation[] textures = new ResourceLocation[0];
 		private ToDoubleFunction<EntityPlayerMP> calculateLevel = player -> TransformationHelper.getCap(player).getXP()
 				/ 500.0D;
-		private Function<EntityLiving, EntityLivingBase> transformCreature = null;
+		private Function<EntityCreature, EntityLivingBase> transformCreature = null;
 		private Consumer<EntityLivingBase> infect = null;
 		private ResourceLocation resourceLocation = null;
 		/** A runnable that is executed when the player levels up */
@@ -247,7 +234,7 @@ public enum Transformations {
 			return this;
 		}
 
-		public TransformationEntry setTransformCreature(Function<EntityLiving, EntityLivingBase> transformCreature) {
+		public TransformationEntry setTransformCreature(Function<EntityCreature, EntityLivingBase> transformCreature) {
 			this.transformCreature = transformCreature;
 			return this;
 		}

@@ -7,7 +7,7 @@
                 {
                 	"name": "huntersdream:hunters_journal_page",
                     "type": "item",
-                    "weight": 1,
+                    "weight": 12,
                     "conditions": [{ "condition": "random_chance", "chance": 0.25 }]
                 }
             ]

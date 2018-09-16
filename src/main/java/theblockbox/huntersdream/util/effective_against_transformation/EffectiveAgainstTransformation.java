@@ -1,10 +1,8 @@
 package theblockbox.huntersdream.util.effective_against_transformation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumMap;
+import java.util.Set;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
 
 import theblockbox.huntersdream.util.enums.Transformations;
 
@@ -13,13 +11,11 @@ import theblockbox.huntersdream.util.enums.Transformations;
  * a specific item, entity etc. effective against a specific transformation
  * (currently only item and entity are supported)
  */
-public class EffectiveAgainstTransformation implements IEffective {
-	public static final List<EffectiveAgainstTransformation> OBJECTS = new ArrayList<>();
-	private Transformations[] effectiveAgainst;
-	private Predicate<Object> isForObject;
-	private float[] effectiveness;
-	private boolean effectiveAgainstUndead;
+public abstract class EffectiveAgainstTransformation<T> {
+	private final Predicate<T> isForObject;
+	private final boolean effectiveAgainstUndead;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
+	private final EnumMap<Transformations, Float> effectivenessMap;
 
 	/**
 	 * Creates a new EffectiveAgainstTransformation object from the given arguments
@@ -38,57 +34,24 @@ public class EffectiveAgainstTransformation implements IEffective {
 	 *                               at the same index as the transformation in the
 	 *                               effectiveAgainst array will be used)
 	 */
-	public EffectiveAgainstTransformation(Predicate<Object> isForObject, boolean effectiveAgainstUndead,
-			@Nonnull Transformations[] effectiveAgainst, @Nonnull float[] effectiveness) {
+	protected EffectiveAgainstTransformation(Predicate<T> isForObject, boolean effectiveAgainstUndead,
+			EnumMap<Transformations, Float> effectivenessMap) {
 		this.isForObject = isForObject;
-		this.effectiveness = effectiveness;
-		this.effectiveAgainst = effectiveAgainst;
 		this.effectiveAgainstUndead = effectiveAgainstUndead;
+		this.effectivenessMap = effectivenessMap;
 
-		if (effectiveAgainst.length != effectiveness.length) {
-			throw new IllegalArgumentException(
-					"The array of effectiveness values needs to have the same length as the array of transformations");
+		if (effectivenessMap.isEmpty()) {
+			throw new IllegalArgumentException("The given map has to contain at least one object");
 		}
-
-		if (effectiveAgainst.length < 1) {
-			throw new IllegalArgumentException("The given arrays have to contain at least one object");
-		}
-
-		for (EffectiveAgainstTransformation eat : OBJECTS)
-			if (eat.isForObject == isForObject)
-				throw new IllegalArgumentException("Object already registered");
-
-		OBJECTS.add(this);
-	}
-
-	@Override
-	public Transformations[] transformations() {
-		return this.effectiveAgainst;
 	}
 
 	/** The damage multiplier when used against the specified creature */
 	public float getEffectivenessAgainstTransformation(Transformations transformation) {
-		return this.effectiveness[this.getTransformationArrayIndex(transformation)];
+		return this.effectivenessMap.get(transformation);
 	}
 
-	public static EffectiveAgainstTransformation getFromObject(Object object) {
-		for (EffectiveAgainstTransformation eat : OBJECTS) {
-			if (eat.isForObject(object)) {
-				return eat;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns all instances of this class and subclasses
-	 */
-	public static List<EffectiveAgainstTransformation> getObjects() {
-		return OBJECTS;
-	}
-
-	public boolean isForObject(Object object) {
-		return this.isForObject.test(object);
+	public boolean isForObject(T t) {
+		return this.isForObject.test(t);
 	}
 
 	/**
@@ -96,5 +59,13 @@ public class EffectiveAgainstTransformation implements IEffective {
 	 */
 	public boolean effectiveAgainstUndead() {
 		return this.effectiveAgainstUndead;
+	}
+
+	public boolean effectiveAgainst(Transformations transformation) {
+		return this.effectivenessMap.containsKey(transformation);
+	}
+
+	public Set<Transformations> transformations() {
+		return this.effectivenessMap.keySet();
 	}
 }

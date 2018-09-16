@@ -1,8 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.util.stream.IntStream;
-
-import org.apache.commons.lang3.ArrayUtils;
+import java.util.EnumMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -25,7 +23,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
@@ -44,7 +41,10 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
@@ -54,8 +54,6 @@ import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
  */
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class RegistryHandler {
-	public static final String[] LOOT_TABLE_NAMES = {};
-
 	// Registry events
 
 	@SubscribeEvent
@@ -133,28 +131,27 @@ public class RegistryHandler {
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
 		// register objects that are effective against a specific transformation
-		new EffectiveAgainstTransformation(object -> {
-			if (object instanceof Item || object instanceof ItemStack) {
-				ItemStack stack = (object instanceof Item) ? new ItemStack((Item) object) : (ItemStack) object;
-				if (!stack.isEmpty()) {
-					int[] ids = OreDictionary.getOreIDs(stack);
-					return (ids.length > 0) ? IntStream.of(ids).mapToObj(OreDictionary::getOreName)
-							.anyMatch(name -> ArrayUtils.contains(OreDictionaryCompat.SILVER_NAMES, name)) : false;
-				}
-			}
-			return false;
-		}, true, new Transformations[] { Transformations.WEREWOLF },
-				new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS });
 
+		// first index is armor part, second is values for transformations and third
+		// index 0 is thorns, index 1 is protection
+		float protection = 0.5F;
 		ArmorEffectiveAgainstTransformation.registerArmorSet("Silver",
-				new float[][] { new float[] { 1.35F }, new float[] { 1.85F }, new float[] { 1.65F },
-						new float[] { 1.25F } },
-				new float[][] { new float[] { 1.2F }, new float[] { 1.6F }, new float[] { 1.3F },
-						new float[] { 1.1F } },
+				new float[][][] { new float[][] { /* Helmet */ new float[] { 0.019F, protection * 0.6F } },
+						/* Chestplate */ new float[][] { new float[] { 0.026F, protection * 0.8F } },
+						/* Leggings */ new float[][] { new float[] { 0.023F, protection * 0.65F } },
+						/* Boots */ new float[][] { new float[] { 0.018F, 0.55F } } },
 				Transformations.WEREWOLF);
-		new EffectiveAgainstTransformation(obj -> {
-			if (obj instanceof EntityTippedArrow) {
-				EntityTippedArrow arrow = (EntityTippedArrow) obj;
+
+		EnumMap<Transformations, Float> itemMap = new EnumMap<>(Transformations.class);
+		itemMap.put(Transformations.WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
+		ItemEffectiveAgainstTransformation
+				.of(GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true, itemMap);
+
+		EnumMap<Transformations, Float> entityMap = new EnumMap<>(Transformations.class);
+		entityMap.put(Transformations.WEREWOLF, 1F);
+		EntityEffectiveAgainstTransformation.of(entity -> {
+			if (entity instanceof EntityTippedArrow) {
+				EntityTippedArrow arrow = (EntityTippedArrow) entity;
 				// using AT to access fields
 				for (PotionEffect effect : arrow.potion.getEffects())
 					if (effect.getPotion() == MobEffects.POISON || effect.getPotion() == PotionInit.POTION_WOLFSBANE)
@@ -164,9 +161,7 @@ public class RegistryHandler {
 						return true;
 			}
 			return false;
-		}, false, new Transformations[] { Transformations.WEREWOLF },
-				// new float[] { EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS });
-				new float[] { 1F });
+		}, false, entityMap);
 	}
 
 	// Client

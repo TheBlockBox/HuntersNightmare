@@ -9,7 +9,6 @@ import net.minecraft.world.IBlockAccess;
 import theblockbox.huntersdream.blocks.BlockBase;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.items.ItemBlockWithMaxStackSize;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public abstract class BlockBaseCustomModel extends BlockBase {
 	public static final AxisAlignedBB DEFAULT_BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
@@ -43,6 +42,6 @@ public abstract class BlockBaseCustomModel extends BlockBase {
 	}
 
 	public static double sixteenth(double numerator) {
-		return GeneralHelper.getSixteenth(numerator);
+		return numerator / 16.0D;
 	}
 }

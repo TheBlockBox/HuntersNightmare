@@ -9,17 +9,23 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.enums.Transformations;
 
 public class EffectivenessHelper {
 	public static final String THORNS_DAMAGE_NAME = "effectiveAgainstTransformationThorns";
 
 	/** Shortcut for {@link EffectiveAgainstTransformation#getFromObject(Object)} */
-	public static EffectiveAgainstTransformation getEAT(@Nonnull Object object) {
-		if (object != null) {
-			return EffectiveAgainstTransformation.getFromObject(object);
+	@SuppressWarnings("unchecked")
+	public static <T> EffectiveAgainstTransformation<T> getEAT(@Nonnull T t) {
+		if (t instanceof ItemStack) {
+			return (EffectiveAgainstTransformation<T>) ItemEffectiveAgainstTransformation.getFromItem((ItemStack) t);
+		} else if (t instanceof Entity) {
+			return (EffectiveAgainstTransformation<T>) EntityEffectiveAgainstTransformation.getFromEntity((Entity) t);
 		} else {
-			throw new NullPointerException("The given object is not allowed to be null");
+			throw new IllegalArgumentException(
+					"The given object has to be an instance of ItemStack or Entity and not null");
 		}
 	}
 

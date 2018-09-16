@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -87,14 +88,18 @@ public class CapabilityHandler {
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
 
+			for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
+				PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
+
+			final MinecraftServer server = player.getServer();
 			new Thread(() -> {
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					Main.getLogger().catching(e);
 				}
-				player.getServer().addScheduledTask(() -> {
-					for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
+				server.addScheduledTask(() -> {
+					for (EntityPlayerMP p : server.getPlayerList().getPlayers())
 						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
 				});
 			}, "SyncCapAfterPlayerDeath1").start();
@@ -104,8 +109,8 @@ public class CapabilityHandler {
 				} catch (InterruptedException e) {
 					Main.getLogger().catching(e);
 				}
-				player.getServer().addScheduledTask(() -> {
-					for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
+				server.addScheduledTask(() -> {
+					for (EntityPlayerMP p : server.getPlayerList().getPlayers())
 						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
 				});
 			}, "SyncCapAfterPlayerDeath2").start();

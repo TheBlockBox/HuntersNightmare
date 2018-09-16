@@ -1,13 +1,13 @@
 package theblockbox.huntersdream.util.helpers;
 
-import java.util.HashMap;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
@@ -15,6 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.TransformationEvent;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.TransformationXPEvent;
@@ -38,14 +39,6 @@ public class TransformationHelper {
 	public static final Capability<ITransformationPlayer> CAPABILITY_TRANSFORMATION_PLAYER = CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER;
 	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
 	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS;
-
-	/**
-	 * Contains entities that can be infected. The class is the entity's class and
-	 * the Transformation array contains all the transformations into which the
-	 * entity can transform
-	 */
-	public final static HashMap<Class<? extends EntityLivingBase>, Transformations[]> INFECTABLE_ENTITES = new HashMap<>();
-
 	/**
 	 * special damage source for things that are effective against specific
 	 * transformations
@@ -135,12 +128,12 @@ public class TransformationHelper {
 	 * accounting for infection
 	 */
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
-		Transformations transformation = getTransformation(entity);
-		return ((transformation == Transformations.HUMAN) || (transformation == Transformations.HUNTER)
-				|| (INFECTABLE_ENTITES.containsKey(entity.getClass())) && transformation != null);
+		ITransformation transformation = getITransformation(entity);
+		return (transformation != null) && (transformation.isTransformationChangeable());
 	}
 
 	/** Returns the entity's transformation */
+	@Nullable
 	public static Transformations getTransformation(EntityLivingBase entity) {
 		ITransformation transformation = getITransformation(entity);
 		return (transformation == null) ? null : transformation.getTransformation();
@@ -150,6 +143,7 @@ public class TransformationHelper {
 	 * This is a way to get the {@link ITransformation} interface from every entity
 	 * that has it in some form (capability or implemented)
 	 */
+	@Nullable
 	public static ITransformation getITransformation(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
 			return getCap((EntityPlayer) entity);
@@ -162,6 +156,7 @@ public class TransformationHelper {
 		}
 	}
 
+	@Nullable
 	public static ITransformationCreature getITransformationCreature(EntityCreature entity) {
 		if (entity != null) {
 			return (entity instanceof ITransformationCreature) ? (ITransformationCreature) entity
@@ -210,18 +205,6 @@ public class TransformationHelper {
 	}
 
 	/**
-	 * Add an entity that can be infected
-	 * 
-	 * @param transformations The transformations in that the entity can transform
-	 */
-	public static void addInfectableEntity(Class<? extends EntityLivingBase> entity,
-			Transformations... transformations) {
-		if (!INFECTABLE_ENTITES.containsKey(entity)) {
-			INFECTABLE_ENTITES.put(entity, transformations);
-		}
-	}
-
-	/**
 	 * Returns true when the given entity can be infected with the given
 	 * infection/transformation
 	 */
@@ -266,6 +249,7 @@ public class TransformationHelper {
 	}
 
 	/** Returns the {@link IInfectInTicks} capability of the given entity */
+	@Nullable
 	public static IInfectInTicks getIInfectInTicks(EntityLivingBase entity) {
 		return entity.getCapability(CAPABILITY_INFECT_IN_TICKS, null);
 	}
@@ -342,5 +326,11 @@ public class TransformationHelper {
 				getITransformation(entity).setTransformed(transformed);
 			}
 		}
+	}
+
+	public static NBTTagCompound postExtraDataEvent(EntityCreature creature, boolean onDataSave) {
+		ExtraDataEvent event = new ExtraDataEvent(creature, GeneralHelper.writeEntityToNBT(creature), onDataSave);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getExtraData();
 	}
 }

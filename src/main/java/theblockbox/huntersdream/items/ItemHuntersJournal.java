@@ -2,7 +2,6 @@ package theblockbox.huntersdream.items;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,9 +14,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import theblockbox.huntersdream.gui.GuiHuntersJournal;
+import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class ItemHuntersJournal extends ItemBase {
 
@@ -26,21 +25,19 @@ public class ItemHuntersJournal extends ItemBase {
 		setMaxStackSize(1);
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		if (worldIn.isRemote) {
-			ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
-			if (cap.getUnlockedPages().length == 0) {
+		HuntersJournalPage[] pages = TransformationHelper.getCap(playerIn).getUnlockedPages();
+		if (pages.length <= 0) {
+			if (!worldIn.isRemote) {
 				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".noPage"));
-				return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
-			} else {
-				Minecraft.getMinecraft().displayGuiScreen(new GuiHuntersJournal(playerIn, cap.getUnlockedPages()));
-				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 			}
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
+		} else {
+			Main.proxy.openHuntersJournal(playerIn, pages);
+			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		}
-		return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
 	}
 
 	@SideOnly(Side.CLIENT)

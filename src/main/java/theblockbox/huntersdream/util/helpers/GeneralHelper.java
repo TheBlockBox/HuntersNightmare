@@ -1,13 +1,13 @@
 package theblockbox.huntersdream.util.helpers;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 
@@ -29,6 +30,12 @@ import theblockbox.huntersdream.util.Reference;
 public class GeneralHelper {
 	public static final float STANDARD_PLAYER_WIDTH = 0.6F;
 	public static final float STANDARD_PLAYER_HEIGHT = 1.8F;
+	/**
+	 * A normal NBTTagCompound that is used if an empty non null NBTTagCompound is
+	 * needed, so there won't be twenty empty instances
+	 */
+	public static final NBTTagCompound EMPTY_COMPOUND = new NBTTagCompound();
+	// currently not used
 	public static final DataSerializer<byte[]> BYTE_ARRAY_DATA_SERIALIZER = new DataSerializer<byte[]>() {
 
 		@Override
@@ -99,21 +106,25 @@ public class GeneralHelper {
 	/** Changes the player's size */
 	public static void changePlayerSize(EntityPlayer player, float width, float height) {
 		if (width != player.width || height != player.height) {
-			float f = player.width;
+			float oldWidth = player.width;
 			player.width = width;
 			player.height = height;
-			if (player.width < f) {
-				double d0 = (double) width / 2.0D;
-				player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, player.posY, player.posZ - d0,
-						player.posX + d0, player.posY + (double) player.height, player.posZ + d0));
+
+			if (player.width < oldWidth) {
+				double halfWidth = width / 2.0D;
+				player.setEntityBoundingBox(
+						new AxisAlignedBB(player.posX - halfWidth, player.posY, player.posZ - halfWidth,
+								player.posX + halfWidth, player.posY + player.height, player.posZ + halfWidth));
 				return;
 			}
+
 			AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
 			player.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ,
-					axisalignedbb.minX + (double) player.width, axisalignedbb.minY + (double) player.height,
-					axisalignedbb.minZ + (double) player.width));
-			if (player.width > f && !player.world.isRemote) {
-				player.move(MoverType.SELF, (double) (f - player.width), 0.0D, (double) (f - player.width));
+					axisalignedbb.minX + player.width, axisalignedbb.minY + player.height,
+					axisalignedbb.minZ + player.width));
+
+			if (player.width > oldWidth && (player.ticksExisted > 1) && !player.world.isRemote) {
+				player.move(MoverType.SELF, (oldWidth - player.width), 0.0D, (oldWidth - player.width));
 			}
 		}
 	}
@@ -142,11 +153,6 @@ public class GeneralHelper {
 			return new ResourceLocation(Reference.MODID, resourcePath);
 	}
 
-	/** Shortcut for {@code numerator / 16.0D} */
-	public static double getSixteenth(double numerator) {
-		return numerator / 16.0D;
-	}
-
 	/**
 	 * Returns true if the given entity can expand its height to the given new
 	 * height without glitching through blocks
@@ -161,16 +167,6 @@ public class GeneralHelper {
 				if (entity.world.getBlockState(new BlockPos(entity.posX, i, entity.posZ)).getMaterial().isSolid())
 					return false;
 		return true;
-	}
-
-	/** Combines to arrays to one array */
-	public static <T> List<T> combineArraysToList(T[] array1, T[] array2) {
-		List<T> arrayList = new LinkedList<>();
-		for (T t : array1)
-			arrayList.add(t);
-		for (T t : array2)
-			arrayList.add(t);
-		return arrayList;
 	}
 
 	/** Returns true if the given player is not under a block */
@@ -234,5 +230,33 @@ public class GeneralHelper {
 			Main.getLogger().error("Couldn't load array, returning array with size 0");
 			return createEmptyArrayWithSize.apply(0);
 		}
+	}
+
+	public static NBTTagCompound writeEntityToNBT(EntityLivingBase toBeWritten) {
+		NBTTagCompound compound = new NBTTagCompound();
+		toBeWritten.writeEntityToNBT(compound);
+		return compound;
+	}
+
+	/**
+	 * Returns a predicate that returns true if the given itemstack matches one of
+	 * the given oreDictNames (while not accounting for damage)
+	 */
+	public static Predicate<ItemStack> getPredicateMatchesOreDict(String... oreDictNames) {
+		return stack -> {
+			if (!stack.isEmpty()) {
+				// need to create a new item stack to make the oredict not care about damage
+				int[] ids = OreDictionary.getOreIDs(new ItemStack(stack.getItem()));
+				return (oreDictNames.length > 0)
+						? Stream.of(oreDictNames).mapToInt(OreDictionary::getOreID).anyMatch(i -> {
+							for (int j : ids)
+								if (j == i)
+									return true;
+							return false;
+						})
+						: false;
+			}
+			return false;
+		};
 	}
 }

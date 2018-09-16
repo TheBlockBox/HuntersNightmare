@@ -77,9 +77,12 @@ public class EntityChair extends Entity {
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound compound) {
-		blockPosX = compound.getInteger("blockPosX");
-		blockPosY = compound.getInteger("blockPosY");
-		blockPosZ = compound.getInteger("blockPosZ");
+		if (compound.hasKey("blockPosX"))
+			blockPosX = compound.getInteger("blockPosX");
+		if (compound.hasKey("blockPosY"))
+			blockPosY = compound.getInteger("blockPosY");
+		if (compound.hasKey("blockPosZ"))
+			blockPosZ = compound.getInteger("blockPosZ");
 	}
 
 	@Override
