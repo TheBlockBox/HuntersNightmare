@@ -33,8 +33,9 @@ import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.SoundInit;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
@@ -70,7 +71,7 @@ public class WerewolfEventHandler {
 					if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
 						// and the entity can be infected
 						if (TransformationHelper.canChangeTransformation(attacked)
-								&& TransformationHelper.canBeInfectedWith(Transformations.WEREWOLF, attacked)
+								&& TransformationHelper.canBeInfectedWith(TransformationInit.WEREWOLF, attacked)
 								&& (!TransformationHelper.isInfected(attacked))) {
 							// infect the entity
 							WerewolfHelper.infectEntityAsWerewolf(attacked);
@@ -91,7 +92,7 @@ public class WerewolfEventHandler {
 				ITransformationPlayer cap = TransformationHelper.getCap(player);
 				IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 				if (WerewolfHelper.isWerewolfTime(player) && !cap.transformed()
-						&& (cap.getTransformation() == Transformations.WEREWOLF)
+						&& (cap.getTransformation() == TransformationInit.WEREWOLF)
 						&& werewolf.getTransformationStage() > 0) {
 					// cancel event if damage source isn't magic (including poison) or event can
 					// kill player
@@ -119,7 +120,7 @@ public class WerewolfEventHandler {
 	public static void handleWerewolfInfection(EntityLivingBase entity) {
 		if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
-			if (ionm.getInfectionTransformation() == Transformations.WEREWOLF) {
+			if (ionm.getInfectionTransformation() == TransformationInit.WEREWOLF) {
 				if (!WerewolfHelper.isWerewolfTime(entity)) {
 					if (ionm.getInfectionStatus() == InfectionStatus.MOON_ON_INFECTION) {
 						ionm.setInfectionStatus(InfectionStatus.AFTER_INFECTION);
@@ -128,9 +129,9 @@ public class WerewolfEventHandler {
 					if (ionm.getInfectionStatus() == InfectionStatus.AFTER_INFECTION) {
 						ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
 						ionm.setInfectionTick(-1);
-						ionm.setInfectionTransformation(Transformations.HUMAN);
+						ionm.setInfectionTransformation(TransformationInit.HUMAN);
 						// change transformation
-						TransformationHelper.changeTransformation(entity, Transformations.WEREWOLF,
+						TransformationHelper.changeTransformation(entity, TransformationInit.WEREWOLF,
 								TransformationEventReason.INFECTION);
 					}
 				}
@@ -141,6 +142,7 @@ public class WerewolfEventHandler {
 	// these methods are here for easier code understanding
 
 	static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
+		WerewolfHelper.applyLevelBuffs(player);
 	}
 
 	static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
@@ -296,7 +298,7 @@ public class WerewolfEventHandler {
 			EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
 			if (!(WerewolfHelper.transformedWerewolf(interactedWith))) {
 				Item item = event.getItemStack().getItem();
-				Transformations transformation = TransformationHelper.getTransformation(interactedWith);
+				Transformation transformation = TransformationHelper.getTransformation(interactedWith);
 				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, event.getItemStack())) {
 					if (!player.world.isRemote) {
 						String msg = "transformations." + transformation.toString() + ".";
@@ -317,7 +319,7 @@ public class WerewolfEventHandler {
 
 	@SubscribeEvent
 	public static void onWerewolfTransformation(TransformingEvent.PlayerTransformingEvent event) {
-		if (event.getTransformation() == Transformations.WEREWOLF) {
+		if (event.getTransformation() == TransformationInit.WEREWOLF) {
 			EntityPlayer player = event.getEntityPlayer();
 			int level = TransformationHelper.getCap(player).getLevelFloor();
 			if (event.transformingBack()) {
@@ -336,7 +338,7 @@ public class WerewolfEventHandler {
 	@SubscribeEvent
 	public static void onPlayerSleep(PlayerSleepInBedEvent event) {
 		EntityPlayer player = event.getEntityPlayer();
-		if (TransformationHelper.getTransformation(player) == Transformations.WEREWOLF) {
+		if (TransformationHelper.getTransformation(player) == TransformationInit.WEREWOLF) {
 			event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
 			if (!player.world.isRemote)
 				player.sendStatusMessage(new TextComponentTranslation(Reference.MODID + ".werewolfNotAllowedToSleep"),

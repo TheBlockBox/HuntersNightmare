@@ -52,11 +52,6 @@ public class EntityChair extends Entity {
 	}
 
 	@Override
-	public double getMountedYOffset() {
-		return this.height * 0.0D;
-	}
-
-	@Override
 	protected boolean shouldSetPosAfterLoading() {
 		return false;
 	}

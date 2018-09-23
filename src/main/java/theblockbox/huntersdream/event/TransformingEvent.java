@@ -6,7 +6,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
@@ -16,7 +16,7 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 @Cancelable
 public class TransformingEvent extends LivingEvent {
 	private boolean transformingBack;
-	private Transformations transformation;
+	private Transformation transformation;
 	private TransformingEventReason reason;
 
 	public TransformingEvent(EntityLivingBase entity, boolean transformingBack, TransformingEventReason reason) {
@@ -38,7 +38,7 @@ public class TransformingEvent extends LivingEvent {
 		return transformingBack;
 	}
 
-	public Transformations getTransformation() {
+	public Transformation getTransformation() {
 		return transformation;
 	}
 
@@ -53,7 +53,7 @@ public class TransformingEvent extends LivingEvent {
 	@Cancelable
 	public class PlayerTransformingEvent extends PlayerEvent {
 		private boolean transformingBack;
-		private Transformations transformation;
+		private Transformation transformation;
 		private TransformingEventReason reason;
 
 		public PlayerTransformingEvent(EntityPlayer player, boolean transformingBack, TransformingEventReason reason) {
@@ -71,7 +71,7 @@ public class TransformingEvent extends LivingEvent {
 			return transformingBack;
 		}
 
-		public Transformations getTransformation() {
+		public Transformation getTransformation() {
 			return transformation;
 		}
 	}

@@ -27,9 +27,9 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.PotionInit;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
@@ -37,8 +37,6 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -58,9 +56,6 @@ public class TransformationEventHandler {
 						player.inventory.dropAllItems();
 					}
 				}
-				if (player.ticksExisted % 80 == 0) {
-					WerewolfHelper.applyLevelBuffs(player);
-				}
 			}
 
 			if (player.ticksExisted % 80 == 0) {
@@ -75,7 +70,7 @@ public class TransformationEventHandler {
 
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
-					if (cap.getTransformation() == Transformations.WEREWOLF) {
+					if (cap.getTransformation() == TransformationInit.WEREWOLF) {
 						if (WerewolfHelper.isWerewolfTime(player)) {
 							if (!cap.transformed()) {
 								WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
@@ -120,10 +115,10 @@ public class TransformationEventHandler {
 	@SubscribeEvent
 	public static void onEntityHurt(LivingHurtEvent event) {
 		EntityLivingBase hurt = event.getEntityLiving();
-		Transformations transformationHurt = TransformationHelper.getTransformation(hurt);
+		Transformation transformationHurt = TransformationHelper.getTransformation(hurt);
 		if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
 			EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-			Transformations transformationAtt = TransformationHelper.getTransformation(attacker);
+			Transformation transformationAtt = TransformationHelper.getTransformation(attacker);
 
 			// make that player deals more damage
 			if (transformationAtt != null) {
@@ -133,17 +128,14 @@ public class TransformationEventHandler {
 			}
 
 			if (hurt != null) {
-
 				if (attacker != null) {
 					// add effectiveness against undead
-					if (attacker.getHeldItemMainhand() != null) {
+					if (attacker.getHeldItemMainhand() != null)
 						if (hurt.isEntityUndead()
-								&& EffectivenessHelper.effectiveAgainstUndead(attacker.getHeldItemMainhand())) {
+								&& EffectivenessHelper.effectiveAgainstUndead(attacker.getHeldItemMainhand()))
 							event.setAmount(event.getAmount() + 2.5F);
-						}
-					}
-
-					addEffectiveAgainst(event, attacker, hurt, transformationHurt);
+					if (transformationHurt != null)
+						addEffectiveAgainst(event, attacker, hurt, transformationHurt);
 				}
 			}
 		}
@@ -156,7 +148,7 @@ public class TransformationEventHandler {
 	}
 
 	private static void addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase hurt,
-			Transformations transformationHurt) {
+			Transformation transformationHurt) {
 		// don't apply when it was thorns damage
 		if (!event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME)) {
 			// first check if immediate source is effective, then weapon and then attacker
@@ -178,7 +170,7 @@ public class TransformationEventHandler {
 		if ((!event.getSource().getDamageType().equals(EffectivenessHelper.THORNS_DAMAGE_NAME))
 				&& source instanceof EntityLivingBase && hurt != null) {
 			EntityLivingBase attacker = (EntityLivingBase) source;
-			Transformations transformationAttacker = TransformationHelper.getTransformation(attacker);
+			Transformation transformationAttacker = TransformationHelper.getTransformation(attacker);
 			if (transformationAttacker != null) {
 				ItemStack[] stacks = Stream
 						.of(EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
@@ -219,13 +211,13 @@ public class TransformationEventHandler {
 					entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
 							EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
 				} else if (creature instanceof EntityGoblinTD) {
-					if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == Transformations.HUMAN)) {
-						TransformationHelper.changeTransformationWhenPossible(creature, Transformations.WEREWOLF,
+					if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == TransformationInit.HUMAN)) {
+						TransformationHelper.changeTransformationWhenPossible(creature, TransformationInit.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
 				} else if (creature instanceof EntityVillager) {
-					if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == Transformations.HUMAN)) {
-						TransformationHelper.changeTransformationWhenPossible(creature, Transformations.WEREWOLF,
+					if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == TransformationInit.HUMAN)) {
+						TransformationHelper.changeTransformationWhenPossible(creature, TransformationInit.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
 				}
@@ -252,19 +244,8 @@ public class TransformationEventHandler {
 			if (!event.getEntityLiving().world.isRemote) {
 				EntityLivingBase entity = event.getEntityLiving();
 
-				// remove infection when wolfsbane active
-				if (entity.isPotionActive(PotionInit.POTION_WOLFSBANE)
-						&& entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
-					IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
-					if (ionm.isInfected()) {
-						ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
-						ionm.setInfectionTick(-1);
-						ionm.setInfectionTransformation(Transformations.HUMAN);
-					}
-				}
-
 				if (!(entity instanceof ITransformationEntityTransformed) && entity instanceof EntityCreature) {
-					Transformations transformation = TransformationHelper.getTransformation(entity);
+					Transformation transformation = TransformationHelper.getTransformation(entity);
 					if (transformation != null) {
 						transformation.transformCreatureWhenPossible((EntityCreature) entity);
 					}

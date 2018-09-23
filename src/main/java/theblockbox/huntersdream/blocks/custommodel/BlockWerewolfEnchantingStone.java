@@ -13,8 +13,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.init.CreativeTabInit;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -69,7 +69,7 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModelWithDirect
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			if (TransformationHelper.getTransformation(playerIn) == Transformations.WEREWOLF) {
+			if (TransformationHelper.getTransformation(playerIn) == TransformationInit.WEREWOLF) {
 				ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
 				if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT)) {
 					cap.addRitual(Rituals.LUPUS_ADVOCABIT);

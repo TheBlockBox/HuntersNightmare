@@ -13,14 +13,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.HuntersJournalPage;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;;
+import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
  * ITransform for players (players can have xp)
@@ -72,7 +72,7 @@ public interface ITransformationPlayer extends ITransformation {
 
 	public static class TransformationPlayer implements ITransformationPlayer {
 		private boolean transformed = false;
-		private Transformations transformation = Transformations.HUMAN;
+		private Transformation transformation = TransformationInit.HUMAN;
 		private int xp = 0;
 		private int textureIndex = 0;
 		private double level = 0;
@@ -91,12 +91,12 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 
 		@Override
-		public Transformations getTransformation() {
+		public Transformation getTransformation() {
 			return this.transformation;
 		}
 
 		@Override
-		public void setTransformation(Transformations transformation) {
+		public void setTransformation(Transformation transformation) {
 			this.transformation = transformation;
 		}
 
@@ -231,20 +231,10 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setXP(compound.getInteger(XP));
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
 			instance.setLevel(compound.getDouble(LEVEL));
-			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
+			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
 			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
 			instance.setRituals(GeneralHelper.readArrayFromNBT(compound, RITUALS, Rituals::fromName, Rituals[]::new));
-
-			// pre-0.2.0 support
-
-			if (compound.hasKey("transformationID")) {
-				Main.getLogger()
-						.warn("Seems like you've updated Hunter's Dream... Loading transformation from old format");
-				@SuppressWarnings("deprecation")
-				Transformations transformation = Transformations.fromID(compound.getInteger("transformationID"));
-				instance.setTransformation(transformation);
-			}
 		}
 	}
 }

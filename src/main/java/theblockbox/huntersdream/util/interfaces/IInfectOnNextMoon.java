@@ -5,8 +5,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
-import theblockbox.huntersdream.util.enums.Transformations;
 
 @CapabilityInterface
 public interface IInfectOnNextMoon {
@@ -33,11 +34,11 @@ public interface IInfectOnNextMoon {
 
 	/**
 	 * This interface is only for werewolves so this should either return
-	 * {@link Transformations#WEREWOLF} or {@link Transformations#HUMAN}
+	 * {@link Transformation#WEREWOLF} or {@link Transformation#HUMAN}
 	 */
-	public Transformations getInfectionTransformation();
+	public Transformation getInfectionTransformation();
 
-	public void setInfectionTransformation(Transformations transformation);
+	public void setInfectionTransformation(Transformation transformation);
 
 	default public boolean isInfected() {
 		return !(this.getInfectionStatus() == InfectionStatus.NOT_INFECTED);
@@ -46,7 +47,7 @@ public interface IInfectOnNextMoon {
 	public static class InfectOnNextMoon implements IInfectOnNextMoon {
 		private InfectionStatus status = InfectionStatus.NOT_INFECTED;
 		private int infectionTick = -1;
-		private Transformations infectionTransformation = Transformations.HUMAN;
+		private Transformation infectionTransformation = TransformationInit.HUMAN;
 
 		@Override
 		public InfectionStatus getInfectionStatus() {
@@ -69,12 +70,12 @@ public interface IInfectOnNextMoon {
 		}
 
 		@Override
-		public Transformations getInfectionTransformation() {
+		public Transformation getInfectionTransformation() {
 			return this.infectionTransformation;
 		}
 
 		@Override
-		public void setInfectionTransformation(Transformations transformation) {
+		public void setInfectionTransformation(Transformation transformation) {
 			this.infectionTransformation = transformation;
 		}
 	}
@@ -99,7 +100,7 @@ public interface IInfectOnNextMoon {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
 			instance.setInfectionStatus(InfectionStatus.fromString(compound.getString(INFECTION_STATUS)));
 			instance.setInfectionTick(compound.getInteger(INFECTION_TICK));
-			instance.setInfectionTransformation(Transformations.fromName(compound.getString(INFECTION_TRANSFORMTION)));
+			instance.setInfectionTransformation(Transformation.fromName(compound.getString(INFECTION_TRANSFORMTION)));
 		}
 	}
 }

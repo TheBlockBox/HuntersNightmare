@@ -7,11 +7,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.enums.Transformations;
 
 public class EffectivenessHelper {
 	public static final String THORNS_DAMAGE_NAME = "effectiveAgainstTransformationThorns";
@@ -59,31 +59,31 @@ public class EffectivenessHelper {
 	/**
 	 * Returns true when the object is either an instance of
 	 * {@link IEffectiveAgainstTransformation} or registered through
-	 * {@link #addEffectiveAgainst(Object, float, Transformations...)} This is
+	 * {@link #addEffectiveAgainst(Object, float, Transformation...)} This is
 	 * dynamic, so one object you passed in twenty minutes ago could return false
 	 * but when you do the same thing with the same object later, it could return
 	 * true
 	 */
-	public static boolean effectiveAgainstTransformation(Transformations effectiveAgainst, Object object) {
+	public static boolean effectiveAgainstTransformation(Transformation effectiveAgainst, Object object) {
 		return effectiveAgainstSomeTransformation(object) ? getEAT(object).effectiveAgainst(effectiveAgainst) : false;
 	}
 
 	/**
 	 * Returns true when the object is either an instance of
 	 * {@link IArmorEffectiveAgainstTransformation} or registered through
-	 * {@link #addArmorEffectiveAgainst(Item, float, float, Transformations...)}
+	 * {@link #addArmorEffectiveAgainst(Item, float, float, Transformation...)}
 	 * This is dynamic, so one object you passed in twenty minutes ago could return
 	 * false but when you do the same thing with the same object later, it could
 	 * return true
 	 */
-	public static boolean armorEffectiveAgainstTransformation(Transformations effectiveAgainst, ItemStack armorPart) {
+	public static boolean armorEffectiveAgainstTransformation(Transformation effectiveAgainst, ItemStack armorPart) {
 		return armorEffectiveAgainstSomeTransformation(armorPart)
 				? getAEAT(armorPart).effectiveAgainst(effectiveAgainst)
 				: false;
 	}
 
 	/** Returns the given armor's protection against the given transformation */
-	public static float armorGetProtectionAgainst(Transformations against, ItemStack armorPart) {
+	public static float armorGetProtectionAgainst(Transformation against, ItemStack armorPart) {
 		if (armorEffectiveAgainstTransformation(against, armorPart)) {
 			return getAEAT(armorPart).getProtectionAgainstTransformation(against);
 		} else {
@@ -93,9 +93,9 @@ public class EffectivenessHelper {
 
 	/**
 	 * Effectiveness = thorns (more info here:
-	 * {@link ArmorEffectiveAgainstTransformation#ArmorEffectiveAgainstTransformation(Item, float, float, Transformations...)})
+	 * {@link ArmorEffectiveAgainstTransformation#ArmorEffectiveAgainstTransformation(Item, float, float, Transformation...)})
 	 */
-	public static float armorGetEffectivenessAgainst(Transformations against, ItemStack armorPart) {
+	public static float armorGetEffectivenessAgainst(Transformation against, ItemStack armorPart) {
 		if (armorEffectiveAgainstTransformation(against, armorPart)) {
 			return getAEAT(armorPart).getArmorEffectivenessAgainstTransformation(against);
 		} else {
@@ -105,9 +105,9 @@ public class EffectivenessHelper {
 
 	/**
 	 * (For armor parts, see
-	 * {@link #armorGetEffectivenessAgainst(Transformations, Item)})
+	 * {@link #armorGetEffectivenessAgainst(Transformation, Item)})
 	 */
-	public static float getEffectivenessAgainst(Transformations effectiveAgainst, Object object) {
+	public static float getEffectivenessAgainst(Transformation effectiveAgainst, Object object) {
 		if (effectiveAgainstTransformation(effectiveAgainst, object)) {
 			return getEAT(object).getEffectivenessAgainstTransformation(effectiveAgainst);
 		} else {

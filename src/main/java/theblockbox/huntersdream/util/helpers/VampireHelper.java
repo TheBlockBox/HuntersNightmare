@@ -6,13 +6,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.SoundInit;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -23,7 +21,6 @@ public class VampireHelper {
 
 	public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
 		checkIsVampire(vampire);
-		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1F);
 
 		if (drinkFrom.isEntityUndead()) {
 			vampire.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 60, 2));
@@ -36,8 +33,8 @@ public class VampireHelper {
 				vamp.incrementBlood();
 			}
 			PacketHandler.sendBloodMessage(player);
-			player.world.playSound(null, player.getPosition(), SoundInit.VAMPIRE_GULP, SoundCategory.PLAYERS, 10, 1);
 		}
+		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1F);
 	}
 
 	public static IVampire getIVampire(EntityPlayer player) {
@@ -45,7 +42,7 @@ public class VampireHelper {
 	}
 
 	public static boolean isVampire(EntityLivingBase entity) {
-		return TransformationHelper.getTransformation(entity) == Transformations.VAMPIRE;
+		return TransformationHelper.getTransformation(entity) == TransformationInit.VAMPIRE;
 	}
 
 	public static float calculateProtection(EntityLivingBase vampire) {

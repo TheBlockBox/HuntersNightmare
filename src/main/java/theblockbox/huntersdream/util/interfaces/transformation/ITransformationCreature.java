@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
-import java.util.EnumSet;
 import java.util.Set;
 
 import net.minecraft.nbt.NBTBase;
@@ -8,8 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.util.TransformationSet;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 /**
@@ -17,13 +18,13 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
  */
 @CapabilityInterface
 public interface ITransformationCreature extends ITransformation {
-	public Transformations[] getTransformationsNotImmuneTo();
+	public Transformation[] getTransformationsNotImmuneTo();
 
-	default public void setTransformationsNotImmuneTo(Transformations... transformationsNotImmuneTo) {
+	default public void setTransformationsNotImmuneTo(Transformation... transformationsNotImmuneTo) {
 		throw new UnsupportedOperationException("Can't set transformations not immune to");
 	}
 
-	public boolean notImmuneToTransformation(Transformations transformation);
+	public boolean notImmuneToTransformation(Transformation transformation);
 
 	@Override
 	default boolean transformed() {
@@ -36,8 +37,8 @@ public interface ITransformationCreature extends ITransformation {
 	}
 
 	public static class TransformationCreature implements ITransformationCreature {
-		private Set<Transformations> transformationsNotImmuneTo = EnumSet.of(Transformations.HUMAN);
-		private Transformations transformation = Transformations.HUMAN;
+		private Set<Transformation> transformationsNotImmuneTo = new TransformationSet();
+		private Transformation transformation = TransformationInit.HUMAN;
 		private int textureIndex = 0;
 
 		@Override
@@ -46,22 +47,22 @@ public interface ITransformationCreature extends ITransformation {
 		}
 
 		@Override
-		public Transformations[] getTransformationsNotImmuneTo() {
-			return this.transformationsNotImmuneTo.toArray(new Transformations[0]);
+		public Transformation[] getTransformationsNotImmuneTo() {
+			return this.transformationsNotImmuneTo.toArray(new Transformation[0]);
 		}
 
 		@Override
-		public void setTransformationsNotImmuneTo(Transformations... transformationsNotImmuneTo) {
-			this.transformationsNotImmuneTo = EnumSet.of(Transformations.HUMAN, transformationsNotImmuneTo);
+		public void setTransformationsNotImmuneTo(Transformation... transformationsNotImmuneTo) {
+			this.transformationsNotImmuneTo = new TransformationSet(transformationsNotImmuneTo);
 		}
 
 		@Override
-		public Transformations getTransformation() {
+		public Transformation getTransformation() {
 			return this.transformation;
 		}
 
 		@Override
-		public void setTransformation(Transformations transformation) {
+		public void setTransformation(Transformation transformation) {
 			this.transformation = transformation;
 		}
 
@@ -71,7 +72,7 @@ public interface ITransformationCreature extends ITransformation {
 		}
 
 		@Override
-		public boolean notImmuneToTransformation(Transformations transformation) {
+		public boolean notImmuneToTransformation(Transformation transformation) {
 			return this.transformationsNotImmuneTo.contains(transformation);
 		}
 	}
@@ -88,7 +89,7 @@ public interface ITransformationCreature extends ITransformation {
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			GeneralHelper.writeArrayToNBT(compound, instance.getTransformationsNotImmuneTo(),
-					TRANSFORMATIONS_NOT_IMMUNE_TO, Transformations::toString);
+					TRANSFORMATIONS_NOT_IMMUNE_TO, Transformation::toString);
 			return compound;
 		}
 
@@ -97,9 +98,9 @@ public interface ITransformationCreature extends ITransformation {
 				EnumFacing side, NBTBase nbt) {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
-			instance.setTransformation(Transformations.fromName(compound.getString(TRANSFORMATION)));
+			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
 			instance.setTransformationsNotImmuneTo(GeneralHelper.readArrayFromNBT(compound,
-					TRANSFORMATIONS_NOT_IMMUNE_TO, Transformations::fromName, Transformations[]::new));
+					TRANSFORMATIONS_NOT_IMMUNE_TO, Transformation::fromName, Transformation[]::new));
 		}
 	}
 }

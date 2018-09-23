@@ -1,7 +1,8 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
 import net.minecraft.entity.EntityLivingBase;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
@@ -13,9 +14,9 @@ public interface ITransformation {
 
 	public void setTransformed(boolean transformed);
 
-	public Transformations getTransformation();
+	public Transformation getTransformation();
 
-	public void setTransformation(Transformations transformation);
+	public void setTransformation(Transformation transformation);
 
 	public int getTextureIndex();
 
@@ -46,7 +47,7 @@ public interface ITransformation {
 	 *         for infection
 	 */
 	default public boolean isTransformationChangeable() {
-		return this.getTransformation() != null && (this.getTransformation() == Transformations.HUMAN
-				|| this.getTransformation() == Transformations.WEREWOLF);
+		return this.getTransformation() != null && (this.getTransformation() == TransformationInit.HUMAN
+				|| this.getTransformation() == TransformationInit.WEREWOLF);
 	}
 }

@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.util.effective_against_transformation;
 
-import java.util.EnumMap;
+import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class ArmorEffectiveAgainstTransformation {
@@ -17,12 +17,10 @@ public class ArmorEffectiveAgainstTransformation {
 	private final Predicate<ItemStack> isForArmor;
 	public static final float DEFAULT_PROTECTION = 1.5F;
 	public static final float DEFAULT_EFFECTIVENESS = 2;
-	/**
-	 * EnumMap holding the thorns and protection values against a specific
-	 * transformation. First index in the array are the thorns values, second are
-	 * the protection values
-	 */
-	private final EnumMap<Transformations, float[]> effectivenessMap;
+	private final BitSet transformationsEffectiveAgainst = new BitSet(Transformation.getTransformationLength());
+	private final float[] protection = new float[Transformation.getTransformationLength()];
+	private final float[] thorns = new float[Transformation.getTransformationLength()];
+	private final Transformation[] effectiveAgainst;
 
 	/**
 	 * Creates a new ArmorEffectiveAgainstTransformation object from the given
@@ -43,13 +41,15 @@ public class ArmorEffectiveAgainstTransformation {
 	 *                         a transformation is searched, the protection value at
 	 *                         the same index as the transformation will be used)
 	 */
-	public ArmorEffectiveAgainstTransformation(@Nonnull Predicate<ItemStack> isForArmor,
-			EnumMap<Transformations, float[]> effectivenessMap) {
+	public ArmorEffectiveAgainstTransformation(@Nonnull Predicate<ItemStack> isForArmor, TTPArray values) {
 		this.isForArmor = isForArmor;
-		this.effectivenessMap = effectivenessMap;
+		this.effectiveAgainst = values.transformations.clone();
 
-		if (effectivenessMap.isEmpty()) {
-			throw new IllegalArgumentException("The given map has to contain at least one object");
+		for (int i = 0; i < values.length; i++) {
+			final int index = this.effectiveAgainst[i].getTemporaryID();
+			this.transformationsEffectiveAgainst.set(index);
+			this.thorns[index] = values.thorns[i];
+			this.protection[index] = values.protection[i];
 		}
 
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
@@ -58,36 +58,24 @@ public class ArmorEffectiveAgainstTransformation {
 		ARMOR_PARTS.add(this);
 	}
 
-	public ArmorEffectiveAgainstTransformation(@Nonnull Predicate<ItemStack> isForArmor,
-			@Nonnull Transformations effectiveAgainst, @Nonnull float thorns, @Nonnull float protection) {
-		this(isForArmor, newEnumMap(effectiveAgainst, thorns, protection));
-	}
-
-	private static EnumMap<Transformations, float[]> newEnumMap(@Nonnull Transformations effectiveAgainst, float thorns,
-			float protection) {
-		EnumMap<Transformations, float[]> map = new EnumMap<>(Transformations.class);
-		map.put(effectiveAgainst, new float[] { thorns, protection });
-		return map;
-	}
-
 	public boolean isForArmor(ItemStack armor) {
 		return isForArmor.test(armor);
 	}
 
-	public float getArmorEffectivenessAgainstTransformation(Transformations transformation) {
-		return this.effectivenessMap.get(transformation)[0];
+	public float getArmorEffectivenessAgainstTransformation(Transformation transformation) {
+		return this.thorns[transformation.getTemporaryID()];
 	}
 
-	public float getProtectionAgainstTransformation(Transformations transformation) {
-		return this.effectivenessMap.get(transformation)[1];
+	public float getProtectionAgainstTransformation(Transformation transformation) {
+		return this.protection[transformation.getTemporaryID()];
 	}
 
-	public boolean effectiveAgainst(Transformations transformation) {
-		return this.effectivenessMap.containsKey(transformation);
+	public boolean effectiveAgainst(Transformation transformation) {
+		return this.transformationsEffectiveAgainst.get(transformation.getTemporaryID());
 	}
 
-	public Set<Transformations> transformations() {
-		return this.effectivenessMap.keySet();
+	public Transformation[] transformations() {
+		return this.effectiveAgainst;
 	}
 
 	public static ArmorEffectiveAgainstTransformation getFromArmor(ItemStack armor) {
@@ -107,34 +95,69 @@ public class ArmorEffectiveAgainstTransformation {
 	 *                         ore dict. For example if you use "Silver", the method
 	 *                         will search for "helmetSilver", "chestplateSilver",
 	 *                         "leggingsSilver" and "bootsSilver" in the ore dict
-	 * @param effectiveness    A three dimensional array of floats. The first
+	 * @param effectiveness    A two dimensional array of FloatPairs. The first
 	 *                         dimension needs to have a length of four (one for
-	 *                         every armor part). The second dimensions length has
-	 *                         to be the same as the length of the effectiveAgainst.
-	 *                         The last array has to have a size of 2. Index 0 is
-	 *                         the thorns value, the second one the protection value
+	 *                         every armor part). The second dimension's length has
+	 *                         to be the same as the length of the effectiveAgainst
+	 *                         array. In the FloatPair, the first value is the
+	 *                         thorns one, the second is the protection one
 	 * @param effectiveAgainst An array of transformations against which every armor
 	 *                         part should be effective
 	 * @return Returns an array of ArmorEffectiveAgainstTransformation objects with
 	 *         a length of four. Index 0 is the one for the helmets, 1 for the
 	 *         chestplates, 2 for the leggings and 3 for the boots
 	 */
-	public static ArmorEffectiveAgainstTransformation[] registerArmorSet(String armorName, float[][][] effectiveness,
-			Transformations... effectiveAgainst) {
-		if (effectiveness.length != 4) {
+	public static ArmorEffectiveAgainstTransformation[] registerArmorSet(String armorName, TTPArray helmet,
+			TTPArray chestplate, TTPArray leggings, TTPArray boots) {
+		if (helmet.length != chestplate.length || chestplate.length != leggings.length
+				|| leggings.length != boots.length) {
 			throw new IllegalArgumentException(
-					"The size of the given three dimensional float array's first dimension has to be 4");
+					"The length of the helmet, chestplte, leggings and boots TransformationThornsProtectionArrays has to be the same");
 		}
+
 		ArmorEffectiveAgainstTransformation[] toReturn = new ArmorEffectiveAgainstTransformation[4];
-		for (int i = 0; i < 4; i++) {
-			EnumMap<Transformations, float[]> effectivenessMap = new EnumMap<>(Transformations.class);
-			for (int j = 0; j < effectiveAgainst.length; j++) {
-				effectivenessMap.put(effectiveAgainst[j], effectiveness[i][j]);
-			}
+		TTPArray[] values = new TTPArray[] { helmet, chestplate, leggings, boots };
+		for (int i = 0; i < values.length; i++)
 			toReturn[i] = new ArmorEffectiveAgainstTransformation(
 					GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.ARMOR_PART_NAMES[i] + armorName),
-					effectivenessMap);
-		}
+					values[i]);
 		return toReturn;
+	}
+
+	/**
+	 * An object representing a transformation and two float arrays. Used for
+	 * creating a new ArmorEffectiveAgainstTransformation instance. (TTP =
+	 * Transformation Thorns Protection)
+	 */
+	public static class TTPArray implements Cloneable {
+		private int currentIndex = 0;
+		public final Transformation[] transformations;
+		public final float[] thorns;
+		public final float[] protection;
+		public final int length;
+
+		private TTPArray(Transformation[] transformations, float[] thorns, float[] protection) {
+			this.length = transformations.length;
+			this.transformations = transformations;
+			this.thorns = thorns;
+			this.protection = protection;
+		}
+
+		public static TTPArray of(int length) {
+			return new TTPArray(new Transformation[length], new float[length], new float[length]);
+		}
+
+		public TTPArray add(Transformation transformation, float thorns, float protection) {
+			this.transformations[currentIndex] = transformation;
+			this.thorns[currentIndex] = thorns;
+			this.protection[currentIndex] = protection;
+			this.currentIndex++;
+			return this;
+		}
+
+		@Override
+		public TTPArray clone() {
+			return new TTPArray(transformations.clone(), thorns.clone(), protection.clone());
+		}
 	}
 }

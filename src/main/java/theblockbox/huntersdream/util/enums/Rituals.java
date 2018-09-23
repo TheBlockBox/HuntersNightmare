@@ -4,25 +4,27 @@ import java.util.ArrayList;
 
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public enum Rituals {
-	LUPUS_ADVOCABIT("lupus_advocabit", Transformations.WEREWOLF),
-	WEREWOLF_SECOND_RITE("werewolf_second_rite", Transformations.WEREWOLF),
-	VAMPIRE_FIRST_RITUAL("vampire_first_ritual", Transformations.VAMPIRE),
-	VAMPIRE_SECOND_RITUAL("vampire_second_ritual", Transformations.VAMPIRE);
+	LUPUS_ADVOCABIT("lupus_advocabit", TransformationInit.WEREWOLF),
+	WEREWOLF_SECOND_RITE("werewolf_second_rite", TransformationInit.WEREWOLF),
+	VAMPIRE_FIRST_RITUAL("vampire_first_ritual", TransformationInit.VAMPIRE),
+	VAMPIRE_SECOND_RITUAL("vampire_second_ritual", TransformationInit.VAMPIRE);
 
 	private ResourceLocation resourceLocation;
-	private Transformations[] forTransformations;
+	private Transformation[] forTransformations;
 
-	private Rituals(ResourceLocation resourceLocation, Transformations... forTransformations) {
+	private Rituals(ResourceLocation resourceLocation, Transformation... forTransformations) {
 		this.resourceLocation = resourceLocation;
 		this.forTransformations = forTransformations;
 		Helper.RITUALS.add(this);
 	}
 
-	private Rituals(String name, Transformations... forTransformations) {
+	private Rituals(String name, Transformation... forTransformations) {
 		this(GeneralHelper.newResLoc(name), forTransformations);
 	}
 
@@ -38,7 +40,7 @@ public enum Rituals {
 	 * Returns for what transformations the ritual is for (others can't get the
 	 * ritual)
 	 */
-	public Transformations[] getForTransformations() {
+	public Transformation[] getForTransformations() {
 		return this.forTransformations;
 	}
 

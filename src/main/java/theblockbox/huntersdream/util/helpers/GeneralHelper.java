@@ -16,6 +16,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -247,16 +248,48 @@ public class GeneralHelper {
 			if (!stack.isEmpty()) {
 				// need to create a new item stack to make the oredict not care about damage
 				int[] ids = OreDictionary.getOreIDs(new ItemStack(stack.getItem()));
-				return (oreDictNames.length > 0)
-						? Stream.of(oreDictNames).mapToInt(OreDictionary::getOreID).anyMatch(i -> {
-							for (int j : ids)
-								if (j == i)
-									return true;
-							return false;
-						})
-						: false;
+				if (oreDictNames.length > 0) {
+					return Stream.of(oreDictNames).mapToInt(OreDictionary::getOreID).anyMatch(i -> {
+						for (int j : ids)
+							if (j == i)
+								return true;
+						return false;
+					});
+				}
 			}
 			return false;
 		};
+	}
+
+	/**
+	 * Creates a new thread and then executes the given runnable in the given milli
+	 * seconds
+	 */
+	public static void executeIn(Runnable toBeExecuted, long millis) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(millis);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+				toBeExecuted.run();
+			}
+		}.start();
+	}
+
+	public static void executeOnMainThreadIn(Runnable toBeExecuted, long millis, MinecraftServer server) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(millis);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+				server.addScheduledTask(toBeExecuted);
+			}
+		}.start();
 	}
 }

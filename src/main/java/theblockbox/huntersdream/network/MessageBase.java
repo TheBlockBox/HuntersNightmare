@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
@@ -40,15 +40,15 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		writeString(buf, resourceLocation.toString());
 	}
 
-	public static Transformations readTransformation(ByteBuf buf) {
+	public static Transformation readTransformation(ByteBuf buf) {
 		String transformationName = readString(buf);
-		Transformations transformation = Transformations.fromName(transformationName);
+		Transformation transformation = Transformation.fromName(transformationName);
 		if (transformation == null)
 			throw new NullPointerException("Found transformation is null. Name: " + transformationName);
 		return transformation;
 	}
 
-	public static void writeTransformation(ByteBuf buf, @Nonnull Transformations transformation) {
+	public static void writeTransformation(ByteBuf buf, @Nonnull Transformation transformation) {
 		if (transformation != null)
 			writeString(buf, transformation.toString());
 		else

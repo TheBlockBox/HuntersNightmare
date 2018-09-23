@@ -1,6 +1,5 @@
-package theblockbox.huntersdream.util.enums;
+package theblockbox.huntersdream.util;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
@@ -15,47 +14,29 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.EnumHelper;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
-import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.VampireHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
-public enum Transformations {
-
-	// TODO: Add levelling system for WITCH, CLOCKWORKANDROID, HYBRID and
-	// HUNTER
-	HUMAN(TransformationEntry.create("human").setSupernatural(false)),
-	WEREWOLF(TransformationEntry.create("werewolf").setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
-			.setCalculateProtection(WerewolfHelper::calculateProtection)
-			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
-			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
-			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white")),
-	VAMPIRE(TransformationEntry.create("vampire").setCalculateDamage(VampireHelper::calculateDamage)
-			.setCalculateProtection(VampireHelper::calculateProtection)
-			.setCalculateLevel(VampireHelper::calculateLevel)),
-	WITCH(TransformationEntry.create("witch")), CLOCKWORKANDROID(TransformationEntry.create("clockworkandroid")),
-	HYBRID(TransformationEntry.create("hybrid")), HUNTER(TransformationEntry.create("hunter").setSupernatural(false));
-
-	// when an entity has no transformation, use null
-	// (no transformation meaning not infectable)
-
-	public static class Helper {
-		public static final ArrayList<Transformations> TRANSFORMATIONS = new ArrayList<>();
-	}
+public class Transformation {
+	private static Transformation[] transformations = null;
 
 	private final TransformationEntry ENTRY;
+	private final ResourceLocation registryName;
+	/**
+	 * The id of this transformation for this game session. Gets set when
+	 * transformation gets registered
+	 */
+	private int temporaryID = -1;
 
-	private Transformations(TransformationEntry entry) {
+	private Transformation(TransformationEntry entry, ResourceLocation registryName) {
 		this.ENTRY = entry;
-		Helper.TRANSFORMATIONS.add(this);
+		this.registryName = registryName;
 	}
 
 	/**
@@ -66,8 +47,8 @@ public enum Transformations {
 	 *             {@link ResourceLocation#toString()}, something like
 	 *             "huntersdream:werewolf"
 	 */
-	public static Transformations fromName(String name) {
-		Transformations transformation = fromNameWithoutError(name);
+	public static Transformation fromName(String name) {
+		Transformation transformation = fromNameWithoutError(name);
 		if (transformation == null)
 			Main.getLogger().error("The given string \"" + name
 					+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure\nStacktrace: "
@@ -79,36 +60,46 @@ public enum Transformations {
 	 * Does exactly the same thing as {@link #fromName(String)} but without logging
 	 * an error
 	 */
-	public static @Nullable Transformations fromNameWithoutError(String name) {
-		for (Transformations transformations : Helper.TRANSFORMATIONS)
-			if (transformations.getResourceLocation().toString().equals(name))
-				return transformations;
+	public static @Nullable Transformation fromNameWithoutError(String name) {
+		for (Transformation transformation : transformations)
+			if (transformation.getRegistryName().toString().equals(name))
+				return transformation;
 		return null;
 	}
 
-	public static Transformations fromResourceLocation(ResourceLocation resourceLocation) {
+	public static @Nullable Transformation fromResourceLocation(ResourceLocation resourceLocation) {
 		return fromName(resourceLocation.toString());
 	}
 
+	public static Transformation fromTemporaryID(int temporaryID) throws ArrayIndexOutOfBoundsException {
+		return transformations[temporaryID];
+	}
+
 	/** Returns an array of all currently registered transformations */
-	public static Transformations[] getAllTransformations() {
-		return Helper.TRANSFORMATIONS.toArray(new Transformations[0]);
+	public static Transformation[] getAllTransformations() {
+		return transformations.clone();
 	}
 
-	/**
-	 * @deprecated Use {@link #fromName(String)} or
-	 *             {@link #fromResourceLocation(ResourceLocation)} instead. This is
-	 *             only here because of pre-0.2.0 support
-	 * @param id The id of the transformation that you want to get
-	 * @return Returns the transformation that has the corresponding id
-	 */
-	@Deprecated
-	public static Transformations fromID(int id) {
-		return (id == 0) ? (Transformations.HUMAN) : ((id == 1) ? Transformations.WEREWOLF : null);
+	public static void preInit() {
+		TransformationRegistryEvent event = new TransformationRegistryEvent();
+		MinecraftForge.EVENT_BUS.post(event);
+		transformations = event.getTransformations();
+		for (int i = 0; i < transformations.length; i++) {
+			transformations[i].temporaryID = i;
+		}
 	}
 
-	public ResourceLocation getResourceLocation() {
-		return this.ENTRY.resourceLocation;
+	public boolean hasBeenRegistered() {
+		return this.temporaryID >= 0;
+	}
+
+	public ResourceLocation getRegistryName() {
+		return this.registryName;
+	}
+
+	public static int getTransformationLength() {
+		// if not initialized, return 7 (default transformations)
+		return (transformations != null) ? transformations.length : 7;
 	}
 
 	public double getLevel(EntityPlayerMP player) {
@@ -121,8 +112,8 @@ public enum Transformations {
 
 	/** Returns the xp bar texture for the given transformation */
 	public ResourceLocation getXPBarTexture() {
-		return new ResourceLocation(getResourceLocation().getResourceDomain(),
-				"textures/gui/transformation_xp_bar_" + getResourceLocation().getResourcePath() + ".png");
+		return new ResourceLocation(getRegistryName().getResourceDomain(),
+				"textures/gui/transformation_xp_bar_" + getRegistryName().getResourcePath() + ".png");
 	}
 
 	/**
@@ -133,7 +124,7 @@ public enum Transformations {
 	 */
 	@Override
 	public String toString() {
-		return this.getResourceLocation().toString();
+		return this.getRegistryName().toString();
 	}
 
 	public ToDoubleFunction<EntityPlayerMP> getCalculateLevel() {
@@ -141,7 +132,7 @@ public enum Transformations {
 	}
 
 	public ResourceLocation[] getTextures() {
-		return this.ENTRY.textures;
+		return this.ENTRY.textures.clone();
 	}
 
 	public float getGeneralDamage(EntityLivingBase entity) {
@@ -192,7 +183,21 @@ public enum Transformations {
 		}
 	}
 
-	/** Used to make new transformations */
+	/**
+	 * Returns a temporary id for the transformation. Don't use the id for writing
+	 * to or reading from nbt because it may change the next time the game is
+	 * started
+	 */
+	public int getTemporaryID() {
+		return this.temporaryID;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getTemporaryID();
+	}
+
+	/** Used to make register new transformations */
 	public static class TransformationEntry {
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
@@ -200,33 +205,18 @@ public enum Transformations {
 				/ 500.0D;
 		private Function<EntityCreature, EntityLivingBase> transformCreature = null;
 		private Consumer<EntityLivingBase> infect = null;
-		private ResourceLocation resourceLocation = null;
 		/** A runnable that is executed when the player levels up */
 		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
 		};
 		private Function<EntityLivingBase, Float> calculateDamage = e -> 1F;
 		private Function<EntityLivingBase, Float> calculateProtection = e -> 1F;
 
-		private TransformationEntry(ResourceLocation resourceLocation) {
-			this.resourceLocation = resourceLocation;
-			if (resourceLocation.getResourceDomain().equals("") || resourceLocation.getResourcePath().equals("")
-					|| resourceLocation == null
-					|| resourceLocation.getResourceDomain() == null | resourceLocation.getResourcePath() == null)
-				throw new NullPointerException(
-						"A value or the resource location itself is either null or an empty string");
+		private TransformationEntry() {
 		}
 
 		/** Returns a new instance of type TransformationEntry */
-		public static TransformationEntry create(ResourceLocation resourceLocation) {
-			return new TransformationEntry(resourceLocation);
-		}
-
-		/**
-		 * Caution! Domain defaults to huntersdream. If you're making an addon, use
-		 * {@link #create(ResourceLocation)}
-		 */
-		public static TransformationEntry create(String name) {
-			return new TransformationEntry(GeneralHelper.newResLoc(name));
+		public static TransformationEntry of() {
+			return new TransformationEntry();
 		}
 
 		public TransformationEntry setSupernatural(boolean supernatural) {
@@ -282,9 +272,17 @@ public enum Transformations {
 			return this;
 		}
 
-		public Transformations createTransformation(String enumName) {
-			return EnumHelper.addEnum(Transformations.class, enumName, new Class<?>[] { TransformationEntry.class },
-					this);
+		/** Creates a new Transformation with the given registry name */
+		public Transformation create(ResourceLocation registryName) {
+			return new Transformation(this, registryName);
+		}
+
+		/**
+		 * Does exactly the same as {@link #create(ResourceLocation)} except that, if a
+		 * string with ':' is given, the domain defaults to hunter's dream
+		 */
+		public Transformation create(String registryName) {
+			return new Transformation(this, GeneralHelper.newResLoc(registryName));
 		}
 	}
 }

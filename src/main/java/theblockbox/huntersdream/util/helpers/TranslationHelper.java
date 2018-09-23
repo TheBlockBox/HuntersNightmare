@@ -74,15 +74,15 @@ public class TranslationHelper {
 			EffectiveAgainstTransformation<ItemStack> eat = EffectivenessHelper.getEAT(stack);
 			if (eat.effectiveAgainstUndead()) {
 				tooltips.add(I18n.format(Reference.MODID + ".effectiveAgainst.tooltip", getAsLocalizedList(Stream
-						.concat(eat.transformations().stream(), Stream.of(Reference.MODID + ".undead")).toArray())));
+						.concat(Stream.of(eat.transformations()), Stream.of(Reference.MODID + ".undead")).toArray())));
 			} else {
 				tooltips.add(I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-						getAsLocalizedList(eat.transformations().toArray())));
+						getAsLocalizedList(eat.transformations())));
 			}
 		}
 		if (EffectivenessHelper.armorEffectiveAgainstSomeTransformation(stack)) {
 			tooltips.add(I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
-					getAsLocalizedList(EffectivenessHelper.getAEAT(stack).transformations().toArray())));
+					getAsLocalizedList(EffectivenessHelper.getAEAT(stack).transformations())));
 		}
 	}
 }

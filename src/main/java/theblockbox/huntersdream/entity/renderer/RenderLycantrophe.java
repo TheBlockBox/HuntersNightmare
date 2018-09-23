@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
@@ -23,9 +23,9 @@ public abstract class RenderLycantrophe<T extends EntityLivingBase> extends Rend
 	@Override
 	public ResourceLocation getEntityTexture(T entity) {
 		if (entity instanceof EntityWerewolf) {
-			return Transformations.WEREWOLF.getTextures()[((EntityWerewolf) entity).getTextureIndex()];
+			return TransformationInit.WEREWOLF.getTextures()[((EntityWerewolf) entity).getTextureIndex()];
 		} else if (entity instanceof EntityPlayer) {
-			return Transformations.WEREWOLF.getTextures()[TransformationHelper.getCap((EntityPlayer) entity)
+			return TransformationInit.WEREWOLF.getTextures()[TransformationHelper.getCap((EntityPlayer) entity)
 					.getTextureIndex()];
 		} else {
 			return null;

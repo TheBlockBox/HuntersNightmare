@@ -35,8 +35,9 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
@@ -51,7 +52,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	private static final DataParameter<Byte> GOBLIN_TEXTURE_INDEX = EntityDataManager
 			.<Byte>createKey(EntityGoblinTD.class, DataSerializers.BYTE);
 
-	public EntityGoblinTD(World worldIn, int textureIndex, Transformations transformation) {
+	public EntityGoblinTD(World worldIn, int textureIndex, Transformation transformation) {
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
@@ -59,14 +60,14 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	public EntityGoblinTD(World worldIn) {
-		this(worldIn, 0, ChanceHelper.chanceOf(25) ? Transformations.WEREWOLF : Transformations.HUMAN);
+		this(worldIn, 0, ChanceHelper.chanceOf(25) ? TransformationInit.WEREWOLF : TransformationInit.HUMAN);
 	}
 
 	@Override
 	protected void entityInit() {
 		super.entityInit();
 		this.dataManager.register(TEXTURE_INDEX, 0);
-		this.dataManager.register(TRANSFORMATION_NAME, Transformations.HUMAN.toString());
+		this.dataManager.register(TRANSFORMATION_NAME, TransformationInit.HUMAN.toString());
 		this.dataManager.register(GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(TEXTURES));
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 	}
@@ -151,22 +152,22 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
-	public Transformations[] getTransformationsNotImmuneTo() {
-		return new Transformations[] { Transformations.VAMPIRE, Transformations.WEREWOLF };
+	public Transformation[] getTransformationsNotImmuneTo() {
+		return new Transformation[] { TransformationInit.VAMPIRE, TransformationInit.WEREWOLF };
 	}
 
 	@Override
-	public boolean notImmuneToTransformation(Transformations transformation) {
-		return (transformation == Transformations.VAMPIRE) || (transformation == Transformations.WEREWOLF);
+	public boolean notImmuneToTransformation(Transformation transformation) {
+		return (transformation == TransformationInit.VAMPIRE) || (transformation == TransformationInit.WEREWOLF);
 	}
 
 	@Override
-	public Transformations getTransformation() {
-		return Transformations.fromName(this.dataManager.get(TRANSFORMATION_NAME));
+	public Transformation getTransformation() {
+		return Transformation.fromName(this.dataManager.get(TRANSFORMATION_NAME));
 	}
 
 	@Override
-	public void setTransformation(Transformations transformation) {
+	public void setTransformation(Transformation transformation) {
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 	}
 

@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature.TransformationCreature;
 
@@ -13,7 +13,7 @@ public class TransformationCreatureProvider implements ICapabilitySerializable<N
 	public static final Capability<ITransformationCreature> CAP = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
 	private final ITransformationCreature instance;
 
-	public TransformationCreatureProvider(Transformations... notImmuneTo) {
+	public TransformationCreatureProvider(Transformation... notImmuneTo) {
 		this.instance = new TransformationCreatureImplementation(notImmuneTo);
 	}
 
@@ -38,19 +38,19 @@ public class TransformationCreatureProvider implements ICapabilitySerializable<N
 	}
 
 	private static class TransformationCreatureImplementation extends TransformationCreature {
-		private Transformations[] transformationsNotImmuneTo = new Transformations[0];
+		private Transformation[] transformationsNotImmuneTo = new Transformation[0];
 
-		public TransformationCreatureImplementation(Transformations[] notImmuneTo) {
+		public TransformationCreatureImplementation(Transformation[] notImmuneTo) {
 			this.transformationsNotImmuneTo = notImmuneTo;
 		}
 
 		@Override
-		public Transformations[] getTransformationsNotImmuneTo() {
+		public Transformation[] getTransformationsNotImmuneTo() {
 			return this.transformationsNotImmuneTo;
 		}
 
 		@Override
-		public void setTransformationsNotImmuneTo(Transformations... transformationsNotImmuneTo) {
+		public void setTransformationsNotImmuneTo(Transformation... transformationsNotImmuneTo) {
 			this.transformationsNotImmuneTo = transformationsNotImmuneTo;
 		}
 	}

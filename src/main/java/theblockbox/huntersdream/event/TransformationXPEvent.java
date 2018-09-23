@@ -10,7 +10,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -75,18 +76,18 @@ public class TransformationXPEvent extends PlayerEvent {
 	}
 
 	public enum TransformationXPSentReason {
-		WEREWOLF_HAS_KILLED(Transformations.WEREWOLF), WEREWOLF_UNDER_MOON(Transformations.WEREWOLF),
-		VAMPIRE_DRANK_BLOOD(Transformations.VAMPIRE), COMMAND, RESPAWN;
+		WEREWOLF_HAS_KILLED(TransformationInit.WEREWOLF), WEREWOLF_UNDER_MOON(TransformationInit.WEREWOLF),
+		VAMPIRE_DRANK_BLOOD(TransformationInit.VAMPIRE), COMMAND, RESPAWN;
 
 		/** The transformations that can receive xp through this cause */
-		public final Transformations[] TRANSFORMATIONS;
+		public final Transformation[] TRANSFORMATIONS;
 
-		private TransformationXPSentReason(Transformations... transformations) {
+		private TransformationXPSentReason(Transformation... transformations) {
 			this.TRANSFORMATIONS = transformations;
 		}
 
 		public static boolean validReason(@Nonnull TransformationXPSentReason reason,
-				@Nonnull Transformations transformation) {
+				@Nonnull Transformation transformation) {
 			return Stream.of(reason.TRANSFORMATIONS).anyMatch(transformation::equals);
 		}
 	}

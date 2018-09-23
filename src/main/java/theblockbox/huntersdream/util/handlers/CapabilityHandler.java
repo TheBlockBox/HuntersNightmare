@@ -15,10 +15,11 @@ import theblockbox.huntersdream.capabilities.CapabilityProvider;
 import theblockbox.huntersdream.capabilities.TransformationCreatureProvider;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -48,7 +49,7 @@ public class CapabilityHandler {
 			event.addCapability(VAMPIRE, new CapabilityProvider<IVampire>(CapabilitiesInit.CAPABILITY_VAMPIRE));
 		} else if (entity instanceof EntityVillager) {
 			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY,
-					new TransformationCreatureProvider(Transformations.WEREWOLF, Transformations.VAMPIRE));
+					new TransformationCreatureProvider(TransformationInit.WEREWOLF, TransformationInit.VAMPIRE));
 		}
 
 		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD || entity instanceof EntityPlayer
@@ -88,6 +89,8 @@ public class CapabilityHandler {
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
 
+			VampireHelper.getIVampire(player).setBlood(10D);
+
 			for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
 				PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
 
@@ -101,6 +104,7 @@ public class CapabilityHandler {
 				server.addScheduledTask(() -> {
 					for (EntityPlayerMP p : server.getPlayerList().getPlayers())
 						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
+					PacketHandler.sendBloodMessage((EntityPlayerMP) player);
 				});
 			}, "SyncCapAfterPlayerDeath1").start();
 			new Thread(() -> {

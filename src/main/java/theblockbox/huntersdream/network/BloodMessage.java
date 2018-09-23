@@ -10,26 +10,26 @@ import theblockbox.huntersdream.util.helpers.VampireHelper;
 
 public class BloodMessage extends MessageBase<BloodMessage> {
 	private int player;
-	private int blood;
+	private double blood;
 
 	public BloodMessage() {
 	}
 
 	public BloodMessage(EntityPlayer vampire) {
 		this.player = vampire.getEntityId();
-		this.blood = VampireHelper.getIVampire(vampire).getBlood();
+		this.blood = VampireHelper.getIVampire(vampire).getBloodDouble();
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.player = buf.readInt();
-		this.blood = buf.readInt();
+		this.blood = buf.readDouble();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(player);
-		buf.writeInt(blood);
+		buf.writeDouble(blood);
 	}
 
 	@Override

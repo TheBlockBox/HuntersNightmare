@@ -3,29 +3,35 @@ package theblockbox.huntersdream.util.interfaces.transformation;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
-import theblockbox.huntersdream.util.enums.Transformations;
 
 /** For player vampires */
 @CapabilityInterface
 public interface IVampire {
-	default public Transformations getTransformation() {
-		return Transformations.VAMPIRE;
+	default public Transformation getTransformation() {
+		return TransformationInit.VAMPIRE;
 	}
 
 	/** Returns a vampires current blood. One blood is half a blood drop */
-	public int getBlood();
+	default public int getBlood() {
+		return MathHelper.ceil(this.getBloodDouble());
+	}
 
-	public void setBlood(int blood);
+	public double getBloodDouble();
+
+	public void setBlood(double blood);
 
 	default public void incrementBlood() {
-		this.setBlood(this.getBlood() + 1);
+		this.setBlood(this.getBloodDouble() + 1.0D);
 	}
 
 	default public void decrementBlood() {
-		this.setBlood(this.getBlood() - 1);
+		this.setBlood(this.getBloodDouble() - 1.0D);
 	}
 
 	public int getTimeDrinking();
@@ -33,16 +39,16 @@ public interface IVampire {
 	public void setTimeDrinking(int time);
 
 	public static class Vampire implements IVampire {
-		private int blood = 0;
+		private double blood = 0;
 		private int timeDrinking = 0;
 
 		@Override
-		public int getBlood() {
+		public double getBloodDouble() {
 			return this.blood;
 		}
 
 		@Override
-		public void setBlood(int blood) {
+		public void setBlood(double blood) {
 			this.blood = blood;
 		}
 
@@ -63,7 +69,7 @@ public interface IVampire {
 		@Override
 		public NBTBase writeNBT(Capability<IVampire> capability, IVampire instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setInteger(BLOOD, instance.getBlood());
+			compound.setDouble(BLOOD, instance.getBlood());
 			return compound;
 		}
 
@@ -71,7 +77,7 @@ public interface IVampire {
 		public void readNBT(Capability<IVampire> capability, IVampire instance, EnumFacing side, NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
-				instance.setBlood(compound.getInteger(BLOOD));
+				instance.setBlood(compound.getDouble(BLOOD));
 			}
 		}
 	}

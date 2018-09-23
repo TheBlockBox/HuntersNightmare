@@ -5,7 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
@@ -17,11 +17,11 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
  */
 @Cancelable
 public class TransformationEvent extends LivingEvent {
-	private Transformations transformationBefore;
-	private Transformations transformationAfter;
+	private Transformation transformationBefore;
+	private Transformation transformationAfter;
 	private TransformationEventReason reason;
 
-	public TransformationEvent(EntityLivingBase entity, Transformations transformationAfter,
+	public TransformationEvent(EntityLivingBase entity, Transformation transformationAfter,
 			TransformationEventReason reason) {
 		super(entity);
 		this.transformationBefore = TransformationHelper.getTransformation(entity);
@@ -29,11 +29,11 @@ public class TransformationEvent extends LivingEvent {
 		this.reason = reason;
 	}
 
-	public Transformations getTransformationBefore() {
+	public Transformation getTransformationBefore() {
 		return transformationBefore;
 	}
 
-	public Transformations getTransformationAfter() {
+	public Transformation getTransformationAfter() {
 		return transformationAfter;
 	}
 

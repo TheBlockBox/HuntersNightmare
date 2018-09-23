@@ -13,7 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -40,7 +40,7 @@ public class CommandsTransformation extends CommandBase {
 			BlockPos targetPos) {
 		ArrayList<String> toReturn = new ArrayList<>();
 		if (args.length == 1) {
-			toReturn.addAll(Stream.of(Transformations.getAllTransformations()).map(Transformations::toString)
+			toReturn.addAll(Stream.of(Transformation.getAllTransformations()).map(Transformation::toString)
 					.collect(Collectors.toList()));
 			toReturn.add("get");
 			return getListOfStringsMatchingLastWord(args, toReturn);
@@ -63,7 +63,7 @@ public class CommandsTransformation extends CommandBase {
 						player.getName(), TransformationHelper.getTransformation(player).toString()));
 			} else {
 				String transformation = args[0];
-				Transformations transformations = Transformations
+				Transformation transformations = Transformation
 						.fromNameWithoutError(GeneralHelper.newResLoc(transformation).toString());
 				TransformationHelper.changeTransformation(player, transformations, TransformationEventReason.COMMAND);
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationSet",

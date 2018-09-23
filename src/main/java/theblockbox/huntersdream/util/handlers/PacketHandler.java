@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.network.BloodMessage;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.MessageBase.MessageHandler;
@@ -28,7 +29,6 @@ import theblockbox.huntersdream.network.TransformationXPMessage;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.VampireFoodStats;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -81,7 +81,7 @@ public class PacketHandler {
 		cap.setLevel(cap.getTransformation().getLevel(applyOn));
 		TransformationMessage message = new TransformationMessage(cap.getXP(), cap.transformed(),
 				cap.getTransformation(), applyOn, cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
-		if (cap.getTransformation() == Transformations.VAMPIRE)
+		if (cap.getTransformation() == TransformationInit.VAMPIRE)
 			applyOn.foodStats = VampireFoodStats.INSTANCE;
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendTo(message, sendTo));

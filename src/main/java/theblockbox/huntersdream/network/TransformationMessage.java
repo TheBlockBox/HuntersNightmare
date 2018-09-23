@@ -7,10 +7,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.HuntersJournalPage;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -18,7 +19,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 
 	private int xp;
 	private boolean transformed;
-	private Transformations transformation;
+	private Transformation transformation;
 	private int textureIndex;
 	private int player;
 	private double level;
@@ -28,7 +29,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	public TransformationMessage() {
 	}
 
-	public TransformationMessage(int xp, boolean transformed, Transformations transformation, EntityPlayer player,
+	public TransformationMessage(int xp, boolean transformed, Transformation transformation, EntityPlayer player,
 			int textureIndex, Rituals[] rituals, HuntersJournalPage[] pages) {
 		this.xp = xp;
 		this.transformed = transformed;
@@ -91,7 +92,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 					cap.setLevel(message.level);
 					cap.setRituals(message.rituals);
 					cap.setUnlockedPages(message.pages);
-					if (message.transformation == Transformations.VAMPIRE)
+					if (message.transformation == TransformationInit.VAMPIRE)
 						player.foodStats = VampireFoodStats.INSTANCE;
 				});
 			}

@@ -11,7 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
@@ -32,7 +32,7 @@ public interface ITransformationEntityTransformed extends ITransformation {
 	}
 
 	@Override
-	default void setTransformation(Transformations transformation) {
+	default void setTransformation(Transformation transformation) {
 		throw new UnsupportedOperationException("This creature's transformation is already determined");
 	}
 
@@ -76,7 +76,7 @@ public interface ITransformationEntityTransformed extends ITransformation {
 							@SuppressWarnings("unchecked")
 							Class<? extends Entity> entityClass = (Class<? extends Entity>) Class.forName(entityName);
 							Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
-									Transformations.class);
+									Transformation.class);
 							e = (EntityCreature) constructor.newInstance(toBeTransformedBack.world,
 									toBeTransformedBack.getTextureIndex(), toBeTransformedBack.getTransformation());
 						} catch (ClassNotFoundException ex) {

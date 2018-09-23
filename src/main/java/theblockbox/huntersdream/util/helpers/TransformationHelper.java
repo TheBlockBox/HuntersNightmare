@@ -23,8 +23,9 @@ import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSent
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.enums.Transformations;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
@@ -58,7 +59,7 @@ public class TransformationHelper {
 	 * Changes the player's transformation also resets xp and transformed and sends
 	 * the data to the client (this method is only to be called server side!)
 	 */
-	private static void changeTransformation(EntityPlayerMP player, @Nonnull Transformations transformation) {
+	private static void changeTransformation(EntityPlayerMP player, @Nonnull Transformation transformation) {
 		if (transformation == null)
 			throw new NullPointerException("Null not allowed here");
 		ITransformationPlayer cap = getCap(player);
@@ -74,7 +75,7 @@ public class TransformationHelper {
 		PacketHandler.sendTransformationMessage(player); // sync data with client
 	}
 
-	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformations transformation,
+	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformation transformation,
 			TransformationEventReason reason) {
 		if (entity != null && transformation != null) {
 			if (!entity.world.isRemote) {
@@ -102,7 +103,7 @@ public class TransformationHelper {
 	}
 
 	public static void changeTransformationWhenPossible(@Nonnull EntityCreature entity,
-			@Nonnull Transformations transformation, TransformationEventReason reason) {
+			@Nonnull Transformation transformation, TransformationEventReason reason) {
 		if (transformation == null || entity == null) {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
 					+ " Transformation null: " + (transformation == null));
@@ -134,7 +135,7 @@ public class TransformationHelper {
 
 	/** Returns the entity's transformation */
 	@Nullable
-	public static Transformations getTransformation(EntityLivingBase entity) {
+	public static Transformation getTransformation(EntityLivingBase entity) {
 		ITransformation transformation = getITransformation(entity);
 		return (transformation == null) ? null : transformation.getTransformation();
 	}
@@ -208,12 +209,12 @@ public class TransformationHelper {
 	 * Returns true when the given entity can be infected with the given
 	 * infection/transformation
 	 */
-	public static boolean canBeInfectedWith(Transformations infection, EntityLivingBase entity) {
+	public static boolean canBeInfectedWith(Transformation infection, EntityLivingBase entity) {
 		if (canChangeTransformation(entity)) {
 			IInfectInTicks iit = getIInfectInTicks(entity);
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
 			if (ionm != null) {
-				if (infection == Transformations.WEREWOLF) {
+				if (infection == TransformationInit.WEREWOLF) {
 					return true;
 				}
 			}
@@ -235,7 +236,7 @@ public class TransformationHelper {
 	 * Returns true when the given entity can be infected with the given
 	 * infection/transformation without accounting for current infections
 	 */
-	public static boolean onInfectionCanBeInfectedWith(Transformations infection, EntityCreature entity) {
+	public static boolean onInfectionCanBeInfectedWith(Transformation infection, EntityCreature entity) {
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
 			if (tc != null) {
@@ -258,8 +259,7 @@ public class TransformationHelper {
 	 * Infects the given entity in the given amount of ticks with the given
 	 * infection/transformation
 	 */
-	public static void infectIn(int ticksUntilInfection, EntityLivingBase entityToBeInfected,
-			Transformations infectTo) {
+	public static void infectIn(int ticksUntilInfection, EntityLivingBase entityToBeInfected, Transformation infectTo) {
 		IInfectInTicks iit = getIInfectInTicks(entityToBeInfected);
 		if (iit != null) {
 			iit.setTime(ticksUntilInfection);

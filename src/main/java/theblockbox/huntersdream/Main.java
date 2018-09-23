@@ -35,7 +35,6 @@ public class Main {
 
 	@EventHandler
 	public static void preInit(FMLPreInitializationEvent event) {
-		RegistryHandler.gameRegistry(event);
 		RegistryHandler.preInitCommon(event);
 		proxy.preInit();
 	}

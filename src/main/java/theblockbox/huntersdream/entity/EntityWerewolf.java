@@ -29,8 +29,9 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.enums.Transformations;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -43,7 +44,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEn
  */
 public class EntityWerewolf extends EntityMob implements ITransformationEntityTransformed, IEntityAdditionalSpawnData {
 	public static final double SPEED = 0.5D;
-	public static final Transformations TRANSFORMATION = Transformations.WEREWOLF;
+	public static final Transformation TRANSFORMATION = TransformationInit.WEREWOLF;
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
@@ -101,7 +102,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		Predicate<EntityPlayer> predicatePlayer = input -> {
 			ITransformation transformation = TransformationHelper.getITransformation(input);
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(input);
-			return !((transformation.getTransformation() == Transformations.WEREWOLF)
+			return !((transformation.getTransformation() == TransformationInit.WEREWOLF)
 					|| ((ionm != null) && ionm.isInfected()));
 		};
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
@@ -166,7 +167,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
-	public Transformations getTransformation() {
+	public Transformation getTransformation() {
 		return TRANSFORMATION;
 	}
 
