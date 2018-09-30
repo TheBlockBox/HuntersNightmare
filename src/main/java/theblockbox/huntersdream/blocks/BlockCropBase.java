@@ -28,7 +28,7 @@ public class BlockCropBase extends BlockCrops implements IHasModel {
 	private ItemBlock itemBlock;
 
 	public BlockCropBase(String name, Item crop) {
-		setUnlocalizedName(Reference.MODID + "." + name);
+		setTranslationKey(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 		itemBlock = new ItemBlock(this);

@@ -15,7 +15,7 @@ public class BlockBase extends Block implements IHasModel {
 
 	public BlockBase(String name, Material materialIn, float hardness) {
 		super(materialIn);
-		setUnlocalizedName(Reference.MODID + "." + name);
+		setTranslationKey(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 		BlockInit.BLOCKS.add(this);

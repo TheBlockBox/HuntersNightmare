@@ -71,7 +71,7 @@ public class TransformationEventHandler {
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
 					if (cap.getTransformation() == TransformationInit.WEREWOLF) {
-						if (WerewolfHelper.isWerewolfTime(player)) {
+						if (WerewolfHelper.isWerewolfTime(player.world)) {
 							if (!cap.transformed()) {
 								WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
 							} else {
@@ -249,6 +249,9 @@ public class TransformationEventHandler {
 					if (transformation != null) {
 						transformation.transformCreatureWhenPossible((EntityCreature) entity);
 					}
+				}
+				if (TransformationHelper.getTransformation(entity) == TransformationInit.VAMPIRE) {
+					VampireEventHandler.onVampireTick(entity);
 				}
 
 				if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null)) {

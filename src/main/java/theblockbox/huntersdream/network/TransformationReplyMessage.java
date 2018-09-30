@@ -28,7 +28,7 @@ public class TransformationReplyMessage extends MessageBase<TransformationReplyM
 	public TransformationReplyMessage(String reply, EntityLivingBase player, Item pickedUp) {
 		this.reply = reply;
 		this.entity = player.getEntityId();
-		this.pickedUp = pickedUp.getUnlocalizedName() + ".name";
+		this.pickedUp = pickedUp.getTranslationKey() + ".name";
 	}
 
 	@Override

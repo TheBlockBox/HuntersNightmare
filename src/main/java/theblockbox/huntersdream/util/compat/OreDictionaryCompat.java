@@ -1,5 +1,7 @@
 package theblockbox.huntersdream.util.compat;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.ItemInit;
@@ -20,15 +22,19 @@ public class OreDictionaryCompat {
 		OreDictionary.registerOre("oreSilver", BlockInit.ORE_SILVER);
 		OreDictionary.registerOre("ingotSilver", ItemInit.INGOT_SILVER);
 
-		OreDictionary.registerOre("helmetSilver", ItemInit.HELMET_SILVER);
-		OreDictionary.registerOre("chestplateSilver", ItemInit.CHESTPLATE_SILVER);
-		OreDictionary.registerOre("leggingsSilver", ItemInit.LEGGINGS_SILVER);
-		OreDictionary.registerOre("bootsSilver", ItemInit.BOOTS_SILVER);
+		registerOreWithoutDamage("helmetSilver", ItemInit.HELMET_SILVER);
+		registerOreWithoutDamage("chestplateSilver", ItemInit.CHESTPLATE_SILVER);
+		registerOreWithoutDamage("leggingsSilver", ItemInit.LEGGINGS_SILVER);
+		registerOreWithoutDamage("bootsSilver", ItemInit.BOOTS_SILVER);
 
-		OreDictionary.registerOre("axeSilver", ItemInit.AXE_SILVER);
-		OreDictionary.registerOre("pickaxeSilver", ItemInit.PICKAXE_SILVER);
-		OreDictionary.registerOre("hoeSilver", ItemInit.HOE_SILVER);
-		OreDictionary.registerOre("swordSilver", ItemInit.SWORD_SILVER);
-		OreDictionary.registerOre("shovelSilver", ItemInit.SHOVEL_SILVER);
+		registerOreWithoutDamage("axeSilver", ItemInit.AXE_SILVER);
+		registerOreWithoutDamage("pickaxeSilver", ItemInit.PICKAXE_SILVER);
+		registerOreWithoutDamage("hoeSilver", ItemInit.HOE_SILVER);
+		registerOreWithoutDamage("swordSilver", ItemInit.SWORD_SILVER);
+		registerOreWithoutDamage("shovelSilver", ItemInit.SHOVEL_SILVER);
+	}
+
+	private static void registerOreWithoutDamage(String name, Item item) {
+		OreDictionary.registerOre(name, new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
 	}
 }

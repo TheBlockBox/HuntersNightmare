@@ -6,11 +6,15 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.enums.Rituals;
+import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -89,5 +93,19 @@ public class VampireHelper {
 		}
 
 		return level;
+	}
+
+	public static boolean shouldVampireBurn(EntityLivingBase vampire) {
+		checkIsVampire(vampire);
+		World world = vampire.world;
+		if (world.isRemote)
+			throw new WrongSideException("Can only test if vampire should burn on server side", world);
+		// TODO: Check for glasses
+		BlockPos pos = vampire.getPosition();
+		boolean canSeeSky = world.canSeeSky(pos);
+		if (!canSeeSky) {
+			canSeeSky = GeneralHelper.canBlockSeeSky(world, pos);
+		}
+		return !vampire.isPotionActive(PotionInit.SUNSCREEN) && world.isDaytime() && canSeeSky;
 	}
 }

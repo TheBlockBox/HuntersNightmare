@@ -91,7 +91,7 @@ public class WerewolfEventHandler {
 			if (!player.world.isRemote) {
 				ITransformationPlayer cap = TransformationHelper.getCap(player);
 				IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
-				if (WerewolfHelper.isWerewolfTime(player) && !cap.transformed()
+				if (WerewolfHelper.isWerewolfTime(player.world) && !cap.transformed()
 						&& (cap.getTransformation() == TransformationInit.WEREWOLF)
 						&& werewolf.getTransformationStage() > 0) {
 					// cancel event if damage source isn't magic (including poison) or event can
@@ -121,11 +121,11 @@ public class WerewolfEventHandler {
 		if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON, null)) {
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
 			if (ionm.getInfectionTransformation() == TransformationInit.WEREWOLF) {
-				if (!WerewolfHelper.isWerewolfTime(entity)) {
+				if (!WerewolfHelper.isWerewolfTime(entity.world)) {
 					if (ionm.getInfectionStatus() == InfectionStatus.MOON_ON_INFECTION) {
 						ionm.setInfectionStatus(InfectionStatus.AFTER_INFECTION);
 					}
-				} else if (WerewolfHelper.isWerewolfTime(entity)) {
+				} else if (WerewolfHelper.isWerewolfTime(entity.world)) {
 					if (ionm.getInfectionStatus() == InfectionStatus.AFTER_INFECTION) {
 						ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
 						ionm.setInfectionTick(-1);

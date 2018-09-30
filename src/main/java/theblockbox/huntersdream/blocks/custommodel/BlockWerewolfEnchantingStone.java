@@ -80,9 +80,9 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModelWithDirect
 				}
 
 				PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
-				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".onClick.werewolf"));
+				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick.werewolf"));
 			} else {
-				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".onClick.notWerewolf"));
+				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick.notWerewolf"));
 			}
 		}
 		return true;

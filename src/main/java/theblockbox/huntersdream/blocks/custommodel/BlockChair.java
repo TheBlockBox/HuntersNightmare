@@ -19,7 +19,7 @@ public class BlockChair extends BlockBaseCustomModelWithDirection {
 
 	public BlockChair(String name) {
 		super(name, Material.WOOD, 1F);
-		setUnlocalizedName(Reference.MODID + ".chair");
+		setTranslationKey(Reference.MODID + ".chair");
 	}
 
 	protected BlockChair(String name, Material materialIn, float hardness) {

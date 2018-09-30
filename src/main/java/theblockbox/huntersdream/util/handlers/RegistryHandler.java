@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.handlers;
 import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -45,11 +46,11 @@ import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation.TTPArray;
-import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation.TEArray;
 import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
 import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
 
@@ -141,7 +142,7 @@ public class RegistryHandler {
 
 		ItemEffectiveAgainstTransformation.of(
 				GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true,
-				TEArray.of(1).add(TransformationInit.WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS));
+				TEArray.of(2).add(TransformationInit.WEREWOLF).add(TransformationInit.VAMPIRE));
 
 		EntityEffectiveAgainstTransformation.of(entity -> {
 			if (entity instanceof EntityTippedArrow) {
@@ -153,6 +154,11 @@ public class RegistryHandler {
 			}
 			return false;
 		}, false, TEArray.of(1).add(TransformationInit.WEREWOLF, 1.0F));
+		EntityEffectiveAgainstTransformation.of(entity -> {
+			if (entity instanceof EntityLivingBase)
+				return WerewolfHelper.transformedWerewolf((EntityLivingBase) entity);
+			return false;
+		}, false, TEArray.of(1).add(TransformationInit.VAMPIRE, 2.5F));
 	}
 
 	// Client

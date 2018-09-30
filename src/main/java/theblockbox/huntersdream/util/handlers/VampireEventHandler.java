@@ -3,14 +3,18 @@ package theblockbox.huntersdream.util.handlers;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import theblockbox.huntersdream.event.TransformationEvent;
+import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
@@ -57,6 +61,13 @@ public class VampireEventHandler {
 		}
 	}
 
+	/** Called from {@link CapabilityHandler#onPlayerClone(PlayerEvent.Clone)} */
+	public static void onVampireRespawn(EntityPlayer player) {
+		VampireHelper.getIVampire(player).setBlood(10D);
+		if (!player.world.isRemote && player.world.isDaytime())
+			player.addPotionEffect(new PotionEffect(PotionInit.SUNSCREEN, 300, 0, false, false));
+	}
+
 	/** Called from {@link EventHandler#onPlayerJoin(PlayerLoggedInEvent)} */
 	public static void onPlayerJoin(PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
@@ -66,6 +77,19 @@ public class VampireEventHandler {
 		}
 		if (TransformationHelper.getTransformation(player) == TransformationInit.VAMPIRE) {
 			player.foodStats = VampireFoodStats.INSTANCE;
+		}
+	}
+
+	/**
+	 * Called from
+	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
+	 */
+	public static void onVampireTick(EntityLivingBase vampire) {
+		if (VampireHelper.shouldVampireBurn(vampire)
+				&& !((vampire instanceof EntityPlayer) && ((EntityPlayer) vampire).isCreative())) {
+			if (vampire.isPotionActive(MobEffects.FIRE_RESISTANCE))
+				vampire.removePotionEffect(MobEffects.FIRE_RESISTANCE);
+			vampire.setFire(6);
 		}
 	}
 }

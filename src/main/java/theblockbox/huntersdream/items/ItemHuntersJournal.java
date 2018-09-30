@@ -31,7 +31,7 @@ public class ItemHuntersJournal extends ItemBase {
 		HuntersJournalPage[] pages = TransformationHelper.getCap(playerIn).getUnlockedPages();
 		if (pages.length <= 0) {
 			if (!worldIn.isRemote) {
-				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".noPage"));
+				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".noPage"));
 			}
 			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		} else {

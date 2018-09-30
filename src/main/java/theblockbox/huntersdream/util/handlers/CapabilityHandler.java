@@ -19,7 +19,6 @@ import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -89,7 +88,7 @@ public class CapabilityHandler {
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
 
-			VampireHelper.getIVampire(player).setBlood(10D);
+			VampireEventHandler.onVampireRespawn(player);
 
 			for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
 				PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);

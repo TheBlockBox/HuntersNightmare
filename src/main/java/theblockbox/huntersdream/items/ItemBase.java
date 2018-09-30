@@ -15,7 +15,7 @@ public class ItemBase extends Item implements IHasModel {
 	}
 
 	public ItemBase(String name, CreativeTabs creativeTab) {
-		setUnlocalizedName(Reference.MODID + "." + name);
+		setTranslationKey(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(creativeTab);
 

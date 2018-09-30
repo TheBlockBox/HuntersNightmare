@@ -2,7 +2,6 @@ package theblockbox.huntersdream.util.helpers;
 
 import java.util.stream.IntStream;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,12 +35,13 @@ public class WerewolfHelper {
 	public static final Capability<IWerewolf> CAPABILITY_WEREWOLF = CapabilitiesInit.CAPABILITY_WEREWOLF;
 
 	/**
-	 * Returns true when a werewolf can transform in this world (Caution! This
-	 * method doesn't test if the entity is a werewolf or not)
+	 * Returns true when a werewolf can transform in this world
 	 */
-	public static boolean isWerewolfTime(Entity entity) {
-		boolean isNight = !entity.getServer().getWorld(0).isDaytime();
-		boolean werewolfTime = entity.world.getCurrentMoonPhaseFactor() == 1F && isNight;
+	public static boolean isWerewolfTime(World world) {
+		if (world.isRemote)
+			throw new WrongSideException("Can only test if it is werewolf time on server side", world);
+		boolean isNight = !world.isDaytime();
+		boolean werewolfTime = world.getCurrentMoonPhaseFactor() == 1F && isNight;
 		return werewolfTime;
 	}
 
@@ -291,7 +291,7 @@ public class WerewolfHelper {
 	public static EntityWerewolf toWerewolfWhenNight(EntityCreature entity) {
 		World world = entity.world;
 		if (!world.isRemote) {
-			if (WerewolfHelper.isWerewolfTime(entity)) {
+			if (WerewolfHelper.isWerewolfTime(entity.world)) {
 				if (canWerewolfTransform(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
@@ -346,7 +346,7 @@ public class WerewolfHelper {
 			Item pickedUp) {
 		if ((!(reply == null)) && (!reply.equals(""))) {
 			TextComponentTranslation message = null;
-			TextComponentTranslation item = new TextComponentTranslation(pickedUp.getUnlocalizedName() + ".name");
+			TextComponentTranslation item = new TextComponentTranslation(pickedUp.getTranslationKey() + ".name");
 
 			if (reply.contains("fp")) {
 				if (reply.contains("picked")) {

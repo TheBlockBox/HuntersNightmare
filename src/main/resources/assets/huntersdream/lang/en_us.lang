@@ -24,6 +24,7 @@ item.huntersdream.hunters_journal_page.name=Hunter's Note
 # Potions
 effect.huntersdream.fear=Fear
 effect.huntersdream.wolfsbane=Wolfsbane
+effect.huntersdream.sunscreen=Sunscreen
 potion.effect.wolfsbane=Wolfsbane Potion
 splash_potion.effect.wolfsbane=Wolfsbane Splash Potion
 lingering_potion.effect.wolfsbane=Wolfsbane Lingering Potion

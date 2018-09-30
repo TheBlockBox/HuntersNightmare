@@ -112,8 +112,8 @@ public class Transformation {
 
 	/** Returns the xp bar texture for the given transformation */
 	public ResourceLocation getXPBarTexture() {
-		return new ResourceLocation(getRegistryName().getResourceDomain(),
-				"textures/gui/transformation_xp_bar_" + getRegistryName().getResourcePath() + ".png");
+		return new ResourceLocation(getRegistryName().getNamespace(),
+				"textures/gui/transformation_xp_bar_" + getRegistryName().getPath() + ".png");
 	}
 
 	/**

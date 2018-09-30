@@ -31,11 +31,11 @@ public class ItemHuntersJournalPage extends ItemBase {
 				}
 				cap.unlockPage(page);
 				PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
-				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".onPageUnlock",
+				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onPageUnlock",
 						new TextComponentTranslation(page.getTitle())));
 				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 			} else {
-				playerIn.sendMessage(new TextComponentTranslation(this.getUnlocalizedName() + ".allUnlocked"));
+				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".allUnlocked"));
 				return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 			}
 		}

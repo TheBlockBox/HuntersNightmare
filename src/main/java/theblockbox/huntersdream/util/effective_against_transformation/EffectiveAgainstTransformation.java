@@ -2,21 +2,26 @@ package theblockbox.huntersdream.util.effective_against_transformation;
 
 import java.util.BitSet;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import net.minecraft.client.resources.I18n;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.util.helpers.TranslationHelper;
 
 /**
  * Create a new instance of this class (preferably from the subclasses) to make
  * a specific item, entity etc. effective against a specific transformation
  * (currently only item and entity are supported)
  */
-public abstract class EffectiveAgainstTransformation<T> {
+public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAgainstTransformation<T> {
 	private final Predicate<T> isForObject;
 	private final boolean effectiveAgainstUndead;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 	private final BitSet transformationsEffectiveAgainst = new BitSet(Transformation.getTransformationLength());
 	private final Transformation[] effectiveAgainst;
 	private final float[] effectiveness = new float[Transformation.getTransformationLength()];
+	private final String tooltip;
 
 	/**
 	 * Creates a new EffectiveAgainstTransformation object from the given arguments
@@ -44,6 +49,14 @@ public abstract class EffectiveAgainstTransformation<T> {
 			this.transformationsEffectiveAgainst.set(index);
 			this.effectiveness[index] = values.effectiveness[i];
 		}
+		if (effectiveAgainstUndead)
+			this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
+					TranslationHelper.getAsTranslatedList(
+							Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead"))
+									.toArray()));
+		else
+			this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
+					TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
 	}
 
 	/** The damage multiplier when used against the specified creature */
@@ -51,6 +64,7 @@ public abstract class EffectiveAgainstTransformation<T> {
 		return this.effectiveness[transformation.getTemporaryID()];
 	}
 
+	@Override
 	public boolean isForObject(T t) {
 		return this.isForObject.test(t);
 	}
@@ -62,12 +76,19 @@ public abstract class EffectiveAgainstTransformation<T> {
 		return this.effectiveAgainstUndead;
 	}
 
+	@Override
 	public boolean effectiveAgainst(Transformation transformation) {
 		return this.transformationsEffectiveAgainst.get(transformation.getTemporaryID());
 	}
 
+	@Override
 	public Transformation[] transformations() {
 		return this.effectiveAgainst;
+	}
+
+	@Override
+	public String getTooltip() {
+		return this.tooltip;
 	}
 
 	/**
@@ -96,6 +117,14 @@ public abstract class EffectiveAgainstTransformation<T> {
 			this.effectiveness[currentIndex] = effectiveness;
 			this.currentIndex++;
 			return this;
+		}
+
+		/**
+		 * Does the same as {@link #add(Transformation, float)}, but with the default
+		 * effectiveness as the effectiveness
+		 */
+		public TEArray add(Transformation transformation) {
+			return this.add(transformation, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
 		}
 
 		@Override

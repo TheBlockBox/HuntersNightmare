@@ -24,7 +24,7 @@ public class ToolAxe extends ItemTool implements IHasModel {
 
 	public ToolAxe(String name, ToolMaterial material) {
 		super(material, EFFECTIVE_ON);
-		setUnlocalizedName(Reference.MODID + "." + name);
+		setTranslationKey(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 		this.setHarvestLevel(name, material.getHarvestLevel());

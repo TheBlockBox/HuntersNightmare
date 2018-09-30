@@ -7,12 +7,15 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.util.helpers.TranslationHelper;
 
-public class ArmorEffectiveAgainstTransformation {
+public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTransformation<ItemStack> {
 	public static final Set<ArmorEffectiveAgainstTransformation> ARMOR_PARTS = new HashSet<>();
 	private final Predicate<ItemStack> isForArmor;
 	public static final float DEFAULT_PROTECTION = 1.5F;
@@ -21,6 +24,7 @@ public class ArmorEffectiveAgainstTransformation {
 	private final float[] protection = new float[Transformation.getTransformationLength()];
 	private final float[] thorns = new float[Transformation.getTransformationLength()];
 	private final Transformation[] effectiveAgainst;
+	private final String tooltip;
 
 	/**
 	 * Creates a new ArmorEffectiveAgainstTransformation object from the given
@@ -44,13 +48,14 @@ public class ArmorEffectiveAgainstTransformation {
 	public ArmorEffectiveAgainstTransformation(@Nonnull Predicate<ItemStack> isForArmor, TTPArray values) {
 		this.isForArmor = isForArmor;
 		this.effectiveAgainst = values.transformations.clone();
-
 		for (int i = 0; i < values.length; i++) {
 			final int index = this.effectiveAgainst[i].getTemporaryID();
 			this.transformationsEffectiveAgainst.set(index);
 			this.thorns[index] = values.thorns[i];
 			this.protection[index] = values.protection[i];
 		}
+		this.tooltip = I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
+				TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
 
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
 			if (aeat.isForArmor == isForArmor)
@@ -58,7 +63,8 @@ public class ArmorEffectiveAgainstTransformation {
 		ARMOR_PARTS.add(this);
 	}
 
-	public boolean isForArmor(ItemStack armor) {
+	@Override
+	public boolean isForObject(ItemStack armor) {
 		return isForArmor.test(armor);
 	}
 
@@ -70,17 +76,19 @@ public class ArmorEffectiveAgainstTransformation {
 		return this.protection[transformation.getTemporaryID()];
 	}
 
+	@Override
 	public boolean effectiveAgainst(Transformation transformation) {
 		return this.transformationsEffectiveAgainst.get(transformation.getTemporaryID());
 	}
 
+	@Override
 	public Transformation[] transformations() {
 		return this.effectiveAgainst;
 	}
 
 	public static ArmorEffectiveAgainstTransformation getFromArmor(ItemStack armor) {
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS) {
-			if (aeat.isForArmor(armor)) {
+			if (aeat.isForObject(armor)) {
 				return aeat;
 			}
 		}
@@ -122,6 +130,11 @@ public class ArmorEffectiveAgainstTransformation {
 					GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.ARMOR_PART_NAMES[i] + armorName),
 					values[i]);
 		return toReturn;
+	}
+
+	@Override
+	public String getTooltip() {
+		return this.tooltip;
 	}
 
 	/**

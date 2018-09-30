@@ -11,7 +11,7 @@ public class ToolHoe extends ItemHoe implements IHasModel {
 
 	public ToolHoe(String name, ToolMaterial material) {
 		super(material);
-		setUnlocalizedName(Reference.MODID + "." + name);
+		setTranslationKey(Reference.MODID + "." + name);
 		setRegistryName(name);
 		setCreativeTab(CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS);
 

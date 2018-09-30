@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -246,8 +247,12 @@ public class GeneralHelper {
 	public static Predicate<ItemStack> getPredicateMatchesOreDict(String... oreDictNames) {
 		return stack -> {
 			if (!stack.isEmpty()) {
-				// need to create a new item stack to make the oredict not care about damage
-				int[] ids = OreDictionary.getOreIDs(new ItemStack(stack.getItem()));
+				// need to set damage to make the oredict not care about it
+				// (because some people purposely don't use OreDictionary#WILDCARD_VALUE because
+				// of crafting)
+				int damage = stack.getItemDamage();
+				int[] ids = OreDictionary.getOreIDs(stack);
+				stack.setItemDamage(damage);
 				if (oreDictNames.length > 0) {
 					return Stream.of(oreDictNames).mapToInt(OreDictionary::getOreID).anyMatch(i -> {
 						for (int j : ids)
@@ -259,6 +264,13 @@ public class GeneralHelper {
 			}
 			return false;
 		};
+	}
+
+	public static boolean canBlockSeeSky(World world, BlockPos pos) {
+		for (MutableBlockPos mbp = new MutableBlockPos(pos); mbp.getY() < world.getHeight(); mbp.setY(mbp.getY() + 1))
+			if (world.getBlockState(mbp).getMaterial().isOpaque())
+				return false;
+		return true;
 	}
 
 	/**
