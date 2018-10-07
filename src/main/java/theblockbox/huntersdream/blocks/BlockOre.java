@@ -4,9 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import theblockbox.huntersdream.init.BlockInit;
+import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
-public class BlockOreBase extends BlockBase {
+public class BlockOre extends Block {
 	public final int DIMENSION;
 	public final Block SPAWN_ON;
 	public final int CHANCE;
@@ -15,26 +16,27 @@ public class BlockOreBase extends BlockBase {
 	private WorldGenMinable worldGenMinable;
 	private boolean modified = false;
 
-	public BlockOreBase(String name, int dimensionID, String dimensionName, int minHeight, int maxHeight, int chance,
-			Block spawnOn) {
-		super(dimensionName + "_ore_" + name, Material.ROCK, 3.0F);
+	public BlockOre(int dimensionID, int minHeight, int maxHeight, int chance, Block spawnOn) {
+		super(Material.ROCK);
+		this.setHardness(3.0F);
 		this.setResistance(5.0F);
 		this.DIMENSION = dimensionID;
 		this.CHANCE = chance;
 		this.MIN_HEIGHT = minHeight;
 		this.MAX_HEIGHT = maxHeight;
 		this.SPAWN_ON = spawnOn;
+		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 
 		BlockInit.ORES.add(this);
 		setHarvestLevel("pickaxe", 2);
 	}
 
-	public BlockOreBase(String name, Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn) {
-		this(name, dimension.ID, dimension.NAME, minHeight, maxHeight, chance, spawnOn);
+	public BlockOre(Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn) {
+		this(dimension.ID, minHeight, maxHeight, chance, spawnOn);
 	}
 
-	public BlockOreBase(String name, Dimensions dimension, int minHeight, int maxHeight, int chance) {
-		this(name, dimension, minHeight, maxHeight, chance, dimension.SPAWN_ON);
+	public BlockOre(Dimensions dimension, int minHeight, int maxHeight, int chance) {
+		this(dimension, minHeight, maxHeight, chance, dimension.SPAWN_ON);
 	}
 
 	public WorldGenMinable getWorldGenMinable() {

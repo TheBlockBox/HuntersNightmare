@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockTent extends BlockBaseCustomModelWithDirection {
 
-	public BlockTent(String name) {
-		super(name, Material.CLOTH, 0.8F);
+	public BlockTent() {
+		super(Material.CLOTH, 0.8F);
 	}
 
 	@Override

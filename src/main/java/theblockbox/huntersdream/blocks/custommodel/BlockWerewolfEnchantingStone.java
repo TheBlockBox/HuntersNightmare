@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
@@ -51,13 +50,12 @@ public class BlockWerewolfEnchantingStone extends BlockBaseCustomModelWithDirect
 		@Override
 		public boolean isToolNotRequired() {
 			return false;
-		};
+		}
 	};
 
-	public BlockWerewolfEnchantingStone(String name) {
-		super(name, WEREWOLF_ENCHANTING_STONE, 3.5F);
+	public BlockWerewolfEnchantingStone() {
+		super(WEREWOLF_ENCHANTING_STONE, 3.5F);
 		setHarvestLevel("pickaxe", 2);
-		setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 	}
 
 	@Override

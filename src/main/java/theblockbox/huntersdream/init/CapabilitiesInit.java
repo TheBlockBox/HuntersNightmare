@@ -3,6 +3,7 @@ package theblockbox.huntersdream.init;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.items.IItemHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks.InfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks.InfectInTicksStorage;
@@ -35,6 +36,8 @@ public class CapabilitiesInit {
 	public static final Capability<IWerewolf> CAPABILITY_WEREWOLF = null;
 	@CapabilityInject(IVampire.class)
 	public static final Capability<IVampire> CAPABILITY_VAMPIRE = null;
+	@CapabilityInject(IItemHandler.class)
+	public static final Capability<IItemHandler> CAPABILITY_ITEM_HANDLER = null;
 
 	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),

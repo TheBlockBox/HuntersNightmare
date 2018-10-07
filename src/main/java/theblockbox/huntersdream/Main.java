@@ -1,7 +1,5 @@
 package theblockbox.huntersdream;
 
-import java.io.File;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +17,6 @@ import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
 @Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, acceptedMinecraftVersions = Reference.MC_VERSION, updateJSON = Reference.UPDATE_JSON)
 public class Main {
-	private static File config;
 
 	@Instance
 	public static Main instance;
@@ -54,13 +51,5 @@ public class Main {
 	@EventHandler
 	public static void serverInit(FMLServerStartingEvent event) {
 		RegistryHandler.serverRegistries(event);
-	}
-
-	public static File getConfig() {
-		return config;
-	}
-
-	public static void setConfig(File config) {
-		Main.config = config;
 	}
 }

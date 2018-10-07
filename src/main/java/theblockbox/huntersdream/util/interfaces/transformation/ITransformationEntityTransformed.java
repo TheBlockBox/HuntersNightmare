@@ -99,8 +99,7 @@ public interface ITransformationEntityTransformed extends ITransformation {
 							e = (EntityCreature) constructor.newInstance(toBeTransformedBack.world);
 							// remember: this is only server side and the client doesn't actually need to
 							// know about this
-							ITransformationCreature transformation = TransformationHelper
-									.getITransformationCreature((EntityCreature) e);
+							ITransformationCreature transformation = TransformationHelper.getITransformationCreature(e);
 							transformation.setTextureIndex(toBeTransformedBack.getTextureIndex());
 							transformation.setTransformation(toBeTransformedBack.getTransformation());
 						} catch (NullPointerException ex) {

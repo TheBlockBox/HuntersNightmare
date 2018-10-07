@@ -20,6 +20,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
  */
 public class VampireFoodStats extends FoodStats {
 	public static final VampireFoodStats INSTANCE = new VampireFoodStats();
+	long millis = 0;
 
 	private VampireFoodStats() {
 	}
@@ -62,7 +63,7 @@ public class VampireFoodStats extends FoodStats {
 				}
 
 				if (player.ticksExisted % 156 == 0 && blood >= 1) {
-					vampire.setBlood(vampire.getBloodDouble() - 0.0625D);
+					vampire.setBlood(vampire.getBloodDouble() - 0.0416D);
 				}
 			}
 

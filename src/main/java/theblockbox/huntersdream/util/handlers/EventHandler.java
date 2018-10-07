@@ -7,7 +7,6 @@ import java.util.Iterator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -28,8 +27,8 @@ public class EventHandler {
 		VampireEventHandler.onPlayerJoin(event);
 		try {
 			EntityPlayer player = event.player;
-			JsonReader reader = new JsonReader(new InputStreamReader(new URL(Reference.UPDATE_JSON).openStream()));
-			JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+			JsonObject jsonObject = new JsonParser()
+					.parse(new InputStreamReader(new URL(Reference.UPDATE_JSON).openStream())).getAsJsonObject();
 			Iterator<JsonElement> iterator = jsonObject.get("supportedmcversions").getAsJsonArray().iterator();
 			while (iterator.hasNext())
 				if (iterator.next().getAsString().equals(Reference.MC_VERSION))

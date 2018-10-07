@@ -6,6 +6,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -133,7 +134,7 @@ public class GeneralHelper {
 
 	/** Converts from a base (like 10) to another base (like 4) */
 	public static int convertFromBaseToBase(String toConvert, int fromBase, int toBase) {
-		return Integer.valueOf(Integer.toString(Integer.valueOf(toConvert, fromBase), toBase));
+		return Integer.parseInt(Integer.toString(Integer.parseInt(toConvert, fromBase), toBase));
 	}
 
 	/**
@@ -273,6 +274,12 @@ public class GeneralHelper {
 		return true;
 	}
 
+	public static String firstCharToUppercase(String string) {
+		StringBuilder builder = new StringBuilder().append(string);
+		builder.setCharAt(0, Character.toUpperCase(builder.charAt(0)));
+		return builder.toString();
+	}
+
 	/**
 	 * Creates a new thread and then executes the given runnable in the given milli
 	 * seconds
@@ -303,5 +310,18 @@ public class GeneralHelper {
 				server.addScheduledTask(toBeExecuted);
 			}
 		}.start();
+	}
+
+	public static ItemStack[] newEmptyItemStackArray(int length) {
+		ItemStack[] stacks = new ItemStack[length];
+		for (int i = 0; i < stacks.length; i++) {
+			stacks[i] = ItemStack.EMPTY;
+		}
+		return stacks;
+	}
+
+	public static void drawCenteredString(FontRenderer fontRenderer, String string, int x, int width, int y,
+			int color) {
+		fontRenderer.drawString(string, ((width - x) - fontRenderer.getStringWidth(string)) / 2, y, color);
 	}
 }

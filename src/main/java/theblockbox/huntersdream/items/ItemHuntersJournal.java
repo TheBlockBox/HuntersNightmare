@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -18,10 +19,9 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
-public class ItemHuntersJournal extends ItemBase {
+public class ItemHuntersJournal extends Item {
 
-	public ItemHuntersJournal(String name) {
-		super(name);
+	public ItemHuntersJournal() {
 		setMaxStackSize(1);
 	}
 

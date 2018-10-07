@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockWitchCauldron extends BlockBaseCustomModelWithDirection {
 
-	public BlockWitchCauldron(String name) {
-		super(name, Material.IRON, 1.6F);
+	public BlockWitchCauldron() {
+		super(Material.IRON, 1.6F);
 	}
 
 	@Override

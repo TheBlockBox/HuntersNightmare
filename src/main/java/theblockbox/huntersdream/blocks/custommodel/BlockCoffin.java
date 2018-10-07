@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockCoffin extends BlockBaseCustomModelWithDirection {
 
-	public BlockCoffin(String name) {
-		super(name, Material.WOOD, 1.4F);
+	public BlockCoffin() {
+		super(Material.WOOD, 1.4F);
 	}
 
 	@Override

@@ -151,12 +151,11 @@ public class WerewolfEventHandler {
 
 			if (werewolf.getTransformationStage() <= 0) {
 				werewolf.setTimeSinceTransformation(player.ticksExisted);
-				onStageChanged(player, werewolf, 1, cap);
+				onStageChanged(player, werewolf, 1);
 			}
 
 			// every five seconds (20 * 5 = 100) one stage up
-			int nextStage = MathHelper
-					.floor(((double) (player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
+			int nextStage = MathHelper.floor(((player.ticksExisted - werewolf.getTimeSinceTransformation())) / 100.0D);
 
 			if (nextStage > 6 || nextStage < 0) {
 				werewolf.setTimeSinceTransformation(-1);
@@ -167,7 +166,7 @@ public class WerewolfEventHandler {
 				return;
 			}
 			if (nextStage > werewolf.getTransformationStage()) {
-				onStageChanged(player, werewolf, nextStage, cap);
+				onStageChanged(player, werewolf, nextStage);
 			}
 		}
 	}
@@ -193,8 +192,7 @@ public class WerewolfEventHandler {
 	}
 
 	/** Called when infection stage changes */
-	private static void onStageChanged(EntityPlayer player, IWerewolf werewolf, int nextStage,
-			ITransformationPlayer cap) {
+	private static void onStageChanged(EntityPlayer player, IWerewolf werewolf, int nextStage) {
 
 		werewolf.setTransformationStage(nextStage);
 

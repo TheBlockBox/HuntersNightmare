@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 
-@Config(modid = Reference.MODID)
+@Config(modid = Reference.MODID, name = "huntersdream/huntersdream")
 @Config.LangKey(Reference.CFG_LANG + "title")
 public class ConfigHandler {
 

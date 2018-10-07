@@ -37,6 +37,7 @@ public class CapabilityHandler {
 	public static final ResourceLocation INFECT_ON_NEXT_MOON = GeneralHelper.newResLoc("infectonnextmoon");
 	public static final ResourceLocation WEREWOLF = GeneralHelper.newResLoc("werewolf");
 	public static final ResourceLocation VAMPIRE = GeneralHelper.newResLoc("vampire");
+	public static final ResourceLocation ITEM_HANDLER = GeneralHelper.newResLoc("itemhandler");
 
 	@SubscribeEvent
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {

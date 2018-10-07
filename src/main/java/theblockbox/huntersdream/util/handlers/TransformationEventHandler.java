@@ -231,9 +231,8 @@ public class TransformationEventHandler {
 			}
 
 			if (creature instanceof EntityAgeable) {
-				((EntityAgeable) creature).tasks.addTask(2,
-						new EntityAIAvoidEntity<EntityLivingBase>((EntityCreature) creature, EntityLivingBase.class,
-								WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
+				((EntityAgeable) creature).tasks.addTask(2, new EntityAIAvoidEntity<EntityLivingBase>(creature,
+						EntityLivingBase.class, WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
 			}
 		}
 	}

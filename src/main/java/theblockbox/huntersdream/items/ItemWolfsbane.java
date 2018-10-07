@@ -2,6 +2,7 @@ package theblockbox.huntersdream.items;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -12,11 +13,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
 import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.init.CreativeTabInit;
 
-public class ItemWolfsbane extends ItemBase implements IPlantable {
-	public ItemWolfsbane(String name) {
-		super(name, CreativeTabInit.HUNTERSDREAM_MISC);
+public class ItemWolfsbane extends Item implements IPlantable {
+	public ItemWolfsbane() {
 	}
 
 	@Override

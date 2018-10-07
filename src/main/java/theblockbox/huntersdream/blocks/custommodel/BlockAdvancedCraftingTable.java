@@ -9,8 +9,8 @@ import net.minecraft.world.IBlockAccess;
 public class BlockAdvancedCraftingTable extends BlockBaseCustomModelWithDirection {
 	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 1, sixteenth(14));
 
-	public BlockAdvancedCraftingTable(String name) {
-		super(name, Material.WOOD, 1.5F);
+	public BlockAdvancedCraftingTable() {
+		super(Material.WOOD, 1.5F);
 	}
 
 	@Override

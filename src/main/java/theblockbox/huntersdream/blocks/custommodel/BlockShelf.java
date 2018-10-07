@@ -13,8 +13,8 @@ public class BlockShelf extends BlockBaseCustomModelWithDirection {
 			new AxisAlignedBB(1, sixteenth(8), sixteenth(6), 0, 1, 1),
 			new AxisAlignedBB(0, sixteenth(8), 0, sixteenth(10), 1, 1) };
 
-	public BlockShelf(String name) {
-		super(name, Material.WOOD, 1.5F);
+	public BlockShelf() {
+		super(Material.WOOD, 1.5F);
 	}
 
 	@Override

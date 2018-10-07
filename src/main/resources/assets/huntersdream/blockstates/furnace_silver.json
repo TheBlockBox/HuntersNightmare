@@ -1,0 +1,23 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "minecraft:orientable",
+		"textures": {
+			"top": "huntersdream:blocks/block_silver",
+			"side": "huntersdream:blocks/block_silver",
+			"front": "huntersdream:blocks/furnace_silver_on"
+		}
+	},
+	"variants": {
+		"burning": {
+			"true": {},
+			"false": { "textures": { "front": "huntersdream:blocks/furnace_silver_off" } }
+		},
+		"facing": {
+			"north": { "y": 0 },
+			"east": { "y": 90 },
+			"south": { "y": 180 },
+			"west": { "y": 270 }
+		}
+	}
+}

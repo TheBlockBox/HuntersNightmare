@@ -3,8 +3,6 @@ package theblockbox.huntersdream.util.compat;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.init.ItemInit;
 
 public class OreDictionaryCompat {
 	/**
@@ -18,23 +16,23 @@ public class OreDictionaryCompat {
 
 	public static void registerOres() {
 		// Silver
-		OreDictionary.registerOre("blockSilver", BlockInit.BLOCK_SILVER);
-		OreDictionary.registerOre("oreSilver", BlockInit.ORE_SILVER);
-		OreDictionary.registerOre("ingotSilver", ItemInit.INGOT_SILVER);
+		OreDictionary.registerOre("blockSilver", Item.getByNameOrId("huntersdream:block_silver"));
+		OreDictionary.registerOre("oreSilver", Item.getByNameOrId("huntersdream:ingot_silver"));
+		OreDictionary.registerOre("ingotSilver", Item.getByNameOrId("huntersdream:ingot_silver"));
 
-		registerOreWithoutDamage("helmetSilver", ItemInit.HELMET_SILVER);
-		registerOreWithoutDamage("chestplateSilver", ItemInit.CHESTPLATE_SILVER);
-		registerOreWithoutDamage("leggingsSilver", ItemInit.LEGGINGS_SILVER);
-		registerOreWithoutDamage("bootsSilver", ItemInit.BOOTS_SILVER);
+		registerOreWithoutDamage("helmetSilver", "huntersdream:helmet_silver");
+		registerOreWithoutDamage("chestplateSilver", "huntersdream:chestplate_silver");
+		registerOreWithoutDamage("leggingsSilver", "huntersdream:leggings_silver");
+		registerOreWithoutDamage("bootsSilver", "huntersdream:boots_silver");
 
-		registerOreWithoutDamage("axeSilver", ItemInit.AXE_SILVER);
-		registerOreWithoutDamage("pickaxeSilver", ItemInit.PICKAXE_SILVER);
-		registerOreWithoutDamage("hoeSilver", ItemInit.HOE_SILVER);
-		registerOreWithoutDamage("swordSilver", ItemInit.SWORD_SILVER);
-		registerOreWithoutDamage("shovelSilver", ItemInit.SHOVEL_SILVER);
+		registerOreWithoutDamage("axeSilver", "huntersdream:axe_silver");
+		registerOreWithoutDamage("pickaxeSilver", "huntersdream:pickaxe_silver");
+		registerOreWithoutDamage("hoeSilver", "huntersdream:hoe_silver");
+		registerOreWithoutDamage("swordSilver", "huntersdream:sword_silver");
+		registerOreWithoutDamage("shovelSilver", "huntersdream:shovel_silver");
 	}
 
-	private static void registerOreWithoutDamage(String name, Item item) {
-		OreDictionary.registerOre(name, new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
+	private static void registerOreWithoutDamage(String name, String item) {
+		OreDictionary.registerOre(name, new ItemStack(Item.getByNameOrId(item), OreDictionary.WILDCARD_VALUE));
 	}
 }

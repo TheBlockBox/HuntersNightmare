@@ -21,6 +21,7 @@ import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.interfaces.functional.ToFloatFunction;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
 public class Transformation {
@@ -136,11 +137,11 @@ public class Transformation {
 	}
 
 	public float getGeneralDamage(EntityLivingBase entity) {
-		return this.ENTRY.calculateDamage.apply(entity);
+		return this.ENTRY.calculateDamage.applyAsFloat(entity);
 	}
 
 	public float getProtection(EntityLivingBase entity) {
-		return this.ENTRY.calculateProtection.apply(entity);
+		return this.ENTRY.calculateProtection.applyAsFloat(entity);
 	}
 
 	/**
@@ -208,8 +209,8 @@ public class Transformation {
 		/** A runnable that is executed when the player levels up */
 		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
 		};
-		private Function<EntityLivingBase, Float> calculateDamage = e -> 1F;
-		private Function<EntityLivingBase, Float> calculateProtection = e -> 1F;
+		private ToFloatFunction<EntityLivingBase> calculateDamage = e -> 1F;
+		private ToFloatFunction<EntityLivingBase> calculateProtection = e -> 1F;
 
 		private TransformationEntry() {
 		}
@@ -229,12 +230,12 @@ public class Transformation {
 			return this;
 		}
 
-		public TransformationEntry setCalculateDamage(Function<EntityLivingBase, Float> calculateDamage) {
+		public TransformationEntry setCalculateDamage(ToFloatFunction<EntityLivingBase> calculateDamage) {
 			this.calculateDamage = calculateDamage;
 			return this;
 		}
 
-		public TransformationEntry setCalculateProtection(Function<EntityLivingBase, Float> calculateProtection) {
+		public TransformationEntry setCalculateProtection(ToFloatFunction<EntityLivingBase> calculateProtection) {
 			this.calculateProtection = calculateProtection;
 			return this;
 		}

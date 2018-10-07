@@ -11,15 +11,15 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.blocks.BlockOreBase;
+import theblockbox.huntersdream.blocks.BlockOre;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
-public class WorldGenCustomOres implements IWorldGenerator {
+public class WorldGenOres implements IWorldGenerator {
 
-	public WorldGenCustomOres() {
-		for (BlockOreBase blockOreBase : BlockInit.ORES) {
+	public WorldGenOres() {
+		for (BlockOre blockOreBase : BlockInit.ORES) {
 			blockOreBase.setWorldGenMinable(new WorldGenMinable(blockOreBase.getDefaultState(),
 					ConfigHandler.server.ores.veinSize, BlockMatcher.forBlock(blockOreBase.SPAWN_ON)));
 		}
@@ -34,7 +34,7 @@ public class WorldGenCustomOres implements IWorldGenerator {
 				.forEach(e -> {
 					if (e.getWorldGenMinable() == null)
 						Main.getLogger().error(
-								"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated.");
+								"An ore's WorldGenMinable object hasn't been initialized and therefore the ore couldn't be generated. If you see this message please report it!");
 					else
 						runGenerator(e.getWorldGenMinable(), world, random, chunkX, chunkZ, e.CHANCE, e.MIN_HEIGHT,
 								e.MAX_HEIGHT);

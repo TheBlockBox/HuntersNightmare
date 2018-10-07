@@ -2,6 +2,7 @@ package theblockbox.huntersdream.items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -13,10 +14,9 @@ import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-public class ItemHuntersJournalPage extends ItemBase {
+public class ItemHuntersJournalPage extends Item {
 
-	public ItemHuntersJournalPage(String name) {
-		super(name);
+	public ItemHuntersJournalPage() {
 	}
 
 	@Override

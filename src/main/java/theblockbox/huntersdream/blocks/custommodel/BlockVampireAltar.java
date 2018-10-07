@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockVampireAltar extends BlockBaseCustomModelWithDirection {
 
-	public BlockVampireAltar(String name) {
-		super(name, Material.ROCK, 1.5F);
+	public BlockVampireAltar() {
+		super(Material.ROCK, 1.5F);
 	}
 
 	@Override

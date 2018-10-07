@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockCrate extends BlockBaseCustomModelWithDirection {
 
-	public BlockCrate(String name) {
-		super(name, Material.WOOD, 1.5F);
+	public BlockCrate() {
+		super(Material.WOOD, 1.5F);
 	}
 
 	@Override

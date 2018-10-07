@@ -12,7 +12,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
@@ -49,7 +48,7 @@ public class WerewolfHelper {
 	public static double getWerewolfLevel(EntityPlayer player) {
 		if (TransformationHelper.getTransformation(player) == TransformationInit.WEREWOLF) {
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			double level = ((double) cap.getXP()) / 500.0;
+			double level = (cap.getXP()) / 500.0;
 			if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT))
 				level = 0;
 			else
@@ -210,11 +209,8 @@ public class WerewolfHelper {
 			if (entity instanceof EntityPlayer) {
 				int percentage = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
 				return (percentage > 100) ? 100 : percentage;
-			} else if (entity instanceof EntityLivingBase) {
-				return 0; // TODO: Set to 50
 			} else {
-				Main.getLogger().error("Found entity that can infect but has no infection percantage... Using 25%");
-				return 50;
+				return 0; // TODO: Set to 50
 			}
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf",
@@ -304,19 +300,16 @@ public class WerewolfHelper {
 									TransformationHelper.getTransformation(entity));
 						}
 					} else {
-						if (entity instanceof EntityCreature) {
-							EntityCreature creature = (EntityCreature) entity;
-							ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
-							if (tc != null) {
-								if (tc.getTransformation() == TransformationInit.WEREWOLF) {
-									EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
-											"$bycap" + entity.getClass().getName(),
-											TransformationHelper.postExtraDataEvent(entity, true));
-									return werewolf;
-								} else {
-									throw new WrongTransformationException("Entity is not a werewolf",
-											tc.getTransformation());
-								}
+						ITransformationCreature tc = TransformationHelper.getITransformationCreature(entity);
+						if (tc != null) {
+							if (tc.getTransformation() == TransformationInit.WEREWOLF) {
+								EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
+										"$bycap" + entity.getClass().getName(),
+										TransformationHelper.postExtraDataEvent(entity, true));
+								return werewolf;
+							} else {
+								throw new WrongTransformationException("Entity is not a werewolf",
+										tc.getTransformation());
 							}
 						}
 						throw new IllegalArgumentException(

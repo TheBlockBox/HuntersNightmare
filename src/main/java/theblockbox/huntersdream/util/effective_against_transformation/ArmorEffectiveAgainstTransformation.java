@@ -160,10 +160,10 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 			return new TTPArray(new Transformation[length], new float[length], new float[length]);
 		}
 
-		public TTPArray add(Transformation transformation, float thorns, float protection) {
+		public TTPArray add(Transformation transformation, float t, float p) {
 			this.transformations[currentIndex] = transformation;
-			this.thorns[currentIndex] = thorns;
-			this.protection[currentIndex] = protection;
+			this.thorns[currentIndex] = t;
+			this.protection[currentIndex] = p;
 			this.currentIndex++;
 			return this;
 		}

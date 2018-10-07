@@ -11,8 +11,8 @@ public class BlockCampfire extends BlockBaseCustomModelWithDirection {
 	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(sixteenth(1), 0, sixteenth(1), sixteenth(15),
 			sixteenth(12), sixteenth(15));
 
-	public BlockCampfire(String name) {
-		super(name, Material.ROCK, 1.7F);
+	public BlockCampfire() {
+		super(Material.ROCK, 1.7F);
 	}
 
 	@Override

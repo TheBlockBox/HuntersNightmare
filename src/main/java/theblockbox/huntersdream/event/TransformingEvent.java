@@ -52,27 +52,27 @@ public class TransformingEvent extends LivingEvent {
 	/** This event is called when a player gets transformed */
 	@Cancelable
 	public class PlayerTransformingEvent extends PlayerEvent {
-		private boolean transformingBack;
-		private Transformation transformation;
-		private TransformingEventReason reason;
+		private boolean isTransformingBack;
+		private Transformation playerTransformation;
+		private TransformingEventReason transformationReason;
 
 		public PlayerTransformingEvent(EntityPlayer player, boolean transformingBack, TransformingEventReason reason) {
 			super(player);
-			this.transformingBack = transformingBack;
-			this.transformation = TransformationHelper.getTransformation(player);
-			this.reason = reason;
+			this.isTransformingBack = transformingBack;
+			this.playerTransformation = TransformationHelper.getTransformation(player);
+			this.transformationReason = reason;
 		}
 
 		public TransformingEventReason getTransformingEventReason() {
-			return reason;
+			return transformationReason;
 		}
 
 		public boolean transformingBack() {
-			return transformingBack;
+			return isTransformingBack;
 		}
 
 		public Transformation getTransformation() {
-			return transformation;
+			return playerTransformation;
 		}
 	}
 }

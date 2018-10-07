@@ -195,7 +195,7 @@ public class TransformationHelper {
 
 		if (!MinecraftForge.EVENT_BUS.post(event)) {
 			cap.setXP(event.getAmount());
-			cap.setLevel(cap.getTransformation().getLevel((EntityPlayerMP) player));
+			cap.setLevel(cap.getTransformation().getLevel(player));
 			int levelAfter = cap.getLevelFloor();
 			if (levelBefore < levelAfter) {
 				player.sendMessage(new TextComponentTranslation("transformations.huntersdream.onLevelUp", levelAfter));

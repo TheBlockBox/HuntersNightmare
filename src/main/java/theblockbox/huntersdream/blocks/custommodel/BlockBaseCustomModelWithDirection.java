@@ -13,8 +13,8 @@ import net.minecraft.world.World;
 public abstract class BlockBaseCustomModelWithDirection extends BlockBaseCustomModel {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
-	public BlockBaseCustomModelWithDirection(String name, Material materialIn, float hardness) {
-		super(name, materialIn, hardness);
+	public BlockBaseCustomModelWithDirection(Material materialIn, float hardness) {
+		super(materialIn, hardness);
 		setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
 	}
 

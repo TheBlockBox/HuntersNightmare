@@ -1,6 +1,13 @@
 package theblockbox.huntersdream.util.handlers;
 
+import java.io.File;
 import java.util.stream.Stream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jline.utils.InputStreamReader;
+
+import com.google.gson.JsonParser;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,6 +33,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
@@ -42,6 +50,7 @@ import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.init.StructureInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.SilverFurnaceRecipe;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
@@ -51,8 +60,7 @@ import theblockbox.huntersdream.util.effective_against_transformation.EntityEffe
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.functional.IHasModel;
-import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
+import theblockbox.huntersdream.world.gen.WorldGenOres;
 
 /**
  * In this class everythings gets registered (items, blocks, entities, biomes,
@@ -60,16 +68,18 @@ import theblockbox.huntersdream.world.gen.WorldGenCustomOres;
  */
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class RegistryHandler {
+	private static File directory;
+
 	// Registry events
 
 	@SubscribeEvent
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
-		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
+		BlockInit.onBlockRegister(event);
 	}
 
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(ItemInit.ITEMS.toArray(new Item[0]));
+		ItemInit.onItemRegister(event);
 	}
 
 	@SubscribeEvent
@@ -100,14 +110,8 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
-		for (Item item : ItemInit.ITEMS)
-			if (item instanceof IHasModel)
-				((IHasModel) item).registerModels();
-
-		for (Block block : BlockInit.BLOCKS)
-			if (block instanceof IHasModel)
-				((IHasModel) block).registerModels();
-
+		Stream.concat(ItemInit.ITEMS.stream(), BlockInit.BLOCKS.stream().map(Item::getItemFromBlock))
+				.forEach(item -> Main.proxy.registerItemRenderer(item, 0, "inventory"));
 		EntityInit.registerEntityRenders();
 	}
 
@@ -116,17 +120,20 @@ public class RegistryHandler {
 	public static void preInitCommon(FMLPreInitializationEvent event) {
 		CapabilitiesInit.registerCapabilities();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
-		GameRegistry.registerWorldGenerator(new WorldGenCustomOres(), 0);
 		Transformation.preInit();
+		GameRegistry.registerTileEntity(TileEntitySilverFurnace.class,
+				GeneralHelper.newResLoc("tile_entity_silver_furnace"));
+		directory = event.getModConfigurationDirectory();
 	}
 
 	public static void initCommon(FMLInitializationEvent event) {
 		PacketHandler.register();
-		OreDictionaryCompat.registerOres();
 		GameRegistry.addSmelting(BlockInit.ORE_SILVER, new ItemStack(ItemInit.INGOT_SILVER), 0.9F);
 		MinecraftForge.addGrassSeed(new ItemStack(BlockInit.WOLFSBANE), 5);
 		LootTableInit.register();
 		StructureInit.register();
+		OreDictionaryCompat.registerOres();
+		GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
@@ -159,6 +166,21 @@ public class RegistryHandler {
 				return WerewolfHelper.transformedWerewolf((EntityLivingBase) entity);
 			return false;
 		}, false, TEArray.of(1).add(TransformationInit.VAMPIRE, 2.5F));
+
+		// read silver furnace recipes
+		File sfrLocation = new File(directory, "huntersdream/silver_furnace_recipes");
+		sfrLocation.mkdirs();
+		JsonParser parser = new JsonParser();
+		FileUtils.listFiles(sfrLocation, new String[] { "json" }, true).stream().map(file -> {
+			try {
+				return parser.parse(new InputStreamReader(FileUtils.openInputStream(file))).getAsJsonObject();
+			} catch (Exception e) {
+				Main.getLogger().error(String.format(
+						"An exception occured while trying to load/parse the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
+						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
+				return null;
+			}
+		}).filter(json -> json != null).forEach(SilverFurnaceRecipe::addRecipe);
 	}
 
 	// Client

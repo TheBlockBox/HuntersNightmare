@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockStandardTable extends BlockBaseCustomModelWithDirection {
 
-	public BlockStandardTable(String name) {
-		super(name, Material.WOOD, 1.5F);
+	public BlockStandardTable() {
+		super(Material.WOOD, 1.5F);
 	}
 
 	@Override

@@ -72,8 +72,8 @@ public interface ITransformationCreature extends ITransformation {
 		}
 
 		@Override
-		public boolean notImmuneToTransformation(Transformation transformation) {
-			return this.transformationsNotImmuneTo.contains(transformation);
+		public boolean notImmuneToTransformation(Transformation t) {
+			return this.transformationsNotImmuneTo.contains(t);
 		}
 	}
 

@@ -11,8 +11,8 @@ public class BlockPlack extends BlockBaseCustomModelWithDirection {
 			new AxisAlignedBB(0, 0, 0, 1, 1, sixteenth(1)), new AxisAlignedBB(sixteenth(15), 0, 0, 1, 1, 1),
 			new AxisAlignedBB(0, 0, sixteenth(15), 1, 1, 1), new AxisAlignedBB(0, 0, 0, sixteenth(1), 1, 1) };
 
-	public BlockPlack(String name) {
-		super(name, Material.WOOD, 0.8F);
+	public BlockPlack() {
+		super(Material.WOOD, 0.8F);
 	}
 
 	@Override

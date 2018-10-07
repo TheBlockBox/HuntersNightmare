@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.util.interfaces.functional;
 
 @FunctionalInterface
-public interface IHasModel {
-	public void registerModels();
+public interface ToFloatFunction<T> {
+	public float applyAsFloat(T value);
 }

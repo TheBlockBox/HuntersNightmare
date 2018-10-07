@@ -8,8 +8,8 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockThrone extends BlockChair {
 
-	public BlockThrone(String name) {
-		super(name, Material.IRON, 2.5F);
+	public BlockThrone() {
+		super(Material.IRON, 2.5F);
 	}
 
 	@Override

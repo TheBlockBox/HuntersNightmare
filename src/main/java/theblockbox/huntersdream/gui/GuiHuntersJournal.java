@@ -43,22 +43,20 @@ public class GuiHuntersJournal extends GuiScreen {
 		this.pageBefore.visible = currentPage > 0;
 	}
 
-	public void drawInBounds(int x, int y, int width, int height, HuntersJournalPage page) {
+	public void drawInBounds(int x, int y, int drawWidth, HuntersJournalPage page) {
 		// title
-		this.drawCenteredString(this.fontRenderer, page.getTitle(), x + (width / 2), y, Color.BLUE.getRGB());
+		this.drawCenteredString(this.fontRenderer, page.getTitle(), x + (drawWidth / 2), y, Color.BLUE.getRGB());
 
 		y += (page.hasImage() ? 75 : 10);
 
 		// description
-		this.fontRenderer.drawSplitString(page.getDescription(), x, y, width, Color.BLACK.getRGB());
+		this.fontRenderer.drawSplitString(page.getDescription(), x, y, drawWidth, Color.BLACK.getRGB());
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		HuntersJournalPage page = pages[currentPage];
 		mc.getTextureManager().bindTexture(TEXTURE);
-		int width = 146;
-		int height = 180;
 		int middle = (this.width / 2);
 		this.drawTexturedModalRect(middle - (width / 2), 3, 20, 0, width, height);
 		this.pageBefore.x = (int) (middle - (width / 2.5D));
@@ -70,7 +68,8 @@ public class GuiHuntersJournal extends GuiScreen {
 			mc.getTextureManager().bindTexture(page.getImagePath());
 			this.drawTexturedModalRect(x - 1, 24, 0, 0, w, 64);
 		}
-		this.drawInBounds(x, 15, w, height - 20, page);
+		// height = height - 20
+		this.drawInBounds(x, 15, w, page);
 	}
 
 	@Override
@@ -96,7 +95,7 @@ public class GuiHuntersJournal extends GuiScreen {
 		}
 
 		@Override
-		public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+		public void drawButton(Minecraft minecraft, int mouseX, int mouseY, float partialTicks) {
 			if (this.visible) {
 				boolean isButtonPressed = (mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width
 						&& mouseY < this.y + this.height);
@@ -104,7 +103,7 @@ public class GuiHuntersJournal extends GuiScreen {
 				// when button is pressed, use red texture, otherwise use white one
 				int textureX = isButtonPressed ? 26 : 3;
 				int textureY = this.isNextPageButton ? 194 : 207;
-				mc.getTextureManager().bindTexture(TEXTURE);
+				minecraft.getTextureManager().bindTexture(TEXTURE);
 				// draw button
 				this.drawTexturedModalRect(this.x, this.y, textureX, textureY, 18, 10);
 			}

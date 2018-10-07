@@ -10,8 +10,8 @@ public class BlockPlate extends BlockBaseCustomModel {
 	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(7 / 32.0D, 0, 7 / 32.0D, 25 / 32.0D,
 			sixteenth(1), 25 / 32.0D);
 
-	public BlockPlate(String name) {
-		super(name, Material.WOOD, 1.5F);
+	public BlockPlate() {
+		super(Material.WOOD, 1.5F);
 	}
 
 	@Override

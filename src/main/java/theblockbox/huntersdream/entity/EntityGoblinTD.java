@@ -56,7 +56,8 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		super(worldIn);
 		this.setSize(0.5F, 1.4F);
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
-		this.dataManager.set(TEXTURE_INDEX, transformation.getRandomTextureIndex());
+		this.dataManager.set(TEXTURE_INDEX, textureIndex);
+		this.setTextureIndexWhenNeeded();
 	}
 
 	public EntityGoblinTD(World worldIn) {
@@ -192,21 +193,20 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	// now shows "Goblin" instead of the profession
 	public ITextComponent getDisplayName() {
 		Team team = this.getTeam();
-		String s = this.getCustomNameTag();
-		if (s != null && !s.isEmpty()) {
+		String nameTag = this.getCustomNameTag();
+		if (nameTag != null && !nameTag.isEmpty()) {
 			TextComponentString textcomponentstring = new TextComponentString(
-					ScorePlayerTeam.formatPlayerName(team, s));
-			textcomponentstring.getStyle().setHoverEvent(this.getHoverEvent());
-			textcomponentstring.getStyle().setInsertion(this.getCachedUniqueIdString());
+					ScorePlayerTeam.formatPlayerName(team, nameTag));
+			textcomponentstring.getStyle().setHoverEvent(this.getHoverEvent())
+					.setInsertion(this.getCachedUniqueIdString());
 			return textcomponentstring;
 		} else {
-			ITextComponent itextcomponent = new TextComponentTranslation("entity.goblintd.name", new Object[0]);
-			itextcomponent.getStyle().setHoverEvent(this.getHoverEvent());
-			itextcomponent.getStyle().setInsertion(this.getCachedUniqueIdString());
+			ITextComponent tc = new TextComponentTranslation("entity.goblintd.name");
+			tc.getStyle().setHoverEvent(this.getHoverEvent()).setInsertion(this.getCachedUniqueIdString());
 			if (team != null) {
-				itextcomponent.getStyle().setColor(team.getColor());
+				tc.getStyle().setColor(team.getColor());
 			}
-			return itextcomponent;
+			return tc;
 		}
 	}
 
@@ -227,9 +227,9 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		}
 		if (entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), damage)) {
 			if (knockback > 0 && entityIn instanceof EntityLivingBase) {
-				((EntityLivingBase) entityIn).knockBack(this, (float) knockback * 0.5F,
-						(double) MathHelper.sin(this.rotationYaw * 0.017453292F),
-						(double) (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
+				((EntityLivingBase) entityIn).knockBack(this, knockback * 0.5F,
+						MathHelper.sin(this.rotationYaw * 0.017453292F),
+						(-MathHelper.cos(this.rotationYaw * 0.017453292F)));
 				this.motionX *= 0.6D;
 				this.motionZ *= 0.6D;
 			}
@@ -241,12 +241,11 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 			if (entityIn instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) entityIn;
 				ItemStack heldItemStack = this.getHeldItemMainhand();
-				ItemStack activeItemStack = player.isHandActive() ? player.getActiveItemStack() : ItemStack.EMPTY;
 
 				if (!heldItemStack.isEmpty() && !activeItemStack.isEmpty()
 						&& heldItemStack.getItem().canDisableShield(heldItemStack, activeItemStack, player, this)
 						&& activeItemStack.getItem().isShield(activeItemStack, player)) {
-					float f1 = 0.25F + (float) EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
+					float f1 = 0.25F + EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
 
 					if (this.rand.nextFloat() < f1) {
 						player.getCooldownTracker().setCooldown(activeItemStack.getItem(), 100);

@@ -3,32 +3,41 @@ package theblockbox.huntersdream.init;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemSpade;
+import net.minecraft.item.ItemSword;
 import net.minecraftforge.common.util.EnumHelper;
-import theblockbox.huntersdream.armor.SilverArmorBase;
-import theblockbox.huntersdream.items.ItemBase;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import theblockbox.huntersdream.items.ItemHuntersJournal;
 import theblockbox.huntersdream.items.ItemHuntersJournalPage;
 import theblockbox.huntersdream.items.ItemWolfsbane;
-import theblockbox.huntersdream.items.tools.axe.ToolSilverAxe;
-import theblockbox.huntersdream.items.tools.hoe.ToolSilverHoe;
-import theblockbox.huntersdream.items.tools.pickaxe.ToolSilverPickaxe;
-import theblockbox.huntersdream.items.tools.shovel.ToolSilverShovel;
-import theblockbox.huntersdream.items.tools.sword.ToolSilverSword;
+import theblockbox.huntersdream.items.tools.ToolAxe;
+import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class ItemInit {
 	public static final List<Item> ITEMS = new ArrayList<>();
 
-	// Items
-	public static final Item INGOT_SILVER = new ItemBase("ingot_silver", CreativeTabInit.HUNTERSDREAM_MISC);
-	public static final Item WOLFSBANE_FLOWER = new ItemWolfsbane("wolfsbane");
-	public static final Item HUNTERS_JOURNAL = new ItemHuntersJournal("hunters_journal");
-	public static final Item HUNTERS_JOURNAL_PAGE = new ItemHuntersJournalPage("hunters_journal_page");
+	@ObjectHolder("huntersdream:ingot_silver")
+	public static final Item INGOT_SILVER = null;
+
+	@ObjectHolder("huntersdream:sword_silver")
+	public static final Item SWORD_SILVER = null;
+
+	@ObjectHolder("huntersdream:wolfsbane")
+	public static final Item WOLFSBANE_FLOWER = null;
+
+	@ObjectHolder("huntersdream:hunters_journal")
+	public static final Item HUNTERS_JOURNAL = null;
 
 	// Materials
 	public static final ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,
@@ -36,30 +45,51 @@ public class ItemInit {
 	public static final ArmorMaterial ARMOR_SILVER = EnumHelper.addArmorMaterial(Reference.MODID + ":armor_silver",
 			Reference.MODID + ":silver", 6, new int[] { 1, 3, 5, 2 }, 14, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.2F);
 
-	// Tools
-	public static final Item HOE_SILVER = new ToolSilverHoe("hoe_silver");
-	public static final Item PICKAXE_SILVER = new ToolSilverPickaxe("pickaxe_silver");
-	public static final Item SHOVEL_SILVER = new ToolSilverShovel("shovel_silver");
-	public static final Item SWORD_SILVER = new ToolSilverSword("sword_silver");
-	public static final Item AXE_SILVER = new ToolSilverAxe("axe_silver");
+	public static void onItemRegister(RegistryEvent.Register<Item> event) {
+		ITEMS.forEach(item -> registerItemBlock(item, event));
+		registerItem(new Item(), "ingot_silver", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		registerItem(new ItemWolfsbane(), "wolfsbane", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		registerItem(new ItemHuntersJournal(), "hunters_journal", event);
+		registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		registerToolSet("silver", TOOL_SILVER, event);
+		registerArmorSet("silver", ARMOR_SILVER, event);
+	}
 
-	// Armor
-	// These are the weirdest values in the whole world
-	public static final Item HELMET_SILVER = new SilverArmorBase("helmet_silver", ARMOR_SILVER, 1,
-			EntityEquipmentSlot.HEAD);
-	public static final Item CHESTPLATE_SILVER = new SilverArmorBase("chestplate_silver", ARMOR_SILVER, 1,
-			EntityEquipmentSlot.CHEST);
-	public static final Item LEGGINGS_SILVER = new SilverArmorBase("leggings_silver", ARMOR_SILVER, 2,
-			EntityEquipmentSlot.LEGS);
-	public static final Item BOOTS_SILVER = new SilverArmorBase("boots_silver", ARMOR_SILVER, 1,
-			EntityEquipmentSlot.FEET);
+	private static void registerItem(Item item, String name, RegistryEvent.Register<Item> event) {
+		registerItem(item, name,
+				item.getCreativeTab() == null ? CreativeTabInit.HUNTERSDREAM_MISC : item.getCreativeTab(), event);
+	}
 
-	/*
-	 * How to make normal item: - create JSON file in models/item - create item
-	 * texture in textures/items
-	 * 
-	 * How to make armor: - create new JSON files in models/item - create item
-	 * texture in textures/items - create texture (for armor when it's worn) in
-	 * textures/models/armor
-	 */
+	private static void registerItem(Item item, String name, CreativeTabs tab, RegistryEvent.Register<Item> event) {
+		event.getRegistry().register(item.setRegistryName(GeneralHelper.newResLoc(name))
+				.setTranslationKey(Reference.MODID + "." + name).setCreativeTab(tab));
+		ITEMS.add(item);
+	}
+
+	private static void registerItemBlock(Item itemBlock, RegistryEvent.Register<Item> event) {
+		event.getRegistry()
+				.register(itemBlock.setTranslationKey(itemBlock.getRegistryName().toString().replace(':', '.')));
+	}
+
+	private static void registerToolSet(String name, ToolMaterial toolMaterial, RegistryEvent.Register<Item> event) {
+		registerItem(new ItemHoe(toolMaterial), "hoe_" + name, CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+		registerItem(new ToolPickaxe(toolMaterial), "pickaxe_" + name, CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS,
+				event);
+		registerItem(new ItemSpade(toolMaterial), "shovel_" + name, CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS,
+				event);
+		registerItem(new ItemSword(toolMaterial), "sword_" + name, CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS,
+				event);
+		registerItem(new ToolAxe(toolMaterial), "axe_" + name, CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+	}
+
+	private static void registerArmorSet(String name, ArmorMaterial material, RegistryEvent.Register<Item> event) {
+		registerItem(new ItemArmor(material, 1, EntityEquipmentSlot.HEAD), "helmet_" + name,
+				CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+		registerItem(new ItemArmor(material, 1, EntityEquipmentSlot.CHEST), "chestplate_" + name,
+				CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+		registerItem(new ItemArmor(material, 2, EntityEquipmentSlot.LEGS), "leggings_" + name,
+				CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+		registerItem(new ItemArmor(material, 1, EntityEquipmentSlot.FEET), "boots_" + name,
+				CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+	}
 }

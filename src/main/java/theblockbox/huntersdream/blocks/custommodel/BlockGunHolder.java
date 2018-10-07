@@ -13,8 +13,8 @@ public class BlockGunHolder extends BlockBaseCustomModelWithDirection {
 			new AxisAlignedBB(0, sixteenth(4), sixteenth(11), 1, sixteenth(12), 1),
 			new AxisAlignedBB(0, sixteenth(4), 0, sixteenth(5), sixteenth(12), 1) };
 
-	public BlockGunHolder(String name) {
-		super(name, Material.IRON, 1.7F);
+	public BlockGunHolder() {
+		super(Material.IRON, 1.7F);
 	}
 
 	@Override

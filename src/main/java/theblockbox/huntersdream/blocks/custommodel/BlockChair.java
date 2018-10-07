@@ -12,18 +12,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.entity.EntityChair;
-import theblockbox.huntersdream.util.Reference;
 
 public class BlockChair extends BlockBaseCustomModelWithDirection {
 	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
 
-	public BlockChair(String name) {
-		super(name, Material.WOOD, 1F);
-		setTranslationKey(Reference.MODID + ".chair");
+	public BlockChair() {
+		super(Material.WOOD, 1F);
 	}
 
-	protected BlockChair(String name, Material materialIn, float hardness) {
-		super(name, materialIn, hardness);
+	protected BlockChair(Material materialIn, float hardness) {
+		super(materialIn, hardness);
 	}
 
 	@Override

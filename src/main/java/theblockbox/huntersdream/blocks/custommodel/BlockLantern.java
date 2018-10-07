@@ -13,8 +13,8 @@ public class BlockLantern extends BlockBaseCustomModelWithDirection {
 			new AxisAlignedBB(sixteenth(4), 0, sixteenth(4), sixteenth(13), 1, sixteenth(13)),
 			new AxisAlignedBB(sixteenth(3), 0, sixteenth(4), sixteenth(12), 1, sixteenth(13)) };
 
-	public BlockLantern(String name) {
-		super(name, Material.IRON, 1.7F);
+	public BlockLantern() {
+		super(Material.IRON, 1.7F);
 	}
 
 	@Override

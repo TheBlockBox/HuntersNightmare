@@ -59,6 +59,7 @@ tile.huntersdream.wool_colored_light_blue_blessing.name=Wool of Blessing
 tile.huntersdream.wool_colored_red_summoning.name=Wool of Summoning
 tile.huntersdream.wool_colored_green_nature.name=Wool of Nature
 tile.huntersdream.wool_colored_purple_cursing.name=Wool of Cursing
+tile.huntersdream.furnace_silver.name=Silver Furnace
 
 # Entities
 entity.goblintd.name=Goblin

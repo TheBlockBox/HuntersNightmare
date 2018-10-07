@@ -62,7 +62,7 @@ public class CommandsTransformationLevel extends CommandBase {
 			}
 
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			Integer value = null;
+			int value = -1;
 
 			switch (args[0]) {
 			case "set":

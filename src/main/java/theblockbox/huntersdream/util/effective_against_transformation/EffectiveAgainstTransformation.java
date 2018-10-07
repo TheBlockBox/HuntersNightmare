@@ -112,9 +112,9 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 			return new TEArray(new Transformation[length], new float[length]);
 		}
 
-		public TEArray add(Transformation transformation, float effectiveness) {
+		public TEArray add(Transformation transformation, float e) {
 			this.transformations[currentIndex] = transformation;
-			this.effectiveness[currentIndex] = effectiveness;
+			this.effectiveness[currentIndex] = e;
 			this.currentIndex++;
 			return this;
 		}
