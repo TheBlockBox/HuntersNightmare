@@ -10,12 +10,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import theblockbox.huntersdream.blocks.BlockCampfire;
 import theblockbox.huntersdream.blocks.BlockOre;
 import theblockbox.huntersdream.blocks.BlockSilverFurnace;
 import theblockbox.huntersdream.blocks.BlockWolfsbane;
 import theblockbox.huntersdream.blocks.custommodel.BlockAdvancedCraftingTable;
 import theblockbox.huntersdream.blocks.custommodel.BlockBlessingTable;
-import theblockbox.huntersdream.blocks.custommodel.BlockCampfire;
 import theblockbox.huntersdream.blocks.custommodel.BlockCandle;
 import theblockbox.huntersdream.blocks.custommodel.BlockChair;
 import theblockbox.huntersdream.blocks.custommodel.BlockCoffin;
@@ -49,6 +49,9 @@ public class BlockInit {
 	@ObjectHolder("huntersdream:furnace_silver")
 	public static final Block FURNACE_SILVER = null;
 
+	@ObjectHolder("huntersdream:campfire")
+	public static final Block CAMPFIRE = null;
+
 	@ObjectHolder("huntersdream:lantern")
 	public static final Block LANTERN = null;
 
@@ -73,7 +76,6 @@ public class BlockInit {
 		registerBlock(new BlockPlack(), "plack", event);
 		registerBlock(new BlockLantern(), "lantern", event);
 		registerBlock(new BlockGunHolder(), "gun_holder", event);
-		registerBlock(new BlockCampfire(), "campfire", event);
 		registerBlock(new BlockCoffin(), "coffin", event);
 		registerBlock(new BlockTent(), "tent", event);
 		registerBlock(new BlockWitchCauldron(), "witch_cauldron", event);
@@ -90,6 +92,7 @@ public class BlockInit {
 		registerBlock(new BlockCursingTable(), "cursing_table", event);
 		registerBlock(new BlockNatureTable(), "nature_table", event);
 		registerBlock(new BlockSummoningTable(), "summoning_table", event);
+		registerBlock(new BlockCampfire(), "campfire", CreativeTabInit.HUNTERSDREAM_MISC, event);
 	}
 
 	private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {

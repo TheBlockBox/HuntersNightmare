@@ -3,12 +3,6 @@ package theblockbox.huntersdream.util.handlers;
 import java.io.File;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jline.utils.InputStreamReader;
-
-import com.google.gson.JsonParser;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -166,21 +160,6 @@ public class RegistryHandler {
 				return WerewolfHelper.transformedWerewolf((EntityLivingBase) entity);
 			return false;
 		}, false, TEArray.of(1).add(TransformationInit.VAMPIRE, 2.5F));
-
-		// read silver furnace recipes
-		File sfrLocation = new File(directory, "huntersdream/silver_furnace_recipes");
-		sfrLocation.mkdirs();
-		JsonParser parser = new JsonParser();
-		FileUtils.listFiles(sfrLocation, new String[] { "json" }, true).stream().map(file -> {
-			try {
-				return parser.parse(new InputStreamReader(FileUtils.openInputStream(file))).getAsJsonObject();
-			} catch (Exception e) {
-				Main.getLogger().error(String.format(
-						"An exception occured while trying to load/parse the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
-						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
-				return null;
-			}
-		}).filter(json -> json != null).forEach(SilverFurnaceRecipe::addRecipe);
 	}
 
 	// Client
@@ -203,6 +182,7 @@ public class RegistryHandler {
 	}
 
 	public static void postInitServer() {
+		SilverFurnaceRecipe.setAndLoadFiles(directory);
 	}
 
 	public static void serverRegistries(FMLServerStartingEvent event) {

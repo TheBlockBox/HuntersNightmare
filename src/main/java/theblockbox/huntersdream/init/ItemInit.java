@@ -16,6 +16,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import theblockbox.huntersdream.items.ItemBestiary;
 import theblockbox.huntersdream.items.ItemHuntersJournal;
 import theblockbox.huntersdream.items.ItemHuntersJournalPage;
 import theblockbox.huntersdream.items.ItemWolfsbane;
@@ -51,6 +52,7 @@ public class ItemInit {
 		registerItem(new ItemWolfsbane(), "wolfsbane", CreativeTabInit.HUNTERSDREAM_MISC, event);
 		registerItem(new ItemHuntersJournal(), "hunters_journal", event);
 		registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		registerItem(new ItemBestiary(), "bestiary", CreativeTabInit.HUNTERSDREAM_MISC, event);
 		registerToolSet("silver", TOOL_SILVER, event);
 		registerArmorSet("silver", ARMOR_SILVER, event);
 	}

@@ -1,20 +1,25 @@
 package theblockbox.huntersdream.util;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jline.utils.InputStreamReader;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
@@ -30,27 +35,25 @@ public class SilverFurnaceRecipe {
 	private final String oreDictName2;
 	private final ItemStack out1;
 	private final ItemStack out2;
-	private final float xp;
 	private final int smeltingTime;
 	private final int id;
 
 	protected SilverFurnaceRecipe(ItemStack input1, ItemStack input2, @Nullable String oreDictName1,
-			@Nullable String oreDictName2, ItemStack output1, ItemStack output2, float experience, int smeltingTime) {
+			@Nullable String oreDictName2, ItemStack output1, ItemStack output2, int smeltingTime) {
 		this.in1 = input1;
 		this.in2 = input2;
 		this.oreDictName1 = oreDictName1;
 		this.oreDictName2 = oreDictName2;
 		this.out1 = output1;
 		this.out2 = output2;
-		this.xp = experience;
 		this.smeltingTime = smeltingTime;
 		this.id = currentID++;
 	}
 
 	public static void addRecipe(ItemStack input1, ItemStack input2, @Nullable String oreDictName1,
-			@Nullable String oreDictName2, ItemStack output1, ItemStack output2, float experience, int smeltingTime) {
-		RECIPES.add(new SilverFurnaceRecipe(input1, input2, oreDictName1, oreDictName2, output1, output2, experience,
-				smeltingTime));
+			@Nullable String oreDictName2, ItemStack output1, ItemStack output2, int smeltingTime) {
+		RECIPES.add(
+				new SilverFurnaceRecipe(input1, input2, oreDictName1, oreDictName2, output1, output2, smeltingTime));
 	}
 
 	public static void addRecipe(JsonObject json) {
@@ -61,7 +64,6 @@ public class SilverFurnaceRecipe {
 								json.get("type").getAsString(), Reference.MODID + ":silver_furnace_recipe"));
 
 			int smeltingTime = json.has("smeltingTime") ? json.get("smeltingTime").getAsInt() : 200;
-			float experience = json.get("experience").getAsFloat();
 			Pair<ItemStack, String> input1 = readInputStack(json.get("input1").getAsJsonObject());
 			Pair<ItemStack, String> input2 = json.has("input2") ? readInputStack(json.get("input2").getAsJsonObject())
 					: EMPTY_PAIR;
@@ -71,14 +73,39 @@ public class SilverFurnaceRecipe {
 					: ItemStack.EMPTY;
 
 			addRecipe(input1.getLeft(), input2.getLeft(), input1.getRight(), input2.getRight(), output1, output2,
-					experience, smeltingTime);
-			if (json.has("generateMirror") ? json.get("generateMirror").getAsBoolean() : false)
+					smeltingTime);
+			if (json.has("generateMirror") && json.get("generateMirror").getAsBoolean())
 				addRecipe(input2.getLeft(), input1.getLeft(), input2.getRight(), input1.getRight(), output1, output2,
-						experience, smeltingTime);
+						smeltingTime);
 		} catch (Exception e) {
 			Main.getLogger().error("An exception occured while trying to parse from json to silver furnace recipe\n"
 					+ "Exception: " + e.toString() + " Stacktrace:\n" + ExceptionUtils.getStackTrace(e));
 		}
+	}
+
+	/**
+	 * Creates new files and directories for the silver furnace recipes if they
+	 * haven't already been created and parses all the files in the directory to
+	 * silver furnace recipes
+	 */
+	public static void setAndLoadFiles(File directory) {
+		File sfrLocation = new File(directory, "huntersdream/silver_furnace_recipes");
+		// if directory doesn't exist, make it and add default files
+		if (!sfrLocation.exists()) {
+			sfrLocation.mkdirs();
+			// TODO: Add recipes here
+		}
+		JsonParser parser = new JsonParser();
+		FileUtils.listFiles(sfrLocation, new String[] { "json" }, true).stream().map(file -> {
+			try {
+				return parser.parse(new InputStreamReader(FileUtils.openInputStream(file))).getAsJsonObject();
+			} catch (Exception e) {
+				Main.getLogger().error(String.format(
+						"An exception occured while trying to load/parse the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
+						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
+				return null;
+			}
+		}).filter(json -> json != null).forEach(SilverFurnaceRecipe::addRecipe);
 	}
 
 	private static Pair<ItemStack, String> readInputStack(JsonObject json) {
@@ -95,8 +122,8 @@ public class SilverFurnaceRecipe {
 
 	private static ItemStack readOutputStack(JsonObject json) {
 		Item item = Item.getByNameOrId(json.get("item").getAsString());
-		int count = json.get("count").getAsInt();
-		int meta = json.has("meta") ? json.get("meta").getAsInt() : OreDictionary.WILDCARD_VALUE;
+		int count = json.has("count") ? json.get("count").getAsInt() : 1;
+		int meta = json.has("meta") ? json.get("meta").getAsInt() : 0;
 		return json.has("nbt") ? new ItemStack(item, count, meta, JsonUtils.readNBT(json, "nbt"))
 				: new ItemStack(item, count, meta);
 	}
@@ -107,12 +134,16 @@ public class SilverFurnaceRecipe {
 
 	/** Returns the count of the itemstack that is in input 1 */
 	public int getAmount1() {
-		return this.in1.isEmpty() ? 0 : this.in1.getCount();
+		// using AT to access ItemStack#stackSize because we want to access the size
+		// even for empty item stacks
+		return this.in1.stackSize;
 	}
 
 	/** Returns the count of the itemstack that is in input 2 */
 	public int getAmount2() {
-		return this.in2.isEmpty() ? 0 : this.in2.getCount();
+		// using AT to access ItemStack#stackSize because we want to access the size
+		// even for empty item stacks
+		return this.in2.stackSize;
 	}
 
 	/** Returns a copy of the first itemstack that should be outputted */
@@ -126,11 +157,19 @@ public class SilverFurnaceRecipe {
 	}
 
 	/**
-	 * Returns the experience gotten when the player takes the result out of the
-	 * furnace
+	 * Returns the experience gotten when the player takes one item in the output 1
+	 * out of the furnace
 	 */
-	public float getExperience() {
-		return this.xp;
+	public float getExperience1() {
+		return FurnaceRecipes.instance().getSmeltingExperience(this.out1);
+	}
+
+	/**
+	 * Returns the experience gotten when the player takes one item in the output 2
+	 * out of the furnace
+	 */
+	public float getExperience2() {
+		return FurnaceRecipes.instance().getSmeltingExperience(this.out2);
 	}
 
 	/**
@@ -151,18 +190,19 @@ public class SilverFurnaceRecipe {
 	}
 
 	private static boolean doItemStacksMatch(ItemStack stack1, ItemStack stack2, @Nullable String oreDictName) {
-		if (stack1.isEmpty() && stack2.isEmpty())
-			return true;
-		if (stack1.getMetadata() == OreDictionary.WILDCARD_VALUE || stack1.getMetadata() == stack2.getMetadata()
+		// TODO: Maybe find a better way to test if the stacks match
+		if ((stack1.getMetadata() == OreDictionary.WILDCARD_VALUE || stack1.getMetadata() == stack2.getMetadata())
 				&& stack2.getCount() >= stack1.getCount() && stack1.areCapsCompatible(stack2)) {
-			if (oreDictName == null) {
+			if (oreDictName != null) {
+				if (stack2.isEmpty())
+					return false;
 				final int[] oreDictIDs = OreDictionary.getOreIDs(stack2);
 				final int oreDictID = OreDictionary.getOreID(oreDictName);
 				for (int i = 0; i < oreDictIDs.length; i++)
 					if (oreDictID == oreDictIDs[i])
 						return true;
 			} else {
-				return stack1.getItem() == stack2.getItem();
+				return (stack1.getItem() == stack2.getItem());
 			}
 		}
 		return false;

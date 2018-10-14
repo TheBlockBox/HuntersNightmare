@@ -1,46 +1,40 @@
 package theblockbox.huntersdream.blocks;
 
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.init.CreativeTabInit;
 
-public class BlockSilverFurnace extends BlockContainer {
-	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+public class BlockCampfire extends BlockContainer {
 	public static final PropertyBool BURNING = PropertyBool.create("burning");
+	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 3 / 8.0D, 1);
 
-	public BlockSilverFurnace() {
-		super(Material.ROCK);
-		this.setHardness(3.5F);
+	public BlockCampfire() {
+		super(Material.WOOD);
+		this.setHardness(2.0F);
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
-		setHarvestLevel("pickaxe", 2);
-		this.setDefaultState(
-				this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(BURNING, false));
+		this.setHarvestLevel("axe", 0);
+		this.setDefaultState(this.getDefaultState().withProperty(BURNING, false));
 	}
 
 	@Override
-	public TileEntitySilverFurnace createNewTileEntity(World worldIn, int meta) {
-		return new TileEntitySilverFurnace();
-	}
-
-	@Override
-	public int getLightValue(IBlockState state) {
-		return state.getValue(BURNING) ? 13 : 0;
+	public TileEntityCampfire createNewTileEntity(World worldIn, int meta) {
+		return new TileEntityCampfire();
 	}
 
 	@Override
@@ -49,25 +43,13 @@ public class BlockSilverFurnace extends BlockContainer {
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+	public int getLightValue(IBlockState state) {
+		return state.getValue(BURNING) ? 13 : 0;
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING, BURNING);
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta / 2)).withProperty(BURNING,
-				meta % 2 == 1);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getHorizontalIndex() * 2 + (state.getValue(BURNING) ? 1 : 0);
+		return new BlockStateContainer(this, BURNING);
 	}
 
 	@Override
@@ -76,17 +58,27 @@ public class BlockSilverFurnace extends BlockContainer {
 		if (!worldIn.isRemote) {
 			TileEntity tileEntity = worldIn.getTileEntity(pos);
 			if (tileEntity instanceof TileEntitySilverFurnace) {
-				playerIn.openGui(Main.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+				playerIn.openGui(Main.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			}
 		}
 		return true;
 	}
 
 	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return this.getDefaultState().withProperty(BURNING, meta != 0);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return state.getValue(BURNING) ? 1 : 0;
+	}
+
+	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TileEntity te = worldIn.getTileEntity(pos);
-		if (te instanceof TileEntitySilverFurnace)
-			((TileEntitySilverFurnace) te).getInventory().forEach(stack -> {
+		if (te instanceof TileEntityCampfire)
+			((TileEntityCampfire) te).getInventory().forEach(stack -> {
 				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
 			});
 		super.breakBlock(worldIn, pos, state);
@@ -95,5 +87,25 @@ public class BlockSilverFurnace extends BlockContainer {
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return false;
+	}
+
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return BOUNDING_BOX;
 	}
 }

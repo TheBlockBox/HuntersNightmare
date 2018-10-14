@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
@@ -12,20 +13,36 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.functional.ToFloatFunction;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
+/**
+ * A class to represent transformations and their properties. To register new
+ * ones subscribe to
+ * {@link theblockbox.huntersdream.event.TransformationRegistryEvent} and add
+ * your transformation. Create a new one with
+ * {@link TransformationEntry#create(ResourceLocation)}
+ */
 public class Transformation {
 	private static Transformation[] transformations = null;
+	public static final Transformation NONE = new Transformation(TransformationEntry.of().setSupernatural(false),
+			GeneralHelper.newResLoc("none")) {
+		@Override
+		public boolean isTransformation() {
+			return false;
+		}
+	};
 
 	private final TransformationEntry ENTRY;
 	private final ResourceLocation registryName;
@@ -34,10 +51,15 @@ public class Transformation {
 	 * transformation gets registered
 	 */
 	private int temporaryID = -1;
+	private final Optional<Transformation> optional = Optional.of(this);
+	private final TextComponentTranslation translation;
+	private final String registryNameString;
 
 	private Transformation(TransformationEntry entry, ResourceLocation registryName) {
 		this.ENTRY = entry;
 		this.registryName = registryName;
+		this.registryNameString = registryName.toString();
+		this.translation = new TextComponentTranslation(this.registryNameString);
 	}
 
 	/**
@@ -76,6 +98,19 @@ public class Transformation {
 		return transformations[temporaryID];
 	}
 
+	/**
+	 * Gets the transformation with the temporary id of the given transformation + 1
+	 * or 1 if a higher one doesn't exist (because 0 would be
+	 * {@link theblockbox.huntersdream.init.TransformationInit#NONE}). Returns
+	 * {@link TransformationInit#HUMAN} if a null transformation is supplied
+	 */
+	public static Transformation cycle(Transformation transformation) {
+		if (transformation == null)
+			return TransformationInit.HUMAN;
+		int id = transformation.getTemporaryID();
+		return fromTemporaryID((getTransformationLength() > id) ? id + 1 : 1);
+	}
+
 	/** Returns an array of all currently registered transformations */
 	public static Transformation[] getAllTransformations() {
 		return transformations.clone();
@@ -88,6 +123,16 @@ public class Transformation {
 		for (int i = 0; i < transformations.length; i++) {
 			transformations[i].temporaryID = i;
 		}
+	}
+
+	/**
+	 * Gets the transformation with the temporary id of this transformation + 1 or 1
+	 * if this temporary id is the highest one (0 is always
+	 * {@link TransformationInit#NONE}, so that won't be used)
+	 */
+	public Transformation cycle() {
+		int newID = this.temporaryID + 1;
+		return fromTemporaryID((getTransformationLength() > newID) ? newID : 1);
 	}
 
 	public boolean hasBeenRegistered() {
@@ -117,6 +162,18 @@ public class Transformation {
 				"textures/gui/transformation_xp_bar_" + getRegistryName().getPath() + ".png");
 	}
 
+	public TextComponentTranslation getTranslation() {
+		return this.translation;
+	}
+
+	/**
+	 * This method returns true if the transformation is a transformation (meaning
+	 * it's not TransformationInit#NONE)
+	 */
+	public boolean isTransformation() {
+		return true;
+	}
+
 	/**
 	 * This method returns the resource location obtained through
 	 * {@link #getResourceLocation()} in a string representation. So for example for
@@ -125,7 +182,7 @@ public class Transformation {
 	 */
 	@Override
 	public String toString() {
-		return this.getRegistryName().toString();
+		return this.registryNameString;
 	}
 
 	public ToDoubleFunction<EntityPlayerMP> getCalculateLevel() {
@@ -191,6 +248,10 @@ public class Transformation {
 	 */
 	public int getTemporaryID() {
 		return this.temporaryID;
+	}
+
+	public Optional<Transformation> toOptional() {
+		return this.optional;
 	}
 
 	@Override

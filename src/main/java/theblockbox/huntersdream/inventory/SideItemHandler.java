@@ -1,16 +1,16 @@
-package theblockbox.huntersdream.util;
+package theblockbox.huntersdream.inventory;
 
 import java.util.function.IntPredicate;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-public class SideItemStackHandler implements IItemHandler {
+public class SideItemHandler implements IItemHandler {
 	private final IItemHandler delegate;
 	private final IntPredicate shouldInsertIntoSlot;
 	private final IntPredicate shouldExtractFromSlot;
 
-	public SideItemStackHandler(IItemHandler delegate, IntPredicate shouldInsertIntoSlot,
+	public SideItemHandler(IItemHandler delegate, IntPredicate shouldInsertIntoSlot,
 			IntPredicate shouldExtractFromSlot) {
 		this.delegate = delegate;
 		this.shouldInsertIntoSlot = shouldInsertIntoSlot;

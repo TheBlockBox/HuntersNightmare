@@ -20,6 +20,7 @@ item.huntersdream.ingot_silver.name=Silver Ingot
 item.huntersdream.wolfsbane.name=Wolfsbane
 item.huntersdream.hunters_journal.name=Hunter's Journal
 item.huntersdream.hunters_journal_page.name=Hunter's Note
+item.huntersdream.bestiary.name=Bestiary
 
 # Potions
 effect.huntersdream.fear=Fear
@@ -111,6 +112,7 @@ item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "
 item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 death.attack.vampireDrankBlood=%s got drank dried by a vampire
+item.huntersdream.bestiary.onClick=You are now a %s
 
 # Config
 huntersdream.config.title=Hunter's Dream Config
@@ -158,11 +160,10 @@ huntersdream.hunters_journal.werewolf.description=W.I.P.
 # Other stuff
 # the word you'd use in a list (like Werewolf, Vampire and Hybrid)
 huntersdream.and=and
-huntersdream.effectiveAgainst.tooltip=Effective against %s
-huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
-# The character you'd use to split decimal values (in 11.56 the character is .) (currently unused)
-huntersdream.decimalpoint=.
 # The character you'd use in a list (like Werewolf, Vampire and Hybrid)
 huntersdream.comma=,
+huntersdream.effectiveAgainst.tooltip=Effective against %s
+huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
 # Undead like used in the sentence "Effective against Werewolf and Undead"
 huntersdream.undead=Undead
+huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.

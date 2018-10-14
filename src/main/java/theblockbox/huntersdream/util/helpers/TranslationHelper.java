@@ -44,28 +44,6 @@ public class TranslationHelper {
 		}
 	}
 
-	/**
-	 * Does the same as {@link #translateNumber(double, int)} but with preciseness
-	 * 2. Client side only!
-	 */
-	public static String translateNumber(double number) {
-		return translateNumber(number, 2);
-	}
-
-	/**
-	 * Translates a number (like really, you have to translate numbers to German)
-	 * with a given preciseness. Client side only!
-	 * 
-	 * @param number      The number to be translated and rounded
-	 * @param preciseness To how many digits the number shouldn't be rounded
-	 * @return Returns the translated and rounded number as a string
-	 */
-	public static String translateNumber(double number, int preciseness) {
-		double calcPreciseness = Math.pow(10, preciseness);
-		return String.valueOf(Math.round((number * calcPreciseness)) / calcPreciseness).replace(".",
-				I18n.format(Reference.MODID + ".decimalpoint"));
-	}
-
 	// argument is item because only items and itemblocks have tooltips
 	public static void addEffectiveAgainstTransformationTooltips(ItemStack stack, List<String> tooltips) {
 		if (EffectivenessHelper.effectiveAgainstSomeTransformation(stack)) {

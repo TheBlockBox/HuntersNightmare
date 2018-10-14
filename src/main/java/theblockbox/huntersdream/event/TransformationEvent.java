@@ -50,6 +50,8 @@ public class TransformationEvent extends LivingEvent {
 		 */
 		SPAWN,
 		/** When a command is executed */
-		COMMAND;
+		COMMAND,
+		/** When the bestiary item is clicked in creative mode */
+		BESTIARY;
 	}
 }

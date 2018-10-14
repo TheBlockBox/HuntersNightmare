@@ -5,6 +5,7 @@ import java.util.Set;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
 
 /**
@@ -12,9 +13,10 @@ import theblockbox.huntersdream.util.Transformation;
  * {@link MinecraftForge#EVENT_BUS} and is not cancelable
  */
 public class TransformationRegistryEvent extends Event {
-	private static Set<Transformation> transformationSet = new LinkedHashSet<>();
+	private final Set<Transformation> transformationSet = new LinkedHashSet<>();
 
 	public TransformationRegistryEvent() {
+		transformationSet.add(TransformationInit.NONE);
 	}
 
 	/**

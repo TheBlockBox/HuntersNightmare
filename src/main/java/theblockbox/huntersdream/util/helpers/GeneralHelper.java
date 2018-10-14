@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.helpers;
 import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,6 +40,7 @@ public class GeneralHelper {
 	 * needed, so there won't be twenty empty instances
 	 */
 	public static final NBTTagCompound EMPTY_COMPOUND = new NBTTagCompound();
+	public static final IntPredicate FALSE_PREDICATE = i -> false;
 	// currently not used
 	public static final DataSerializer<byte[]> BYTE_ARRAY_DATA_SERIALIZER = new DataSerializer<byte[]>() {
 
@@ -323,5 +326,25 @@ public class GeneralHelper {
 	public static void drawCenteredString(FontRenderer fontRenderer, String string, int x, int width, int y,
 			int color) {
 		fontRenderer.drawString(string, ((width - x) - fontRenderer.getStringWidth(string)) / 2, y, color);
+	}
+
+	/** Spawns experience orbs like a vanilla furnace would do */
+	public static void spawnXP(World world, BlockPos pos, int items, float xpPerItem) {
+		if (!world.isRemote) {
+			if (xpPerItem == 0.0F) {
+				return;
+			} else if (xpPerItem < 1.0F) {
+				float fullXP = items * xpPerItem;
+				int fullXPFloor = MathHelper.floor(fullXP);
+				if (fullXPFloor < MathHelper.ceil(fullXP) && Math.random() < (fullXP - fullXPFloor)) {
+					++fullXPFloor;
+				}
+				items = fullXPFloor;
+			}
+			for (int splitXP = EntityXPOrb.getXPSplit(items); items > 0; splitXP = EntityXPOrb.getXPSplit(items)) {
+				items -= splitXP;
+				world.spawnEntity(new EntityXPOrb(world, pos.getX(), pos.getY() + 0.5D, pos.getZ() + 0.5D, splitXP));
+			}
+		}
 	}
 }

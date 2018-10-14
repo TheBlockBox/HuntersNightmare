@@ -9,7 +9,14 @@ import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 public class TransformationInit {
 	// TODO: Add levelling system for WITCH, CLOCKWORKANDROID, HYBRID and
 	// HUNTER
+	/** Used to indicate that no transformation is present and it won't change */
+	public static final Transformation NONE = Transformation.NONE;
+	/**
+	 * Used to indicate that no transformation is currently present but it is
+	 * possible that it will change
+	 */
 	public static final Transformation HUMAN = newEntry().setSupernatural(false).create("human");
+
 	public static final Transformation WEREWOLF = newEntry().setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
 			.setCalculateProtection(WerewolfHelper::calculateProtection)
 			.setCalculateLevel(WerewolfHelper::getWerewolfLevel)
