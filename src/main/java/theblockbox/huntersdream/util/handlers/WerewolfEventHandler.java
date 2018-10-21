@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -26,7 +25,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.event.TransformingEvent;
@@ -50,9 +48,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class WerewolfEventHandler {
-	/** @deprecated Don't use. We're going to make a new system */
-	@Deprecated
-	private static final ArrayList<EntityWerewolf> PLAYER_WEREWOLVES = new ArrayList<>();
 	public static final int[] LEVELS_WITH_EXTRA_HEARTS = { 7, 8, 9, 10, 11, 12 };
 
 	// use LivingDamage only for removing damage and LivingHurt for damage and
@@ -223,17 +218,6 @@ public class WerewolfEventHandler {
 			werewolf.setTransformationStage(0);
 			TransformationHelper.transform(player, true, TransformingEventReason.ENVIROMENT);
 			PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
-
-// TODO: Remove this after no control is done
-//			if (!WerewolfHelper.hasControl(player)) {
-//				World world = player.world;
-//				EntityWerewolf were = new EntityWerewolf(world, TransformationHelper.getCap(player).getTextureIndex(),
-//						"player" + player.getName());
-//				were.setPosition(player.posX, player.posY, player.posZ);
-//				PLAYER_WEREWOLVES.add(were);
-//				world.spawnEntity(were);
-//				Packets.NO_CONTROL.sync(player, were);
-//			}
 			break;
 		default:
 			throw new UnexpectedBehaviorException(
@@ -244,14 +228,6 @@ public class WerewolfEventHandler {
 					"transformations.huntersdream:werewolf.transformingInto." + werewolf.getTransformationStage()));
 		}
 
-	}
-
-	/**
-	 * @deprecated Don't use, we're going to change the no control mechanic
-	 */
-	@Deprecated
-	public static EntityWerewolf[] getPlayerWerewolves() {
-		return PLAYER_WEREWOLVES.toArray(new EntityWerewolf[0]);
 	}
 
 	@SubscribeEvent

@@ -63,6 +63,7 @@ public interface ITransformationCreature extends ITransformation {
 
 		@Override
 		public void setTransformation(Transformation transformation) {
+			transformation.validateIsTransformation();
 			this.transformation = transformation;
 		}
 

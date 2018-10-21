@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import theblockbox.huntersdream.container.ContainerSilverFurnace;
+import theblockbox.huntersdream.container.ContainerCampfire;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
@@ -13,9 +13,9 @@ public class GuiCampfire extends GuiContainer {
 	public static final int WIDTH = 176;
 	public static final int HEIGHT = 166;
 	public static final ResourceLocation IMAGE = GeneralHelper.newResLoc("textures/gui/campfire.png");
-	private final ContainerSilverFurnace container;
+	private final ContainerCampfire container;
 
-	public GuiCampfire(ContainerSilverFurnace inventorySlotsIn) {
+	public GuiCampfire(ContainerCampfire inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.xSize = WIDTH;
 		this.ySize = HEIGHT;
@@ -43,8 +43,8 @@ public class GuiCampfire extends GuiContainer {
 		int burnTime = container.getBurnTime();
 		if (burnTime > 0) {
 			int fullBurnTime = container.getFullBurnTime();
-			int fuel = MathHelper.ceil(12 / (fullBurnTime / (double) (fullBurnTime - burnTime)));
-			this.drawTexturedModalRect(69, 38 + fuel, 177, fuel, 15, 14 - fuel);
+			int fuel = MathHelper.ceil(12 / (fullBurnTime / (double) (fullBurnTime - burnTime))) - 1;
+			this.drawTexturedModalRect(68, 38 + fuel, 176, fuel, 16, 16 - fuel);
 		}
 
 		GeneralHelper.drawCenteredString(this.fontRenderer,

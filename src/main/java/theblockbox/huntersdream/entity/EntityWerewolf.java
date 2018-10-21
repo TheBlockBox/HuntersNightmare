@@ -228,4 +228,10 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		if (compound.hasKey("untransformedEntityExtraData"))
 			this.setExtraData((NBTTagCompound) compound.getTag("untransformedEntityExtraData"));
 	}
+
+	@Override
+	public boolean isValidLightLevel() {
+		// make werewolves only spawn on full moon
+		return WerewolfHelper.isWerewolfTime(this.world);
+	}
 }

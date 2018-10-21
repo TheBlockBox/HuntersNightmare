@@ -9,6 +9,7 @@ import theblockbox.huntersdream.init.ItemInit;
 
 public class GuiButtonSurvivalTab extends GuiButton {
 	private boolean hasMouseBeenPressed = false;
+	private static final ItemStack ICON = new ItemStack(ItemInit.HUNTERS_JOURNAL);
 
 	public GuiButtonSurvivalTab(int buttonId, int x, int y) {
 		super(buttonId, x, y, 18, 18, "");
@@ -16,14 +17,15 @@ public class GuiButtonSurvivalTab extends GuiButton {
 
 	@Override
 	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-		if (visible) {
+		if (this.visible) {
 			super.drawButton(mc, mouseX, mouseY, partialTicks);
 			if (this.mousePressed(mc, mouseX, mouseY) && this.hasMouseBeenPressed) {
 				// TODO: Add opening of survival tab here
 				Main.getLogger().debug("Survival tab button has been clicked");
 				this.hasMouseBeenPressed = false;
 			}
-			mc.getRenderItem().renderItemIntoGUI(new ItemStack(ItemInit.HUNTERS_JOURNAL), x + 1, y + 1);
+			// TODO: Make special texture render
+			mc.getRenderItem().renderItemIntoGUI(ICON, x + 1, y + 1);
 		}
 	}
 

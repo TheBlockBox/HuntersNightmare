@@ -26,6 +26,8 @@ public class TransformationEvent extends LivingEvent {
 		super(entity);
 		this.transformationBefore = TransformationHelper.getTransformation(entity);
 		this.transformationAfter = transformationAfter;
+		this.transformationBefore.validateIsTransformation();
+		this.transformationAfter.validateIsTransformation();
 		this.reason = reason;
 	}
 

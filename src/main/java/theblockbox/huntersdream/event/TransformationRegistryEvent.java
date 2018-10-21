@@ -1,11 +1,22 @@
 package theblockbox.huntersdream.event;
 
+import static theblockbox.huntersdream.init.TransformationInit.CLOCKWORKANDROID;
+import static theblockbox.huntersdream.init.TransformationInit.HUMAN;
+import static theblockbox.huntersdream.init.TransformationInit.HUNTER;
+import static theblockbox.huntersdream.init.TransformationInit.HYBRID;
+import static theblockbox.huntersdream.init.TransformationInit.NONE;
+import static theblockbox.huntersdream.init.TransformationInit.VAMPIRE;
+import static theblockbox.huntersdream.init.TransformationInit.WEREWOLF;
+import static theblockbox.huntersdream.init.TransformationInit.WITCH;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
 
 /**
@@ -16,7 +27,7 @@ public class TransformationRegistryEvent extends Event {
 	private final Set<Transformation> transformationSet = new LinkedHashSet<>();
 
 	public TransformationRegistryEvent() {
-		transformationSet.add(TransformationInit.NONE);
+		this.registerTransformations(NONE, HUMAN, WEREWOLF, VAMPIRE, WITCH, CLOCKWORKANDROID, HYBRID, HUNTER);
 	}
 
 	/**
@@ -27,6 +38,7 @@ public class TransformationRegistryEvent extends Event {
 	 *                                  registered with the same registry name
 	 */
 	public boolean registerTransformation(Transformation transformation) {
+		Validate.notNull(transformation);
 		transformationSet.stream().map(Transformation::getRegistryName).forEach(name -> {
 			if (transformation.getRegistryName().equals(name))
 				throw new IllegalArgumentException(
@@ -40,6 +52,9 @@ public class TransformationRegistryEvent extends Event {
 	 * it registers more than one
 	 */
 	public boolean registerTransformations(Transformation... transformations) {
+		Validate.noNullElements(transformations,
+				"Null transformations not allowed (null transformation in array %s at index %d)",
+				ArrayUtils.toString(transformations));
 		boolean flag = false;
 		for (Transformation transformation : transformations)
 			if (registerTransformation(transformation) && !flag)

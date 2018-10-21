@@ -4,7 +4,10 @@ import java.util.BitSet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.client.resources.I18n;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
@@ -21,7 +24,7 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 	private final BitSet transformationsEffectiveAgainst = new BitSet(Transformation.getTransformationLength());
 	private final Transformation[] effectiveAgainst;
 	private final float[] effectiveness = new float[Transformation.getTransformationLength()];
-	private final String tooltip;
+	private String tooltip = "";
 
 	/**
 	 * Creates a new EffectiveAgainstTransformation object from the given arguments
@@ -49,14 +52,17 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 			this.transformationsEffectiveAgainst.set(index);
 			this.effectiveness[index] = values.effectiveness[i];
 		}
-		if (effectiveAgainstUndead)
-			this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-					TranslationHelper.getAsTranslatedList(
-							Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead"))
-									.toArray()));
-		else
-			this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-					TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
+		if (Main.proxy.physicalClient()) {
+			if (effectiveAgainstUndead) {
+				this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
+						TranslationHelper.getAsTranslatedList(
+								Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead"))
+										.toArray()));
+			} else {
+				this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
+						TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
+			}
+		}
 	}
 
 	/** The damage multiplier when used against the specified creature */
@@ -83,7 +89,7 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 
 	@Override
 	public Transformation[] transformations() {
-		return this.effectiveAgainst;
+		return this.effectiveAgainst.clone();
 	}
 
 	@Override
@@ -113,6 +119,7 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 		}
 
 		public TEArray add(Transformation transformation, float e) {
+			Validate.notNull(transformation, "Transformation mustn't be null");
 			this.transformations[currentIndex] = transformation;
 			this.effectiveness[currentIndex] = e;
 			this.currentIndex++;

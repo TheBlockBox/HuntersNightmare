@@ -62,13 +62,6 @@ public class BlockWolfsbane extends BlockCrops {
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-		// TODO: Do you have to override this method in order for the wolfsbane to only
-		// be placed on farmland?
-		return super.canPlaceBlockAt(worldIn, pos) && canSustainBush(worldIn.getBlockState(pos.down()));
-	}
-
-	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
 			int fortune) {
 		drops.add(new ItemStack(getSeed()));

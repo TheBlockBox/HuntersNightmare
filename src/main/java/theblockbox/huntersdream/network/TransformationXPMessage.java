@@ -11,7 +11,6 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class TransformationXPMessage extends MessageBase<TransformationXPMessage> {
-
 	private int xp;
 	private int player;
 	private double level;

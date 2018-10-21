@@ -166,4 +166,4 @@ huntersdream.effectiveAgainst.tooltip=Effective against %s
 huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
 # Undead like used in the sentence "Effective against Werewolf and Undead"
 huntersdream.undead=Undead
-huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
+item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.

@@ -121,7 +121,7 @@ public class TransformationEventHandler {
 			Transformation transformationAtt = TransformationHelper.getTransformation(attacker);
 
 			// make that player deals more damage
-			if (transformationAtt != null) {
+			if (transformationAtt.isTransformation()) {
 				if (attacker instanceof EntityPlayer) {
 					event.setAmount(event.getAmount() * transformationAtt.getGeneralDamage(attacker));
 				}
@@ -134,14 +134,14 @@ public class TransformationEventHandler {
 						if (hurt.isEntityUndead()
 								&& EffectivenessHelper.effectiveAgainstUndead(attacker.getHeldItemMainhand()))
 							event.setAmount(event.getAmount() + 2.5F);
-					if (transformationHurt != null)
+					if (transformationHurt.isTransformation())
 						addEffectiveAgainst(event, attacker, hurt, transformationHurt);
 				}
 			}
 		}
 
 		// add protection
-		if (transformationHurt != null
+		if (transformationHurt.isTransformation()
 				&& !(event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME))) {
 			event.setAmount(event.getAmount() / transformationHurt.getProtection(hurt));
 		}
@@ -171,7 +171,7 @@ public class TransformationEventHandler {
 				&& source instanceof EntityLivingBase && hurt != null) {
 			EntityLivingBase attacker = (EntityLivingBase) source;
 			Transformation transformationAttacker = TransformationHelper.getTransformation(attacker);
-			if (transformationAttacker != null) {
+			if (transformationAttacker.isTransformation()) {
 				ItemStack[] stacks = Stream
 						.of(EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
 								EntityEquipmentSlot.FEET)
@@ -245,7 +245,7 @@ public class TransformationEventHandler {
 
 				if (!(entity instanceof ITransformationEntityTransformed) && entity instanceof EntityCreature) {
 					Transformation transformation = TransformationHelper.getTransformation(entity);
-					if (transformation != null) {
+					if (transformation.isTransformation()) {
 						transformation.transformCreatureWhenPossible((EntityCreature) entity);
 					}
 				}

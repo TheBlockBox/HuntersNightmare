@@ -66,7 +66,7 @@ public class TransformationXPEvent extends PlayerEvent {
 	}
 
 	/** Returns true if the player levelled up. Server side only! */
-	public boolean levelledUp() {
+	public boolean leveledUp() {
 		return MathHelper.floor(getNewLevel()) > MathHelper.floor(getLevel());
 	}
 

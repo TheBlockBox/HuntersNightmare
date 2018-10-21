@@ -54,6 +54,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformation transformation) {
 		super(worldIn);
+		transformation.validateIsTransformation();
 		this.setSize(0.5F, 1.4F);
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 		this.dataManager.set(TEXTURE_INDEX, textureIndex);
@@ -169,6 +170,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public void setTransformation(Transformation transformation) {
+		transformation.validateIsTransformation();
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 	}
 

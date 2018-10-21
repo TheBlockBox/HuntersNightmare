@@ -38,7 +38,7 @@ public class CommandsTransformation extends CommandBase {
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
-		ArrayList<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<>();
 		if (args.length == 1) {
 			toReturn.addAll(Stream.of(Transformation.getAllTransformations()).map(Transformation::toString)
 					.collect(Collectors.toList()));
@@ -63,11 +63,11 @@ public class CommandsTransformation extends CommandBase {
 						player.getName(), TransformationHelper.getTransformation(player).toString()));
 			} else {
 				String transformation = args[0];
-				Transformation transformations = Transformation
+				Transformation t = Transformation
 						.fromNameWithoutError(GeneralHelper.newResLoc(transformation).toString());
-				TransformationHelper.changeTransformation(player, transformations, TransformationEventReason.COMMAND);
+				TransformationHelper.changeTransformation(player, t, TransformationEventReason.COMMAND);
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationSet",
-						player.getName(), transformations.toString()));
+						player.getName(), t.toString()));
 			}
 		} catch (Exception e) {
 			CommandHelper.invalidCommand(sender);

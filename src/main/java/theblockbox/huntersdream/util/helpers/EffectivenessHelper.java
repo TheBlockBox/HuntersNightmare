@@ -2,6 +2,8 @@ package theblockbox.huntersdream.util.helpers;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,6 +13,7 @@ import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
+import theblockbox.huntersdream.util.effective_against_transformation.IEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 
 public class EffectivenessHelper {
@@ -65,18 +68,20 @@ public class EffectivenessHelper {
 	 * true
 	 */
 	public static boolean effectiveAgainstTransformation(Transformation effectiveAgainst, Object object) {
+		Validate.notNull(effectiveAgainst, "The transformation isn't allowed to be null");
 		return effectiveAgainstSomeTransformation(object) ? getEAT(object).effectiveAgainst(effectiveAgainst) : false;
 	}
 
 	/**
 	 * Returns true when the object is either an instance of
 	 * {@link IArmorEffectiveAgainstTransformation} or registered through
-	 * {@link #addArmorEffectiveAgainst(Item, float, float, Transformation...)}
-	 * This is dynamic, so one object you passed in twenty minutes ago could return
-	 * false but when you do the same thing with the same object later, it could
-	 * return true
+	 * {@link #addArmorEffectiveAgainst(Item, float, float, Transformation...)} This
+	 * is dynamic, so one object you passed in twenty minutes ago could return false
+	 * but when you do the same thing with the same object later, it could return
+	 * true
 	 */
 	public static boolean armorEffectiveAgainstTransformation(Transformation effectiveAgainst, ItemStack armorPart) {
+		Validate.notNull(effectiveAgainst, "The transformation isn't allowed to be null");
 		return armorEffectiveAgainstSomeTransformation(armorPart)
 				? getAEAT(armorPart).effectiveAgainst(effectiveAgainst)
 				: false;
@@ -96,6 +101,7 @@ public class EffectivenessHelper {
 	 * {@link ArmorEffectiveAgainstTransformation#ArmorEffectiveAgainstTransformation(Item, float, float, Transformation...)})
 	 */
 	public static float armorGetEffectivenessAgainst(Transformation against, ItemStack armorPart) {
+		Validate.notNull(against, "The transformation isn't allowed to be null");
 		if (armorEffectiveAgainstTransformation(against, armorPart)) {
 			return getAEAT(armorPart).getArmorEffectivenessAgainstTransformation(against);
 		} else {
@@ -108,6 +114,7 @@ public class EffectivenessHelper {
 	 * {@link #armorGetEffectivenessAgainst(Transformation, Item)})
 	 */
 	public static float getEffectivenessAgainst(Transformation effectiveAgainst, Object object) {
+		Validate.notNull(effectiveAgainst, "The transformation isn't allowed to be null");
 		if (effectiveAgainstTransformation(effectiveAgainst, object)) {
 			return getEAT(object).getEffectivenessAgainstTransformation(effectiveAgainst);
 		} else {

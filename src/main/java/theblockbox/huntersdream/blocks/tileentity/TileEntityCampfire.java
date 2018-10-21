@@ -52,24 +52,24 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 			this.burnTime -= 9;
 			while (this.burnTime < 0) {
 				if (this.hasRecipe()) {
-					int fuel = TileEntityFurnace.getItemBurnTime(this.getInput());
-					if (fuel > 0 && this.itemHandler.extractItem(0, 1, false).isEmpty()) {
+					int fuel = TileEntityFurnace.getItemBurnTime(this.getFuel());
+					if (fuel > 0 && !this.itemHandler.extractItem(1, 1, false).isEmpty()) {
 						this.burnTime += fuel;
 						this.fullBurnTime = fuel;
 						this.markDirty();
 						continue;
 					}
-
-					if (this.burnTime < 0)
-						this.burnTime = 0;
-					this.markDirty();
-					break;
 				}
+
+				if (this.burnTime < 0)
+					this.burnTime = 0;
+				this.markDirty();
+				break;
 			}
 
 			if (this.hasRecipe()) {
 				if (this.isBurning()) {
-					if (this.ticks > (this.smeltingRecipeSince + 200)) {
+					if (this.ticks > (this.smeltingRecipeSince + 180)) {
 						if (this.itemHandler.insertItem(2, this.output, false).isEmpty()) {
 							this.itemHandler.extractItem(0, 1, false);
 						}
@@ -93,13 +93,13 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 	}
 
 	public boolean checkForRecipe() {
-		ItemStack out = FurnaceRecipes.instance().getSmeltingResult(this.getInput()).copy();
+		ItemStack out = FurnaceRecipes.instance().getSmeltingResult(this.itemHandler.getStackInSlot(0)).copy();
 		if (out.getItem() instanceof ItemFood) {
 			if (this.itemHandler.insertItem(2, out, true).isEmpty()) {
 				if (!(ItemStack.areItemStacksEqual(this.output, out) || this.hasRecipe())) {
 					this.output = out;
-					this.smeltingRecipeSince = this.ticks;
 				}
+				this.smeltingRecipeSince = this.ticks;
 				this.setHasRecipe(true);
 				return true;
 			}
@@ -112,8 +112,8 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 		return this.itemHandler.getInventory();
 	}
 
-	private ItemStack getInput() {
-		return this.itemHandler.getStackInSlot(0);
+	private ItemStack getFuel() {
+		return this.itemHandler.getStackInSlot(1);
 	}
 
 	public boolean isBurning() {

@@ -1,13 +1,17 @@
 package theblockbox.huntersdream.blocks;
 
+import java.util.Random;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -17,7 +21,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
-import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.init.CreativeTabInit;
 
 public class BlockCampfire extends BlockContainer {
@@ -53,18 +56,6 @@ public class BlockCampfire extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
-			TileEntity tileEntity = worldIn.getTileEntity(pos);
-			if (tileEntity instanceof TileEntitySilverFurnace) {
-				playerIn.openGui(Main.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
-			}
-		}
-		return true;
-	}
-
-	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		return this.getDefaultState().withProperty(BURNING, meta != 0);
 	}
@@ -72,6 +63,18 @@ public class BlockCampfire extends BlockContainer {
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		return state.getValue(BURNING) ? 1 : 0;
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (!worldIn.isRemote) {
+			TileEntity tileEntity = worldIn.getTileEntity(pos);
+			if (tileEntity instanceof TileEntityCampfire) {
+				playerIn.openGui(Main.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -95,6 +98,11 @@ public class BlockCampfire extends BlockContainer {
 	}
 
 	@Override
+	public BlockRenderLayer getRenderLayer() {
+		return BlockRenderLayer.CUTOUT;
+	}
+
+	@Override
 	public boolean isFullCube(IBlockState state) {
 		return false;
 	}
@@ -107,5 +115,12 @@ public class BlockCampfire extends BlockContainer {
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return BOUNDING_BOX;
+	}
+
+	@Override
+	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random random) {
+		if (stateIn.getValue(BURNING)) {
+			Blocks.FIRE.randomDisplayTick(stateIn, worldIn, pos, random);
+		}
 	}
 }

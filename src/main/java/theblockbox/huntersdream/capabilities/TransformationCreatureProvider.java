@@ -1,5 +1,8 @@
 package theblockbox.huntersdream.capabilities;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,6 +44,9 @@ public class TransformationCreatureProvider implements ICapabilitySerializable<N
 		private Transformation[] transformationsNotImmuneTo = new Transformation[0];
 
 		public TransformationCreatureImplementation(Transformation[] notImmuneTo) {
+			Validate.noNullElements(notImmuneTo,
+					"Null transformations not allowed (null transformation in array %s at index %d)",
+					ArrayUtils.toString(notImmuneTo));
 			this.transformationsNotImmuneTo = notImmuneTo;
 		}
 
@@ -51,6 +57,9 @@ public class TransformationCreatureProvider implements ICapabilitySerializable<N
 
 		@Override
 		public void setTransformationsNotImmuneTo(Transformation... transformationsNotImmuneTo) {
+			Validate.noNullElements(transformationsNotImmuneTo,
+					"Null transformations not allowed (null transformation in array %s at index %d)",
+					ArrayUtils.toString(transformationsNotImmuneTo));
 			this.transformationsNotImmuneTo = transformationsNotImmuneTo;
 		}
 	}

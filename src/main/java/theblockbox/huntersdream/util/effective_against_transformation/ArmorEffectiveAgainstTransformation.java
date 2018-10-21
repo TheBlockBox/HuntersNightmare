@@ -7,8 +7,11 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
@@ -24,7 +27,7 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 	private final float[] protection = new float[Transformation.getTransformationLength()];
 	private final float[] thorns = new float[Transformation.getTransformationLength()];
 	private final Transformation[] effectiveAgainst;
-	private final String tooltip;
+	private String tooltip = "";
 
 	/**
 	 * Creates a new ArmorEffectiveAgainstTransformation object from the given
@@ -54,8 +57,10 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 			this.thorns[index] = values.thorns[i];
 			this.protection[index] = values.protection[i];
 		}
-		this.tooltip = I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
-				TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
+		if (Main.proxy.physicalClient()) {
+			this.tooltip = I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
+					TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
+		}
 
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
 			if (aeat.isForArmor == isForArmor)
@@ -83,7 +88,7 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 
 	@Override
 	public Transformation[] transformations() {
-		return this.effectiveAgainst;
+		return this.effectiveAgainst.clone();
 	}
 
 	public static ArmorEffectiveAgainstTransformation getFromArmor(ItemStack armor) {
@@ -161,6 +166,7 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 		}
 
 		public TTPArray add(Transformation transformation, float t, float p) {
+			Validate.notNull(transformation, "Transformation is not allowed to be null");
 			this.transformations[currentIndex] = transformation;
 			this.thorns[currentIndex] = t;
 			this.protection[currentIndex] = p;

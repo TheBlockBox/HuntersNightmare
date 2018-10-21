@@ -5,6 +5,8 @@ import java.util.function.IntFunction;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.Validate;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -42,17 +44,12 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 
 	public static Transformation readTransformation(ByteBuf buf) {
 		String transformationName = readString(buf);
-		Transformation transformation = Transformation.fromName(transformationName);
-		if (transformation == null)
-			throw new NullPointerException("Found transformation is null. Name: " + transformationName);
-		return transformation;
+		return Validate.notNull(Transformation.fromName(transformationName),
+				"Found null transformation with name %s while reading transformation", transformationName);
 	}
 
-	public static void writeTransformation(ByteBuf buf, @Nonnull Transformation transformation) {
-		if (transformation != null)
-			writeString(buf, transformation.toString());
-		else
-			throw new IllegalArgumentException("The transformation argument is null which it isn't allowed to be");
+	public static void writeTransformation(ByteBuf buf, Transformation transformation) {
+		writeString(buf, Validate.notNull(transformation, "The transformation is not allowed to be null").toString());
 	}
 
 	public static <T> void writeArray(ByteBuf buf, @Nonnull T[] array, Function<T, String> tToString) {

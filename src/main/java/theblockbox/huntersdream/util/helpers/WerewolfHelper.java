@@ -115,7 +115,8 @@ public class WerewolfHelper {
 					protection = (protection > 0) ? protection : 1;
 					return protection;
 				} else {
-					return 20F;
+					// same as diamond armor
+					return 4.35F;
 				}
 			} else {
 				// no protection when not transformed
@@ -210,27 +211,12 @@ public class WerewolfHelper {
 				int percentage = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
 				return (percentage > 100) ? 100 : percentage;
 			} else {
-				return 0; // TODO: Set to 50
+				return 15;
 			}
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf",
 					TransformationHelper.getTransformation(entity));
 		}
-	}
-
-	/**
-	 * Returns true when the player has control in the werewolf form
-	 * 
-	 * @deprecated Don't use, we're going to make a new no control mechanic. Instead
-	 *             use {@link #hasMainlyControl(EntityPlayer)}.
-	 */
-	@Deprecated
-	public static boolean hasControl(EntityPlayer player) {
-		ITransformationPlayer cap = TransformationHelper.getCap(player);
-		if (cap.getTransformation() != TransformationInit.WEREWOLF) {
-			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
-		}
-		return (cap.getLevelFloor() > 0);
 	}
 
 	/**
@@ -242,20 +228,6 @@ public class WerewolfHelper {
 			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
 		}
 		return (cap.getLevelFloor() > 0);
-	}
-
-	/**
-	 * @deprecated Will soon be removed because we are going to change the no
-	 *             control mechanic
-	 */
-	@Deprecated
-	public static EntityPlayer getPlayer(EntityWerewolf werewolf) {
-		if (werewolf.getUntransformedEntityName().startsWith("player")) {
-			return werewolf.world.getPlayerEntityByName(
-					werewolf.getUntransformedEntityName().substring(6, werewolf.getUntransformedEntityName().length()));
-		} else {
-			throw new IllegalArgumentException("Werewolf is not a player");
-		}
 	}
 
 	/**

@@ -21,19 +21,18 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationLevel;
 import theblockbox.huntersdream.commands.CommandsTransformationTexture;
-import theblockbox.huntersdream.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.EntityInit;
@@ -97,11 +96,6 @@ public class RegistryHandler {
 		event.getRegistry().registerAll(SoundInit.SOUND_EVENTS.toArray(new SoundEvent[0]));
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public static void onTransformationRegistry(TransformationRegistryEvent event) {
-		TransformationInit.register(event);
-	}
-
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
 		Stream.concat(ItemInit.ITEMS.stream(), BlockInit.BLOCKS.stream().map(Item::getItemFromBlock))
@@ -117,6 +111,7 @@ public class RegistryHandler {
 		Transformation.preInit();
 		GameRegistry.registerTileEntity(TileEntitySilverFurnace.class,
 				GeneralHelper.newResLoc("tile_entity_silver_furnace"));
+		GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("tile_entity_campfire"));
 		directory = event.getModConfigurationDirectory();
 	}
 
@@ -156,9 +151,8 @@ public class RegistryHandler {
 			return false;
 		}, false, TEArray.of(1).add(TransformationInit.WEREWOLF, 1.0F));
 		EntityEffectiveAgainstTransformation.of(entity -> {
-			if (entity instanceof EntityLivingBase)
-				return WerewolfHelper.transformedWerewolf((EntityLivingBase) entity);
-			return false;
+			return (entity instanceof EntityLivingBase) ? WerewolfHelper.transformedWerewolf((EntityLivingBase) entity)
+					: false;
 		}, false, TEArray.of(1).add(TransformationInit.VAMPIRE, 2.5F));
 	}
 

@@ -13,7 +13,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
 import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
@@ -70,6 +72,10 @@ public interface ITransformationPlayer extends ITransformation {
 
 	public boolean hasRitual(Rituals ritual);
 
+	public ItemHandlerClothingTab getClothingTab();
+
+	public void setClothingTab(ItemHandlerClothingTab clothingTab);
+
 	public static class TransformationPlayer implements ITransformationPlayer {
 		private boolean transformed = false;
 		private Transformation transformation = TransformationInit.HUMAN;
@@ -79,10 +85,11 @@ public interface ITransformationPlayer extends ITransformation {
 		/** Rituals that the player has done */
 		private Set<Rituals> rituals = EnumSet.noneOf(Rituals.class);
 		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
+		private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
 
 		@Override
 		public boolean transformed() {
-			return transformed;
+			return this.transformed;
 		}
 
 		@Override
@@ -97,6 +104,7 @@ public interface ITransformationPlayer extends ITransformation {
 
 		@Override
 		public void setTransformation(Transformation transformation) {
+			transformation.validateIsTransformation();
 			this.transformation = transformation;
 		}
 
@@ -198,6 +206,16 @@ public interface ITransformationPlayer extends ITransformation {
 		public boolean hasRitual(Rituals ritual) {
 			return this.rituals.contains(ritual);
 		}
+
+		@Override
+		public ItemHandlerClothingTab getClothingTab() {
+			return this.clothingTab;
+		}
+
+		@Override
+		public void setClothingTab(ItemHandlerClothingTab clothingTab) {
+			this.clothingTab = clothingTab;
+		}
 	}
 
 	public static class TransformationPlayerStorage implements IStorage<ITransformationPlayer> {
@@ -208,6 +226,7 @@ public interface ITransformationPlayer extends ITransformation {
 		public static final String LEVEL = "level";
 		public static final String RITUALS = "ritualsnbt";
 		public static final String PAGES = "pages";
+		public static final String CLOTHING_TAB = "clothingtab";
 
 		@Override
 		public NBTBase writeNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
@@ -220,6 +239,8 @@ public interface ITransformationPlayer extends ITransformation {
 			GeneralHelper.writeArrayToNBT(compound, instance.getRituals(), RITUALS, Rituals::toString);
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), PAGES, HuntersJournalPage::toString);
+			compound.setTag(CLOTHING_TAB,
+					CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(instance.getClothingTab(), null));
 			return compound;
 		}
 
@@ -235,6 +256,9 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
 			instance.setRituals(GeneralHelper.readArrayFromNBT(compound, RITUALS, Rituals::fromName, Rituals[]::new));
+			if (compound.hasKey(CLOTHING_TAB))
+				CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(instance.getClothingTab(), null,
+						compound.getTag(CLOTHING_TAB));
 		}
 	}
 }

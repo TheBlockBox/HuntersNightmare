@@ -23,6 +23,7 @@ public class TransformingEvent extends LivingEvent {
 		super(entity);
 		this.transformingBack = transformingBack;
 		this.transformation = TransformationHelper.getTransformation(entity);
+		this.transformation.validateIsTransformation();
 		this.reason = reason;
 		if (entity instanceof EntityPlayer) {
 			this.setCanceled(MinecraftForge.EVENT_BUS

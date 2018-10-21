@@ -1,19 +1,14 @@
 package theblockbox.huntersdream.init;
 
-import static net.minecraft.init.Biomes.BIRCH_FOREST;
-import static net.minecraft.init.Biomes.BIRCH_FOREST_HILLS;
-import static net.minecraft.init.Biomes.FOREST;
-import static net.minecraft.init.Biomes.FOREST_HILLS;
-import static net.minecraft.init.Biomes.MUTATED_BIRCH_FOREST;
-import static net.minecraft.init.Biomes.MUTATED_BIRCH_FOREST_HILLS;
-import static net.minecraft.init.Biomes.MUTATED_FOREST;
-import static net.minecraft.init.Biomes.MUTATED_ROOFED_FOREST;
-import static net.minecraft.init.Biomes.ROOFED_FOREST;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeForest;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -33,9 +28,9 @@ public class EntityInit {
 		event.getRegistry().registerAll(
 				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255).tracker(20, 1, false).build(),
 				getEntityEntryBuilder("werewolf", EntityWerewolf.class).tracker(20, 1, false)
-						.spawn(EnumCreatureType.CREATURE, 1, 1, 3, FOREST, FOREST_HILLS, BIRCH_FOREST,
-								BIRCH_FOREST_HILLS, MUTATED_BIRCH_FOREST, MUTATED_BIRCH_FOREST_HILLS,
-								MUTATED_ROOFED_FOREST, MUTATED_FOREST, ROOFED_FOREST)
+						.spawn(EnumCreatureType.CREATURE, 2, 5, 5,
+								StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
+										.filter(b -> b instanceof BiomeForest).collect(Collectors.toSet()))
 						.build(),
 				getEntityEntryBuilder("chair", EntityChair.class).tracker(0, 1, false).build());
 	}

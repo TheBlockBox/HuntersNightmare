@@ -3,6 +3,8 @@ package theblockbox.huntersdream.util.helpers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,9 +61,8 @@ public class TransformationHelper {
 	 * Changes the player's transformation also resets xp and transformed and sends
 	 * the data to the client (this method is only to be called server side!)
 	 */
-	private static void changeTransformation(EntityPlayerMP player, @Nonnull Transformation transformation) {
-		if (transformation == null)
-			throw new NullPointerException("Null not allowed here");
+	private static void changeTransformation(EntityPlayerMP player, Transformation transformation) {
+		transformation.validateIsTransformation();
 		ITransformationPlayer cap = getCap(player);
 		cap.setXP(0); // reset xp
 		cap.setRituals(new Rituals[0]); // reset rituals
@@ -77,7 +78,7 @@ public class TransformationHelper {
 
 	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformation transformation,
 			TransformationEventReason reason) {
-		if (entity != null && transformation != null) {
+		if (entity != null && transformation.isTransformation()) {
 			if (!entity.world.isRemote) {
 				if (!MinecraftForge.EVENT_BUS.post(new TransformationEvent(entity, transformation, reason))) {
 					if (entity instanceof EntityPlayer) {
@@ -102,12 +103,11 @@ public class TransformationHelper {
 		}
 	}
 
-	public static void changeTransformationWhenPossible(@Nonnull EntityCreature entity,
-			@Nonnull Transformation transformation, TransformationEventReason reason) {
-		if (transformation == null || entity == null) {
-			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
-					+ " Transformation null: " + (transformation == null));
-		}
+	public static void changeTransformationWhenPossible(EntityCreature entity, Transformation transformation,
+			TransformationEventReason reason) {
+		Validate.notNull(entity, "The entity isn't allowed to be null");
+		Validate.notNull(transformation, "The transformation isn't allowed to be null");
+
 		ITransformationCreature tc = getITransformationCreature(entity);
 		boolean flag = canChangeTransformation(entity)
 				&& (tc != null ? tc.notImmuneToTransformation(transformation) : true);
@@ -134,10 +134,9 @@ public class TransformationHelper {
 	}
 
 	/** Returns the entity's transformation */
-	@Nullable
 	public static Transformation getTransformation(EntityLivingBase entity) {
 		ITransformation transformation = getITransformation(entity);
-		return (transformation == null) ? null : transformation.getTransformation();
+		return (transformation == null) ? TransformationInit.NONE : transformation.getTransformation();
 	}
 
 	/**
@@ -210,6 +209,7 @@ public class TransformationHelper {
 	 * infection/transformation
 	 */
 	public static boolean canBeInfectedWith(Transformation infection, EntityLivingBase entity) {
+		Validate.notNull(infection, "The transformation isn't allowed to be null");
 		if (canChangeTransformation(entity)) {
 			IInfectInTicks iit = getIInfectInTicks(entity);
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
@@ -237,6 +237,7 @@ public class TransformationHelper {
 	 * infection/transformation without accounting for current infections
 	 */
 	public static boolean onInfectionCanBeInfectedWith(Transformation infection, EntityCreature entity) {
+		Validate.notNull(infection, "The transformation isn't allowed to be null");
 		if (canChangeTransformationOnInfection(entity)) {
 			ITransformationCreature tc = getITransformationCreature(entity);
 			if (tc != null) {
@@ -260,6 +261,7 @@ public class TransformationHelper {
 	 * infection/transformation
 	 */
 	public static void infectIn(int ticksUntilInfection, EntityLivingBase entityToBeInfected, Transformation infectTo) {
+		Validate.notNull(infectTo, "The transformation isn't allowed to be null");
 		IInfectInTicks iit = getIInfectInTicks(entityToBeInfected);
 		if (iit != null) {
 			iit.setTime(ticksUntilInfection);

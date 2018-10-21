@@ -1,5 +1,7 @@
 package theblockbox.huntersdream.util.interfaces;
 
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -76,6 +78,7 @@ public interface IInfectOnNextMoon {
 
 		@Override
 		public void setInfectionTransformation(Transformation transformation) {
+			Validate.notNull(transformation, "The transformation isn't allowed to be null");
 			this.infectionTransformation = transformation;
 		}
 	}

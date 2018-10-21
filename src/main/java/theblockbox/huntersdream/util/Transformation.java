@@ -7,7 +7,6 @@ import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToDoubleFunction;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +20,7 @@ import theblockbox.huntersdream.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.event.TransformingEvent;
 import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -36,13 +36,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEn
  */
 public class Transformation {
 	private static Transformation[] transformations = null;
-	public static final Transformation NONE = new Transformation(TransformationEntry.of().setSupernatural(false),
-			GeneralHelper.newResLoc("none")) {
-		@Override
-		public boolean isTransformation() {
-			return false;
-		}
-	};
 
 	private final TransformationEntry ENTRY;
 	private final ResourceLocation registryName;
@@ -55,7 +48,7 @@ public class Transformation {
 	private final TextComponentTranslation translation;
 	private final String registryNameString;
 
-	private Transformation(TransformationEntry entry, ResourceLocation registryName) {
+	protected Transformation(TransformationEntry entry, ResourceLocation registryName) {
 		this.ENTRY = entry;
 		this.registryName = registryName;
 		this.registryNameString = registryName.toString();
@@ -64,7 +57,7 @@ public class Transformation {
 
 	/**
 	 * Returns the transformation that has the same name. If no transformation has
-	 * that name, null will be returned
+	 * that name, {@link TransformationInit#NONE} will be returned
 	 * 
 	 * @param name The name of the resourcelocation (obtained through
 	 *             {@link ResourceLocation#toString()}, something like
@@ -72,10 +65,13 @@ public class Transformation {
 	 */
 	public static Transformation fromName(String name) {
 		Transformation transformation = fromNameWithoutError(name);
-		if (transformation == null)
-			Main.getLogger().error("The given string \"" + name
-					+ "\" does not have a corresponding transformation. Please report this, NullPointerExceptions may occure\nStacktrace: "
-					+ (new ExecutionPath()).getAll());
+		if (transformation == TransformationInit.NONE) {
+			Main.getLogger()
+					.error("The given string \"" + name
+							+ "\" does not have a corresponding transformation. Please report this\nStacktrace: "
+							+ (new ExecutionPath()).getAll());
+			return TransformationInit.NONE;
+		}
 		return transformation;
 	}
 
@@ -83,14 +79,14 @@ public class Transformation {
 	 * Does exactly the same thing as {@link #fromName(String)} but without logging
 	 * an error
 	 */
-	public static @Nullable Transformation fromNameWithoutError(String name) {
+	public static Transformation fromNameWithoutError(String name) {
 		for (Transformation transformation : transformations)
 			if (transformation.getRegistryName().toString().equals(name))
 				return transformation;
-		return null;
+		return TransformationInit.NONE;
 	}
 
-	public static @Nullable Transformation fromResourceLocation(ResourceLocation resourceLocation) {
+	public static Transformation fromResourceLocation(ResourceLocation resourceLocation) {
 		return fromName(resourceLocation.toString());
 	}
 
@@ -101,12 +97,11 @@ public class Transformation {
 	/**
 	 * Gets the transformation with the temporary id of the given transformation + 1
 	 * or 1 if a higher one doesn't exist (because 0 would be
-	 * {@link theblockbox.huntersdream.init.TransformationInit#NONE}). Returns
-	 * {@link TransformationInit#HUMAN} if a null transformation is supplied
+	 * {@link theblockbox.huntersdream.init.TransformationInit#NONE}). Doesn't allow
+	 * {@link TransformationInit#NONE}
 	 */
 	public static Transformation cycle(Transformation transformation) {
-		if (transformation == null)
-			return TransformationInit.HUMAN;
+		transformation.validateIsTransformation();
 		int id = transformation.getTemporaryID();
 		return fromTemporaryID((getTransformationLength() > id) ? id + 1 : 1);
 	}
@@ -168,10 +163,16 @@ public class Transformation {
 
 	/**
 	 * This method returns true if the transformation is a transformation (meaning
-	 * it's not TransformationInit#NONE)
+	 * it's not {@link TransformationInit#NONE})
 	 */
 	public boolean isTransformation() {
 		return true;
+	}
+
+	/** Throws an exception if {@link #isTransformation()} returns false */
+	public void validateIsTransformation() {
+		if (!this.isTransformation())
+			throw new WrongTransformationException("No transformation not allowed here", this);
 	}
 
 	/**

@@ -34,6 +34,7 @@ import theblockbox.huntersdream.blocks.custommodel.BlockThrone;
 import theblockbox.huntersdream.blocks.custommodel.BlockVampireAltar;
 import theblockbox.huntersdream.blocks.custommodel.BlockWerewolfEnchantingStone;
 import theblockbox.huntersdream.blocks.custommodel.BlockWitchCauldron;
+import theblockbox.huntersdream.items.ItemBlockWithMaxStackSize;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -92,7 +93,7 @@ public class BlockInit {
 		registerBlock(new BlockCursingTable(), "cursing_table", event);
 		registerBlock(new BlockNatureTable(), "nature_table", event);
 		registerBlock(new BlockSummoningTable(), "summoning_table", event);
-		registerBlock(new BlockCampfire(), "campfire", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		registerBlock(new BlockCampfire(), "campfire", CreativeTabInit.HUNTERSDREAM_MISC, 1, event);
 	}
 
 	private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {
@@ -101,10 +102,19 @@ public class BlockInit {
 	}
 
 	private static void registerBlock(Block block, String name, CreativeTabs tab, RegistryEvent.Register<Block> event) {
-		event.getRegistry().register(
-				block.setTranslationKey(Reference.MODID + "." + name).setRegistryName(GeneralHelper.newResLoc(name)));
+		event.getRegistry().register(block.setTranslationKey(Reference.MODID + "." + name).setCreativeTab(tab)
+				.setRegistryName(GeneralHelper.newResLoc(name)));
 		BLOCKS.add(block);
 		ItemInit.ITEMS.add(new ItemBlock(block).setRegistryName(GeneralHelper.newResLoc(name)));
+	}
+
+	private static void registerBlock(Block block, String name, CreativeTabs tab, int maxStackSize,
+			RegistryEvent.Register<Block> event) {
+		event.getRegistry().register(block.setTranslationKey(Reference.MODID + "." + name).setCreativeTab(tab)
+				.setRegistryName(GeneralHelper.newResLoc(name)));
+		BLOCKS.add(block);
+		ItemInit.ITEMS
+				.add(new ItemBlockWithMaxStackSize(block, maxStackSize).setRegistryName(GeneralHelper.newResLoc(name)));
 	}
 
 	private static void registerWool(RegistryEvent.Register<Block> event, String... names) {

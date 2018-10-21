@@ -1,8 +1,8 @@
 package theblockbox.huntersdream.init;
 
-import theblockbox.huntersdream.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.Transformation.TransformationEntry;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
@@ -10,7 +10,13 @@ public class TransformationInit {
 	// TODO: Add levelling system for WITCH, CLOCKWORKANDROID, HYBRID and
 	// HUNTER
 	/** Used to indicate that no transformation is present and it won't change */
-	public static final Transformation NONE = Transformation.NONE;
+	public static final Transformation NONE = new Transformation(TransformationEntry.of().setSupernatural(false),
+			GeneralHelper.newResLoc("none")) {
+		@Override
+		public boolean isTransformation() {
+			return false;
+		}
+	};
 	/**
 	 * Used to indicate that no transformation is currently present but it is
 	 * possible that it will change
@@ -32,9 +38,5 @@ public class TransformationInit {
 
 	private static TransformationEntry newEntry() {
 		return TransformationEntry.of();
-	}
-
-	public static void register(TransformationRegistryEvent event) {
-		event.registerTransformations(HUMAN, WEREWOLF, VAMPIRE, WITCH, CLOCKWORKANDROID, HYBRID, HUNTER);
 	}
 }
