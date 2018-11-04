@@ -8,11 +8,11 @@ import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
 public class BlockOre extends Block {
-	public final int DIMENSION;
-	public final Block SPAWN_ON;
-	public final int CHANCE;
-	public final int MIN_HEIGHT;
-	public final int MAX_HEIGHT;
+	public final int dimension;
+	public final Block spawnOn;
+	public final int chance;
+	public final int minHeight;
+	public final int maxHeight;
 	private WorldGenMinable worldGenMinable;
 	private boolean modified = false;
 
@@ -20,11 +20,11 @@ public class BlockOre extends Block {
 		super(Material.ROCK);
 		this.setHardness(3.0F);
 		this.setResistance(5.0F);
-		this.DIMENSION = dimensionID;
-		this.CHANCE = chance;
-		this.MIN_HEIGHT = minHeight;
-		this.MAX_HEIGHT = maxHeight;
-		this.SPAWN_ON = spawnOn;
+		this.dimension = dimensionID;
+		this.chance = chance;
+		this.minHeight = minHeight;
+		this.maxHeight = maxHeight;
+		this.spawnOn = spawnOn;
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 
 		BlockInit.ORES.add(this);
@@ -44,7 +44,10 @@ public class BlockOre extends Block {
 	}
 
 	public void setWorldGenMinable(WorldGenMinable worldGenMinable) {
-		if (!modified)
+		if (!modified) {
 			this.worldGenMinable = worldGenMinable;
+		} else {
+			this.modified = true;
+		}
 	}
 }

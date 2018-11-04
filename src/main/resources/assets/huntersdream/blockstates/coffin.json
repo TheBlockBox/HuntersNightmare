@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:coffin", "y": 90 },
-        "facing=south": { "model": "huntersdream:coffin", "y": 180 },
-        "facing=west": { "model": "huntersdream:coffin", "y": 270 },
-        "facing=north": { "model": "huntersdream:coffin", "y": 0 }
-    }
-}

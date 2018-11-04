@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:summoning_table", "y": 90 },
-        "facing=south": { "model": "huntersdream:summoning_table", "y": 180 },
-        "facing=west": { "model": "huntersdream:summoning_table", "y": 270 },
-        "facing=north": { "model": "huntersdream:summoning_table", "y": 0 }
-    }
-}

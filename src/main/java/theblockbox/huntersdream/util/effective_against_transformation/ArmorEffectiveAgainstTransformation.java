@@ -11,7 +11,6 @@ import org.apache.commons.lang3.Validate;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
@@ -23,11 +22,11 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 	private final Predicate<ItemStack> isForArmor;
 	public static final float DEFAULT_PROTECTION = 1.5F;
 	public static final float DEFAULT_EFFECTIVENESS = 2;
+	public static final String TOOLTIP_KEY = Reference.MODID + ".armorEffectiveAgainst.tooltip";
 	private final BitSet transformationsEffectiveAgainst = new BitSet(Transformation.getTransformationLength());
 	private final float[] protection = new float[Transformation.getTransformationLength()];
 	private final float[] thorns = new float[Transformation.getTransformationLength()];
 	private final Transformation[] effectiveAgainst;
-	private String tooltip = "";
 
 	/**
 	 * Creates a new ArmorEffectiveAgainstTransformation object from the given
@@ -56,10 +55,6 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 			this.transformationsEffectiveAgainst.set(index);
 			this.thorns[index] = values.thorns[i];
 			this.protection[index] = values.protection[i];
-		}
-		if (Main.proxy.physicalClient()) {
-			this.tooltip = I18n.format(Reference.MODID + ".armorEffectiveAgainst.tooltip",
-					TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
 		}
 
 		for (ArmorEffectiveAgainstTransformation aeat : ARMOR_PARTS)
@@ -139,7 +134,7 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 
 	@Override
 	public String getTooltip() {
-		return this.tooltip;
+		return I18n.format(TOOLTIP_KEY, TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
 	}
 
 	/**

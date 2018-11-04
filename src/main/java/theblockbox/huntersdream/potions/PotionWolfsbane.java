@@ -35,7 +35,7 @@ public class PotionWolfsbane extends PotionBase {
 	public void performEffect(EntityLivingBase entityIn, int amplifier) {
 		ITransformation transformation = TransformationHelper.getITransformation(entityIn);
 		if (transformation != null && transformation.getTransformation() == TransformationInit.WEREWOLF
-				&& !transformation.transformed()) {
+				&& !WerewolfHelper.isTransformed(entityIn)) {
 			if (entityIn.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
 				entityIn.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 110));
 				entityIn.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100));

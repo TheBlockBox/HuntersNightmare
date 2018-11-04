@@ -1,6 +1,0 @@
-{
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "huntersdream:blocks/wool_colored_purple_cursing"
-    }
-}

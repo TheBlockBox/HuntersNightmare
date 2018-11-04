@@ -9,15 +9,12 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.TransformationInit;
-import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
 
 public class VampireHelper {
@@ -31,7 +28,6 @@ public class VampireHelper {
 		}
 		if (vampire instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) vampire;
-			TransformationHelper.addXP(player, 2, TransformationXPSentReason.VAMPIRE_DRANK_BLOOD);
 			IVampire vamp = getIVampire(player);
 			if (vamp.getBlood() < 20) {
 				vamp.incrementBlood();
@@ -75,24 +71,6 @@ public class VampireHelper {
 			throw new WrongTransformationException("The given entity (" + toCheck.toString() + ") has to be a vampire",
 					TransformationHelper.getTransformation(toCheck));
 		}
-	}
-
-	public static double calculateLevel(EntityPlayerMP vampire) {
-		checkIsVampire(vampire);
-		ITransformationPlayer cap = TransformationHelper.getCap(vampire);
-		double level = cap.getXP() / 500D;
-		// maximum level
-		if (level >= 13) {
-			level = 12.99999D;
-		}
-		if (level >= 12 && !cap.hasRitual(Rituals.VAMPIRE_FIRST_RITUAL)) {
-			level = 11.99999D;
-		}
-		if (level >= 6 && !cap.hasRitual(Rituals.VAMPIRE_SECOND_RITUAL)) {
-			level = 5.99999D;
-		}
-
-		return level;
 	}
 
 	public static boolean shouldVampireBurn(EntityLivingBase vampire) {

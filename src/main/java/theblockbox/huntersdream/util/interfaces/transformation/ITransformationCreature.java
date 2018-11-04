@@ -26,16 +26,6 @@ public interface ITransformationCreature extends ITransformation {
 
 	public boolean notImmuneToTransformation(Transformation transformation);
 
-	@Override
-	default boolean transformed() {
-		return false;
-	}
-
-	@Override
-	default void setTransformed(boolean transformed) {
-		throw new UnsupportedOperationException("Entity is always not transformed");
-	}
-
 	public static class TransformationCreature implements ITransformationCreature {
 		private Set<Transformation> transformationsNotImmuneTo = new TransformationSet();
 		private Transformation transformation = TransformationInit.HUMAN;

@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:vampire_altar", "y": 90 },
-        "facing=south": { "model": "huntersdream:vampire_altar", "y": 180 },
-        "facing=west": { "model": "huntersdream:vampire_altar", "y": 270 },
-        "facing=north": { "model": "huntersdream:vampire_altar", "y": 0 }
-    }
-}

@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.client.resources.I18n;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
@@ -21,10 +20,11 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 	private final Predicate<T> isForObject;
 	private final boolean effectiveAgainstUndead;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
+	public static final String TOOLTIP_KEY = Reference.MODID + ".effectiveAgainst.tooltip";
 	private final BitSet transformationsEffectiveAgainst = new BitSet(Transformation.getTransformationLength());
 	private final Transformation[] effectiveAgainst;
 	private final float[] effectiveness = new float[Transformation.getTransformationLength()];
-	private String tooltip = "";
+	private final Object[] tooltipFormatArgs;
 
 	/**
 	 * Creates a new EffectiveAgainstTransformation object from the given arguments
@@ -52,17 +52,9 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 			this.transformationsEffectiveAgainst.set(index);
 			this.effectiveness[index] = values.effectiveness[i];
 		}
-		if (Main.proxy.physicalClient()) {
-			if (effectiveAgainstUndead) {
-				this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-						TranslationHelper.getAsTranslatedList(
-								Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead"))
-										.toArray()));
-			} else {
-				this.tooltip = I18n.format(Reference.MODID + ".effectiveAgainst.tooltip",
-						TranslationHelper.getAsTranslatedList(this.effectiveAgainst));
-			}
-		}
+		this.tooltipFormatArgs = effectiveAgainstUndead
+				? Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead")).toArray()
+				: this.effectiveAgainst;
 	}
 
 	/** The damage multiplier when used against the specified creature */
@@ -94,7 +86,7 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 
 	@Override
 	public String getTooltip() {
-		return this.tooltip;
+		return I18n.format(TOOLTIP_KEY, TranslationHelper.getAsTranslatedList(this.tooltipFormatArgs));
 	}
 
 	/**

@@ -17,13 +17,14 @@ import theblockbox.huntersdream.network.BloodMessage;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
-import theblockbox.huntersdream.network.TransformationXPMessage;
+import theblockbox.huntersdream.network.WerewolfTransformedMessage;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class PacketHandler {
@@ -32,10 +33,10 @@ public class PacketHandler {
 
 	public static void register() {
 		registerMessage(TransformationMessage.Handler.class, TransformationMessage.class);
-		registerMessage(TransformationXPMessage.Handler.class, TransformationXPMessage.class);
 		INSTANCE.registerMessage(TransformationTextureIndexMessage.Handler.class,
 				TransformationTextureIndexMessage.class, networkID++, Side.SERVER);
 		registerMessage(BloodMessage.Handler.class, BloodMessage.class);
+		registerMessage(WerewolfTransformedMessage.Handler.class, WerewolfTransformedMessage.class);
 	}
 
 	private static <REQ extends IMessage> void registerMessage(
@@ -60,30 +61,21 @@ public class PacketHandler {
 
 	public static void sendTransformationMessage(EntityPlayerMP applyOn) {
 		ITransformationPlayer cap = TransformationHelper.getCap(applyOn);
-		cap.setLevel(cap.getTransformation().getLevel(applyOn));
-		TransformationMessage message = new TransformationMessage(cap.getXP(), cap.transformed(),
-				cap.getTransformation(), applyOn, cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
+		TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
+				cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendToDimension(message, applyOn.world.provider.getDimension()));
 	}
 
+	// TODO: Look where this is used to send that the player has transformed
 	public static void sendTransformationMessageToPlayer(EntityPlayerMP applyOn, EntityPlayerMP sendTo) {
 		ITransformationPlayer cap = TransformationHelper.getCap(applyOn);
-		cap.setLevel(cap.getTransformation().getLevel(applyOn));
-		TransformationMessage message = new TransformationMessage(cap.getXP(), cap.transformed(),
-				cap.getTransformation(), applyOn, cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
+		TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
+				cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
 		if (cap.getTransformation() == TransformationInit.VAMPIRE)
 			applyOn.foodStats = VampireFoodStats.INSTANCE;
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendTo(message, sendTo));
-	}
-
-	public static void sendTransformationXPMessage(EntityPlayerMP applyOn) {
-		TransformationXPMessage message = new TransformationXPMessage(TransformationHelper.getCap(applyOn).getXP(),
-				applyOn);
-		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message, () -> {
-			INSTANCE.sendToDimension(message, applyOn.world.provider.getDimension());
-		});
 	}
 
 	public static void sendTextureIndexMessage(World forSideCheck) {
@@ -97,5 +89,11 @@ public class PacketHandler {
 		BloodMessage message = new BloodMessage(player);
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(player), message,
 				() -> INSTANCE.sendTo(message, player));
+	}
+
+	public static void sendWerewolfTransformedMessage(EntityPlayerMP player) {
+		WerewolfTransformedMessage message = new WerewolfTransformedMessage(player,
+				WerewolfHelper.isTransformed(player));
+		afterPacketSent(CLIENT, SERVER, message, () -> INSTANCE.sendToAll(message));
 	}
 }

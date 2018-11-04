@@ -24,18 +24,6 @@ public class ConfigHandler {
 	public static class Client {
 		@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
 		public boolean customPlayerRender = true;
-
-		@Config.LangKey(Reference.CFG_LANG + "xpBarPosition")
-		public XPBarPosition xpBarPosition = XPBarPosition.BOTTOM_LEFT;
-
-		public static enum XPBarPosition {
-			@Config.LangKey(Reference.CFG_LANG + "dontRender")
-			DONT_RENDER, @Config.LangKey(Reference.CFG_LANG + "topLeft")
-			TOP_LEFT, @Config.LangKey(Reference.CFG_LANG + "topRight")
-			TOP_RIGHT, @Config.LangKey(Reference.CFG_LANG + "bottomLeft")
-			BOTTOM_LEFT, @Config.LangKey(Reference.CFG_LANG + "bottomRight")
-			BOTTOM_RIGHT;
-		}
 	}
 
 	public static class Common {

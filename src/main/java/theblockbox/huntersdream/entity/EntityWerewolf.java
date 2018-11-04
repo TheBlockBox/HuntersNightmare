@@ -29,6 +29,8 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.event.WerewolfTransformingEvent;
+import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
@@ -156,7 +158,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		if (ticksExisted % 80 == 0) {
 			if (!world.isRemote) {
 				if (!WerewolfHelper.isWerewolfTime(this.world)) {
-					ITransformationEntityTransformed.transformBack(this);
+					ITransformationEntityTransformed.transformBack(this,
+							new WerewolfTransformingEvent(this, true, WerewolfTransformingReason.FULL_MOON_END));
 				}
 			}
 		}

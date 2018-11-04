@@ -62,9 +62,9 @@ public class CapabilityHandler {
 	}
 
 	@SubscribeEvent
-	public static void onPlayerClone(PlayerEvent.Clone event) throws InterruptedException {
+	public static void onPlayerClone(PlayerEvent.Clone event) {
 		if (event.isWasDeath()) {
-			EntityPlayer player = event.getEntityPlayer();
+			EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
 			EntityPlayer originalPlayer = event.getOriginal();
 
 			IInfectInTicks iit = TransformationHelper.getIInfectInTicks(player);
@@ -82,19 +82,24 @@ public class CapabilityHandler {
 			ITransformationPlayer transformationPlayer = TransformationHelper.getCap(player);
 			ITransformationPlayer oldTransformationPlayer = TransformationHelper.getCap(originalPlayer);
 
-			transformationPlayer.setLevel(oldTransformationPlayer.getLevel());
-			transformationPlayer.setTransformed(false);
-			transformationPlayer.setXP(oldTransformationPlayer.getXP());
 			transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
 
+			WerewolfHelper.getIWerewolf(player).setTransformed(false);
+
 			VampireEventHandler.onVampireRespawn(player);
 
-			for (EntityPlayerMP p : player.getServer().getPlayerList().getPlayers())
-				PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
-
 			final MinecraftServer server = player.getServer();
+
+			sendPackets(server, player);
+			GeneralHelper.executeOnMainThreadIn(() -> {
+				sendPackets(server, player);
+			}, 1, server, "SyncCapAfterPlayerDeath1");
+			GeneralHelper.executeOnMainThreadIn(() -> {
+				sendPackets(server, player);
+			}, 40000, server, "SyncCapAfterPlayerDeath2");
+
 			new Thread(() -> {
 				try {
 					Thread.sleep(1);
@@ -102,9 +107,7 @@ public class CapabilityHandler {
 					Main.getLogger().catching(e);
 				}
 				server.addScheduledTask(() -> {
-					for (EntityPlayerMP p : server.getPlayerList().getPlayers())
-						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
-					PacketHandler.sendBloodMessage((EntityPlayerMP) player);
+					sendPackets(server, player);
 				});
 			}, "SyncCapAfterPlayerDeath1").start();
 			new Thread(() -> {
@@ -114,10 +117,17 @@ public class CapabilityHandler {
 					Main.getLogger().catching(e);
 				}
 				server.addScheduledTask(() -> {
-					for (EntityPlayerMP p : server.getPlayerList().getPlayers())
-						PacketHandler.sendTransformationMessageToPlayer(p, (EntityPlayerMP) player);
+					sendPackets(server, player);
 				});
 			}, "SyncCapAfterPlayerDeath2").start();
 		}
+	}
+
+	private static void sendPackets(MinecraftServer server, EntityPlayerMP player) {
+		for (EntityPlayerMP p : server.getPlayerList().getPlayers()) {
+			PacketHandler.sendTransformationMessageToPlayer(p, player);
+		}
+		PacketHandler.sendBloodMessage(player);
+		PacketHandler.sendWerewolfTransformedMessage(player);
 	}
 }

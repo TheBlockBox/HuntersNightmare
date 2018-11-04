@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
-import java.util.function.ToDoubleFunction;
 
 import javax.annotation.Nonnull;
 
@@ -17,13 +16,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationRegistryEvent;
-import theblockbox.huntersdream.event.TransformingEvent;
-import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
+import theblockbox.huntersdream.event.WerewolfTransformingEvent;
+import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.functional.ToFloatFunction;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 
@@ -143,10 +141,6 @@ public class Transformation {
 		return (transformations != null) ? transformations.length : 7;
 	}
 
-	public double getLevel(EntityPlayerMP player) {
-		return this.getCalculateLevel().applyAsDouble(player);
-	}
-
 	public boolean isSupernatural() {
 		return this.ENTRY.supernatural;
 	}
@@ -166,7 +160,7 @@ public class Transformation {
 	 * it's not {@link TransformationInit#NONE})
 	 */
 	public boolean isTransformation() {
-		return true;
+		return this != TransformationInit.NONE;
 	}
 
 	/** Throws an exception if {@link #isTransformation()} returns false */
@@ -184,10 +178,6 @@ public class Transformation {
 	@Override
 	public String toString() {
 		return this.registryNameString;
-	}
-
-	public ToDoubleFunction<EntityPlayerMP> getCalculateLevel() {
-		return this.ENTRY.calculateLevel;
 	}
 
 	public ResourceLocation[] getTextures() {
@@ -218,6 +208,7 @@ public class Transformation {
 		this.ENTRY.onLevelUp.accept(player, newLevel);
 	}
 
+	// TODO: Move this somewhere else?
 	public void transformCreatureWhenPossible(@Nonnull EntityCreature creature) {
 		if (this.ENTRY.transformCreature != null) {
 			if (creature == null)
@@ -227,7 +218,7 @@ public class Transformation {
 						+ " is an instance of ITransformationEntityTransformed and can therefore not be transformed");
 			else {
 				if (!MinecraftForge.EVENT_BUS
-						.post(new TransformingEvent(creature, false, TransformingEventReason.ENVIROMENT))) {
+						.post(new WerewolfTransformingEvent(creature, false, WerewolfTransformingReason.FULL_MOON))) {
 					EntityLivingBase returned = this.ENTRY.transformCreature.apply(creature);
 					if (returned != null) {
 						World world = returned.world;
@@ -264,8 +255,6 @@ public class Transformation {
 	public static class TransformationEntry {
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
-		private ToDoubleFunction<EntityPlayerMP> calculateLevel = player -> TransformationHelper.getCap(player).getXP()
-				/ 500.0D;
 		private Function<EntityCreature, EntityLivingBase> transformCreature = null;
 		private Consumer<EntityLivingBase> infect = null;
 		/** A runnable that is executed when the player levels up */
@@ -299,11 +288,6 @@ public class Transformation {
 
 		public TransformationEntry setCalculateProtection(ToFloatFunction<EntityLivingBase> calculateProtection) {
 			this.calculateProtection = calculateProtection;
-			return this;
-		}
-
-		public TransformationEntry setCalculateLevel(ToDoubleFunction<EntityPlayerMP> calculateLevel) {
-			this.calculateLevel = calculateLevel;
 			return this;
 		}
 

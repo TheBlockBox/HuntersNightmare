@@ -24,11 +24,4 @@ public class CreativeTabInit {
 			return new ItemStack(ItemInit.INGOT_SILVER);
 		}
 	};
-
-	public static final CreativeTabs HUNTERSDREAM_FURNITURE = new CreativeTabs(Reference.MODID + ".furniture") {
-		@Override
-		public ItemStack createIcon() {
-			return new ItemStack(BlockInit.LANTERN);
-		}
-	};
 }

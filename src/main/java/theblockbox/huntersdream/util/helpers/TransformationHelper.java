@@ -11,19 +11,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.event.ExtraDataEvent;
+import theblockbox.huntersdream.event.IsLivingInfectedEvent;
 import theblockbox.huntersdream.event.TransformationEvent;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
-import theblockbox.huntersdream.event.TransformationXPEvent;
-import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
-import theblockbox.huntersdream.event.TransformingEvent;
-import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
@@ -64,10 +61,7 @@ public class TransformationHelper {
 	private static void changeTransformation(EntityPlayerMP player, Transformation transformation) {
 		transformation.validateIsTransformation();
 		ITransformationPlayer cap = getCap(player);
-		cap.setXP(0); // reset xp
 		cap.setRituals(new Rituals[0]); // reset rituals
-		cap.setLevel(0);
-		cap.setTransformed(false); // reset transformed
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
 		if (ConfigHandler.common.showPacketMessages)
@@ -167,44 +161,6 @@ public class TransformationHelper {
 	}
 
 	/**
-	 * Shortcut for {@code addXP(player, 1, reason)}
-	 */
-	public static void incrementXP(EntityPlayerMP player, TransformationXPSentReason reason) {
-		addXP(player, 1, reason);
-	}
-
-	/**
-	 * Shortcut for {@code
-	 * ITransformationPlayer cap = getCap(player);
-	 * setXP(player, (cap.getXP() + xpToAdd), reason);}
-	 */
-	public static void addXP(EntityPlayerMP player, int xpToAdd, TransformationXPSentReason reason) {
-		ITransformationPlayer cap = getCap(player);
-		setXP(player, (cap.getXP() + xpToAdd), reason);
-	}
-
-	/**
-	 * Sets the players xp to the given xp, sends a message on levelup and an xp
-	 * packet
-	 */
-	public static void setXP(EntityPlayerMP player, int xp, TransformationXPSentReason reason) {
-		ITransformationPlayer cap = getCap(player);
-		int levelBefore = cap.getLevelFloor();
-		TransformationXPEvent event = new TransformationXPEvent(player, xp, reason);
-
-		if (!MinecraftForge.EVENT_BUS.post(event)) {
-			cap.setXP(event.getAmount());
-			cap.setLevel(cap.getTransformation().getLevel(player));
-			int levelAfter = cap.getLevelFloor();
-			if (levelBefore < levelAfter) {
-				player.sendMessage(new TextComponentTranslation("transformations.huntersdream.onLevelUp", levelAfter));
-				cap.getTransformation().onLevelUp(player, levelAfter);
-			}
-			PacketHandler.sendTransformationXPMessage(player);
-		}
-	}
-
-	/**
 	 * Returns true when the given entity can be infected with the given
 	 * infection/transformation
 	 */
@@ -213,23 +169,21 @@ public class TransformationHelper {
 		if (canChangeTransformation(entity)) {
 			IInfectInTicks iit = getIInfectInTicks(entity);
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
-			if (ionm != null) {
-				if (infection == TransformationInit.WEREWOLF) {
-					return true;
-				}
+			if (ionm != null && infection == TransformationInit.WEREWOLF) {
+				return true;
 			}
 			if (iit != null) {
 				if (entity instanceof EntityCreature) {
 					ITransformationCreature tc = getITransformationCreature((EntityCreature) entity);
 					if (tc != null) {
-						return tc.notImmuneToTransformation(infection);
+						return tc.notImmuneToTransformation(infection)
+								|| MinecraftForge.EVENT_BUS.post(new CanLivingBeInfectedEvent(entity, infection));
 					}
 				}
 				return true;
 			}
-
 		}
-		return false;
+		return MinecraftForge.EVENT_BUS.post(new CanLivingBeInfectedEvent(entity, infection));
 	}
 
 	/**
@@ -277,23 +231,14 @@ public class TransformationHelper {
 	public static boolean isInfected(EntityLivingBase entity) {
 		IInfectInTicks iit = getIInfectInTicks(entity);
 		IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
-		boolean flag = false;
 
-		if (iit != null) {
-			flag = iit.currentlyInfected();
+		if ((iit != null) && iit.currentlyInfected()) {
+			return true;
+		} else if (ionm != null && (ionm.getInfectionStatus() != InfectionStatus.NOT_INFECTED)) {
+			return true;
 		}
 
-		if (ionm != null) {
-			if (!flag) {
-				flag = !(ionm.getInfectionStatus() == InfectionStatus.NOT_INFECTED);
-			}
-		}
-		return flag;
-	}
-
-	public static void refreshLevel(EntityPlayerMP player) {
-		ITransformationPlayer cap = getCap(player);
-		cap.setLevel(cap.getTransformation().getLevel(player));
+		return MinecraftForge.EVENT_BUS.post(new IsLivingInfectedEvent(entity));
 	}
 
 	/**
@@ -301,7 +246,7 @@ public class TransformationHelper {
 	 * werewolf
 	 */
 	public static void configurePlayerSize(EntityPlayer player) {
-		if (WerewolfHelper.transformedWerewolf(player)) {
+		if (WerewolfHelper.isTransformedWerewolf(player)) {
 			boolean quadruped = (player.isSprinting() || player.isSneaking());
 			float height = quadruped ? ModelLycanthropeQuadruped.HEIGHT : ModelLycanthropeBiped.HEIGHT;
 			float width = quadruped ? ModelLycanthropeQuadruped.WIDTH : GeneralHelper.STANDARD_PLAYER_WIDTH;
@@ -318,15 +263,6 @@ public class TransformationHelper {
 			player.eyeHeight = eyeheight;
 		} else {
 			player.eyeHeight = player.getDefaultEyeHeight();
-		}
-	}
-
-	public static void transform(@Nonnull EntityLivingBase entity, boolean transformed,
-			TransformingEventReason reason) {
-		if (getITransformation(entity).transformed() != transformed) {
-			if (!MinecraftForge.EVENT_BUS.post(new TransformingEvent(entity, !transformed, reason))) {
-				getITransformation(entity).setTransformed(transformed);
-			}
 		}
 	}
 

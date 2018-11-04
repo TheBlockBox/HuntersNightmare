@@ -25,7 +25,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
-import theblockbox.huntersdream.event.TransformationXPEvent.TransformationXPSentReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
@@ -33,13 +32,13 @@ import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class TransformationEventHandler {
@@ -50,7 +49,7 @@ public class TransformationEventHandler {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getCap(player);
 
-			if (WerewolfHelper.transformedWerewolf(player)) {
+			if (WerewolfHelper.isTransformedWerewolf(player)) {
 				if (!player.isCreative() && !player.isSpectator()) {
 					if (!player.inventory.isEmpty()) {
 						player.inventory.dropAllItems();
@@ -63,44 +62,40 @@ public class TransformationEventHandler {
 				if (!player.world.isRemote) { // ensures that this is the server side
 
 					for (ItemStack stack : player.getEquipmentAndArmor()) {
-						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), stack))
+						// damage player if item is effective against transformation (also works when
+						// player is not transformed)
+						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), stack)) {
 							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION,
 									cap.getTransformation().getProtection(player));
+						}
 					}
 
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
+					// call methods in WerewolfEventHandler
 					if (cap.getTransformation() == TransformationInit.WEREWOLF) {
+						IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
 						if (WerewolfHelper.isWerewolfTime(player.world)) {
-							if (!cap.transformed()) {
-								WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
+							if (WerewolfHelper.isTransformed(player)) {
+								WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap, werewolf);
 							} else {
-								WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap);
+								WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap, werewolf);
 							}
 						} else {
-							if (cap.transformed()) {
-								WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap);
+							if (WerewolfHelper.isTransformed(player)) {
+								WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap, werewolf);
 							} else {
-								WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap);
+								WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap, werewolf);
 							}
 						}
 					}
-
-					if (player.ticksExisted % 1200 == 0) {
-						// every minute when the player is not under a block, transformed and a
-						// werewolf, one xp gets added
-						if (GeneralHelper.playerNotUnderBlock(player) && WerewolfHelper.transformedWerewolf(player)
-								&& WerewolfHelper.hasMainlyControl(player)) {
-							TransformationHelper.addXP((EntityPlayerMP) player, 5,
-									TransformationXPSentReason.WEREWOLF_UNDER_MOON);
-						}
-						// this piece of code syncs the player data every six minutes, so basically
-						// you
-						// don't have to sync the data every time you change something
-						// (though it is recommended)
-						if (player.ticksExisted % 7200 == 0) {
-							PacketHandler.sendTransformationMessage(playerMP);
-						}
+					// this piece of code syncs the player data every six minutes, so basically
+					// you
+					// don't have to sync the data every time you change something
+					// (though it is recommended)
+					if (player.ticksExisted % 7200 == 0) {
+						PacketHandler.sendTransformationMessage(playerMP);
+						PacketHandler.sendWerewolfTransformedMessage(playerMP);
 					}
 				}
 			}
@@ -209,7 +204,7 @@ public class TransformationEventHandler {
 					entity.targetTasks.addTask(2,
 							new EntityAINearestAttackableTarget<EntityWerewolf>(entity, EntityWerewolf.class, true));
 					entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(entity,
-							EntityPlayer.class, 10, true, false, WerewolfHelper::transformedWerewolf));
+							EntityPlayer.class, 10, true, false, WerewolfHelper::isTransformedWerewolf));
 				} else if (creature instanceof EntityGoblinTD) {
 					if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == TransformationInit.HUMAN)) {
 						TransformationHelper.changeTransformationWhenPossible(creature, TransformationInit.WEREWOLF,
@@ -232,7 +227,7 @@ public class TransformationEventHandler {
 
 			if (creature instanceof EntityAgeable) {
 				((EntityAgeable) creature).tasks.addTask(2, new EntityAIAvoidEntity<EntityLivingBase>(creature,
-						EntityLivingBase.class, WerewolfHelper::transformedWerewolf, 8.0F, 0.8F, 1.1F));
+						EntityLivingBase.class, WerewolfHelper::isTransformedWerewolf, 8.0F, 0.8F, 1.1F));
 			}
 		}
 	}

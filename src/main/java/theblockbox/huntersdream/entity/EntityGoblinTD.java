@@ -91,7 +91,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
 				true, false, predicateMob));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
-				true, false, WerewolfHelper::transformedWerewolf));
+				true, false, WerewolfHelper::isTransformedWerewolf));
 	}
 
 	@Override
@@ -193,6 +193,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	// now shows "Goblin" instead of the profession
+	@Override
 	public ITextComponent getDisplayName() {
 		Team team = this.getTeam();
 		String nameTag = this.getCustomNameTag();

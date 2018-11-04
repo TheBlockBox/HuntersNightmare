@@ -97,14 +97,15 @@ public class SilverFurnaceRecipe {
 		}
 		JsonParser parser = new JsonParser();
 		FileUtils.listFiles(sfrLocation, new String[] { "json" }, true).stream().map(file -> {
-			try {
-				return parser.parse(new InputStreamReader(FileUtils.openInputStream(file))).getAsJsonObject();
+			JsonObject json = null;
+			try (InputStreamReader isr = new InputStreamReader(FileUtils.openInputStream(file))) {
+				json = parser.parse(isr).getAsJsonObject();
 			} catch (Exception e) {
 				Main.getLogger().error(String.format(
 						"An exception occured while trying to load/parse the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
 						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
-				return null;
 			}
+			return json;
 		}).filter(json -> json != null).forEach(SilverFurnaceRecipe::addRecipe);
 	}
 

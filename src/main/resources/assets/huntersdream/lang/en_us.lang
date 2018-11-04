@@ -34,32 +34,9 @@ tipped_arrow.effect.wolfsbane=Wolfsbane Arrow
 # Blocks
 tile.huntersdream.block_silver.name=Silver Block
 tile.huntersdream.overworld_ore_silver.name=Silver Ore
-tile.huntersdream.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
-tile.huntersdream.chair.name=Chair
 tile.huntersdream.plant_wolfsbane.name=Wolfsbane Seed
-tile.huntersdream.advanced_crafting_table.name=Advanced Crafting Table
-tile.huntersdream.blessing_table.name=Blessing Table
-tile.huntersdream.nature_table.name=Nature Table
-tile.huntersdream.cursing_table.name=Cursing Table
-tile.huntersdream.summoning_table.name=Summoning Table
-tile.huntersdream.table.name=Table
-tile.huntersdream.vampire_altar.name=Vampire Altar
-tile.huntersdream.crate.name=Crate
-tile.huntersdream.throne.name=Throne
-tile.huntersdream.shelf.name=Shelf
-tile.huntersdream.plate.name=Plate
-tile.huntersdream.candle.name=Candle
-tile.huntersdream.witch_cauldron.name=Witch Cauldron
 tile.huntersdream.tent.name=Tent
-tile.huntersdream.coffin.name=Coffin
 tile.huntersdream.campfire.name=Campfire
-tile.huntersdream.gun_holder.name=Gunholder
-tile.huntersdream.lantern.name=Lantern
-tile.huntersdream.plack.name=Plack
-tile.huntersdream.wool_colored_light_blue_blessing.name=Wool of Blessing
-tile.huntersdream.wool_colored_red_summoning.name=Wool of Summoning
-tile.huntersdream.wool_colored_green_nature.name=Wool of Nature
-tile.huntersdream.wool_colored_purple_cursing.name=Wool of Cursing
 tile.huntersdream.furnace_silver.name=Silver Furnace
 
 # Entities
@@ -69,12 +46,9 @@ entity.werewolf.name=Werewolf
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools
 itemGroup.huntersdream.misc=Hunter's Dream Miscellaneous
-itemGroup.huntersdream.furniture=Hunter's Dream Furniture
 
 # Commands
 command.huntersdream.invalid=Invalid arguments
-command.huntersdream.transformationXP.usage=hdtransformationlevel <set|add|remove> <value> <player>
-command.huntersdream.transformationXP.set=%s's transformation xp was set to %s
 command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
 command.huntersdream.moonphase.getCurrent=Current moonphase is %s
 command.huntersdream.moonphase.getSet=Moonphase is now %s
@@ -90,7 +64,6 @@ command.huntersdream.ritual.remove=The ritual %s has been removed from %s
 command.huntersdream.ritual.clear=%s's rituals have been cleared
 
 # Chat messages
-transformations.huntersdream.onLevelUp=You feel that you're getting stronger... You're now level %s
 transformations.huntersdream.infected.werewolf=You've been bitten but the wound is ... healing?
 # FP = First Person, TP = Third Person, picked = by yourself, touch = someone touched you
 transformations.huntersdream:werewolf.fp.picked=You touch %s! Your skin burns as you hold it. Hope nobody saw that!
@@ -104,8 +77,6 @@ transformations.huntersdream:werewolf.transformingInto.4=You go blind, your eyes
 transformations.huntersdream:werewolf.transformingInto.5=Your body is now having dramatic changes, bones and muscle tissue breaking and reforming, your eyesight is back but different. Your mind can only think about killing
 transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf within is now free...
 transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
-tile.huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
-tile.huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
 item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
@@ -125,7 +96,6 @@ huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverChance=Average silver ores per vein
 huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
 huntersdream.config.ores=Ore Generation Settings
-huntersdream.config.xpBarPosition=Transformation XP Bar Position
 huntersdream.config.client=Client
 huntersdream.config.server=Server
 huntersdream.config.common=Client and Server

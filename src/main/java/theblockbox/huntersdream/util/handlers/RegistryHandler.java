@@ -31,7 +31,6 @@ import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
 import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
-import theblockbox.huntersdream.commands.CommandsTransformationLevel;
 import theblockbox.huntersdream.commands.CommandsTransformationTexture;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -151,8 +150,8 @@ public class RegistryHandler {
 			return false;
 		}, false, TEArray.of(1).add(TransformationInit.WEREWOLF, 1.0F));
 		EntityEffectiveAgainstTransformation.of(entity -> {
-			return (entity instanceof EntityLivingBase) ? WerewolfHelper.transformedWerewolf((EntityLivingBase) entity)
-					: false;
+			return (entity instanceof EntityLivingBase)
+					&& WerewolfHelper.isTransformedWerewolf((EntityLivingBase) entity);
 		}, false, TEArray.of(1).add(TransformationInit.VAMPIRE, 2.5F));
 	}
 
@@ -181,7 +180,6 @@ public class RegistryHandler {
 
 	public static void serverRegistries(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandsMoonphase());
-		event.registerServerCommand(new CommandsTransformationLevel());
 		event.registerServerCommand(new CommandsTransformation());
 		event.registerServerCommand(new CommandsTransformationTexture());
 		event.registerServerCommand(new CommandsRitual());

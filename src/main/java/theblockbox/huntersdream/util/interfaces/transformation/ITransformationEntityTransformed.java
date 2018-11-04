@@ -8,9 +8,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import theblockbox.huntersdream.event.ExtraDataEvent;
-import theblockbox.huntersdream.event.TransformingEvent;
-import theblockbox.huntersdream.event.TransformingEvent.TransformingEventReason;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -20,17 +19,8 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
  * are/represent the transformed form (for example werewolf counts, werewolf
  * villager does not)
  */
+// TODO: Decide if this should be made werewolf only or if it should be kept
 public interface ITransformationEntityTransformed extends ITransformation {
-	@Override
-	default boolean transformed() {
-		return true;
-	}
-
-	@Override
-	default void setTransformed(boolean transformed) {
-		throw new UnsupportedOperationException("This entity is always transformed");
-	}
-
 	@Override
 	default void setTransformation(Transformation transformation) {
 		throw new UnsupportedOperationException("This creature's transformation is already determined");
@@ -56,14 +46,17 @@ public interface ITransformationEntityTransformed extends ITransformation {
 	 * be written in the entity's TransformationCreature capability, otherwise if
 	 * the name doesn't start with $bycap, the information will be passed to the
 	 * constructor
+	 * 
+	 * @param transformingEvent A cancelable event that is posted before the entity
+	 *                          transforms. If it is canceled, the entity won't
+	 *                          transform
 	 */
 	public String getUntransformedEntityName();
 
 	public static <T extends EntityCreature & ITransformationEntityTransformed> void transformBack(
-			T toBeTransformedBack) {
+			T toBeTransformedBack, Event transformingEvent) {
 		if (!toBeTransformedBack.world.isRemote) {
-			if (!MinecraftForge.EVENT_BUS
-					.post(new TransformingEvent(toBeTransformedBack, true, TransformingEventReason.ENVIROMENT))) {
+			if (!MinecraftForge.EVENT_BUS.post(transformingEvent)) {
 				EntityCreature e = null;
 				String entityName = toBeTransformedBack.getUntransformedEntityName();
 

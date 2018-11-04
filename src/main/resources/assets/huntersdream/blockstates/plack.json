@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:plack", "y": 90 },
-        "facing=south": { "model": "huntersdream:plack", "y": 180 },
-        "facing=west": { "model": "huntersdream:plack", "y": 270 },
-        "facing=north": { "model": "huntersdream:plack", "y": 0 }
-    }
-}

@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -8,33 +9,54 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 /** For player werewolves */
 @CapabilityInterface
 public interface IWerewolf {
+	/**
+	 * Returns true when the player is currently in werewolf form, otherwise returns
+	 * false
+	 * 
+	 * @deprecated Prefer to call
+	 *             {@link WerewolfHelper#isTransformed(EntityLivingBase)} or
+	 *             {@link WerewolfHelper#isTransformedWerewolf(EntityLivingBase)}
+	 *             instead to get a version that works with all entities extending
+	 *             EntityLivingBase. Try to avoid calling this method.
+	 */
+	@Deprecated
+	public boolean isTransformed();
 
-	public void setTimeSinceTransformation(int time);
+	public void setTransformed(boolean transformed);
 
 	/** Returns the player.ticksExisted when the transformation has started */
 	public int getTimeSinceTransformation();
+
+	public void setTimeSinceTransformation(int time);
 
 	/** 0 is no stage and 6 is transformed */
 	public int getTransformationStage();
 
 	public void setTransformationStage(int stage);
 
-	public double getStandardHealth();
-
-	public void setStandardHealth(double newStandardHealth);
-
 	default public Transformation getTransformation() {
 		return TransformationInit.WEREWOLF;
 	}
 
 	public static class Werewolf implements IWerewolf {
+		private boolean transformed = false;
 		private int timeSinceTransformation = -1;
 		private int transformationStage = 0;
-		private double standardHealth = 0;
+
+		@Override
+		public boolean isTransformed() {
+			return transformed;
+		}
+
+		@Override
+		public void setTransformed(boolean transformed) {
+			this.transformed = transformed;
+		}
 
 		@Override
 		public void setTimeSinceTransformation(int time) {
@@ -55,29 +77,19 @@ public interface IWerewolf {
 		public void setTransformationStage(int stage) {
 			this.transformationStage = stage;
 		}
-
-		@Override
-		public double getStandardHealth() {
-			return this.standardHealth;
-		}
-
-		@Override
-		public void setStandardHealth(double newStandardHealth) {
-			this.standardHealth = newStandardHealth;
-		}
 	}
 
 	public static class WerewolfStorage implements IStorage<IWerewolf> {
+		public static final String TRANSFORMED = "transformed";
 		public static final String TIME_SINCE_TRANSFORMATION = "timesincetransformation";
 		public static final String TRANSFORMATION_STAGE = "transformationstage";
-		public static final String STANDARD_HEALTH = "standardhealth";
 
 		@Override
 		public NBTBase writeNBT(Capability<IWerewolf> capability, IWerewolf instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger(TIME_SINCE_TRANSFORMATION, instance.getTimeSinceTransformation());
 			compound.setInteger(TRANSFORMATION_STAGE, instance.getTransformationStage());
-			compound.setDouble(STANDARD_HEALTH, instance.getStandardHealth());
+			compound.setBoolean(TRANSFORMED, instance.isTransformed());
 			return compound;
 		}
 
@@ -86,7 +98,7 @@ public interface IWerewolf {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
 			instance.setTimeSinceTransformation(compound.getInteger(TIME_SINCE_TRANSFORMATION));
 			instance.setTransformationStage(compound.getInteger(TRANSFORMATION_STAGE));
-			instance.setStandardHealth(compound.getDouble(STANDARD_HEALTH));
+			instance.setTransformed(compound.getBoolean(TRANSFORMED));
 		}
 	}
 }

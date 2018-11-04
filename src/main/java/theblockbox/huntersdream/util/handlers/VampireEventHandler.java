@@ -42,7 +42,7 @@ public class VampireEventHandler {
 				vampire.setTimeDrinking(player.ticksExisted);
 				GeneralHelper.executeOnMainThreadIn(() -> {
 					VampireHelper.drinkBlood(player, (EntityLivingBase) event.getTarget());
-				}, 400, player.world.getMinecraftServer());
+				}, 400, player.world.getMinecraftServer(), "VampireBloodDrinking");
 			}
 		}
 	}

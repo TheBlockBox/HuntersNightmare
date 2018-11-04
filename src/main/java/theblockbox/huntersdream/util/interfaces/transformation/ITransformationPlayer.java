@@ -6,11 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -22,34 +20,12 @@ import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
  * ITransform for players (players can have xp)
  */
 @CapabilityInterface
 public interface ITransformationPlayer extends ITransformation {
-	public int getXP();
-
-	/**
-	 * Use {@link TransformationHelper#setXP(EntityPlayerMP, int)} for automatic
-	 * packets and level up messages. When you use this, always remember to also do
-	 * {@link #setLevel(double)}
-	 */
-	public void setXP(int xp);
-
-	public double getLevel();
-
-	public void setLevel(double level);
-
-	default public int getLevelFloor() {
-		return MathHelper.floor(getLevel());
-	}
-
-	default public double getPercentageToNextLevel() {
-		return (getLevel() - getLevelFloor());
-	}
-
 	public void setUnlockedPages(HuntersJournalPage[] pages);
 
 	public HuntersJournalPage[] getUnlockedPages();
@@ -77,25 +53,12 @@ public interface ITransformationPlayer extends ITransformation {
 	public void setClothingTab(ItemHandlerClothingTab clothingTab);
 
 	public static class TransformationPlayer implements ITransformationPlayer {
-		private boolean transformed = false;
 		private Transformation transformation = TransformationInit.HUMAN;
-		private int xp = 0;
 		private int textureIndex = 0;
-		private double level = 0;
 		/** Rituals that the player has done */
 		private Set<Rituals> rituals = EnumSet.noneOf(Rituals.class);
 		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
 		private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
-
-		@Override
-		public boolean transformed() {
-			return this.transformed;
-		}
-
-		@Override
-		public void setTransformed(boolean transformed) {
-			this.transformed = transformed;
-		}
 
 		@Override
 		public Transformation getTransformation() {
@@ -109,16 +72,6 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 
 		@Override
-		public int getXP() {
-			return this.xp;
-		}
-
-		@Override
-		public void setXP(int xp) {
-			this.xp = xp;
-		}
-
-		@Override
 		public int getTextureIndex() {
 			return this.textureIndex;
 		}
@@ -126,16 +79,6 @@ public interface ITransformationPlayer extends ITransformation {
 		@Override
 		public void setTextureIndex(int textureIndex) {
 			this.textureIndex = textureIndex;
-		}
-
-		@Override
-		public double getLevel() {
-			return this.level;
-		}
-
-		@Override
-		public void setLevel(double level) {
-			this.level = level;
 		}
 
 		@Override
@@ -219,11 +162,8 @@ public interface ITransformationPlayer extends ITransformation {
 	}
 
 	public static class TransformationPlayerStorage implements IStorage<ITransformationPlayer> {
-		public static final String TRANSFORMED = "transformed";
-		public static final String XP = "xp";
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TEXTURE_INDEX = "textureindex";
-		public static final String LEVEL = "level";
 		public static final String RITUALS = "ritualsnbt";
 		public static final String PAGES = "pages";
 		public static final String CLOTHING_TAB = "clothingtab";
@@ -232,10 +172,7 @@ public interface ITransformationPlayer extends ITransformation {
 		public NBTBase writeNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
 				EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setBoolean(TRANSFORMED, instance.transformed());
-			compound.setInteger(XP, instance.getXP());
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
-			compound.setDouble(LEVEL, instance.getLevel());
 			GeneralHelper.writeArrayToNBT(compound, instance.getRituals(), RITUALS, Rituals::toString);
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), PAGES, HuntersJournalPage::toString);
@@ -248,10 +185,7 @@ public interface ITransformationPlayer extends ITransformation {
 		public void readNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
 				EnumFacing side, NBTBase nbt) {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
-			instance.setTransformed(compound.getBoolean(TRANSFORMED));
-			instance.setXP(compound.getInteger(XP));
 			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
-			instance.setLevel(compound.getDouble(LEVEL));
 			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
 			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
@@ -260,5 +194,9 @@ public interface ITransformationPlayer extends ITransformation {
 				CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(instance.getClothingTab(), null,
 						compound.getTag(CLOTHING_TAB));
 		}
+	}
+
+	default public int getLevelFloor() {
+		return 0;
 	}
 }

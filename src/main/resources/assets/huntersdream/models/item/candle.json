@@ -1,9 +1,0 @@
-{
-    "parent": "huntersdream:block/candle",
-    "display": {
-    	"firstperson_righthand": {
-    		"scale" : [1.5, 1.5, 1.5],
-    		"translation": [0, 10, 0]
-    	}
-    }
-}

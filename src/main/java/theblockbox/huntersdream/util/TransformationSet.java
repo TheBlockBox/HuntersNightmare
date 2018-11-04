@@ -6,9 +6,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 /**
  * A set for storing Transformation instances via storing their temporary id
- * obtained from {@link Transformation#getTemporaryID()} in a BitSet
+ * obtained from {@link Transformation#getTemporaryID()} in a BitSet. Does not
+ * allow null values
  */
 public class TransformationSet extends AbstractSet<Transformation> implements Cloneable {
 	private final BitSet delegate;
@@ -51,7 +54,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 		}
 	}
 
-	public boolean remove(Transformation transformation) {
+	public boolean remove(@Nonnull Transformation transformation) {
 		int id = transformation.getTemporaryID();
 		if (this.delegate.get(id)) {
 			this.delegate.set(id, false);
@@ -70,7 +73,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 		}
 	}
 
-	public boolean contains(Transformation transformation) {
+	public boolean contains(@Nonnull Transformation transformation) {
 		return this.delegate.get(transformation.getTemporaryID());
 	}
 
@@ -92,6 +95,15 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 	@Override
 	public Transformation[] toArray() {
 		return this.stream().toArray(Transformation[]::new).clone();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T[] toArray(T[] array) {
+		if (array instanceof Transformation[]) {
+			return (T[]) this.toArray();
+		}
+		return super.toArray(array);
 	}
 
 	@Override

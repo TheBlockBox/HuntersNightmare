@@ -301,8 +301,8 @@ public class GeneralHelper {
 		}.start();
 	}
 
-	public static void executeOnMainThreadIn(Runnable toBeExecuted, long millis, MinecraftServer server) {
-		new Thread() {
+	public static void executeOnMainThreadIn(Runnable toBeExecuted, long millis, MinecraftServer server, String name) {
+		new Thread(name) {
 			@Override
 			public void run() {
 				try {

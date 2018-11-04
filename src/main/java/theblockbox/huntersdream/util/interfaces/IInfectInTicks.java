@@ -41,6 +41,7 @@ public interface IInfectInTicks {
 			return this.time;
 		}
 
+		@Override
 		public void setTime(int time) {
 			this.time = time;
 			this.timeUntilInfection = time;

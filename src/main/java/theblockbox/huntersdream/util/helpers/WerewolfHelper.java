@@ -2,6 +2,8 @@ package theblockbox.huntersdream.util.helpers;
 
 import java.util.stream.IntStream;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,21 +13,25 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.event.WerewolfTransformingEvent;
+import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
-import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.EventHandler;
+import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
@@ -44,30 +50,6 @@ public class WerewolfHelper {
 		return werewolfTime;
 	}
 
-	/** Returns the player's current werewolf as a double level */
-	public static double getWerewolfLevel(EntityPlayer player) {
-		if (TransformationHelper.getTransformation(player) == TransformationInit.WEREWOLF) {
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
-			double level = (cap.getXP()) / 500.0;
-			if (!cap.hasRitual(Rituals.LUPUS_ADVOCABIT))
-				level = 0;
-			else
-				level += 1;
-
-			if (level >= 6 && !cap.hasRitual(Rituals.WEREWOLF_SECOND_RITE)) {
-				level = 5.99999D;
-			}
-
-			if (level >= 9) {
-				level = 8.99999D;
-			}
-			return level;
-		} else {
-			throw new WrongTransformationException("Given player is not a werewolf",
-					TransformationHelper.getTransformation(player));
-		}
-	}
-
 	/**
 	 * Returns how much damage the given entity does unarmed (this method can also
 	 * be called when the entity is not transformed, as long as it's still a
@@ -77,8 +59,7 @@ public class WerewolfHelper {
 		if (TransformationHelper.getTransformation(entity) == TransformationInit.WEREWOLF) {
 			// if the werewolf is either not transformed or has something in its hands
 			// (shouldn't happen for players)
-			if (TransformationHelper.getITransformation(entity).transformed()
-					|| !entity.getHeldItemMainhand().isEmpty()) {
+			if (isTransformed(entity) || !entity.getHeldItemMainhand().isEmpty()) {
 				if (entity instanceof EntityPlayer) {
 					int level = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor();
 					float unarmedDamage = IntStream.of(1, 7, 9, 11, 12).filter(i -> level >= i).mapToLong(i -> 3).sum();
@@ -106,7 +87,7 @@ public class WerewolfHelper {
 	 */
 	public static float calculateProtection(EntityLivingBase entity) {
 		if (TransformationHelper.getTransformation(entity) == TransformationInit.WEREWOLF) {
-			if (TransformationHelper.getITransformation(entity).transformed()) {
+			if (isTransformed(entity)) {
 				if (entity instanceof EntityPlayer) {
 					int level = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor();
 					float protection = (IntStream.of(6, 7, 9, 11, 12).filter(i -> level >= i).mapToLong(i -> 4).sum());
@@ -131,8 +112,7 @@ public class WerewolfHelper {
 	/** Applies potion effects to transformed werewolf players */
 	public static void applyLevelBuffs(EntityPlayer player) {
 		// if (hasControl(player)) { // TODO: Uncomment this when no control is done
-		if (TransformationHelper.getTransformation(player) == TransformationInit.WEREWOLF
-				&& TransformationHelper.getITransformation(player).transformed()) {
+		if (isTransformedWerewolf(player)) {
 			int level = TransformationHelper.getCap(player).getLevelFloor();
 			int duration = 120;
 
@@ -196,7 +176,7 @@ public class WerewolfHelper {
 	public static boolean canInfect(EntityLivingBase entity) {
 		// all werewolves (players included) can always infect (given they're
 		// transformed)
-		return transformedWerewolf(entity);
+		return isTransformedWerewolf(entity);
 	}
 
 	/**
@@ -231,18 +211,49 @@ public class WerewolfHelper {
 	}
 
 	/**
-	 * Shortcut method for
-	 * {@link TransformationHelper#transformedTransformation(EntityLivingBase, Transformation)}
+	 * Returns true when the given entity is a werewolf and also transformed
 	 */
-	public static boolean transformedWerewolf(EntityLivingBase entity) {
+	public static boolean isTransformedWerewolf(EntityLivingBase entity) {
 		ITransformation transformation = TransformationHelper.getITransformation(entity);
 		return (transformation != null) && (transformation.getTransformation() == TransformationInit.WEREWOLF)
-				&& transformation.transformed();
+				&& isTransformed(entity);
+	}
+
+	/**
+	 * Does the same as {@link #isTransformedWerewolf(EntityLivingBase)} except that
+	 * it doesn't test if the entity is actually a werewolf. Should only be used if
+	 * you know that the entity's transformation is
+	 * {@link TransformationInit#WEREWOLF}
+	 */
+	@SuppressWarnings("deprecation")
+	public static boolean isTransformed(EntityLivingBase werewolf) {
+		return werewolf instanceof EntityPlayer ? getIWerewolf((EntityPlayer) werewolf).isTransformed()
+				: werewolf instanceof ITransformationEntityTransformed;
 	}
 
 	/** Shortcut method for getting the IWerewolf capability */
 	public static IWerewolf getIWerewolf(EntityPlayer player) {
 		return player.getCapability(CAPABILITY_WEREWOLF, null);
+	}
+
+	/**
+	 * Tries to transform a player. Returns true if successful and false if not
+	 * (also returns true if the player was already transformed). Also sends a
+	 * packet if something changed.
+	 */
+	public static boolean transformPlayer(@Nonnull EntityPlayerMP player, boolean transformed,
+			WerewolfTransformingReason reason) {
+		if (isTransformed(player) != transformed) {
+			if (!MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(player, !transformed, reason))) {
+				// TODO: Send packet
+				getIWerewolf(player).setTransformed(transformed);
+				PacketHandler.sendWerewolfTransformedMessage(player);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
