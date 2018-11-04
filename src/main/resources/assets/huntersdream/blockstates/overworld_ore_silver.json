@@ -1,6 +1,9 @@
 {
-    "variants": 
-    {
-        "normal": { "model": "huntersdream:overworld_ore_silver" }
+	"forge_marker": 1,
+    "variants": {
+    	"normal": {
+    		"model": "minecraft:cube_all",
+    		"textures": { "all": "huntersdream:blocks/overworld_ore_silver" }
+    	}
     }
 }

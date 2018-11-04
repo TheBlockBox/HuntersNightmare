@@ -1,6 +1,9 @@
 {
-    "variants": 
-    {
-        "normal": { "model": "huntersdream:block_silver" }
+    "forge_marker": 1,
+    "variants": {
+    	"normal": {
+    		"model": "minecraft:cube_all",
+    		"textures": { "all": "huntersdream:blocks/block_silver" }
+    	}
     }
 }
