@@ -14,8 +14,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
 import theblockbox.huntersdream.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.IsLivingInfectedEvent;
@@ -40,8 +38,8 @@ public class TransformationHelper {
 	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
 	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS;
 	/**
-	 * special damage source for things that are effective against specific
-	 * transformations
+	 * Special damage source for things that are effective against specific
+	 * transformations. If used, the attacked entity's protection won't work
 	 */
 	public static final DamageSource EFFECTIVE_AGAINST_TRANSFORMATION = new DamageSource(
 			"effectiveAgainstTransformation");
@@ -50,7 +48,8 @@ public class TransformationHelper {
 	 * Returns the transformation capability of the given player (just a short-cut
 	 * method)
 	 */
-	public static ITransformationPlayer getCap(EntityPlayer player) {
+	public static ITransformationPlayer getCap(@Nonnull EntityPlayer player) {
+		Validate.notNull(player);
 		return player.getCapability(CAPABILITY_TRANSFORMATION_PLAYER, null);
 	}
 
@@ -128,6 +127,7 @@ public class TransformationHelper {
 	}
 
 	/** Returns the entity's transformation */
+	@Nonnull
 	public static Transformation getTransformation(EntityLivingBase entity) {
 		ITransformation transformation = getITransformation(entity);
 		return (transformation == null) ? TransformationInit.NONE : transformation.getTransformation();
@@ -151,13 +151,10 @@ public class TransformationHelper {
 	}
 
 	@Nullable
-	public static ITransformationCreature getITransformationCreature(EntityCreature entity) {
-		if (entity != null) {
-			return (entity instanceof ITransformationCreature) ? (ITransformationCreature) entity
-					: entity.getCapability(CAPABILITY_TRANSFORMATION_CREATURE, null);
-		} else {
-			return null;
-		}
+	public static ITransformationCreature getITransformationCreature(@Nonnull EntityCreature entity) {
+		Validate.notNull(entity);
+		return (entity instanceof ITransformationCreature) ? (ITransformationCreature) entity
+				: entity.getCapability(CAPABILITY_TRANSFORMATION_CREATURE, null);
 	}
 
 	/**
@@ -206,7 +203,8 @@ public class TransformationHelper {
 
 	/** Returns the {@link IInfectInTicks} capability of the given entity */
 	@Nullable
-	public static IInfectInTicks getIInfectInTicks(EntityLivingBase entity) {
+	public static IInfectInTicks getIInfectInTicks(@Nonnull EntityLivingBase entity) {
+		Validate.notNull(entity);
 		return entity.getCapability(CAPABILITY_INFECT_IN_TICKS, null);
 	}
 
@@ -241,26 +239,11 @@ public class TransformationHelper {
 		return MinecraftForge.EVENT_BUS.post(new IsLivingInfectedEvent(entity));
 	}
 
-	/**
-	 * Sets the player size when the player is for example a transformed, sprinting
-	 * werewolf
-	 */
-	public static void configurePlayerSize(EntityPlayer player) {
+	public static void changePlayerSize(EntityPlayer player) {
 		if (WerewolfHelper.isTransformedWerewolf(player)) {
-			boolean quadruped = (player.isSprinting() || player.isSneaking());
-			float height = quadruped ? ModelLycanthropeQuadruped.HEIGHT : ModelLycanthropeBiped.HEIGHT;
-			float width = quadruped ? ModelLycanthropeQuadruped.WIDTH : GeneralHelper.STANDARD_PLAYER_WIDTH;
-			float eyeheight = quadruped ? ModelLycanthropeQuadruped.EYE_HEIGHT : ModelLycanthropeBiped.EYE_HEIGHT;
-
-			if (!quadruped && !GeneralHelper.canEntityExpandHeight(player, height)) {
-				quadruped = true;
-				height = ModelLycanthropeQuadruped.HEIGHT;
-				width = ModelLycanthropeQuadruped.WIDTH;
-				eyeheight = ModelLycanthropeQuadruped.EYE_HEIGHT;
-			}
-
-			GeneralHelper.changePlayerSize(player, width, height);
-			player.eyeHeight = eyeheight;
+			// we have to use 0.6 because otherwise the players move without doing anything
+			GeneralHelper.changePlayerSize(player, 0.6F, WerewolfHelper.getWerewolfHeight(player));
+			player.eyeHeight = WerewolfHelper.getWerewolfEyeHeight(player);
 		} else {
 			player.eyeHeight = player.getDefaultEyeHeight();
 		}

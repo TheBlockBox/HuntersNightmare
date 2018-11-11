@@ -14,7 +14,7 @@ import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiHuntersJournal extends GuiScreen {
-	public final EntityPlayer PLAYER;
+	public final EntityPlayer player;
 	private int currentPage = 0;
 	private HuntersJournalPage[] pages;
 	private GuiButton nextPage;
@@ -23,24 +23,24 @@ public class GuiHuntersJournal extends GuiScreen {
 	public static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/hunters_journal.png");
 
 	public GuiHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
-		this.PLAYER = player;
+		this.player = player;
 		this.pages = pages;
 	}
 
 	@Override
 	public void initGui() {
-		buttonList.clear();
+		this.buttonList.clear();
 		Keyboard.enableRepeatEvents(true);
 		this.nextPage = new NextButton(0, true);
 		this.pageBefore = new NextButton(1, false);
-		this.buttonList.add(nextPage);
-		this.buttonList.add(pageBefore);
+		this.buttonList.add(this.nextPage);
+		this.buttonList.add(this.pageBefore);
 	}
 
 	@Override
 	public void updateScreen() {
-		this.nextPage.visible = currentPage < pages.length - 1;
-		this.pageBefore.visible = currentPage > 0;
+		this.nextPage.visible = this.currentPage < this.pages.length - 1;
+		this.pageBefore.visible = this.currentPage > 0;
 	}
 
 	public void drawInBounds(int x, int y, int drawWidth, HuntersJournalPage page) {
@@ -55,17 +55,17 @@ public class GuiHuntersJournal extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		HuntersJournalPage page = pages[currentPage];
-		mc.getTextureManager().bindTexture(TEXTURE);
+		HuntersJournalPage page = this.pages[this.currentPage];
+		this.mc.getTextureManager().bindTexture(TEXTURE);
 		int middle = (this.width / 2);
-		this.drawTexturedModalRect(middle - (width / 2), 3, 20, 0, width, height);
-		this.pageBefore.x = (int) (middle - (width / 2.5D));
-		this.nextPage.x = (int) (middle + (width / 2.5D)) - this.nextPage.width;
+		this.drawTexturedModalRect(middle - (this.width / 2), 3, 20, 0, this.width, this.height);
+		this.pageBefore.x = (int) (middle - (this.width / 2.5D));
+		this.nextPage.x = (int) (middle + (this.width / 2.5D)) - this.nextPage.width;
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		int x = middle - (width / 2) + 15;
-		int w = width - 28;
+		int x = middle - (this.width / 2) + 15;
+		int w = this.width - 28;
 		if (page.hasImage()) {
-			mc.getTextureManager().bindTexture(page.getImagePath());
+			this.mc.getTextureManager().bindTexture(page.getImagePath());
 			this.drawTexturedModalRect(x - 1, 24, 0, 0, w, 64);
 		}
 		// height = height - 20
@@ -75,12 +75,12 @@ public class GuiHuntersJournal extends GuiScreen {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		if (button instanceof NextButton) {
-			currentPage += ((NextButton) button).isNextPageButton ? 1 : -1;
-			if (currentPage < 0) {
-				currentPage = 0;
+			this.currentPage += ((NextButton) button).isNextPageButton ? 1 : -1;
+			if (this.currentPage < 0) {
+				this.currentPage = 0;
 			}
-			if (currentPage > pages.length - 1) {
-				currentPage = pages.length - 1;
+			if (this.currentPage > this.pages.length - 1) {
+				this.currentPage = this.pages.length - 1;
 			}
 		}
 	}

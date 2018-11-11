@@ -65,7 +65,7 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 
 	@Override
 	public boolean isForObject(ItemStack armor) {
-		return isForArmor.test(armor);
+		return this.isForArmor.test(armor);
 	}
 
 	public float getArmorEffectivenessAgainstTransformation(Transformation transformation) {
@@ -162,16 +162,16 @@ public class ArmorEffectiveAgainstTransformation implements IEffectiveAgainstTra
 
 		public TTPArray add(Transformation transformation, float t, float p) {
 			Validate.notNull(transformation, "Transformation is not allowed to be null");
-			this.transformations[currentIndex] = transformation;
-			this.thorns[currentIndex] = t;
-			this.protection[currentIndex] = p;
+			this.transformations[this.currentIndex] = transformation;
+			this.thorns[this.currentIndex] = t;
+			this.protection[this.currentIndex] = p;
 			this.currentIndex++;
 			return this;
 		}
 
 		@Override
 		public TTPArray clone() {
-			return new TTPArray(transformations.clone(), thorns.clone(), protection.clone());
+			return new TTPArray(this.transformations.clone(), this.thorns.clone(), this.protection.clone());
 		}
 	}
 }

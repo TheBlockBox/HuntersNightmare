@@ -17,21 +17,21 @@ public class CapabilityProvider<T> implements ICapabilitySerializable<NBTTagComp
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return (capability == cap);
+		return (capability == this.cap);
 	}
 
 	@Override
 	public <E> E getCapability(Capability<E> capability, EnumFacing facing) {
-		return capability == cap ? cap.<E>cast(this.instance) : null;
+		return capability == this.cap ? this.cap.<E>cast(this.instance) : null;
 	}
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		return (NBTTagCompound) cap.getStorage().writeNBT(cap, instance, null);
+		return (NBTTagCompound) this.cap.getStorage().writeNBT(this.cap, this.instance, null);
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		cap.getStorage().readNBT(cap, instance, null, nbt);
+		this.cap.getStorage().readNBT(this.cap, this.instance, null, nbt);
 	}
 }

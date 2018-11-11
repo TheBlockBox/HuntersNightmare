@@ -40,17 +40,17 @@ public class StructureVillageComponent extends StructureVillagePieces.House1 {
 			if (this.avgGroundLevel < 0) {
 				return true;
 			} else {
-				this.boundingBox.offset(0, this.avgGroundLevel - this.boundingBox.maxY + ySize - 1, 0);
+				this.boundingBox.offset(0, this.avgGroundLevel - this.boundingBox.maxY + this.ySize - 1, 0);
 			}
 		}
 
-		this.fillWithBlocks(worldIn, boundingBoxIn, 0, 0, 0, xSize - 1, ySize - 1, zSize - 1,
+		this.fillWithBlocks(worldIn, boundingBoxIn, 0, 0, 0, this.xSize - 1, this.ySize - 1, this.zSize - 1,
 				Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState(), false);
 		this.spawnStructure(worldIn, randomIn, boundingBoxIn);
 
-		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < zSize; j++) {
-				this.clearCurrentPositionBlocksUpwards(worldIn, i, ySize, j, boundingBoxIn);
+		for (int i = 0; i < this.xSize; i++) {
+			for (int j = 0; j < this.zSize; j++) {
+				this.clearCurrentPositionBlocksUpwards(worldIn, i, this.ySize, j, boundingBoxIn);
 				this.replaceAirAndLiquidDownwards(worldIn, Blocks.DIRT.getDefaultState(), i, -1, j, boundingBoxIn);
 			}
 		}

@@ -1,14 +1,17 @@
 package theblockbox.huntersdream.entity;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Predicate;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
@@ -21,37 +24,47 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeBiped;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeQuadruped;
+import theblockbox.huntersdream.entity.ai.EntityAIBreakAllDoors;
+import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper.ITransformedWerewolf;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
 /**
  * A werewolf
  */
-public class EntityWerewolf extends EntityMob implements ITransformationEntityTransformed, IEntityAdditionalSpawnData {
+public class EntityWerewolf extends EntityMob
+		implements ITransformation, IEntityAdditionalSpawnData, ITransformedWerewolf {
+	/**
+	 * The speed of every werewolf (exactly two times faster than a normal player)
+	 */
 	public static final double SPEED = 0.5D;
+	public static final float ATTACK_DAMAGE = 8F;
 	public static final Transformation TRANSFORMATION = TransformationInit.WEREWOLF;
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
 	private String untransformedEntityName;
 	private NBTTagCompound extraData;
+	private boolean usesAlexSkin;
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName, @Nonnull NBTTagCompound extraData) {
 		super(worldIn);
@@ -63,11 +76,20 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 			this.setTextureIndexWhenNeeded();
 		}
 		this.untransformedEntityName = entityName;
-		this.setSize(1F, ModelLycanthropeBiped.HEIGHT);
+		this.usesAlexSkin = ChanceHelper.randomBoolean();
+		this.setSize(0.6F, WerewolfHelper.getWerewolfHeight(this));
 		this.setExtraData(extraData);
 		if (extraData == null) {
 			throw new NullPointerException("Can't spawn werewolf with null extra data");
 		}
+	}
+
+	public boolean usesAlexSkin() {
+		return this.usesAlexSkin;
+	}
+
+	public void setUseAlexSkin(boolean useAlexSkin) {
+		this.usesAlexSkin = useAlexSkin;
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityCreature entity, NBTTagCompound extraData) {
@@ -88,10 +110,12 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	protected void initEntityAI() {
 		this.tasks.addTask(0, new EntityAISwimming(this));
+		((PathNavigateGround) this.getNavigator()).setBreakDoors(true);
+		this.tasks.addTask(1, new EntityAIBreakAllDoors(this));
 		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.2D, false));
+
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
-		this.tasks.addTask(4, new EntityAIBreakDoor(this));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 		this.applyEntityAI();
@@ -107,17 +131,16 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 			return !((transformation.getTransformation() == TransformationInit.WEREWOLF)
 					|| ((ionm != null) && ionm.isInfected()));
 		};
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
-				true, false, predicateMob));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
-				true, false, predicatePlayer));
+		this.targetTasks.addTask(2,
+				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
+		this.targetTasks.addTask(2,
+				new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false, predicatePlayer));
 	}
 
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
-				.setBaseValue(TRANSFORMATION.getGeneralDamage(this));
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(SPEED);
 	}
@@ -139,7 +162,12 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 
 	@Override
 	public float getEyeHeight() {
-		return ModelLycanthropeBiped.EYE_HEIGHT;
+		return WerewolfHelper.getWerewolfEyeHeight(this);
+	}
+
+	@Override
+	public void setSneaking(boolean sneaking) {
+		super.setSneaking(sneaking);
 	}
 
 	@Override
@@ -155,18 +183,91 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	@Override
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
-		if (ticksExisted % 80 == 0) {
-			if (!world.isRemote) {
+		if (this.ticksExisted % 80 == 0) {
+			if (!this.world.isRemote) {
 				if (!WerewolfHelper.isWerewolfTime(this.world)) {
-					ITransformationEntityTransformed.transformBack(this,
-							new WerewolfTransformingEvent(this, true, WerewolfTransformingReason.FULL_MOON_END));
+					if (!MinecraftForge.EVENT_BUS.post(
+							new WerewolfTransformingEvent(this, true, WerewolfTransformingReason.FULL_MOON_END))) {
+						EntityCreature e = null;
+						String entityName = this.getUntransformedEntityName();
+
+						// TODO: Remove this when no control is done (only the line below and its
+						// bracket)
+						if (!entityName.startsWith("player")) {
+
+							if (!entityName.startsWith("$bycap")) {
+								try {
+									@SuppressWarnings("unchecked")
+									Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
+											.forName(entityName);
+									Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
+											Transformation.class);
+									e = (EntityCreature) constructor.newInstance(this.world, this.getTextureIndex(),
+											this.getTransformation());
+								} catch (ClassNotFoundException ex) {
+									throw new NullPointerException("Can't find class " + entityName);
+								} catch (ClassCastException ex) {
+									throw new IllegalArgumentException(
+											"Given class " + entityName + " is not an entity");
+								} catch (NoSuchMethodException | InvocationTargetException | SecurityException
+										| IllegalAccessException ex) {
+									throw new NullPointerException("Class " + entityName
+											+ " does not have an accessible constructor with parameters World, int, Transformations");
+								} catch (InstantiationException ex) {
+									throw new IllegalArgumentException("Can't instantiate class " + entityName);
+								}
+							} else {
+								String eName = entityName.substring(6);
+								try {
+									@SuppressWarnings("unchecked")
+									Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
+											.forName(eName);
+									Constructor<?> constructor = entityClass.getConstructor(World.class);
+									e = (EntityCreature) constructor.newInstance(this.world);
+									// remember: this is only server side and the client doesn't actually need to
+									// know about this
+									ITransformationCreature transformation = TransformationHelper
+											.getITransformationCreature(e);
+									transformation.setTextureIndex(this.getTextureIndex());
+									transformation.setTransformation(this.getTransformation());
+								} catch (NullPointerException ex) {
+									NullPointerException exception = new NullPointerException(
+											"Either the entity's capability or something else was null");
+									exception.setStackTrace(ex.getStackTrace());
+									throw exception;
+								} catch (ClassNotFoundException ex) {
+									throw new NullPointerException("Can't find class " + eName);
+								} catch (ClassCastException ex) {
+									throw new IllegalArgumentException("Given class " + eName + " is not an entity");
+								} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+										| InstantiationException | InvocationTargetException ex) {
+									throw new IllegalArgumentException(
+											"This entity does not have an accessible constructor and is therefore not registered");
+								}
+							}
+
+							// set health
+							this.extraData.setFloat("Health",
+									e.getMaxHealth() / (this.getMaxHealth() / this.getHealth()));
+							ExtraDataEvent extraDataEvent = new ExtraDataEvent(e, this.extraData, false);
+							MinecraftForge.EVENT_BUS.post(extraDataEvent);
+							e.readEntityFromNBT(extraDataEvent.getExtraData());
+
+							e.setPosition(this.posX, this.posY, this.posZ);
+							this.world.spawnEntity(e);
+						}
+
+						this.world.removeEntity(this);
+					}
+				}
+
+				// set size
+				float newHeight = WerewolfHelper.getWerewolfHeight(this);
+				if (this.height != newHeight) {
+					this.setSize(0.6F, newHeight);
 				}
 			}
 		}
-		if (isSprinting() || isSneaking())
-			setSize(ModelLycanthropeQuadruped.WIDTH, ModelLycanthropeQuadruped.HEIGHT);
-		else
-			setSize(1F, ModelLycanthropeBiped.HEIGHT);
 	}
 
 	@Override
@@ -175,8 +276,13 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	}
 
 	@Override
+	public void setTransformation(Transformation transformation) {
+		throw new UnsupportedOperationException("This creature's transformation is already determined");
+	}
+
+	@Override
 	public int getTextureIndex() {
-		return textureIndex;
+		return this.textureIndex;
 	}
 
 	@Override
@@ -188,6 +294,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	public void writeSpawnData(ByteBuf buffer) {
 		ByteBufUtils.writeUTF8String(buffer, this.getUntransformedEntityName());
 		buffer.writeInt(this.getTextureIndex());
+		buffer.writeBoolean(this.usesAlexSkin());
 		// ByteBufUtils.writeTag(buffer, this.getEntityData());
 	}
 
@@ -195,20 +302,18 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 	public void readSpawnData(ByteBuf buffer) {
 		this.untransformedEntityName = ByteBufUtils.readUTF8String(buffer);
 		this.setTextureIndex(buffer.readInt());
+		this.setUseAlexSkin(buffer.readBoolean());
 		// this.setExtraData(ByteBufUtils.readTag(buffer));
 	}
 
-	@Override
 	public String getUntransformedEntityName() {
 		return this.untransformedEntityName;
 	}
 
-	@Override
 	public NBTTagCompound getExtraData() {
 		return this.extraData;
 	}
 
-	@Override
 	public void setExtraData(NBTTagCompound extraData) {
 		this.extraData = extraData;
 	}
@@ -219,6 +324,7 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 		compound.setInteger("textureIndex", this.getTextureIndex());
 		compound.setString("untransformedEntityName", this.getUntransformedEntityName());
 		compound.setTag("untransformedEntityExtraData", this.getExtraData());
+		compound.setBoolean("useAlexSkin", this.usesAlexSkin());
 	}
 
 	@Override
@@ -230,6 +336,8 @@ public class EntityWerewolf extends EntityMob implements ITransformationEntityTr
 			this.untransformedEntityName = compound.getString("untransformedEntityName");
 		if (compound.hasKey("untransformedEntityExtraData"))
 			this.setExtraData((NBTTagCompound) compound.getTag("untransformedEntityExtraData"));
+		if (compound.hasKey("useAlexSkin"))
+			this.setUseAlexSkin(compound.getBoolean("useAlexSkin"));
 	}
 
 	@Override

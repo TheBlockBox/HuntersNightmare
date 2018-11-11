@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.proxy;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.util.HuntersJournalPage;
@@ -37,5 +38,10 @@ public class ServerProxy implements IProxy {
 
 	@Override
 	public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
+	}
+
+	@Override
+	public <T extends Entity> T getEntityFromID(int id) {
+		throw new UnsupportedOperationException("Can't get entity from server");
 	}
 }

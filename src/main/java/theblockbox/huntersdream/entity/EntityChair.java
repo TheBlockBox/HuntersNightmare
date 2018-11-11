@@ -59,9 +59,11 @@ public class EntityChair extends Entity {
 	@Override
 	public void onEntityUpdate() {
 		if (!this.world.isRemote) {
-			if (!this.isBeingRidden() || this.world.isAirBlock(new BlockPos(blockPosX, blockPosY, blockPosZ))) {
+			if (!this.isBeingRidden()
+					|| this.world.isAirBlock(new BlockPos(this.blockPosX, this.blockPosY, this.blockPosZ))) {
 				this.setDead();
-				world.updateComparatorOutputLevel(getPosition(), world.getBlockState(getPosition()).getBlock());
+				this.world.updateComparatorOutputLevel(getPosition(),
+						this.world.getBlockState(getPosition()).getBlock());
 			}
 		}
 	}
@@ -73,17 +75,17 @@ public class EntityChair extends Entity {
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound compound) {
 		if (compound.hasKey("blockPosX"))
-			blockPosX = compound.getInteger("blockPosX");
+			this.blockPosX = compound.getInteger("blockPosX");
 		if (compound.hasKey("blockPosY"))
-			blockPosY = compound.getInteger("blockPosY");
+			this.blockPosY = compound.getInteger("blockPosY");
 		if (compound.hasKey("blockPosZ"))
-			blockPosZ = compound.getInteger("blockPosZ");
+			this.blockPosZ = compound.getInteger("blockPosZ");
 	}
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound compound) {
-		compound.setInteger("blockPosX", blockPosX);
-		compound.setInteger("blockPosY", blockPosY);
-		compound.setInteger("blockPosZ", blockPosZ);
+		compound.setInteger("blockPosX", this.blockPosX);
+		compound.setInteger("blockPosY", this.blockPosY);
+		compound.setInteger("blockPosZ", this.blockPosZ);
 	}
 }

@@ -26,7 +26,7 @@ public class TransformationTextureIndexMessage extends MessageBase<Transformatio
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(textureIndex);
+		buf.writeInt(this.textureIndex);
 	}
 
 	@Override

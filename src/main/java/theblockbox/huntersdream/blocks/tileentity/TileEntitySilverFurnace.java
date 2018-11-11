@@ -119,8 +119,8 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 			// if no fuel was found, the item couldn't be extracted or there was no recipe,
 			// set fuel to 0 and go out
 			// of the loop
-			if (burnTime < 0)
-				burnTime = 0;
+			if (this.burnTime < 0)
+				this.burnTime = 0;
 			break;
 		}
 		this.markDirty();
@@ -157,13 +157,13 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 	private boolean setRecipe(int amount1, int amount2, ItemStack output1, ItemStack output2,
 			int fullNeededSmeltingTime) {
 		// make recipes burn faster because furnace smelts a bit slower
-		fullNeededSmeltingTime -= 12;
+		int fullSmeltingTime = fullNeededSmeltingTime - 12;
 		if (this.canAddItemsToOutput(output1, output2)) {
 			// if everything is still the same, just return true and do nothing
 			if (this.hasRecipe() && (this.amount1 == amount1) && (this.amount2 == amount2)
 					&& ItemStack.areItemStacksEqual(this.outputs.getLeft(), output1)
 					&& ItemStack.areItemStacksEqual(this.outputs.getRight(), output2)
-					&& this.fullNeededSmeltingTime == fullNeededSmeltingTime && this.hasRecipe()) {
+					&& this.fullNeededSmeltingTime == fullSmeltingTime && this.hasRecipe()) {
 				return true;
 			}
 
@@ -171,7 +171,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 			this.amount2 = amount2;
 			this.outputs.setLeft(output1);
 			this.outputs.setRight(output2);
-			this.fullNeededSmeltingTime = fullNeededSmeltingTime;
+			this.fullNeededSmeltingTime = fullSmeltingTime;
 			this.hasRecipe = true;
 			this.smeltingRecipeSince = this.ticks;
 			this.markDirty();
@@ -243,23 +243,23 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 	}
 
 	public int getBurnTime() {
-		return burnTime;
+		return this.burnTime;
 	}
 
 	public int getFullBurnTime() {
-		return fullBurnTime;
+		return this.fullBurnTime;
 	}
 
 	public int getSmeltingRecipeSince() {
-		return smeltingRecipeSince;
+		return this.smeltingRecipeSince;
 	}
 
 	public int getFullNeededSmeltingTime() {
-		return fullNeededSmeltingTime;
+		return this.fullNeededSmeltingTime;
 	}
 
 	public int getTicks() {
-		return ticks;
+		return this.ticks;
 	}
 
 	@Override
@@ -340,7 +340,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 
 		@Override
 		protected void onContentsChanged(int slot) {
-			if (world != null && !world.isRemote) {
+			if (TileEntitySilverFurnace.this.world != null && !TileEntitySilverFurnace.this.world.isRemote) {
 				// checks if recipe has changed
 				checkForRecipe();
 				markDirty();

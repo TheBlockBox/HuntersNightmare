@@ -1,8 +1,6 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -30,8 +28,8 @@ public class WerewolfTransformedMessage extends MessageBase<WerewolfTransformedM
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeBoolean(transformed);
-		buf.writeInt(player);
+		buf.writeInt(this.player);
+		buf.writeBoolean(this.transformed);
 	}
 
 	@Override
@@ -52,9 +50,7 @@ public class WerewolfTransformedMessage extends MessageBase<WerewolfTransformedM
 		public IMessage onMessageReceived(WerewolfTransformedMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					WerewolfHelper
-							.getIWerewolf((EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player))
-							.setTransformed(message.transformed);
+					WerewolfHelper.getIWerewolf(getPlayerFromID(message.player)).setTransformed(message.transformed);
 				});
 			}
 			return null;

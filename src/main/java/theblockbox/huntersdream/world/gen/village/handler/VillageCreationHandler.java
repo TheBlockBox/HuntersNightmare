@@ -26,6 +26,6 @@ public abstract class VillageCreationHandler implements VillagerRegistry.IVillag
 
 	@Override
 	public Class<?> getComponentClass() {
-		return componentClass;
+		return this.componentClass;
 	}
 }

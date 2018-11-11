@@ -33,10 +33,10 @@ public class ItemHuntersJournalPage extends Item {
 				PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
 				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onPageUnlock",
 						new TextComponentTranslation(page.getTitle())));
-				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+				return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 			} else {
 				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".allUnlocked"));
-				return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
+				return new ActionResult<>(EnumActionResult.FAIL, stack);
 			}
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);

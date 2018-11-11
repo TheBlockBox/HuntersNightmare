@@ -29,14 +29,14 @@ public class ModelGoblinTD extends ModelBase {
 		this.armr = new ModelRenderer(this, 24, 4);
 		this.armr.setRotationPoint(-3.0F, 10.0F, 0.0F);
 		this.armr.addBox(-2.0F, -1.0F, -1.0F, 2, 8, 2, 0.0F);
-		setRotateAngle(armr, 0.0F, 0.0F, 0.5235987755982988F);
+		setRotateAngle(this.armr, 0.0F, 0.0F, 0.5235987755982988F);
 		this.tummy = new ModelRenderer(this, 18, 16);
 		this.tummy.setRotationPoint(0.0F, 3.0F, 0.0F);
 		this.tummy.addBox(-4.5F, 0.0F, -3.0F, 9, 8, 6, 0.0F);
 		this.arml = new ModelRenderer(this, 24, 4);
 		this.arml.setRotationPoint(3.0F, 10.0F, 0.0F);
 		this.arml.addBox(0.0F, -1.0F, -1.0F, 2, 8, 2, 0.0F);
-		setRotateAngle(arml, 0.0F, 0.0F, -0.5235987755982988F);
+		setRotateAngle(this.arml, 0.0F, 0.0F, -0.5235987755982988F);
 		this.earr = new ModelRenderer(this, 18, 0);
 		this.earr.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.earr.addBox(-6.0F, -4.0F, 0.0F, 3, 1, 1, 0.0F);

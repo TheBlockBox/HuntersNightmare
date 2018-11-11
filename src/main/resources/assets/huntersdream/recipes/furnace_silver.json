@@ -1,28 +1,23 @@
 {
     "type": "minecraft:crafting_shaped",
     
-    "pattern":
-    [
+    "pattern": [
         "SSS",
         "SFS",
         "SSS"
     ],
     
-    "key":
-    {
-        "S":
-        {
+    "key": {
+        "S": {
             "type": "forge:ore_dict",
             "ore": "ingotSilver"
         },
-        "F":
-        {
+        "F": {
         	"item": "minecraft:furnace"
         }
     },
     
-    "result":
-    {
+    "result": {
         "item": "huntersdream:furnace_silver",
         "count": 1
     }

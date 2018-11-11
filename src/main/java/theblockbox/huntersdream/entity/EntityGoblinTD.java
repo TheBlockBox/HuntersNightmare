@@ -88,10 +88,10 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	protected void applyEntityAI() {
 		Predicate<EntityCreature> predicateMob = input -> !(input instanceof EntityGoblinTD);
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityCreature>(this, EntityCreature.class, 10,
-				true, false, predicateMob));
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, 10,
-				true, false, WerewolfHelper::isTransformedWerewolf));
+		this.targetTasks.addTask(3,
+				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false,
+				WerewolfHelper::isTransformedWerewolf));
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public EntityVillager createChild(EntityAgeable ageable) {
-		return new EntityGoblinTD(world);
+		return new EntityGoblinTD(this.world);
 	}
 
 	@Override
@@ -184,7 +184,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		if (this.hasCustomName()) {
 			return this.getCustomNameTag();
 		} else {
-			if (world.isRemote) {
+			if (this.world.isRemote) {
 				return I18n.format("entity.goblintd.name");
 			} else {
 				return "Goblin";
@@ -245,13 +245,13 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 				EntityPlayer player = (EntityPlayer) entityIn;
 				ItemStack heldItemStack = this.getHeldItemMainhand();
 
-				if (!heldItemStack.isEmpty() && !activeItemStack.isEmpty()
-						&& heldItemStack.getItem().canDisableShield(heldItemStack, activeItemStack, player, this)
-						&& activeItemStack.getItem().isShield(activeItemStack, player)) {
+				if (!heldItemStack.isEmpty() && !this.activeItemStack.isEmpty()
+						&& heldItemStack.getItem().canDisableShield(heldItemStack, this.activeItemStack, player, this)
+						&& this.activeItemStack.getItem().isShield(this.activeItemStack, player)) {
 					float f1 = 0.25F + EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
 
 					if (this.rand.nextFloat() < f1) {
-						player.getCooldownTracker().setCooldown(activeItemStack.getItem(), 100);
+						player.getCooldownTracker().setCooldown(this.activeItemStack.getItem(), 100);
 						this.world.setEntityState(player, (byte) 30);
 					}
 				}

@@ -7,6 +7,7 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.Transformation;
 
 /** A utility class for all things that don't fit into the other helpers */
 public class GeneralHelper {
@@ -56,7 +58,7 @@ public class GeneralHelper {
 
 		@Override
 		public DataParameter<byte[]> createKey(int id) {
-			return new DataParameter<byte[]>(id, this);
+			return new DataParameter<>(id, this);
 		}
 
 		@Override
@@ -346,5 +348,11 @@ public class GeneralHelper {
 				world.spawnEntity(new EntityXPOrb(world, pos.getX(), pos.getY() + 0.5D, pos.getZ() + 0.5D, splitXP));
 			}
 		}
+	}
+
+	public static TObjectFloatHashMap<Transformation> newTFMapWith(Transformation key, float value) {
+		TObjectFloatHashMap<Transformation> map = new TObjectFloatHashMap<>();
+		map.put(key, value);
+		return map;
 	}
 }

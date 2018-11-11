@@ -4,6 +4,9 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.Validate;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +30,11 @@ import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.EventHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
+import theblockbox.huntersdream.util.handlers.TransformationEventHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
@@ -55,57 +58,56 @@ public class WerewolfHelper {
 	 * be called when the entity is not transformed, as long as it's still a
 	 * werewolf)
 	 */
-	public static float calculateUnarmedDamage(EntityLivingBase entity) {
-		if (TransformationHelper.getTransformation(entity) == TransformationInit.WEREWOLF) {
-			// if the werewolf is either not transformed or has something in its hands
-			// (shouldn't happen for players)
-			if (isTransformed(entity) || !entity.getHeldItemMainhand().isEmpty()) {
-				if (entity instanceof EntityPlayer) {
-					int level = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor();
-					float unarmedDamage = IntStream.of(1, 7, 9, 11, 12).filter(i -> level >= i).mapToLong(i -> 3).sum();
-					// if no damage, set to 1 (0 would cause the player to deal no damage because x
-					// * 0 = 0)
-					unarmedDamage = (unarmedDamage > 0) ? unarmedDamage : 1;
-					return unarmedDamage;
+	public static float calculateUnarmedDamage(EntityLivingBase entity, float initialDamage) {
+		WrongTransformationException.ifNotTransformationThrow(entity, TransformationInit.WEREWOLF);
+		// if the werewolf is either not transformed or has something in its hands
+		// (shouldn't happen for players)
+//		if (isTransformed(entity) || !entity.getHeldItemMainhand().isEmpty()) {
+//			if (entity instanceof EntityPlayer) {
+//				return initialDamage + 2F;
+//			} else {
+//				// standard
+//				return 9F * initialDamage;
+//			}
+//		} else {
+//			// no extra damage when not transformed
+//			return initialDamage;
+//		}
+		boolean transformed = isTransformed(entity);
+		if (entity instanceof EntityPlayer) {
+			if (transformed) {
+				if (entity.getHeldItemMainhand().isEmpty()) {
+					// unarmed damage does the equivalent as an iron sword
+					return 5F;
 				} else {
-					// standard
-					return 12F;
+					return initialDamage;
 				}
 			} else {
-				// no extra damage when not transformed
-				return 1F;
+				return initialDamage + 2;
 			}
 		} else {
-			throw new WrongTransformationException("The given entity is not a werewolf",
-					TransformationHelper.getTransformation(entity));
+			return transformed ? initialDamage * EntityWerewolf.ATTACK_DAMAGE : initialDamage;
 		}
 	}
 
 	/**
-	 * Returns how much protection the given entity has (this method can also be
-	 * called when the entity is not transformed, as long as it's still a werewolf)
+	 * /** Returns how much damage the given entity should get if the entity and the
+	 * initial damage are the passed arguments (this method can also be called when
+	 * the entity is not transformed, as long as it's still a werewolf)
 	 */
-	public static float calculateProtection(EntityLivingBase entity) {
-		if (TransformationHelper.getTransformation(entity) == TransformationInit.WEREWOLF) {
-			if (isTransformed(entity)) {
-				if (entity instanceof EntityPlayer) {
-					int level = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor();
-					float protection = (IntStream.of(6, 7, 9, 11, 12).filter(i -> level >= i).mapToLong(i -> 4).sum());
-					// if no protection, set to 1 (0 would cause an ArithmaticException because of
-					// dividing by zero)
-					protection = (protection > 0) ? protection : 1;
-					return protection;
-				} else {
-					// same as diamond armor
-					return 4.35F;
-				}
+	public static float calculateReducedDamage(EntityLivingBase entity, float initialDamage) {
+		WrongTransformationException.ifNotTransformationThrow(entity, TransformationInit.WEREWOLF);
+		if (isTransformed(entity)) {
+			if (entity instanceof EntityPlayer) {
+				// same as leather armour
+				return initialDamage / 1.28F;
 			} else {
-				// no protection when not transformed
-				return 1F;
+				// same as diamond armor
+				return initialDamage / 4.35F;
 			}
 		} else {
-			throw new WrongTransformationException("The given entity is not a werewolf",
-					TransformationHelper.getTransformation(entity));
+			// no protection when not transformed
+			return initialDamage;
 		}
 	}
 
@@ -138,12 +140,8 @@ public class WerewolfHelper {
 
 	/** Returns true if the werewolf can transform */
 	public static boolean canWerewolfTransform(EntityLivingBase werewolf) {
-		if (TransformationHelper.getTransformation(werewolf) == TransformationInit.WEREWOLF) {
-			return !werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE);
-		} else {
-			throw new WrongTransformationException("Entity is not a werewolf",
-					TransformationHelper.getTransformation(werewolf));
-		}
+		WrongTransformationException.ifNotTransformationThrow(werewolf, TransformationInit.WEREWOLF);
+		return !werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE);
 	}
 
 	/** Infects the given entity with lycantrophy */
@@ -165,7 +163,8 @@ public class WerewolfHelper {
 		}
 	}
 
-	public static IInfectOnNextMoon getIInfectOnNextMoon(EntityLivingBase entity) {
+	public static IInfectOnNextMoon getIInfectOnNextMoon(@Nonnull EntityLivingBase entity) {
+		Validate.notNull(entity);
 		return entity.getCapability(CAPABILITY_INFECT_ON_NEXT_MOON, null);
 	}
 
@@ -191,7 +190,7 @@ public class WerewolfHelper {
 				int percentage = TransformationHelper.getCap((EntityPlayer) entity).getLevelFloor() * 5;
 				return (percentage > 100) ? 100 : percentage;
 			} else {
-				return 15;
+				return 25;
 			}
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf",
@@ -204,9 +203,7 @@ public class WerewolfHelper {
 	 */
 	public static boolean hasMainlyControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getCap(player);
-		if (cap.getTransformation() != TransformationInit.WEREWOLF) {
-			throw new WrongTransformationException("The given player is not a werewolf", cap.getTransformation());
-		}
+		WrongTransformationException.ifNotTransformationThrow(player, TransformationInit.WEREWOLF);
 		return (cap.getLevelFloor() > 0);
 	}
 
@@ -215,8 +212,8 @@ public class WerewolfHelper {
 	 */
 	public static boolean isTransformedWerewolf(EntityLivingBase entity) {
 		ITransformation transformation = TransformationHelper.getITransformation(entity);
-		return (transformation != null) && (transformation.getTransformation() == TransformationInit.WEREWOLF)
-				&& isTransformed(entity);
+		return isTransformed(entity) && (transformation != null)
+				&& (transformation.getTransformation() == TransformationInit.WEREWOLF);
 	}
 
 	/**
@@ -228,11 +225,12 @@ public class WerewolfHelper {
 	@SuppressWarnings("deprecation")
 	public static boolean isTransformed(EntityLivingBase werewolf) {
 		return werewolf instanceof EntityPlayer ? getIWerewolf((EntityPlayer) werewolf).isTransformed()
-				: werewolf instanceof ITransformationEntityTransformed;
+				: werewolf instanceof ITransformedWerewolf;
 	}
 
 	/** Shortcut method for getting the IWerewolf capability */
-	public static IWerewolf getIWerewolf(EntityPlayer player) {
+	public static IWerewolf getIWerewolf(@Nonnull EntityPlayer player) {
+		Validate.notNull(player);
 		return player.getCapability(CAPABILITY_WEREWOLF, null);
 	}
 
@@ -274,26 +272,18 @@ public class WerewolfHelper {
 				if (canWerewolfTransform(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
-						if (transformation.getTransformation() == TransformationInit.WEREWOLF) {
-							EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
-									entity.getClass().getName(), TransformationHelper.postExtraDataEvent(entity, true));
-							return werewolf;
-						} else {
-							throw new WrongTransformationException("Entity is not a werewolf",
-									TransformationHelper.getTransformation(entity));
-						}
+						WrongTransformationException.ifNotTransformationThrow(entity, TransformationInit.WEREWOLF);
+						EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
+								entity.getClass().getName(), TransformationHelper.postExtraDataEvent(entity, true));
+						return werewolf;
 					} else {
 						ITransformationCreature tc = TransformationHelper.getITransformationCreature(entity);
 						if (tc != null) {
-							if (tc.getTransformation() == TransformationInit.WEREWOLF) {
-								EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
-										"$bycap" + entity.getClass().getName(),
-										TransformationHelper.postExtraDataEvent(entity, true));
-								return werewolf;
-							} else {
-								throw new WrongTransformationException("Entity is not a werewolf",
-										tc.getTransformation());
-							}
+							WrongTransformationException.ifNotTransformationThrow(entity, TransformationInit.WEREWOLF);
+							EntityWerewolf werewolf = new EntityWerewolf(world, tc.getTextureIndex(),
+									"$bycap" + entity.getClass().getName(),
+									TransformationHelper.postExtraDataEvent(entity, true));
+							return werewolf;
 						}
 						throw new IllegalArgumentException(
 								"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability");
@@ -339,5 +329,56 @@ public class WerewolfHelper {
 			}
 			sendTo.sendMessage(message);
 		}
+	}
+
+	/**
+	 * Called in
+	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
+	 */
+	public static void onWerewolfTick(EntityCreature werewolf) {
+		if (!isTransformed(werewolf)) {
+			transformWerewolfWhenPossible(werewolf, WerewolfTransformingReason.FULL_MOON);
+		}
+	}
+
+	public static void transformWerewolfWhenPossible(@Nonnull EntityCreature werewolf,
+			WerewolfTransformingReason reason) {
+		Validate.notNull(werewolf, "The argument werewolf is not allowed to be null");
+		WrongTransformationException.ifNotTransformationThrow(werewolf, TransformationInit.WEREWOLF);
+		if (isTransformed(werewolf)) {
+			throw new IllegalArgumentException(
+					"The given entity " + werewolf.toString() + " is not allowed to be transformed");
+		}
+		if (!MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(werewolf, false, reason))) {
+			EntityLivingBase returned = toWerewolfWhenNight(werewolf);
+			if (returned != null) {
+				World world = returned.world;
+				returned.setPosition(werewolf.posX, werewolf.posY, werewolf.posZ);
+				returned.setHealth(returned.getMaxHealth() / (werewolf.getMaxHealth() / werewolf.getHealth()));
+				world.removeEntity(werewolf);
+				world.spawnEntity(returned);
+				returned.setPositionAndUpdate(werewolf.posX, werewolf.posY, werewolf.posZ);
+			}
+		}
+	}
+
+	public static float getWerewolfHeight(Entity werewolf) {
+		return shouldUseSneakingModel(werewolf) ? 1.9F : 2.4F;
+	}
+
+	public static float getWerewolfEyeHeight(Entity werewolf) {
+		return shouldUseSneakingModel(werewolf) ? 1.7F : 2.2F;
+	}
+
+	public static boolean shouldUseSneakingModel(Entity werewolf) {
+		return werewolf.isSneaking();
+	}
+
+	/**
+	 * Implement this interface if you want
+	 * {@link WerewolfHelper#isTransformed(net.minecraft.entity.EntityLivingBase)}
+	 * to return true
+	 */
+	public static interface ITransformedWerewolf {
 	}
 }

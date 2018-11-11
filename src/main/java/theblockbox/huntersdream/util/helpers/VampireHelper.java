@@ -1,5 +1,9 @@
 package theblockbox.huntersdream.util.helpers;
 
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.Validate;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,7 +41,8 @@ public class VampireHelper {
 		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1F);
 	}
 
-	public static IVampire getIVampire(EntityPlayer player) {
+	public static IVampire getIVampire(@Nonnull EntityPlayer player) {
+		Validate.notNull(player);
 		return player.getCapability(CAPABILITY_VAMPIRE, null);
 	}
 
@@ -45,18 +50,18 @@ public class VampireHelper {
 		return TransformationHelper.getTransformation(entity) == TransformationInit.VAMPIRE;
 	}
 
-	public static float calculateProtection(EntityLivingBase vampire) {
+	public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {
 		checkIsVampire(vampire);
-		return 1F;
+		return initialDamage;
 	}
 
 	// TODO: Make better values
-	public static float calculateDamage(EntityLivingBase vampire) {
+	public static float calculateDamage(EntityLivingBase vampire, float initialDamage) {
 		checkIsVampire(vampire);
 		if (vampire.getHeldItemMainhand().isEmpty()) {
-			return 10F;
+			return 10F * initialDamage;
 		} else {
-			return 1F;
+			return initialDamage;
 		}
 	}
 

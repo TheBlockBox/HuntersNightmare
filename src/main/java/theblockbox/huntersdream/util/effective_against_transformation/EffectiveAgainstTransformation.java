@@ -1,11 +1,9 @@
 package theblockbox.huntersdream.util.effective_against_transformation;
 
-import java.util.BitSet;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.Validate;
-
+import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.client.resources.I18n;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
@@ -17,14 +15,22 @@ import theblockbox.huntersdream.util.helpers.TranslationHelper;
  * (currently only item and entity are supported)
  */
 public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAgainstTransformation<T> {
-	private final Predicate<T> isForObject;
-	private final boolean effectiveAgainstUndead;
+	/** A reserved value for the effectiveness that is not allowed to be used */
+	public static final float WILDCARD_EFFECTIVENESS = Float.MIN_VALUE;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 	public static final String TOOLTIP_KEY = Reference.MODID + ".effectiveAgainst.tooltip";
-	private final BitSet transformationsEffectiveAgainst = new BitSet(Transformation.getTransformationLength());
-	private final Transformation[] effectiveAgainst;
-	private final float[] effectiveness = new float[Transformation.getTransformationLength()];
 	private final Object[] tooltipFormatArgs;
+	private final Predicate<T> isForObject;
+	private final boolean effectiveAgainstUndead;
+
+	private final Transformation[] effectiveAgainst;
+	/**
+	 * An array containing the effectiveness values of the effective
+	 * transformations. The effectiveness for each transformation is at the index of
+	 * the transformation's temporary id ({@link Transformation#getTemporaryID()})
+	 * to hopefully make accessing the values faster
+	 */
+	private final float[] effectiveness;
 
 	/**
 	 * Creates a new EffectiveAgainstTransformation object from the given arguments
@@ -43,15 +49,20 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 	 *                               at the same index as the transformation in the
 	 *                               effectiveAgainst array will be used)
 	 */
-	protected EffectiveAgainstTransformation(Predicate<T> isForObject, boolean effectiveAgainstUndead, TEArray values) {
+	// TODO: Create own transformation map?
+	protected EffectiveAgainstTransformation(Predicate<T> isForObject, boolean effectiveAgainstUndead,
+			TObjectFloatHashMap<Transformation> values) {
 		this.isForObject = isForObject;
 		this.effectiveAgainstUndead = effectiveAgainstUndead;
-		this.effectiveAgainst = values.transformations.clone();
-		for (int i = 0; i < values.length; i++) {
-			final int index = this.effectiveAgainst[i].getTemporaryID();
-			this.transformationsEffectiveAgainst.set(index);
-			this.effectiveness[index] = values.effectiveness[i];
+		this.effectiveAgainst = values.keys(new Transformation[values.size()]);
+
+		this.effectiveness = new float[Transformation.getTransformationLength()];
+		for (int i = 0; i < this.effectiveAgainst.length; i++) {
+			Transformation transformation = Transformation.fromTemporaryID(i);
+			this.effectiveness[i] = values.containsKey(transformation) ? values.get(transformation)
+					: WILDCARD_EFFECTIVENESS;
 		}
+
 		this.tooltipFormatArgs = effectiveAgainstUndead
 				? Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead")).toArray()
 				: this.effectiveAgainst;
@@ -76,7 +87,7 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 
 	@Override
 	public boolean effectiveAgainst(Transformation transformation) {
-		return this.transformationsEffectiveAgainst.get(transformation.getTemporaryID());
+		return this.effectiveness[transformation.getTemporaryID()] != WILDCARD_EFFECTIVENESS;
 	}
 
 	@Override
@@ -87,48 +98,5 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 	@Override
 	public String getTooltip() {
 		return I18n.format(TOOLTIP_KEY, TranslationHelper.getAsTranslatedList(this.tooltipFormatArgs));
-	}
-
-	/**
-	 * Object storing a transformation and float array with the same length. Used
-	 * for creating new EffectiveAgainstTransformation instances (TE =
-	 * Transformation Effectiveness)
-	 */
-	public static class TEArray implements Cloneable {
-		private int currentIndex = 0;
-		public final Transformation[] transformations;
-		public final float[] effectiveness;
-		public final int length;
-
-		private TEArray(Transformation[] transformations, float[] effectiveness) {
-			this.length = transformations.length;
-			this.transformations = transformations;
-			this.effectiveness = effectiveness;
-		}
-
-		public static TEArray of(int length) {
-			return new TEArray(new Transformation[length], new float[length]);
-		}
-
-		public TEArray add(Transformation transformation, float e) {
-			Validate.notNull(transformation, "Transformation mustn't be null");
-			this.transformations[currentIndex] = transformation;
-			this.effectiveness[currentIndex] = e;
-			this.currentIndex++;
-			return this;
-		}
-
-		/**
-		 * Does the same as {@link #add(Transformation, float)}, but with the default
-		 * effectiveness as the effectiveness
-		 */
-		public TEArray add(Transformation transformation) {
-			return this.add(transformation, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
-		}
-
-		@Override
-		public TEArray clone() {
-			return new TEArray(transformations.clone(), effectiveness.clone());
-		}
 	}
 }

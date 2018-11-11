@@ -32,19 +32,19 @@ public class BlockOre extends Block {
 	}
 
 	public BlockOre(Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn) {
-		this(dimension.ID, minHeight, maxHeight, chance, spawnOn);
+		this(dimension.id, minHeight, maxHeight, chance, spawnOn);
 	}
 
 	public BlockOre(Dimensions dimension, int minHeight, int maxHeight, int chance) {
-		this(dimension, minHeight, maxHeight, chance, dimension.SPAWN_ON);
+		this(dimension, minHeight, maxHeight, chance, dimension.spawnOn);
 	}
 
 	public WorldGenMinable getWorldGenMinable() {
-		return worldGenMinable;
+		return this.worldGenMinable;
 	}
 
 	public void setWorldGenMinable(WorldGenMinable worldGenMinable) {
-		if (!modified) {
+		if (!this.modified) {
 			this.worldGenMinable = worldGenMinable;
 		} else {
 			this.modified = true;

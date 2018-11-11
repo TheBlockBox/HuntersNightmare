@@ -1,23 +1,19 @@
 {
     "type": "minecraft:crafting_shaped",
     
-    "pattern":
-    [
+    "pattern": [
         "S S",
         "S S"   
     ],
     
-    "key":
-    {
-        "S":
-        {
+    "key": {
+        "S": {
             "type": "forge:ore_dict",
             "ore": "ingotSilver"
         }
     },
     
-    "result":
-    {
+    "result": {
         "item": "huntersdream:boots_silver",
         "count": 1
     }

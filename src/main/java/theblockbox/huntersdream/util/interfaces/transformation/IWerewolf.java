@@ -50,7 +50,7 @@ public interface IWerewolf {
 
 		@Override
 		public boolean isTransformed() {
-			return transformed;
+			return this.transformed;
 		}
 
 		@Override

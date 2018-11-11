@@ -8,6 +8,8 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang3.Validate;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -64,6 +66,14 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		for (int i = 0; i < array.length; i++)
 			array[i] = stringToT.apply(readString(buf));
 		return array;
+	}
+
+	public static EntityPlayer getPlayerFromID(int id) {
+		return getEntityFromID(id);
+	}
+
+	public static <T extends Entity> T getEntityFromID(int id) {
+		return Main.proxy.getEntityFromID(id);
 	}
 
 	public static void addScheduledTask(MessageContext ctx, Runnable runnableToSchedule) {

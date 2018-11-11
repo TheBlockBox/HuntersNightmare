@@ -2,6 +2,7 @@ package theblockbox.huntersdream.proxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
@@ -43,5 +44,17 @@ public class ClientProxy implements IProxy {
 	@Override
 	public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
 		Minecraft.getMinecraft().displayGuiScreen(new GuiHuntersJournal(player, pages));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Entity> T getEntityFromID(int id) {
+		Minecraft mc = Minecraft.getMinecraft();
+		Entity entity = mc.world.getEntityByID(id);
+		if (entity == null) {
+			throw new IllegalArgumentException("No entity with the id " + id + " exists in the world "
+					+ mc.world.getProviderName() + " (Side: CLIENT)");
+		}
+		return (T) entity;
 	}
 }

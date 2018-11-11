@@ -142,7 +142,7 @@ public class ContainerSilverFurnace extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (IContainerListener listener : listeners) {
+		for (IContainerListener listener : this.listeners) {
 			int burn = this.tileEntity.getBurnTime();
 			if (this.burnTime != burn) {
 				this.burnTime = burn;

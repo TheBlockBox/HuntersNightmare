@@ -30,11 +30,11 @@ public class WerewolfTransformingEvent extends LivingEvent {
 	}
 
 	public WerewolfTransformingReason getTransformingEventReason() {
-		return reason;
+		return this.reason;
 	}
 
 	public boolean transformingBack() {
-		return transformingBack;
+		return this.transformingBack;
 	}
 
 	public static class WerewolfTransformingReason {
@@ -58,11 +58,11 @@ public class WerewolfTransformingEvent extends LivingEvent {
 		}
 
 		public WerewolfTransformingReason getTransformingEventReason() {
-			return transformationReason;
+			return this.transformationReason;
 		}
 
 		public boolean transformingBack() {
-			return isTransformingBack;
+			return this.isTransformingBack;
 		}
 	}
 }

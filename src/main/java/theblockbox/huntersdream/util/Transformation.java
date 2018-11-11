@@ -2,28 +2,20 @@ package theblockbox.huntersdream.util;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationRegistryEvent;
-import theblockbox.huntersdream.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.interfaces.functional.ToFloatFunction;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationEntityTransformed;
+import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFunction;
 
 /**
  * A class to represent transformations and their properties. To register new
@@ -184,12 +176,20 @@ public class Transformation {
 		return this.ENTRY.textures.clone();
 	}
 
-	public float getGeneralDamage(EntityLivingBase entity) {
-		return this.ENTRY.calculateDamage.applyAsFloat(entity);
+	/**
+	 * Used to get the dealt damage from an entity and the initial damage. Currently
+	 * only used for players.
+	 */
+	public float getDamage(EntityLivingBase entity, float initialDamage) {
+		return this.ENTRY.calculateDamage.applyAsFloat(entity, initialDamage);
 	}
 
-	public float getProtection(EntityLivingBase entity) {
-		return this.ENTRY.calculateProtection.applyAsFloat(entity);
+	/**
+	 * Used to get the damage an entity gets by passing the entity and the initial
+	 * damage
+	 */
+	public float getReducedDamage(EntityLivingBase entity, float initialDamage) {
+		return this.ENTRY.calculateReducedDamage.applyAsFloat(entity, initialDamage);
 	}
 
 	/**
@@ -206,31 +206,6 @@ public class Transformation {
 
 	public void onLevelUp(EntityPlayerMP player, double newLevel) {
 		this.ENTRY.onLevelUp.accept(player, newLevel);
-	}
-
-	// TODO: Move this somewhere else?
-	public void transformCreatureWhenPossible(@Nonnull EntityCreature creature) {
-		if (this.ENTRY.transformCreature != null) {
-			if (creature == null)
-				throw new NullPointerException("The given \"parameter\" creature is null");
-			else if (creature instanceof ITransformationEntityTransformed)
-				throw new IllegalArgumentException("The given entity " + creature.toString()
-						+ " is an instance of ITransformationEntityTransformed and can therefore not be transformed");
-			else {
-				if (!MinecraftForge.EVENT_BUS
-						.post(new WerewolfTransformingEvent(creature, false, WerewolfTransformingReason.FULL_MOON))) {
-					EntityLivingBase returned = this.ENTRY.transformCreature.apply(creature);
-					if (returned != null) {
-						World world = returned.world;
-						returned.setPosition(creature.posX, creature.posY, creature.posZ);
-						returned.setHealth(returned.getMaxHealth() / (creature.getMaxHealth() / creature.getHealth()));
-						world.removeEntity(creature);
-						world.spawnEntity(returned);
-						returned.setPositionAndUpdate(creature.posX, creature.posY, creature.posZ);
-					}
-				}
-			}
-		}
 	}
 
 	/**
@@ -255,13 +230,12 @@ public class Transformation {
 	public static class TransformationEntry {
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
-		private Function<EntityCreature, EntityLivingBase> transformCreature = null;
 		private Consumer<EntityLivingBase> infect = null;
 		/** A runnable that is executed when the player levels up */
 		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
 		};
-		private ToFloatFunction<EntityLivingBase> calculateDamage = e -> 1F;
-		private ToFloatFunction<EntityLivingBase> calculateProtection = e -> 1F;
+		private ToFloatObjFloatFunction<EntityLivingBase> calculateDamage = (e, f) -> f;
+		private ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage = (e, f) -> f;
 
 		private TransformationEntry() {
 		}
@@ -276,18 +250,14 @@ public class Transformation {
 			return this;
 		}
 
-		public TransformationEntry setTransformCreature(Function<EntityCreature, EntityLivingBase> transformCreature) {
-			this.transformCreature = transformCreature;
-			return this;
-		}
-
-		public TransformationEntry setCalculateDamage(ToFloatFunction<EntityLivingBase> calculateDamage) {
+		public TransformationEntry setCalculateDamage(ToFloatObjFloatFunction<EntityLivingBase> calculateDamage) {
 			this.calculateDamage = calculateDamage;
 			return this;
 		}
 
-		public TransformationEntry setCalculateProtection(ToFloatFunction<EntityLivingBase> calculateProtection) {
-			this.calculateProtection = calculateProtection;
+		public TransformationEntry setCalculateReducedDamage(
+				ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage) {
+			this.calculateReducedDamage = calculateReducedDamage;
 			return this;
 		}
 

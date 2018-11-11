@@ -29,7 +29,7 @@ public class SideItemHandler implements IItemHandler {
 
 	@Override
 	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-		if (shouldInsertIntoSlot.test(slot))
+		if (this.shouldInsertIntoSlot.test(slot))
 			return this.delegate.insertItem(slot, stack, simulate);
 		else
 			return stack;
@@ -37,7 +37,7 @@ public class SideItemHandler implements IItemHandler {
 
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (shouldExtractFromSlot.test(slot))
+		if (this.shouldExtractFromSlot.test(slot))
 			return this.delegate.extractItem(slot, amount, simulate);
 		else
 			return ItemStack.EMPTY;

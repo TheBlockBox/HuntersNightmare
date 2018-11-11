@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -28,8 +27,8 @@ public class BloodMessage extends MessageBase<BloodMessage> {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(player);
-		buf.writeDouble(blood);
+		buf.writeInt(this.player);
+		buf.writeDouble(this.blood);
 	}
 
 	@Override
@@ -50,8 +49,7 @@ public class BloodMessage extends MessageBase<BloodMessage> {
 		public IMessage onMessageReceived(BloodMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					EntityPlayer player = (EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player);
-					VampireHelper.getIVampire(player).setBlood(message.blood);
+					VampireHelper.getIVampire(getPlayerFromID(message.player)).setBlood(message.blood);
 				});
 			}
 			return null;

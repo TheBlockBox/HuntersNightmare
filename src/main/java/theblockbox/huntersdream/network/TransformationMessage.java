@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -44,11 +43,11 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		writeTransformation(buf, transformation);
-		buf.writeInt(player);
-		buf.writeInt(textureIndex);
-		writeArray(buf, rituals, Rituals::toString);
-		writeArray(buf, pages, HuntersJournalPage::toString);
+		writeTransformation(buf, this.transformation);
+		buf.writeInt(this.player);
+		buf.writeInt(this.textureIndex);
+		writeArray(buf, this.rituals, Rituals::toString);
+		writeArray(buf, this.pages, HuntersJournalPage::toString);
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		public IMessage onMessageReceived(final TransformationMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
-					EntityPlayer player = (EntityPlayer) Minecraft.getMinecraft().world.getEntityByID(message.player);
+					EntityPlayer player = getPlayerFromID(message.player);
 					ITransformationPlayer cap = TransformationHelper.getCap(player);
 					cap.setTransformation(message.transformation);
 					cap.setTextureIndex(message.textureIndex);

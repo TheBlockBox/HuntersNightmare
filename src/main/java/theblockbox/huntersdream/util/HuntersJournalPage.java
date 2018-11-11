@@ -40,19 +40,19 @@ public class HuntersJournalPage {
 	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
 	public ResourceLocation getImagePath() {
-		return imagePath;
+		return this.imagePath;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public boolean hasImage() {
-		return hasImage;
+		return this.hasImage;
 	}
 
 	@Override

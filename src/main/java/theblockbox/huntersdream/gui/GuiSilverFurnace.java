@@ -33,16 +33,16 @@ public class GuiSilverFurnace extends GuiContainer {
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(IMAGE);
-		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		this.mc.getTextureManager().bindTexture(IMAGE);
 		// draw fuel
-		int burnTime = container.getBurnTime();
+		int burnTime = this.container.getBurnTime();
 		if (burnTime > 0) {
-			int fullBurnTime = container.getFullBurnTime();
+			int fullBurnTime = this.container.getFullBurnTime();
 			int fuel = MathHelper.ceil(12 / (fullBurnTime / (double) (fullBurnTime - burnTime)));
 			this.drawTexturedModalRect(38, 36 + fuel, 176, fuel, 15, 14 - fuel);
 		}

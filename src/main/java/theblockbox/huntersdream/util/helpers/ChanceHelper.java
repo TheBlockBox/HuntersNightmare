@@ -33,6 +33,10 @@ public class ChanceHelper {
 		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10F)));
 	}
 
+	public static boolean randomBoolean() {
+		return RANDOM.nextBoolean();
+	}
+
 	public static boolean chanceOf(float percentage) {
 		return chanceOf(ChanceHelper.RANDOM, percentage);
 	}

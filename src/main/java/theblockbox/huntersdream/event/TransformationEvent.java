@@ -32,15 +32,15 @@ public class TransformationEvent extends LivingEvent {
 	}
 
 	public Transformation getTransformationBefore() {
-		return transformationBefore;
+		return this.transformationBefore;
 	}
 
 	public Transformation getTransformationAfter() {
-		return transformationAfter;
+		return this.transformationAfter;
 	}
 
 	public TransformationEventReason getTransformationEventReason() {
-		return reason;
+		return this.reason;
 	}
 
 	public enum TransformationEventReason {

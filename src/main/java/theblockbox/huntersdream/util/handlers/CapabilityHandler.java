@@ -24,8 +24,6 @@ import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
-import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class CapabilityHandler {
@@ -44,9 +42,9 @@ public class CapabilityHandler {
 		Entity entity = event.getObject();
 		if (entity instanceof EntityPlayer) {
 			event.addCapability(TRANSFORMATION_PLAYER_CAPABILITIY,
-					new CapabilityProvider<ITransformationPlayer>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
-			event.addCapability(WEREWOLF, new CapabilityProvider<IWerewolf>(CapabilitiesInit.CAPABILITY_WEREWOLF));
-			event.addCapability(VAMPIRE, new CapabilityProvider<IVampire>(CapabilitiesInit.CAPABILITY_VAMPIRE));
+					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
+			event.addCapability(WEREWOLF, new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_WEREWOLF));
+			event.addCapability(VAMPIRE, new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_VAMPIRE));
 		} else if (entity instanceof EntityVillager) {
 			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY,
 					new TransformationCreatureProvider(TransformationInit.WEREWOLF, TransformationInit.VAMPIRE));
@@ -55,9 +53,9 @@ public class CapabilityHandler {
 		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD || entity instanceof EntityPlayer
 				|| entity instanceof ITransformationCreature) {
 			event.addCapability(INFECT_IN_TICKS_CAPABILITY,
-					new CapabilityProvider<IInfectInTicks>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
+					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
 			event.addCapability(INFECT_ON_NEXT_MOON,
-					new CapabilityProvider<IInfectOnNextMoon>(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON));
+					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON));
 		}
 	}
 
@@ -88,14 +86,16 @@ public class CapabilityHandler {
 
 			WerewolfHelper.getIWerewolf(player).setTransformed(false);
 
-			VampireEventHandler.onVampireRespawn(player);
+			if (transformationPlayer.getTransformation() == TransformationInit.VAMPIRE) {
+				VampireEventHandler.onVampireRespawn(player);
+			}
 
 			final MinecraftServer server = player.getServer();
 
 			sendPackets(server, player);
 			GeneralHelper.executeOnMainThreadIn(() -> {
 				sendPackets(server, player);
-			}, 1, server, "SyncCapAfterPlayerDeath1");
+			}, 100, server, "SyncCapAfterPlayerDeath1");
 			GeneralHelper.executeOnMainThreadIn(() -> {
 				sendPackets(server, player);
 			}, 40000, server, "SyncCapAfterPlayerDeath2");

@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.handlers;
 import java.io.File;
 import java.util.stream.Stream;
 
+import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -47,7 +48,7 @@ import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation.TTPArray;
-import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation.TEArray;
+import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -135,9 +136,11 @@ public class RegistryHandler {
 				TTPArray.of(1).add(TransformationInit.WEREWOLF, 0.023F, 0.325F),
 				TTPArray.of(1).add(TransformationInit.WEREWOLF, 0.018F, 0.55F));
 
-		ItemEffectiveAgainstTransformation.of(
-				GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true,
-				TEArray.of(2).add(TransformationInit.WEREWOLF).add(TransformationInit.VAMPIRE));
+		TObjectFloatHashMap<Transformation> mapSilver = new TObjectFloatHashMap<>();
+		mapSilver.put(TransformationInit.WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
+		mapSilver.put(TransformationInit.VAMPIRE, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
+		ItemEffectiveAgainstTransformation
+				.of(GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true, mapSilver);
 
 		EntityEffectiveAgainstTransformation.of(entity -> {
 			if (entity instanceof EntityTippedArrow) {
@@ -148,11 +151,11 @@ public class RegistryHandler {
 						.anyMatch(potion -> (potion == MobEffects.POISON) || (potion == PotionInit.POTION_WOLFSBANE));
 			}
 			return false;
-		}, false, TEArray.of(1).add(TransformationInit.WEREWOLF, 1.0F));
+		}, false, GeneralHelper.newTFMapWith(TransformationInit.WEREWOLF, 1.0F));
 		EntityEffectiveAgainstTransformation.of(entity -> {
 			return (entity instanceof EntityLivingBase)
 					&& WerewolfHelper.isTransformedWerewolf((EntityLivingBase) entity);
-		}, false, TEArray.of(1).add(TransformationInit.VAMPIRE, 2.5F));
+		}, false, GeneralHelper.newTFMapWith(TransformationInit.VAMPIRE, 2.5F));
 	}
 
 	// Client

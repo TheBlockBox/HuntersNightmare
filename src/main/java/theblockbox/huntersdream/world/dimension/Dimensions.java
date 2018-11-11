@@ -8,34 +8,34 @@ import net.minecraft.init.Blocks;
  */
 public enum Dimensions {
 	NETHER(Blocks.NETHERRACK, 1), OVERWORLD(Blocks.STONE, 0), END(Blocks.END_STONE, -1);
-	public final int ID;
-	public final String NAME;
+	public final int id;
+	public final String name;
 	/**
 	 * The block on which ores should spawn in this dimension (if not set)
 	 */
-	public final Block SPAWN_ON;
+	public final Block spawnOn;
 
 	private Dimensions(Block spawnOn, int id) {
-		this.NAME = this.toString();
-		this.ID = id;
-		this.SPAWN_ON = spawnOn;
+		this.name = this.toString();
+		this.id = id;
+		this.spawnOn = spawnOn;
 	}
 
 	public static Dimensions getDimensionFromID(int id) {
 		Dimensions dimension = null;
 		for (Dimensions d : values()) {
-			if (d.ID == id)
+			if (d.id == id)
 				dimension = d;
 		}
 		return dimension;
 	}
 
 	public static int getIDFromDimension(Dimensions dimension) {
-		return dimension.ID;
+		return dimension.id;
 	}
 
 	/**
-	 * Same as {@link Dimension#NAME}
+	 * Same as {@link Dimension#name}
 	 * 
 	 * @return Returns the dimension name
 	 */

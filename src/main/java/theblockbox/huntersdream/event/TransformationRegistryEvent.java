@@ -39,12 +39,12 @@ public class TransformationRegistryEvent extends Event {
 	 */
 	public boolean registerTransformation(Transformation transformation) {
 		Validate.notNull(transformation);
-		transformationSet.stream().map(Transformation::getRegistryName).forEach(name -> {
+		this.transformationSet.stream().map(Transformation::getRegistryName).forEach(name -> {
 			if (transformation.getRegistryName().equals(name))
 				throw new IllegalArgumentException(
 						"Found duplicate registry name \"" + name + "\" while registering transformations");
 		});
-		return transformationSet.add(transformation);
+		return this.transformationSet.add(transformation);
 	}
 
 	/**
@@ -64,6 +64,6 @@ public class TransformationRegistryEvent extends Event {
 
 	/** Returns all transformations that have been registered yet */
 	public Transformation[] getTransformations() {
-		return transformationSet.toArray(new Transformation[0]);
+		return this.transformationSet.toArray(new Transformation[0]);
 	}
 }

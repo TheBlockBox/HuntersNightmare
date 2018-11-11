@@ -7,18 +7,20 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.entity.Entity;
+import theblockbox.huntersdream.util.Transformation;
 
 public class EntityEffectiveAgainstTransformation extends EffectiveAgainstTransformation<Entity> {
 	private static final Set<EntityEffectiveAgainstTransformation> OBJECTS = new HashSet<>();
 
 	private EntityEffectiveAgainstTransformation(Predicate<Entity> isForObject, boolean effectiveAgainstUndead,
-			TEArray values) {
+			TObjectFloatHashMap<Transformation> values) {
 		super(isForObject, effectiveAgainstUndead, values);
 	}
 
 	public static EntityEffectiveAgainstTransformation of(Predicate<Entity> isForObject, boolean effectiveAgainstUndead,
-			TEArray values) {
+			TObjectFloatHashMap<Transformation> values) {
 		EntityEffectiveAgainstTransformation eeat = new EntityEffectiveAgainstTransformation(isForObject,
 				effectiveAgainstUndead, values);
 		OBJECTS.add(eeat);

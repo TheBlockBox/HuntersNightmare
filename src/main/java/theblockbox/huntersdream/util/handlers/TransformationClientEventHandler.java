@@ -42,9 +42,9 @@ public class TransformationClientEventHandler {
 	private static RenderLycantrophePlayer renderLycantrophePlayer = null;
 	private static RenderPlayer renderPlayerHand = null;
 	public static final ResourceLocation BLOOD_BAR = GeneralHelper.newResLoc("textures/gui/blood_bar.png");
-	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("black", false),
-			getHandTexture("brown", false), getHandTexture("white", false), getHandTexture("black", true),
-			getHandTexture("brown", true), getHandTexture("white", true) };
+	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("brown", false),
+			getHandTexture("black", false), getHandTexture("white", false), getHandTexture("brown", true),
+			getHandTexture("black", true), getHandTexture("white", true) };
 
 	private static ResourceLocation getHandTexture(String variant, boolean slim) {
 		return GeneralHelper.newResLoc(

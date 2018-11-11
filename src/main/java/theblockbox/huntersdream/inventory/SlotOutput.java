@@ -19,7 +19,7 @@ public class SlotOutput extends SlotItemHandler {
 	@Override
 	public ItemStack onTake(EntityPlayer player, ItemStack stack) {
 		if (player != null) {
-			GeneralHelper.spawnXP(te.getWorld(), te.getPos(), stack.getCount(),
+			GeneralHelper.spawnXP(this.te.getWorld(), this.te.getPos(), stack.getCount(),
 					FurnaceRecipes.instance().getSmeltingExperience(stack));
 		}
 		return super.onTake(player, stack);

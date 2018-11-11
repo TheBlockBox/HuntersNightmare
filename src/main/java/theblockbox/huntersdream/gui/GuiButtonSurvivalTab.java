@@ -25,7 +25,7 @@ public class GuiButtonSurvivalTab extends GuiButton {
 				this.hasMouseBeenPressed = false;
 			}
 			// TODO: Make special texture render
-			mc.getRenderItem().renderItemIntoGUI(ICON, x + 1, y + 1);
+			mc.getRenderItem().renderItemIntoGUI(ICON, this.x + 1, this.y + 1);
 		}
 	}
 

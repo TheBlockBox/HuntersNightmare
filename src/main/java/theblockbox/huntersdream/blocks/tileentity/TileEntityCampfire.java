@@ -210,7 +210,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
 		@Override
 		protected void onContentsChanged(int slot) {
-			if (world != null && !world.isRemote) {
+			if (TileEntityCampfire.this.world != null && !TileEntityCampfire.this.world.isRemote) {
 				// checks if recipe has changed
 				checkForRecipe();
 				markDirty();

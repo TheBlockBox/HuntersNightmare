@@ -17,11 +17,10 @@ public class TransformationInit {
 	public static final Transformation HUMAN = newEntry().setSupernatural(false).create("human");
 
 	public static final Transformation WEREWOLF = newEntry().setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
-			.setCalculateProtection(WerewolfHelper::calculateProtection)
-			.setTransformCreature(WerewolfHelper::toWerewolfWhenNight)
-			.setTexturesHD("werewolf_beta_black", "werewolf_beta_brown", "werewolf_beta_white").create("werewolf");
+			.setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage).setTexturesHD("lycantrophe")
+			.create("werewolf");
 	public static final Transformation VAMPIRE = newEntry().setCalculateDamage(VampireHelper::calculateDamage)
-			.setCalculateProtection(VampireHelper::calculateProtection).create("vampire");
+			.setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create("vampire");
 	public static final Transformation WITCH = newEntry().create("witch");
 	public static final Transformation CLOCKWORKANDROID = newEntry().create("clockworkandroid");
 	public static final Transformation HYBRID = newEntry().create("hybrid");

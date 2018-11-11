@@ -59,7 +59,7 @@ public interface IInfectInTicks {
 
 		@Override
 		public Transformation getInfectionTransformation() {
-			return infectionTransformation;
+			return this.infectionTransformation;
 		}
 
 		@Override
