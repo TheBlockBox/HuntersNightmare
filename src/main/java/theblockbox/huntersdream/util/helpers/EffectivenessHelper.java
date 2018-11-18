@@ -23,7 +23,7 @@ public class EffectivenessHelper {
 	@SuppressWarnings("unchecked")
 	public static <T> EffectiveAgainstTransformation<T> getEAT(@Nonnull T t) {
 		if (t instanceof ItemStack) {
-			return (EffectiveAgainstTransformation<T>) ItemEffectiveAgainstTransformation.getFromItem((ItemStack) t);
+			return (EffectiveAgainstTransformation<T>) ItemEffectiveAgainstTransformation.getFromItemStack((ItemStack) t);
 		} else if (t instanceof Entity) {
 			return (EffectiveAgainstTransformation<T>) EntityEffectiveAgainstTransformation.getFromEntity((Entity) t);
 		} else {

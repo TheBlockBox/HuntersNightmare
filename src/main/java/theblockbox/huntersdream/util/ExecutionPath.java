@@ -9,50 +9,56 @@ import theblockbox.huntersdream.util.handlers.ConfigHandler;
 public class ExecutionPath extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public ExecutionPath() {
+	private ExecutionPath() {
 	}
 
-	public String get(int index) {
-		return ConfigHandler.common.showFullStackTrace ? getAll() : getFromIndex(index);
+	public static String get(int index) {
+		return ConfigHandler.common.showFullStackTrace ? getAll() : (new ExecutionPath()).getFromIndex(index);
 	}
 
 	/**
 	 * @param beginIndex inclusive
 	 * @param endIndex   exclusive
 	 */
-	public String get(int beginIndex, int endIndex) {
+	public static String get(int beginIndex, int endIndex) {
 		if (ConfigHandler.common.showFullStackTrace) {
 			return getAll();
 		} else {
-			String toReturn = "";
+			ExecutionPath path = new ExecutionPath();
+			StringBuilder toReturn = new StringBuilder();
 			for (int i = beginIndex; i < endIndex; i++) {
-				toReturn += "\n" + "	at " + get(i);
+				try {
+					toReturn.append("\n\tat " + path.getFromIndex(i));
+				} catch (ArrayIndexOutOfBoundsException e) {
+					break;
+				}
 			}
-			return toReturn;
+			return toReturn.toString();
 		}
 	}
 
-	public String getAll() {
-		String toReturn = "";
+	public static String getAll() {
+		ExecutionPath path = new ExecutionPath();
+		StringBuilder toReturn = new StringBuilder();
 		String last = "";
 		int repetitions = 0;
-		for (int i = 0; i < getStackTrace().length; i++) {
-			String str = "\n" + "	at " + getFromIndex(i);
+		for (int i = 0; i < path.getStackTrace().length; i++) {
+			String str = "\n\tat " + path.getFromIndex(i);
 			if (!str.equals(last)) {
 				if (repetitions > 0) {
-					toReturn += "\n" + "	(times " + repetitions + ")";
+					toReturn.append("\n\t(times ").append(repetitions).append(")");
 					repetitions = 0;
 				}
-				toReturn += str;
+				toReturn.append(str);
 			} else {
 				repetitions++;
 			}
 			last = str;
 		}
 		if (repetitions > 0) {
-			toReturn += "\n" + "	(times " + repetitions + ")";
+			toReturn.append("\n\t(times ").append(repetitions).append(")");
 		}
-		return toReturn;
+		return toReturn.toString();
 	}
 
 	private String getFromIndex(int index) {

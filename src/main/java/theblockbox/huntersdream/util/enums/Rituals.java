@@ -4,16 +4,15 @@ import java.util.ArrayList;
 
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public enum Rituals {
-	LUPUS_ADVOCABIT("lupus_advocabit", TransformationInit.WEREWOLF),
-	WEREWOLF_SECOND_RITE("werewolf_second_rite", TransformationInit.WEREWOLF),
-	VAMPIRE_FIRST_RITUAL("vampire_first_ritual", TransformationInit.VAMPIRE),
-	VAMPIRE_SECOND_RITUAL("vampire_second_ritual", TransformationInit.VAMPIRE);
+	LUPUS_ADVOCABIT("lupus_advocabit", Transformation.WEREWOLF),
+	WEREWOLF_SECOND_RITE("werewolf_second_rite", Transformation.WEREWOLF),
+	VAMPIRE_FIRST_RITUAL("vampire_first_ritual", Transformation.VAMPIRE),
+	VAMPIRE_SECOND_RITUAL("vampire_second_ritual", Transformation.VAMPIRE);
 
 	private ResourceLocation resourceLocation;
 	private Transformation[] forTransformations;
@@ -50,7 +49,7 @@ public enum Rituals {
 				return ritual;
 		Main.getLogger().error("The given string \"" + name
 				+ "\" does not have a corresponding ritual. Please report this, NullPointerExceptions may occure\nStacktrace: "
-				+ (new ExecutionPath()).getAll());
+				+ ExecutionPath.getAll());
 		return null;
 	}
 

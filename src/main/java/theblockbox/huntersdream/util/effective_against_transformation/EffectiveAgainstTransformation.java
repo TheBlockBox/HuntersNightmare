@@ -3,10 +3,10 @@ package theblockbox.huntersdream.util.effective_against_transformation;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.client.resources.I18n;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.util.collection.TransformationToFloatMap;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
 
 /**
@@ -15,62 +15,43 @@ import theblockbox.huntersdream.util.helpers.TranslationHelper;
  * (currently only item and entity are supported)
  */
 public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAgainstTransformation<T> {
-	/** A reserved value for the effectiveness that is not allowed to be used */
-	public static final float WILDCARD_EFFECTIVENESS = Float.MIN_VALUE;
 	public static final float DEFAULT_EFFECTIVENESS = 1.5F;
 	public static final String TOOLTIP_KEY = Reference.MODID + ".effectiveAgainst.tooltip";
 	private final Object[] tooltipFormatArgs;
 	private final Predicate<T> isForObject;
 	private final boolean effectiveAgainstUndead;
-
-	private final Transformation[] effectiveAgainst;
-	/**
-	 * An array containing the effectiveness values of the effective
-	 * transformations. The effectiveness for each transformation is at the index of
-	 * the transformation's temporary id ({@link Transformation#getTemporaryID()})
-	 * to hopefully make accessing the values faster
-	 */
-	private final float[] effectiveness;
+	private final TransformationToFloatMap effectivenessMap;
 
 	/**
 	 * Creates a new EffectiveAgainstTransformation object from the given arguments
+	 * (Caution! You have to call {@link #register()} to register it, otherwise it
+	 * won't work!)
 	 * 
-	 * @param isForObject            A predicate that is used to determine if an
-	 *                               object should have this object's properties
-	 *                               (like extra damage against werewolves)
-	 * @param effectiveAgainstUndead If this should be effective against undead
-	 *                               (does as much damage as Smite I)
-	 * @param effectiveAgainst       An array of transformations against which this
-	 *                               is effective
-	 * @param effectiveness          An array of floats with the effectiveness
-	 *                               values (has to have the same length as the
-	 *                               effectiveAgainst array. When the effectiveness
-	 *                               against a transformation is searched, the one
-	 *                               at the same index as the transformation in the
-	 *                               effectiveAgainst array will be used)
+	 * @param isForObject            A Predicate that returns true if this
+	 *                               EffectiveAgainstTransformation object should be
+	 *                               used to get the effectiveness values for the
+	 *                               passed object of type T
+	 * @param effectiveAgainstUndead If the objects that match this
+	 *                               EffectiveAgainstTransformation object should
+	 *                               deal as much damage as Smite I against undead.
+	 * @param effectivenessMap       A TransformationToFloatMap that is used to get
+	 *                               the effectiveness values against specific
+	 *                               transformations.
 	 */
-	// TODO: Create own transformation map?
 	protected EffectiveAgainstTransformation(Predicate<T> isForObject, boolean effectiveAgainstUndead,
-			TObjectFloatHashMap<Transformation> values) {
+			TransformationToFloatMap effectivenessMap) {
 		this.isForObject = isForObject;
 		this.effectiveAgainstUndead = effectiveAgainstUndead;
-		this.effectiveAgainst = values.keys(new Transformation[values.size()]);
-
-		this.effectiveness = new float[Transformation.getTransformationLength()];
-		for (int i = 0; i < this.effectiveAgainst.length; i++) {
-			Transformation transformation = Transformation.fromTemporaryID(i);
-			this.effectiveness[i] = values.containsKey(transformation) ? values.get(transformation)
-					: WILDCARD_EFFECTIVENESS;
-		}
-
+		this.effectivenessMap = effectivenessMap.clone();
 		this.tooltipFormatArgs = effectiveAgainstUndead
-				? Stream.concat(Stream.of(this.effectiveAgainst), Stream.of(Reference.MODID + ".undead")).toArray()
-				: this.effectiveAgainst;
+				? Stream.concat(this.effectivenessMap.transformationStream(), Stream.of(Reference.MODID + ".undead"))
+						.toArray()
+				: this.transformations();
 	}
 
 	/** The damage multiplier when used against the specified creature */
 	public float getEffectivenessAgainstTransformation(Transformation transformation) {
-		return this.effectiveness[transformation.getTemporaryID()];
+		return this.effectivenessMap.get(transformation);
 	}
 
 	@Override
@@ -87,12 +68,12 @@ public abstract class EffectiveAgainstTransformation<T> implements IEffectiveAga
 
 	@Override
 	public boolean effectiveAgainst(Transformation transformation) {
-		return this.effectiveness[transformation.getTemporaryID()] != WILDCARD_EFFECTIVENESS;
+		return this.effectivenessMap.hasKey(transformation);
 	}
 
 	@Override
 	public Transformation[] transformations() {
-		return this.effectiveAgainst.clone();
+		return this.effectivenessMap.toArray();
 	}
 
 	@Override

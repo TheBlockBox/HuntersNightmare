@@ -1,7 +1,7 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
 import net.minecraft.entity.EntityLivingBase;
-import theblockbox.huntersdream.init.TransformationInit;
+import net.minecraft.nbt.NBTTagCompound;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
@@ -32,6 +32,22 @@ public interface ITransformation {
 	}
 
 	/**
+	 * Returns an NBTTagCompound of bytes with transformation specific data (made so
+	 * that there doesn't have to be a new capability for each transformation). When
+	 * the entity changes the transformation the NBTTagCompound always has the key
+	 * "transformation" with the value of the string returned by
+	 * {@link Transformation#toString()} where the transformation is the entity's
+	 * new transformation. After changing the NBTTagCompound set it again with
+	 * {@link #setTransformationData(NBTTagCompound)} so that entities depending on
+	 * EntityDataManager to handle the server client communication won't have any
+	 * problems
+	 */
+	public NBTTagCompound getTransformationData();
+
+	/** Sets the transformation data to the given NBTTagCompound */
+	public void setTransformationData(NBTTagCompound transformationData);
+
+	/**
 	 * If the entity can change transformation. It's recommended to prefer
 	 * {@link TransformationHelper#canChangeTransformation(EntityLivingBase)} or
 	 * {@link TransformationHelper#canChangeTransformationOnInfection(EntityLivingBase)}
@@ -42,7 +58,7 @@ public interface ITransformation {
 	 *         for infection
 	 */
 	default public boolean isTransformationChangeable() {
-		return this.getTransformation() != null && (this.getTransformation() == TransformationInit.HUMAN
-				|| this.getTransformation() == TransformationInit.WEREWOLF);
+		return this.getTransformation().isTransformation() && (this.getTransformation() == Transformation.HUMAN
+				|| this.getTransformation() == Transformation.WEREWOLF);
 	}
 }

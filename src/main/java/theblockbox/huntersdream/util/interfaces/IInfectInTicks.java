@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
@@ -33,7 +32,7 @@ public interface IInfectInTicks {
 	public static class InfectInTicks implements IInfectInTicks {
 		private int time = -1;
 		private int timeUntilInfection = -1;
-		private Transformation infectionTransformation = TransformationInit.HUMAN;
+		private Transformation infectionTransformation = Transformation.HUMAN;
 		private boolean currentlyInfected = false;
 
 		@Override

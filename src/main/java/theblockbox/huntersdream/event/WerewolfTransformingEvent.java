@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 /**
  * Called when an entity transforms (back). If the event is canceled, the entity
  * won't transform back. The entity's transformation is always
- * {@link theblockbox.huntersdream.init.TransformationInit#WEREWOLF} Posted on
+ * {@link theblockbox.huntersdream.util.Transformation#WEREWOLF} Posted on
  * {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable

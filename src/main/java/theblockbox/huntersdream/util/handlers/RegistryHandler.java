@@ -1,9 +1,11 @@
 package theblockbox.huntersdream.util.handlers;
 
+import static theblockbox.huntersdream.util.Transformation.VAMPIRE;
+import static theblockbox.huntersdream.util.Transformation.WEREWOLF;
+
 import java.io.File;
 import java.util.stream.Stream;
 
-import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -41,13 +43,13 @@ import theblockbox.huntersdream.init.LootTableInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.init.StructureInit;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.SilverFurnaceRecipe;
 import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.util.collection.TransformationToFloatFloatMap;
+import theblockbox.huntersdream.util.collection.TransformationToFloatMap;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation.TTPArray;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
@@ -126,23 +128,23 @@ public class RegistryHandler {
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
+		// TODO: Make better values
 		// register objects that are effective against a specific transformation
 
 		// first index is armor part, second is values for transformations, first value
 		// is thorns and second is protection
 		ArmorEffectiveAgainstTransformation.registerArmorSet("Silver",
-				TTPArray.of(1).add(TransformationInit.WEREWOLF, 0.019F, 0.3F),
-				TTPArray.of(1).add(TransformationInit.WEREWOLF, 0.026F, 0.4F),
-				TTPArray.of(1).add(TransformationInit.WEREWOLF, 0.023F, 0.325F),
-				TTPArray.of(1).add(TransformationInit.WEREWOLF, 0.018F, 0.55F));
+				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.019F, 0.3F),
+				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.026F, 0.4F),
+				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.023F, 0.325F),
+				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.018F, 0.55F));
 
-		TObjectFloatHashMap<Transformation> mapSilver = new TObjectFloatHashMap<>();
-		mapSilver.put(TransformationInit.WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
-		mapSilver.put(TransformationInit.VAMPIRE, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS);
-		ItemEffectiveAgainstTransformation
-				.of(GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true, mapSilver);
+		new ItemEffectiveAgainstTransformation(
+				GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true,
+				new TransformationToFloatMap().put(WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS)
+						.put(VAMPIRE, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS)).register();
 
-		EntityEffectiveAgainstTransformation.of(entity -> {
+		new EntityEffectiveAgainstTransformation(entity -> {
 			if (entity instanceof EntityTippedArrow) {
 				EntityTippedArrow arrow = (EntityTippedArrow) entity;
 				// using AT to access fields
@@ -151,11 +153,12 @@ public class RegistryHandler {
 						.anyMatch(potion -> (potion == MobEffects.POISON) || (potion == PotionInit.POTION_WOLFSBANE));
 			}
 			return false;
-		}, false, GeneralHelper.newTFMapWith(TransformationInit.WEREWOLF, 1.0F));
-		EntityEffectiveAgainstTransformation.of(entity -> {
+		}, false, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
+
+		new EntityEffectiveAgainstTransformation(entity -> {
 			return (entity instanceof EntityLivingBase)
-					&& WerewolfHelper.isTransformedWerewolf((EntityLivingBase) entity);
-		}, false, GeneralHelper.newTFMapWith(TransformationInit.VAMPIRE, 2.5F));
+					&& WerewolfHelper.isTransformed((EntityLivingBase) entity);
+		}, false, new TransformationToFloatMap().put(VAMPIRE, 2.5F)).register();
 	}
 
 	// Client

@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import net.minecraft.entity.Entity;
@@ -26,7 +27,6 @@ import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
@@ -37,7 +37,6 @@ import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.IWerewolf;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class TransformationEventHandler {
@@ -46,9 +45,9 @@ public class TransformationEventHandler {
 	public static void onPlayerTick(PlayerTickEvent event) {
 		if (event.phase == Phase.END) {
 			EntityPlayer player = event.player;
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
+			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 
-			if (WerewolfHelper.isTransformedWerewolf(player)) {
+			if (WerewolfHelper.isTransformed(player)) {
 				if (!player.isCreative() && !player.isSpectator()) {
 					if (!player.inventory.isEmpty()) {
 						player.inventory.dropAllItems();
@@ -73,19 +72,18 @@ public class TransformationEventHandler {
 						EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
 						// call methods in WerewolfEventHandler
-						if (cap.getTransformation() == TransformationInit.WEREWOLF) {
-							IWerewolf werewolf = WerewolfHelper.getIWerewolf(player);
+						if (cap.getTransformation() == Transformation.WEREWOLF) {
 							if (WerewolfHelper.isWerewolfTime(player.world)) {
 								if (WerewolfHelper.isTransformed(player)) {
-									WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap, werewolf);
+									WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap);
 								} else {
-									WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap, werewolf);
+									WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
 								}
 							} else {
 								if (WerewolfHelper.isTransformed(player)) {
-									WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap, werewolf);
+									WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap);
 								} else {
-									WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap, werewolf);
+									WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap);
 								}
 							}
 						}
@@ -95,7 +93,7 @@ public class TransformationEventHandler {
 						// (though it is recommended)
 						if (player.ticksExisted % 7200 == 0) {
 							PacketHandler.sendTransformationMessage(playerMP);
-							PacketHandler.sendWerewolfTransformedMessage(playerMP);
+							PacketHandler.sendTransformationMessage(playerMP);
 						}
 					}
 				}
@@ -193,7 +191,7 @@ public class TransformationEventHandler {
 	public static void onEntityJoin(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof EntityCreature) {
 			EntityCreature creature = (EntityCreature) event.getEntity();
-			ITransformationCreature tc = TransformationHelper.getITransformationCreature(creature);
+			Optional<ITransformationCreature> tc = TransformationHelper.getITransformationCreature(creature);
 
 			if (!creature.world.isRemote) {
 
@@ -202,30 +200,28 @@ public class TransformationEventHandler {
 					entity.targetTasks.addTask(2,
 							new EntityAINearestAttackableTarget<>(entity, EntityWerewolf.class, true));
 					entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(entity, EntityPlayer.class, 10,
-							true, false, WerewolfHelper::isTransformedWerewolf));
+							true, false, WerewolfHelper::isTransformed));
 				} else if (creature instanceof EntityGoblinTD) {
-					if (ChanceHelper.chanceOf(1.5F) && (tc.getTransformation() == TransformationInit.HUMAN)) {
-						TransformationHelper.changeTransformationWhenPossible(creature, TransformationInit.WEREWOLF,
+					if (ChanceHelper.chanceOf(1.5F) && (tc.get().getTransformation() == Transformation.HUMAN)) {
+						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
 				} else if (creature instanceof EntityVillager) {
-					if (ChanceHelper.chanceOf(5) && (tc.getTransformation() == TransformationInit.HUMAN)) {
-						TransformationHelper.changeTransformationWhenPossible(creature, TransformationInit.WEREWOLF,
+					if (ChanceHelper.chanceOf(5) && (tc.get().getTransformation() == Transformation.HUMAN)) {
+						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
 				}
 
-				if (tc != null) {
-					// set texture index when it's not in bounds
-					if (tc.getTransformation().getTextures().length > 0) {
-						tc.setTextureIndexWhenNeeded();
-					}
-				}
+				tc.ifPresent(t -> {
+					if (t.getTransformation().getTextures().length > 0)
+						t.setTextureIndexWhenNeeded();
+				});
 			}
 
 			if (creature instanceof EntityAgeable) {
 				((EntityAgeable) creature).tasks.addTask(2, new EntityAIAvoidEntity<>(creature, EntityLivingBase.class,
-						WerewolfHelper::isTransformedWerewolf, 8.0F, 0.8F, 1.1F));
+						WerewolfHelper::isTransformed, 8.0F, 0.8F, 1.1F));
 			}
 		}
 	}
@@ -239,16 +235,16 @@ public class TransformationEventHandler {
 				if (entity instanceof EntityCreature) {
 					EntityCreature creature = (EntityCreature) entity;
 					Transformation transformation = TransformationHelper.getTransformation(creature);
-					if (transformation == TransformationInit.WEREWOLF) {
+					if (transformation == Transformation.WEREWOLF) {
 						WerewolfHelper.onWerewolfTick(creature);
 					}
 				}
-				if (TransformationHelper.getTransformation(entity) == TransformationInit.VAMPIRE) {
+				if (TransformationHelper.getTransformation(entity) == Transformation.VAMPIRE) {
 					VampireEventHandler.onVampireTick(entity);
 				}
 
 				if (entity.hasCapability(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS, null)) {
-					IInfectInTicks iit = TransformationHelper.getIInfectInTicks(entity);
+					IInfectInTicks iit = TransformationHelper.getIInfectInTicks(entity).get();
 					if (iit.getTime() > -1) {
 						if (iit.currentlyInfected()) {
 							if (iit.getTimeUntilInfection() > 0) {

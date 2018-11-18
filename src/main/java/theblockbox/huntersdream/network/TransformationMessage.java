@@ -2,10 +2,10 @@ package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.VampireFoodStats;
@@ -19,17 +19,19 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private int player;
 	private Rituals[] rituals;
 	private HuntersJournalPage[] pages;
+	private NBTTagCompound transformationData;
 
 	public TransformationMessage() {
 	}
 
 	public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex,
-			Rituals[] rituals, HuntersJournalPage[] pages) {
+			Rituals[] rituals, HuntersJournalPage[] pages, NBTTagCompound transformationData) {
 		this.transformation = transformation;
 		this.textureIndex = textureIndex;
 		this.player = player.getEntityId();
 		this.rituals = rituals;
 		this.pages = pages;
+		this.transformationData = transformationData;
 	}
 
 	@Override
@@ -39,6 +41,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.textureIndex = buf.readInt();
 		this.rituals = readArray(buf, Rituals::fromName, Rituals[]::new);
 		this.pages = readArray(buf, HuntersJournalPage::fromName, HuntersJournalPage[]::new);
+		this.transformationData = readTag(buf);
 	}
 
 	@Override
@@ -48,6 +51,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		buf.writeInt(this.textureIndex);
 		writeArray(buf, this.rituals, Rituals::toString);
 		writeArray(buf, this.pages, HuntersJournalPage::toString);
+		writeTag(buf, this.transformationData);
 	}
 
 	@Override
@@ -69,12 +73,13 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 			if (ctx.side == Side.CLIENT) {
 				addScheduledTask(ctx, () -> {
 					EntityPlayer player = getPlayerFromID(message.player);
-					ITransformationPlayer cap = TransformationHelper.getCap(player);
+					ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 					cap.setTransformation(message.transformation);
 					cap.setTextureIndex(message.textureIndex);
 					cap.setRituals(message.rituals);
 					cap.setUnlockedPages(message.pages);
-					if (message.transformation == TransformationInit.VAMPIRE)
+					cap.setTransformationData(message.transformationData);
+					if (message.transformation == Transformation.VAMPIRE)
 						player.foodStats = VampireFoodStats.INSTANCE;
 				});
 			}

@@ -40,7 +40,7 @@ public class CommandsTransformationTexture extends CommandBase {
 		if (args.length == 1) {
 			if (sender instanceof EntityPlayer) {
 				toReturn.add("get");
-				ITransformationPlayer cap = TransformationHelper.getCap((EntityPlayer) sender);
+				ITransformationPlayer cap = TransformationHelper.getITransformationPlayer((EntityPlayer) sender);
 				for (int i = 0; i < cap.getTransformation().getTextures().length; i++) {
 					toReturn.add(String.valueOf(i));
 				}
@@ -60,7 +60,7 @@ public class CommandsTransformationTexture extends CommandBase {
 			} else {
 				player = (EntityPlayer) sender;
 			}
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
+			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 
 			if (args[0].equals("get")) {
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformationtexture.get",

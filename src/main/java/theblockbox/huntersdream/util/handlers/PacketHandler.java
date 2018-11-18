@@ -12,19 +12,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.network.BloodMessage;
 import theblockbox.huntersdream.network.MessageBase;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
-import theblockbox.huntersdream.network.WerewolfTransformedMessage;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class PacketHandler {
@@ -36,7 +34,6 @@ public class PacketHandler {
 		INSTANCE.registerMessage(TransformationTextureIndexMessage.Handler.class,
 				TransformationTextureIndexMessage.class, networkID++, Side.SERVER);
 		registerMessage(BloodMessage.Handler.class, BloodMessage.class);
-		registerMessage(WerewolfTransformedMessage.Handler.class, WerewolfTransformedMessage.class);
 	}
 
 	private static <REQ extends IMessage> void registerMessage(
@@ -49,30 +46,30 @@ public class PacketHandler {
 		if (receivingSide == GeneralHelper.getOppositeSide(currentSide)) {
 			send.run();
 			if (ConfigHandler.common.showPacketMessages)
-				Main.getLogger().info(message.getName() + " packet sent on side " + currentSide + "\nPath: "
-						+ (new ExecutionPath()).get(1));
+				Main.getLogger().info(
+						message.getName() + " packet sent on side " + currentSide + "\nPath: " + ExecutionPath.get(1));
 		} else {
 			// Receiving side can't be sending side
 			throw new WrongSideException(
-					"Packet " + message.getName() + " couldn't be sent\nPath: " + (new ExecutionPath()).get(1),
+					"Packet " + message.getName() + " couldn't be sent\nPath: " + ExecutionPath.get(1),
 					GeneralHelper.getOppositeSide(receivingSide));
 		}
 	}
 
 	public static void sendTransformationMessage(EntityPlayerMP applyOn) {
-		ITransformationPlayer cap = TransformationHelper.getCap(applyOn);
+		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
 		TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
-				cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
+				cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages(), cap.getTransformationData());
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendToDimension(message, applyOn.world.provider.getDimension()));
 	}
 
 	// TODO: Look where this is used to send that the player has transformed
 	public static void sendTransformationMessageToPlayer(EntityPlayerMP applyOn, EntityPlayerMP sendTo) {
-		ITransformationPlayer cap = TransformationHelper.getCap(applyOn);
+		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
 		TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
-				cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages());
-		if (cap.getTransformation() == TransformationInit.VAMPIRE)
+				cap.getTextureIndex(), cap.getRituals(), cap.getUnlockedPages(), cap.getTransformationData());
+		if (cap.getTransformation() == Transformation.VAMPIRE)
 			applyOn.foodStats = VampireFoodStats.INSTANCE;
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendTo(message, sendTo));
@@ -80,7 +77,7 @@ public class PacketHandler {
 
 	public static void sendTextureIndexMessage(World forSideCheck) {
 		TransformationTextureIndexMessage message = new TransformationTextureIndexMessage(
-				TransformationHelper.getCap(Main.proxy.getPlayer()).getTextureIndex());
+				TransformationHelper.getITransformationPlayer(Main.proxy.getPlayer()).getTextureIndex());
 		afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
 				() -> INSTANCE.sendToServer(message));
 	}
@@ -89,11 +86,5 @@ public class PacketHandler {
 		BloodMessage message = new BloodMessage(player);
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(player), message,
 				() -> INSTANCE.sendTo(message, player));
-	}
-
-	public static void sendWerewolfTransformedMessage(EntityPlayerMP player) {
-		WerewolfTransformedMessage message = new WerewolfTransformedMessage(player,
-				WerewolfHelper.isTransformed(player));
-		afterPacketSent(CLIENT, SERVER, message, () -> INSTANCE.sendToAll(message));
 	}
 }

@@ -12,7 +12,7 @@ import theblockbox.huntersdream.entity.model.ModelLycanthropeAlex;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeAlexCrouched;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeSteve;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeSteveCrouched;
-import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
@@ -31,9 +31,9 @@ public abstract class RenderLycantrophe<T extends EntityLivingBase> extends Rend
 	@Override
 	public ResourceLocation getEntityTexture(T entity) {
 		if (entity instanceof EntityWerewolf) {
-			return TransformationInit.WEREWOLF.getTextures()[((EntityWerewolf) entity).getTextureIndex()];
+			return Transformation.WEREWOLF.getTextures()[((EntityWerewolf) entity).getTextureIndex()];
 		} else if (entity instanceof EntityPlayer) {
-			return TransformationInit.WEREWOLF.getTextures()[TransformationHelper.getCap((EntityPlayer) entity)
+			return Transformation.WEREWOLF.getTextures()[TransformationHelper.getITransformationPlayer((EntityPlayer) entity)
 					.getTextureIndex()];
 		} else {
 			return null;

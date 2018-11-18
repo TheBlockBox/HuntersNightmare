@@ -23,7 +23,7 @@ public class ItemHuntersJournalPage extends Item {
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		if (!playerIn.world.isRemote) {
 			ItemStack stack = playerIn.getHeldItem(handIn);
-			ITransformationPlayer cap = TransformationHelper.getCap(playerIn);
+			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(playerIn);
 			HuntersJournalPage page = cap.getRandomNotUnlockedPage();
 			if (page != null) {
 				if (!playerIn.capabilities.isCreativeMode) {

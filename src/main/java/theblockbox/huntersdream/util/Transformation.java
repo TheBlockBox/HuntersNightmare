@@ -1,20 +1,22 @@
 package theblockbox.huntersdream.util;
 
+import static theblockbox.huntersdream.util.Transformation.TransformationEntry.of;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationRegistryEvent;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.util.helpers.VampireHelper;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFunction;
 
 /**
@@ -25,9 +27,24 @@ import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFuncti
  * {@link TransformationEntry#create(ResourceLocation)}
  */
 public class Transformation {
+	// Transformation constants
+	/** Used to indicate that no transformation is present and it won't change */
+	public static final Transformation NONE = of().setSupernatural(false).create("none");
+	/**
+	 * Used to indicate that no transformation is currently present but it is
+	 * possible that it will change
+	 */
+	public static final Transformation HUMAN = of().setSupernatural(false).create("human");
+	public static final Transformation WEREWOLF = of().setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
+			.setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage).setTexturesHD("lycantrophe")
+			.create("werewolf");
+	public static final Transformation VAMPIRE = of().setCalculateDamage(VampireHelper::calculateDamage)
+			.setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create("vampire");
+	public static final Transformation HUNTER = of().create("hunter");
+
 	private static Transformation[] transformations = null;
 
-	private final TransformationEntry ENTRY;
+	private final TransformationEntry entry;
 	private final ResourceLocation registryName;
 	/**
 	 * The id of this transformation for this game session. Gets set when
@@ -38,16 +55,9 @@ public class Transformation {
 	private final TextComponentTranslation translation;
 	private final String registryNameString;
 
-	protected Transformation(TransformationEntry entry, ResourceLocation registryName) {
-		this.ENTRY = entry;
-		this.registryName = registryName;
-		this.registryNameString = registryName.toString();
-		this.translation = new TextComponentTranslation(this.registryNameString);
-	}
-
 	/**
 	 * Returns the transformation that has the same name. If no transformation has
-	 * that name, {@link TransformationInit#NONE} will be returned
+	 * that name, {@link Transformation#NONE} will be returned
 	 * 
 	 * @param name The name of the resourcelocation (obtained through
 	 *             {@link ResourceLocation#toString()}, something like
@@ -55,14 +65,20 @@ public class Transformation {
 	 */
 	public static Transformation fromName(String name) {
 		Transformation transformation = fromNameWithoutError(name);
-		if (transformation == TransformationInit.NONE) {
+		if (transformation == NONE) {
 			Main.getLogger()
 					.error("The given string \"" + name
 							+ "\" does not have a corresponding transformation. Please report this\nStacktrace: "
-							+ (new ExecutionPath()).getAll());
-			return TransformationInit.NONE;
+							+ ExecutionPath.getAll());
+			return NONE;
 		}
 		return transformation;
+	}
+
+	/** Returns the number of registered transformations */
+	public static int getRegisteredTransformations() {
+		// if not initialized, return 5 (default transformations)
+		return (transformations != null) ? transformations.length : 5;
 	}
 
 	/**
@@ -73,7 +89,7 @@ public class Transformation {
 		for (Transformation transformation : transformations)
 			if (transformation.getRegistryName().toString().equals(name))
 				return transformation;
-		return TransformationInit.NONE;
+		return NONE;
 	}
 
 	public static Transformation fromResourceLocation(ResourceLocation resourceLocation) {
@@ -87,13 +103,13 @@ public class Transformation {
 	/**
 	 * Gets the transformation with the temporary id of the given transformation + 1
 	 * or 1 if a higher one doesn't exist (because 0 would be
-	 * {@link theblockbox.huntersdream.init.TransformationInit#NONE}). Doesn't allow
-	 * {@link TransformationInit#NONE}
+	 * {@link theblockbox.huntersdream.util.Transformation#NONE}). Doesn't allow
+	 * {@link Transformation#NONE}
 	 */
 	public static Transformation cycle(Transformation transformation) {
 		transformation.validateIsTransformation();
 		int id = transformation.getTemporaryID();
-		return fromTemporaryID((getTransformationLength() > id) ? id + 1 : 1);
+		return fromTemporaryID((getRegisteredTransformations() > id) ? id + 1 : 1);
 	}
 
 	/** Returns an array of all currently registered transformations */
@@ -110,16 +126,24 @@ public class Transformation {
 		}
 	}
 
+	protected Transformation(TransformationEntry entry, ResourceLocation registryName) {
+		this.entry = entry;
+		this.registryName = registryName;
+		this.registryNameString = registryName.toString();
+		this.translation = new TextComponentTranslation(this.registryNameString);
+	}
+
 	/**
 	 * Gets the transformation with the temporary id of this transformation + 1 or 1
 	 * if this temporary id is the highest one (0 is always
-	 * {@link TransformationInit#NONE}, so that won't be used)
+	 * {@link Transformation#NONE}, so that won't be used)
 	 */
 	public Transformation cycle() {
 		int newID = this.temporaryID + 1;
-		return fromTemporaryID((getTransformationLength() > newID) ? newID : 1);
+		return fromTemporaryID((getRegisteredTransformations() > newID) ? newID : 1);
 	}
 
+	/** Returns true if this transformation has been registered */
 	public boolean hasBeenRegistered() {
 		return this.temporaryID >= 0;
 	}
@@ -128,31 +152,21 @@ public class Transformation {
 		return this.registryName;
 	}
 
-	public static int getTransformationLength() {
-		// if not initialized, return 7 (default transformations)
-		return (transformations != null) ? transformations.length : 7;
-	}
-
 	public boolean isSupernatural() {
-		return this.ENTRY.supernatural;
+		return this.entry.supernatural;
 	}
 
-	/** Returns the xp bar texture for the given transformation */
-	public ResourceLocation getXPBarTexture() {
-		return new ResourceLocation(getRegistryName().getNamespace(),
-				"textures/gui/transformation_xp_bar_" + getRegistryName().getPath() + ".png");
-	}
-
+	/** Returns the {@link TextComponentTranslation} for this transformation */
 	public TextComponentTranslation getTranslation() {
 		return this.translation;
 	}
 
 	/**
 	 * This method returns true if the transformation is a transformation (meaning
-	 * it's not {@link TransformationInit#NONE})
+	 * it's not {@link Transformation#NONE})
 	 */
 	public boolean isTransformation() {
-		return this != TransformationInit.NONE;
+		return this != NONE;
 	}
 
 	/** Throws an exception if {@link #isTransformation()} returns false */
@@ -172,8 +186,12 @@ public class Transformation {
 		return this.registryNameString;
 	}
 
+	/**
+	 * Returns the resource locations of the textures this transformation has (used
+	 * for texture index)
+	 */
 	public ResourceLocation[] getTextures() {
-		return this.ENTRY.textures.clone();
+		return this.entry.textures.clone();
 	}
 
 	/**
@@ -181,15 +199,15 @@ public class Transformation {
 	 * only used for players.
 	 */
 	public float getDamage(EntityLivingBase entity, float initialDamage) {
-		return this.ENTRY.calculateDamage.applyAsFloat(entity, initialDamage);
+		return this.entry.calculateDamage.applyAsFloat(entity, initialDamage);
 	}
 
 	/**
 	 * Used to get the damage an entity gets by passing the entity and the initial
-	 * damage
+	 * damage the entity got
 	 */
 	public float getReducedDamage(EntityLivingBase entity, float initialDamage) {
-		return this.ENTRY.calculateReducedDamage.applyAsFloat(entity, initialDamage);
+		return this.entry.calculateReducedDamage.applyAsFloat(entity, initialDamage);
 	}
 
 	/**
@@ -201,11 +219,7 @@ public class Transformation {
 	}
 
 	public Consumer<EntityLivingBase> getInfect() {
-		return this.ENTRY.infect;
-	}
-
-	public void onLevelUp(EntityPlayerMP player, double newLevel) {
-		this.ENTRY.onLevelUp.accept(player, newLevel);
+		return this.entry.infect;
 	}
 
 	/**
@@ -226,20 +240,19 @@ public class Transformation {
 		return this.getTemporaryID();
 	}
 
-	/** Used to make register new transformations */
+	/** Used to register new transformations */
 	public static class TransformationEntry {
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
 		private Consumer<EntityLivingBase> infect = null;
-		/** A runnable that is executed when the player levels up */
-		private ObjDoubleConsumer<EntityPlayerMP> onLevelUp = (d, p) -> {
-		};
+		/** An {@link ObjDoubleConsumer} that is executed when the player levels up */
 		private ToFloatObjFloatFunction<EntityLivingBase> calculateDamage = (e, f) -> f;
 		private ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage = (e, f) -> f;
 
 		private TransformationEntry() {
 		}
 
+		// TODO: Find better name for method?
 		/** Returns a new instance of type TransformationEntry */
 		public static TransformationEntry of() {
 			return new TransformationEntry();
@@ -281,11 +294,6 @@ public class Transformation {
 
 		public TransformationEntry setInfect(Consumer<EntityLivingBase> infect) {
 			this.infect = infect;
-			return this;
-		}
-
-		public TransformationEntry setOnLevelUp(ObjDoubleConsumer<EntityPlayerMP> onLevelUp) {
-			this.onLevelUp = onLevelUp;
 			return this;
 		}
 

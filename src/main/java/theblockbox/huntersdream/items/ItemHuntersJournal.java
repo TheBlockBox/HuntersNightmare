@@ -28,7 +28,7 @@ public class ItemHuntersJournal extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		HuntersJournalPage[] pages = TransformationHelper.getCap(playerIn).getUnlockedPages();
+		HuntersJournalPage[] pages = TransformationHelper.getITransformationPlayer(playerIn).getUnlockedPages();
 		if (pages.length <= 0) {
 			if (!worldIn.isRemote) {
 				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".noPage"));

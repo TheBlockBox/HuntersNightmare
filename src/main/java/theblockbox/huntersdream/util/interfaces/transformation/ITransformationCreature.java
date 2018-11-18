@@ -7,10 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
-import theblockbox.huntersdream.util.TransformationSet;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
+import theblockbox.huntersdream.util.collection.TransformationSet;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 /**
@@ -27,9 +26,15 @@ public interface ITransformationCreature extends ITransformation {
 	public boolean notImmuneToTransformation(Transformation transformation);
 
 	public static class TransformationCreature implements ITransformationCreature {
+		private static final NBTTagCompound DEFAULT_TRANSFORMATION_DATA = new NBTTagCompound();
+		static {
+			DEFAULT_TRANSFORMATION_DATA.setString("transformation", Transformation.WEREWOLF.toString());
+		}
+
 		private Set<Transformation> transformationsNotImmuneTo = new TransformationSet();
-		private Transformation transformation = TransformationInit.HUMAN;
+		private Transformation transformation = Transformation.HUMAN;
 		private int textureIndex = 0;
+		private NBTTagCompound transformationData = DEFAULT_TRANSFORMATION_DATA;
 
 		@Override
 		public int getTextureIndex() {
@@ -66,12 +71,23 @@ public interface ITransformationCreature extends ITransformation {
 		public boolean notImmuneToTransformation(Transformation t) {
 			return this.transformationsNotImmuneTo.contains(t);
 		}
+
+		@Override
+		public NBTTagCompound getTransformationData() {
+			return this.transformationData;
+		}
+
+		@Override
+		public void setTransformationData(NBTTagCompound transformationData) {
+			this.transformationData = transformationData;
+		}
 	}
 
 	public static class TransformationCreatureStorage implements IStorage<ITransformationCreature> {
 		public static final String TEXTURE_INDEX = "textureindex";
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TRANSFORMATIONS_NOT_IMMUNE_TO = "notimmuneto";
+		public static final String TRANSFORMATION_DATA = "transformationdata";
 
 		@Override
 		public NBTBase writeNBT(Capability<ITransformationCreature> capability, ITransformationCreature instance,
@@ -81,6 +97,7 @@ public interface ITransformationCreature extends ITransformation {
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			GeneralHelper.writeArrayToNBT(compound, instance.getTransformationsNotImmuneTo(),
 					TRANSFORMATIONS_NOT_IMMUNE_TO, Transformation::toString);
+			compound.setTag(TRANSFORMATION_DATA, instance.getTransformationData());
 			return compound;
 		}
 
@@ -92,6 +109,7 @@ public interface ITransformationCreature extends ITransformation {
 			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
 			instance.setTransformationsNotImmuneTo(GeneralHelper.readArrayFromNBT(compound,
 					TRANSFORMATIONS_NOT_IMMUNE_TO, Transformation::fromName, Transformation[]::new));
+			instance.setTransformationData((NBTTagCompound) compound.getTag(TRANSFORMATION_DATA));
 		}
 	}
 }

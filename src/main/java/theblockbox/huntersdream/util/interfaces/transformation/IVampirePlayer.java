@@ -6,15 +6,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
+// TODO: Remove
 /** For player vampires */
 @CapabilityInterface
-public interface IVampire {
+public interface IVampirePlayer {
 	default public Transformation getTransformation() {
-		return TransformationInit.VAMPIRE;
+		return Transformation.VAMPIRE;
 	}
 
 	/** Returns a vampires current blood. One blood is half a blood drop */
@@ -38,7 +38,7 @@ public interface IVampire {
 
 	public void setTimeDrinking(int time);
 
-	public static class Vampire implements IVampire {
+	public static class Vampire implements IVampirePlayer {
 		private double blood = 0;
 		private int timeDrinking = 0;
 
@@ -63,18 +63,19 @@ public interface IVampire {
 		}
 	}
 
-	public static class VampireStorage implements IStorage<IVampire> {
+	public static class VampireStorage implements IStorage<IVampirePlayer> {
 		public static final String BLOOD = "blood";
 
 		@Override
-		public NBTBase writeNBT(Capability<IVampire> capability, IVampire instance, EnumFacing side) {
+		public NBTBase writeNBT(Capability<IVampirePlayer> capability, IVampirePlayer instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setDouble(BLOOD, instance.getBlood());
 			return compound;
 		}
 
 		@Override
-		public void readNBT(Capability<IVampire> capability, IVampire instance, EnumFacing side, NBTBase nbt) {
+		public void readNBT(Capability<IVampirePlayer> capability, IVampirePlayer instance, EnumFacing side,
+				NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
 				instance.setBlood(compound.getDouble(BLOOD));

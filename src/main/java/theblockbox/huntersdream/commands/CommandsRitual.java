@@ -62,7 +62,7 @@ public class CommandsRitual extends CommandBase {
 				player = (EntityPlayerMP) sender;
 			}
 
-			ITransformationPlayer cap = TransformationHelper.getCap(player);
+			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 
 			Rituals ritual = (!args[0].equals("clear")) ? Rituals.fromNameWithException(args[2]) : null;
 

@@ -64,13 +64,13 @@ public class BlockSilverFurnace extends BlockContainer {
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta / 2)).withProperty(BURNING,
-				meta % 2 == 1);
+		return this.getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 0b011))
+				.withProperty(BURNING, (meta & 0b100) != 0);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getHorizontalIndex() * 2 + (state.getValue(BURNING) ? 1 : 0);
+		return state.getValue(FACING).getHorizontalIndex() | (state.getValue(BURNING) ? 0b100 : 0b000);
 	}
 
 	@Override

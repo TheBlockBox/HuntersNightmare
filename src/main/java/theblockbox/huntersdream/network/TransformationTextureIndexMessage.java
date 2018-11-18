@@ -48,7 +48,7 @@ public class TransformationTextureIndexMessage extends MessageBase<Transformatio
 			if (ctx.side == Side.SERVER) {
 				addScheduledTask(ctx, () -> {
 					EntityPlayerMP player = ctx.getServerHandler().player;
-					TransformationHelper.getCap(player).setTextureIndex(message.textureIndex);
+					TransformationHelper.getITransformationPlayer(player).setTextureIndex(message.textureIndex);
 					// notify everyone that one player has a new texture
 					PacketHandler.sendTransformationMessage(player);
 				});

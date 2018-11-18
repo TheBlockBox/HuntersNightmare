@@ -32,7 +32,7 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 /**
  * Handles events which are important for transforming
@@ -57,7 +57,7 @@ public class TransformationClientEventHandler {
 		if (ConfigHandler.client.customPlayerRender && !mc.playerController.isSpectator()) {
 			EntityPlayer player = event.getEntityPlayer();
 			// werewolf
-			if (WerewolfHelper.isTransformedWerewolf(player)) {
+			if (WerewolfHelper.isTransformed(player)) {
 				event.setCanceled(true);
 				if (renderLycantrophePlayer == null)
 					renderLycantrophePlayer = new RenderLycantrophePlayer(Minecraft.getMinecraft().getRenderManager());
@@ -73,7 +73,7 @@ public class TransformationClientEventHandler {
 		if (ConfigHandler.client.customPlayerRender && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
 			EntityPlayerSP player = mc.player;
 			String skinType = player.getSkinType();
-			if (WerewolfHelper.isTransformedWerewolf(player)) {
+			if (WerewolfHelper.isTransformed(player)) {
 				if (renderPlayerHand == null) {
 					renderPlayerHand = new RenderPlayer(mc.getRenderManager(), skinType.equals("slim")) {
 						@Override
@@ -91,7 +91,7 @@ public class TransformationClientEventHandler {
 						public void bindTextures(AbstractClientPlayer clientPlayer) {
 							ResourceLocation werewolfHand = WEREWOLF_HANDS[((clientPlayer.getSkinType().equals("slim")
 									? 3
-									: 0) + TransformationHelper.getCap(clientPlayer).getTextureIndex())];
+									: 0) + TransformationHelper.getITransformationPlayer(clientPlayer).getTextureIndex())];
 							this.bindTexture(werewolfHand);
 							Minecraft.getMinecraft().getTextureManager().bindTexture(werewolfHand);
 						}
@@ -133,7 +133,7 @@ public class TransformationClientEventHandler {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.player;
 		if ((event.getType() == ElementType.FOOD) && VampireHelper.isVampire(player)) {
-			IVampire vampire = VampireHelper.getIVampire(player);
+			IVampirePlayer vampire = VampireHelper.getIVampire(player);
 			event.setCanceled(true);
 			GuiIngameForge ingGUI = (GuiIngameForge) mc.ingameGUI;
 			GlStateManager.enableBlend();

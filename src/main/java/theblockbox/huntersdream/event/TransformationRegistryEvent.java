@@ -1,13 +1,10 @@
 package theblockbox.huntersdream.event;
 
-import static theblockbox.huntersdream.init.TransformationInit.CLOCKWORKANDROID;
-import static theblockbox.huntersdream.init.TransformationInit.HUMAN;
-import static theblockbox.huntersdream.init.TransformationInit.HUNTER;
-import static theblockbox.huntersdream.init.TransformationInit.HYBRID;
-import static theblockbox.huntersdream.init.TransformationInit.NONE;
-import static theblockbox.huntersdream.init.TransformationInit.VAMPIRE;
-import static theblockbox.huntersdream.init.TransformationInit.WEREWOLF;
-import static theblockbox.huntersdream.init.TransformationInit.WITCH;
+import static theblockbox.huntersdream.util.Transformation.HUMAN;
+import static theblockbox.huntersdream.util.Transformation.HUNTER;
+import static theblockbox.huntersdream.util.Transformation.NONE;
+import static theblockbox.huntersdream.util.Transformation.VAMPIRE;
+import static theblockbox.huntersdream.util.Transformation.WEREWOLF;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,7 +24,7 @@ public class TransformationRegistryEvent extends Event {
 	private final Set<Transformation> transformationSet = new LinkedHashSet<>();
 
 	public TransformationRegistryEvent() {
-		this.registerTransformations(NONE, HUMAN, WEREWOLF, VAMPIRE, WITCH, CLOCKWORKANDROID, HYBRID, HUNTER);
+		this.registerTransformations(NONE, HUMAN, WEREWOLF, VAMPIRE, HUNTER);
 	}
 
 	/**

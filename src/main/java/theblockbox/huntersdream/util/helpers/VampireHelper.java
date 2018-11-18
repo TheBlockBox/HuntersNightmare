@@ -15,14 +15,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
-import theblockbox.huntersdream.init.TransformationInit;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 public class VampireHelper {
-	public static final Capability<IVampire> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
+	public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
 
 	public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
 		checkIsVampire(vampire);
@@ -32,7 +32,7 @@ public class VampireHelper {
 		}
 		if (vampire instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) vampire;
-			IVampire vamp = getIVampire(player);
+			IVampirePlayer vamp = getIVampire(player);
 			if (vamp.getBlood() < 20) {
 				vamp.incrementBlood();
 			}
@@ -41,13 +41,13 @@ public class VampireHelper {
 		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1F);
 	}
 
-	public static IVampire getIVampire(@Nonnull EntityPlayer player) {
+	public static IVampirePlayer getIVampire(@Nonnull EntityPlayer player) {
 		Validate.notNull(player);
 		return player.getCapability(CAPABILITY_VAMPIRE, null);
 	}
 
 	public static boolean isVampire(EntityLivingBase entity) {
-		return TransformationHelper.getTransformation(entity) == TransformationInit.VAMPIRE;
+		return TransformationHelper.getTransformation(entity) == Transformation.VAMPIRE;
 	}
 
 	public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {

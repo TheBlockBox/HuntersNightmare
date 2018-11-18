@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
@@ -49,7 +48,7 @@ public interface IInfectOnNextMoon {
 	public static class InfectOnNextMoon implements IInfectOnNextMoon {
 		private InfectionStatus status = InfectionStatus.NOT_INFECTED;
 		private int infectionTick = -1;
-		private Transformation infectionTransformation = TransformationInit.HUMAN;
+		private Transformation infectionTransformation = Transformation.HUMAN;
 
 		@Override
 		public InfectionStatus getInfectionStatus() {

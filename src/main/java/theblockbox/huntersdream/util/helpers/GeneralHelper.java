@@ -7,7 +7,6 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,7 +30,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.Transformation;
 
 /** A utility class for all things that don't fit into the other helpers */
 public class GeneralHelper {
@@ -66,6 +64,10 @@ public class GeneralHelper {
 			return value.clone();
 		}
 	};
+	// A mutable AxisAlignedBB that is used in #canEntityExpandHeight(Entity, float)
+	// to test if the entity can change its size. Here so that we don't have to
+	// create a new one every tick
+	private static final AxisAlignedBB AABB = new AxisAlignedBB(BlockPos.ORIGIN);
 
 	static {
 		DataSerializers.registerSerializer(BYTE_ARRAY_DATA_SERIALIZER);
@@ -126,28 +128,14 @@ public class GeneralHelper {
 				return;
 			}
 
-			AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
-			player.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ,
-					axisalignedbb.minX + player.width, axisalignedbb.minY + player.height,
-					axisalignedbb.minZ + player.width));
+			AxisAlignedBB aabb = player.getEntityBoundingBox();
+			player.setEntityBoundingBox(new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.minX + player.width,
+					aabb.minY + player.height, aabb.minZ + player.width));
 
 			if (player.width > oldWidth && (player.ticksExisted > 1) && !player.world.isRemote) {
 				player.move(MoverType.SELF, (oldWidth - player.width), 0.0D, (oldWidth - player.width));
 			}
 		}
-	}
-
-	/** Converts from a base (like 10) to another base (like 4) */
-	public static int convertFromBaseToBase(String toConvert, int fromBase, int toBase) {
-		return Integer.parseInt(Integer.toString(Integer.parseInt(toConvert, fromBase), toBase));
-	}
-
-	/**
-	 * Does the same as {@link #convertFromBaseToBase(String, int, int)}, except
-	 * that the first argument is an int
-	 */
-	public static int convertFromBaseToBase(int toConvert, int fromBase, int toBase) {
-		return convertFromBaseToBase(String.valueOf(toConvert), fromBase, toBase);
 	}
 
 	/**
@@ -166,15 +154,17 @@ public class GeneralHelper {
 	 * height without glitching through blocks
 	 */
 	public static boolean canEntityExpandHeight(Entity entity, float newHeight) {
-		int currentY = MathHelper.ceil(entity.posY);
-		int newY = MathHelper.ceil(newHeight - entity.height) + currentY + 1;
-		if (currentY >= newY)
+		if (entity.height >= newHeight) {
 			return true;
-		else
-			for (int i = currentY; i <= newY; i++)
-				if (entity.world.getBlockState(new BlockPos(entity.posX, i, entity.posZ)).getMaterial().isSolid())
-					return false;
-		return true;
+		}
+		AxisAlignedBB entityAABB = entity.getEntityBoundingBox();
+		AABB.minX = entityAABB.minX;
+		AABB.minY = entityAABB.minY;
+		AABB.minZ = entityAABB.minZ;
+		AABB.maxX = entityAABB.maxX;
+		AABB.maxY = AABB.minY + newHeight;
+		AABB.maxZ = entityAABB.maxZ;
+		return !entity.world.collidesWithAnyBlock(AABB);
 	}
 
 	/** Returns true if the given player is not under a block */
@@ -348,11 +338,5 @@ public class GeneralHelper {
 				world.spawnEntity(new EntityXPOrb(world, pos.getX(), pos.getY() + 0.5D, pos.getZ() + 0.5D, splitXP));
 			}
 		}
-	}
-
-	public static TObjectFloatHashMap<Transformation> newTFMapWith(Transformation key, float value) {
-		TObjectFloatHashMap<Transformation> map = new TObjectFloatHashMap<>();
-		map.put(key, value);
-		return map;
 	}
 }

@@ -16,14 +16,14 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import theblockbox.huntersdream.event.TransformationEvent;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class VampireEventHandler {
@@ -32,7 +32,7 @@ public class VampireEventHandler {
 	public static void onVampireDrinkingBlood(PlayerInteractEvent.EntityInteractSpecific event) {
 		EntityPlayer player = event.getEntityPlayer();
 		if (VampireHelper.isVampire(player) && player.isSneaking() && event.getTarget() instanceof EntityLivingBase) {
-			IVampire vampire = VampireHelper.getIVampire(player);
+			IVampirePlayer vampire = VampireHelper.getIVampire(player);
 			event.setCancellationResult(EnumActionResult.SUCCESS);
 			event.setCanceled(true);
 			int time = player.ticksExisted - vampire.getTimeDrinking();
@@ -53,9 +53,9 @@ public class VampireEventHandler {
 		if ((event.getEntityLiving() instanceof EntityPlayer)
 				&& event.getTransformationAfter() != event.getTransformationBefore()) {
 			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			if (event.getTransformationAfter() == TransformationInit.VAMPIRE) {
+			if (event.getTransformationAfter() == Transformation.VAMPIRE) {
 				player.foodStats = VampireFoodStats.INSTANCE;
-			} else if (event.getTransformationBefore() == TransformationInit.VAMPIRE) {
+			} else if (event.getTransformationBefore() == Transformation.VAMPIRE) {
 				player.foodStats = new FoodStats();
 			}
 		}
@@ -72,10 +72,12 @@ public class VampireEventHandler {
 	public static void onPlayerJoin(PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
 		if (!player.world.isRemote) {
-			WerewolfHelper.resetTransformationStage((EntityPlayerMP) player);
+			if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
+				WerewolfHelper.setTransformationStage((EntityPlayerMP) player, 0);
+			}
 			PacketHandler.sendBloodMessage((EntityPlayerMP) player);
 		}
-		if (TransformationHelper.getTransformation(player) == TransformationInit.VAMPIRE) {
+		if (TransformationHelper.getTransformation(player) == Transformation.VAMPIRE) {
 			player.foodStats = VampireFoodStats.INSTANCE;
 		}
 	}

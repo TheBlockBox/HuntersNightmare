@@ -2,16 +2,20 @@ package theblockbox.huntersdream.entity;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Predicate;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
@@ -24,41 +28,46 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.entity.ai.EntityAIBreakAllDoors;
+import theblockbox.huntersdream.entity.ai.EntityAIWerewolfAttack;
 import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper.ITransformedWerewolf;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 /**
  * A werewolf
  */
-public class EntityWerewolf extends EntityMob
-		implements ITransformation, IEntityAdditionalSpawnData, ITransformedWerewolf {
+public class EntityWerewolf extends EntityMob implements ITransformation, IEntityAdditionalSpawnData {
 	/**
 	 * The speed of every werewolf (exactly two times faster than a normal player)
 	 */
 	public static final double SPEED = 0.5D;
 	public static final float ATTACK_DAMAGE = 8F;
-	public static final Transformation TRANSFORMATION = TransformationInit.WEREWOLF;
+	public static final Transformation TRANSFORMATION = Transformation.WEREWOLF;
+	private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
+			.createKey(EntityWerewolf.class, DataSerializers.COMPOUND_TAG);
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
@@ -72,16 +81,14 @@ public class EntityWerewolf extends EntityMob
 			this.setTextureIndex(textureIndex);
 		} else {
 			Main.getLogger().warn("A werewolf has been created with a texture index (" + textureIndex
-					+ ") that is out of bounds. This shouldn't happen.\nPath: " + (new ExecutionPath()).get(0, 3));
+					+ ") that is out of bounds. This shouldn't happen.\nPath: " + ExecutionPath.get(0, 5));
 			this.setTextureIndexWhenNeeded();
 		}
 		this.untransformedEntityName = entityName;
 		this.usesAlexSkin = ChanceHelper.randomBoolean();
 		this.setSize(0.6F, WerewolfHelper.getWerewolfHeight(this));
 		this.setExtraData(extraData);
-		if (extraData == null) {
-			throw new NullPointerException("Can't spawn werewolf with null extra data");
-		}
+		Validate.notNull(extraData, "Can't spawn werewolf with null extra data");
 	}
 
 	public boolean usesAlexSkin() {
@@ -105,6 +112,10 @@ public class EntityWerewolf extends EntityMob
 	@Override
 	protected void entityInit() {
 		super.entityInit();
+		NBTTagCompound transformationData = new NBTTagCompound();
+		transformationData.setString("transformation", TRANSFORMATION.toString());
+		transformationData.setBoolean("transformed", true);
+		this.dataManager.register(TRANSFORMATION_DATA, GeneralHelper.EMPTY_COMPOUND);
 	}
 
 	@Override
@@ -112,24 +123,21 @@ public class EntityWerewolf extends EntityMob
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		((PathNavigateGround) this.getNavigator()).setBreakDoors(true);
 		this.tasks.addTask(1, new EntityAIBreakAllDoors(this));
-		this.tasks.addTask(2, new EntityAIAttackMelee(this, SPEED + 0.2D, false));
+		this.tasks.addTask(2, new EntityAIWerewolfAttack(this, SPEED + 0.2D, false));
 
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
-		this.applyEntityAI();
-	}
 
-	protected void applyEntityAI() {
 		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
 		Predicate<EntityCreature> predicateMob = input -> !((input instanceof EntityWerewolf)
 				|| TransformationHelper.isInfected(input));
 		Predicate<EntityPlayer> predicatePlayer = input -> {
-			ITransformation transformation = TransformationHelper.getITransformation(input);
-			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(input);
-			return !((transformation.getTransformation() == TransformationInit.WEREWOLF)
-					|| ((ionm != null) && ionm.isInfected()));
+			ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(input);
+			Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(input);
+			return !((transformation.getTransformation() == Transformation.WEREWOLF)
+					|| ((ionm.isPresent()) && ionm.get().isInfected()));
 		};
 		this.targetTasks.addTask(2,
 				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
@@ -161,6 +169,16 @@ public class EntityWerewolf extends EntityMob
 	}
 
 	@Override
+	protected void playStepSound(BlockPos pos, Block blockIn) {
+		this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, this.getSoundPitch());
+	}
+
+	@Override
+	protected float getSoundPitch() {
+		return super.getSoundPitch() - 1.0F;
+	}
+
+	@Override
 	public float getEyeHeight() {
 		return WerewolfHelper.getWerewolfEyeHeight(this);
 	}
@@ -173,11 +191,6 @@ public class EntityWerewolf extends EntityMob
 	@Override
 	public boolean isChild() {
 		return false;
-	}
-
-	@Override
-	protected float getSoundPitch() {
-		return super.getSoundPitch() - 1.0F;
 	}
 
 	@Override
@@ -227,7 +240,7 @@ public class EntityWerewolf extends EntityMob
 									// remember: this is only server side and the client doesn't actually need to
 									// know about this
 									ITransformationCreature transformation = TransformationHelper
-											.getITransformationCreature(e);
+											.getITransformationCreature(e).get();
 									transformation.setTextureIndex(this.getTextureIndex());
 									transformation.setTransformation(this.getTransformation());
 								} catch (NullPointerException ex) {
@@ -291,11 +304,21 @@ public class EntityWerewolf extends EntityMob
 	}
 
 	@Override
+	public NBTTagCompound getTransformationData() {
+		return this.dataManager.get(TRANSFORMATION_DATA);
+	}
+
+	@Override
+	public void setTransformationData(NBTTagCompound transformationData) {
+		this.dataManager.set(TRANSFORMATION_DATA, transformationData);
+	}
+
+	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		ByteBufUtils.writeUTF8String(buffer, this.getUntransformedEntityName());
 		buffer.writeInt(this.getTextureIndex());
 		buffer.writeBoolean(this.usesAlexSkin());
-		// ByteBufUtils.writeTag(buffer, this.getEntityData());
+		ByteBufUtils.writeTag(buffer, this.getEntityData());
 	}
 
 	@Override
@@ -303,7 +326,7 @@ public class EntityWerewolf extends EntityMob
 		this.untransformedEntityName = ByteBufUtils.readUTF8String(buffer);
 		this.setTextureIndex(buffer.readInt());
 		this.setUseAlexSkin(buffer.readBoolean());
-		// this.setExtraData(ByteBufUtils.readTag(buffer));
+		this.setExtraData(ObjectUtils.defaultIfNull(ByteBufUtils.readTag(buffer), GeneralHelper.EMPTY_COMPOUND));
 	}
 
 	public String getUntransformedEntityName() {
@@ -325,6 +348,7 @@ public class EntityWerewolf extends EntityMob
 		compound.setString("untransformedEntityName", this.getUntransformedEntityName());
 		compound.setTag("untransformedEntityExtraData", this.getExtraData());
 		compound.setBoolean("useAlexSkin", this.usesAlexSkin());
+		compound.setTag("transformationData", this.getTransformationData());
 	}
 
 	@Override
@@ -338,6 +362,8 @@ public class EntityWerewolf extends EntityMob
 			this.setExtraData((NBTTagCompound) compound.getTag("untransformedEntityExtraData"));
 		if (compound.hasKey("useAlexSkin"))
 			this.setUseAlexSkin(compound.getBoolean("useAlexSkin"));
+		if (compound.hasKey("transformationData"))
+			this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
 	}
 
 	@Override

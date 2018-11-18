@@ -1,12 +1,13 @@
-package theblockbox.huntersdream.util;
+package theblockbox.huntersdream.util.collection;
 
 import java.util.AbstractSet;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+
+import theblockbox.huntersdream.util.Transformation;
 
 /**
  * A set for storing Transformation instances via storing their temporary id
@@ -14,24 +15,24 @@ import javax.annotation.Nonnull;
  * allow null values
  */
 public class TransformationSet extends AbstractSet<Transformation> implements Cloneable {
-	private final BitSet delegate;
+	private final BoolArray delegate;
 
 	public TransformationSet() {
-		this(new BitSet(Transformation.getTransformationLength()));
+		this(BoolArray.of(Transformation.getRegisteredTransformations()));
 	}
 
 	public TransformationSet(Collection<Transformation> collection) {
-		this(collection.stream().mapToInt(Transformation::getTemporaryID)
-				.collect(() -> new BitSet(Transformation.getTransformationLength()), BitSet::set, BitSet::or));
+		this(collection.stream().mapToInt(Transformation::getTemporaryID).collect(
+				() -> BoolArray.of(Transformation.getRegisteredTransformations()), BoolArray::set, BoolArray::or));
 	}
 
-	public TransformationSet(BitSet delegate) {
+	public TransformationSet(BoolArray delegate) {
 		this.delegate = delegate;
 	}
 
 	public TransformationSet(Transformation... transformations) {
-		this(Stream.of(transformations).mapToInt(Transformation::getTemporaryID)
-				.collect(() -> new BitSet(Transformation.getTransformationLength()), BitSet::set, BitSet::or));
+		this(Stream.of(transformations).mapToInt(Transformation::getTemporaryID).collect(
+				() -> BoolArray.of(Transformation.getRegisteredTransformations()), BoolArray::set, BoolArray::or));
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 
 	@Override
 	public int size() {
-		return this.delegate.cardinality();
+		return this.delegate.length();
 	}
 
 	@Override
@@ -107,12 +108,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 	}
 
 	@Override
-	public Stream<Transformation> stream() {
-		return this.delegate.stream().mapToObj(Transformation::fromTemporaryID);
-	}
-
-	@Override
 	public TransformationSet clone() {
-		return new TransformationSet((BitSet) this.delegate.clone());
+		return new TransformationSet(this.delegate.clone());
 	}
 }

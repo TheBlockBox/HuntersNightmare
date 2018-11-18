@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampire;
+import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 /**
  * A class for vampires extending {@link FoodStats} to change the way hunger
@@ -38,7 +38,7 @@ public class VampireFoodStats extends FoodStats {
 
 	@Override
 	public void onUpdate(EntityPlayer player) {
-		IVampire vampire = VampireHelper.getIVampire(player);
+		IVampirePlayer vampire = VampireHelper.getIVampire(player);
 		if (player.ticksExisted % 2 == 0) {
 			int blood = vampire.getBlood();
 

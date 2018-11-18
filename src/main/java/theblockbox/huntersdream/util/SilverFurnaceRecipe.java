@@ -1,6 +1,8 @@
 package theblockbox.huntersdream.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -98,11 +100,15 @@ public class SilverFurnaceRecipe {
 		JsonParser parser = new JsonParser();
 		FileUtils.listFiles(sfrLocation, new String[] { "json" }, true).stream().map(file -> {
 			JsonObject json = null;
-			try (InputStreamReader isr = new InputStreamReader(FileUtils.openInputStream(file))) {
-				json = parser.parse(isr).getAsJsonObject();
-			} catch (Exception e) {
+			try (Reader reader = new InputStreamReader(FileUtils.openInputStream(file))) {
+				json = parser.parse(reader).getAsJsonObject();
+			} catch (JsonParseException e) {
 				Main.getLogger().error(String.format(
-						"An exception occured while trying to load/parse the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
+						"An exception occured while trying to parse the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
+						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
+			} catch (IOException e) {
+				Main.getLogger().error(String.format(
+						"An exception occured while trying to get/load the silver furnace recipe \"%s\" (full path: %s)\nException: %s Stacktrace:\n%s",
 						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
 			}
 			return json;

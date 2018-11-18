@@ -16,7 +16,7 @@ public class ContainerClothingTab extends Container {
 	public ContainerClothingTab(EntityPlayer player) {
 		this.player = player;
 		this.playerInventory = this.player.inventory;
-		this.clothingTab = TransformationHelper.getCap(this.player).getClothingTab();
+		this.clothingTab = TransformationHelper.getITransformationPlayer(this.player).getClothingTab();
 		this.addSlots(this.playerInventory);
 	}
 

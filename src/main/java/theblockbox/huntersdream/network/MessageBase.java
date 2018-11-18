@@ -10,6 +10,7 @@ import org.apache.commons.lang3.Validate;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -66,6 +67,27 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		for (int i = 0; i < array.length; i++)
 			array[i] = stringToT.apply(readString(buf));
 		return array;
+	}
+
+	public static void writeByteArray(ByteBuf buf, @Nonnull byte[] bytes) {
+		buf.writeInt(bytes.length);
+		for (int i = 0; i < bytes.length; i++)
+			buf.writeByte(bytes[i]);
+	}
+
+	public static byte[] readByteArray(ByteBuf buf) {
+		byte[] bytes = new byte[buf.readInt()];
+		for (int i = 0; i < bytes.length; i++)
+			bytes[i] = buf.readByte();
+		return bytes;
+	}
+
+	public static NBTTagCompound readTag(ByteBuf buf) {
+		return ByteBufUtils.readTag(buf);
+	}
+
+	public static void writeTag(ByteBuf buf, NBTTagCompound tag) {
+		ByteBufUtils.writeTag(buf, tag);
 	}
 
 	public static EntityPlayer getPlayerFromID(int id) {

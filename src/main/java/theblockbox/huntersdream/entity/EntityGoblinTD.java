@@ -35,10 +35,10 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.init.TransformationInit;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
@@ -51,6 +51,8 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 			.<String>createKey(EntityGoblinTD.class, DataSerializers.STRING);
 	private static final DataParameter<Byte> GOBLIN_TEXTURE_INDEX = EntityDataManager
 			.<Byte>createKey(EntityGoblinTD.class, DataSerializers.BYTE);
+	private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
+			.createKey(EntityGoblinTD.class, DataSerializers.COMPOUND_TAG);
 
 	public EntityGoblinTD(World worldIn, int textureIndex, Transformation transformation) {
 		super(worldIn);
@@ -59,18 +61,23 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 		this.dataManager.set(TEXTURE_INDEX, textureIndex);
 		this.setTextureIndexWhenNeeded();
+
+		NBTTagCompound transformationData = new NBTTagCompound();
+		transformationData.setString("transformation", this.dataManager.get(TRANSFORMATION_NAME));
+		this.setTransformationData(transformationData);
 	}
 
 	public EntityGoblinTD(World worldIn) {
-		this(worldIn, 0, ChanceHelper.chanceOf(25) ? TransformationInit.WEREWOLF : TransformationInit.HUMAN);
+		this(worldIn, 0, ChanceHelper.chanceOf(25) ? Transformation.WEREWOLF : Transformation.HUMAN);
 	}
 
 	@Override
 	protected void entityInit() {
 		super.entityInit();
 		this.dataManager.register(TEXTURE_INDEX, 0);
-		this.dataManager.register(TRANSFORMATION_NAME, TransformationInit.HUMAN.toString());
+		this.dataManager.register(TRANSFORMATION_NAME, Transformation.HUMAN.toString());
 		this.dataManager.register(GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(TEXTURES));
+		this.dataManager.register(TRANSFORMATION_DATA, GeneralHelper.EMPTY_COMPOUND);
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 	}
 
@@ -91,7 +98,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.targetTasks.addTask(3,
 				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false,
-				WerewolfHelper::isTransformedWerewolf));
+				WerewolfHelper::isTransformed));
 	}
 
 	@Override
@@ -145,7 +152,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 			Main.getLogger()
 					.error("Tried to get a goblin's texture index and failed. Texture index: " + textureIndex
 							+ " Bounds: " + this.getTransformation().getTextures().length
-							+ "\nAttempting to retry...\nStacktrace: " + (new ExecutionPath()).getAll());
+							+ "\nAttempting to retry...\nStacktrace: " + ExecutionPath.getAll());
 			return this.getTextureIndex();
 		} else {
 			// return texture index if either length is 0 or texture index is in bounds
@@ -155,12 +162,12 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public Transformation[] getTransformationsNotImmuneTo() {
-		return new Transformation[] { TransformationInit.VAMPIRE, TransformationInit.WEREWOLF };
+		return new Transformation[] { Transformation.VAMPIRE, Transformation.WEREWOLF };
 	}
 
 	@Override
 	public boolean notImmuneToTransformation(Transformation transformation) {
-		return (transformation == TransformationInit.VAMPIRE) || (transformation == TransformationInit.WEREWOLF);
+		return (transformation == Transformation.VAMPIRE) || (transformation == Transformation.WEREWOLF);
 	}
 
 	@Override
@@ -177,6 +184,16 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	public void setTextureIndex(int index) {
 		this.dataManager.set(TEXTURE_INDEX, index);
+	}
+
+	@Override
+	public NBTTagCompound getTransformationData() {
+		return this.dataManager.get(TRANSFORMATION_DATA);
+	}
+
+	@Override
+	public void setTransformationData(NBTTagCompound transformationData) {
+		this.dataManager.set(TRANSFORMATION_DATA, transformationData);
 	}
 
 	@Override
@@ -269,6 +286,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		compound.setByte("goblinTextureIndex", this.getTexture());
 		compound.setInteger("transformedTextureIndex", this.getTextureIndex());
 		compound.setString("transformationName", this.dataManager.get(TRANSFORMATION_NAME));
+		compound.setTag("transformationData", this.getTransformationData());
 	}
 
 	@Override
@@ -280,5 +298,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 			this.setTextureIndex(compound.getInteger("transformedTextureIndex"));
 		if (compound.hasKey("transformationName"))
 			this.dataManager.set(TRANSFORMATION_NAME, compound.getString("transformationName"));
+		if (compound.hasKey("transformationData"))
+			this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
 	}
 }
