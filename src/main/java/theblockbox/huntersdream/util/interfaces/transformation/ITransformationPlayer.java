@@ -3,8 +3,11 @@ package theblockbox.huntersdream.util.interfaces.transformation;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +20,6 @@ import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.enums.Rituals;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 /**
@@ -35,7 +37,9 @@ public interface ITransformationPlayer extends ITransformation {
 
 	public boolean hasUnlockedPage(HuntersJournalPage page);
 
-	public HuntersJournalPage getRandomNotUnlockedPage();
+	/** Returns a random not unlocked page or null if all pages are unlocked */
+	@Nullable
+	public HuntersJournalPage getRandomNotUnlockedPage(Random random);
 
 	public Rituals[] getRituals();
 
@@ -126,13 +130,14 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 
 		@Override
-		public HuntersJournalPage getRandomNotUnlockedPage() {
+		@Nullable
+		public HuntersJournalPage getRandomNotUnlockedPage(Random random) {
 			int size = HuntersJournalPage.PAGES.size();
 			if (this.unlockedPages.size() >= size) {
 				return null;
 			} else {
-				HuntersJournalPage random = HuntersJournalPage.PAGES.get(ChanceHelper.randomInt(size));
-				return this.hasUnlockedPage(random) ? this.getRandomNotUnlockedPage() : random;
+				HuntersJournalPage page = HuntersJournalPage.PAGES.get(random.nextInt(size));
+				return this.hasUnlockedPage(page) ? this.getRandomNotUnlockedPage(random) : page;
 			}
 		}
 

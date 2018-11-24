@@ -25,7 +25,7 @@ public class VampireHelper {
 	public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
 
 	public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
-		checkIsVampire(vampire);
+		validateIsVampire(vampire);
 
 		if (drinkFrom.isEntityUndead()) {
 			vampire.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 60, 2));
@@ -46,18 +46,14 @@ public class VampireHelper {
 		return player.getCapability(CAPABILITY_VAMPIRE, null);
 	}
 
-	public static boolean isVampire(EntityLivingBase entity) {
-		return TransformationHelper.getTransformation(entity) == Transformation.VAMPIRE;
-	}
-
 	public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {
-		checkIsVampire(vampire);
+		validateIsVampire(vampire);
 		return initialDamage;
 	}
 
 	// TODO: Make better values
 	public static float calculateDamage(EntityLivingBase vampire, float initialDamage) {
-		checkIsVampire(vampire);
+		validateIsVampire(vampire);
 		if (vampire.getHeldItemMainhand().isEmpty()) {
 			return 10F * initialDamage;
 		} else {
@@ -69,17 +65,12 @@ public class VampireHelper {
 	 * Throws a {@link WrongTransformationException} if the given entity is not a
 	 * vampire
 	 */
-	public static void checkIsVampire(EntityLivingBase toCheck) {
-		if (toCheck == null) {
-			throw new NullPointerException("The given entity is not allowed to be null");
-		} else if (!isVampire(toCheck)) {
-			throw new WrongTransformationException("The given entity (" + toCheck.toString() + ") has to be a vampire",
-					TransformationHelper.getTransformation(toCheck));
-		}
+	public static void validateIsVampire(EntityLivingBase toCheck) {
+		TransformationHelper.getTransformation(toCheck).validateEquals(Transformation.VAMPIRE);
 	}
 
 	public static boolean shouldVampireBurn(EntityLivingBase vampire) {
-		checkIsVampire(vampire);
+		validateIsVampire(vampire);
 		World world = vampire.world;
 		if (world.isRemote)
 			throw new WrongSideException("Can only test if vampire should burn on server side", world);

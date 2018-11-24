@@ -270,9 +270,11 @@ public class GeneralHelper {
 	}
 
 	public static String firstCharToUppercase(String string) {
-		StringBuilder builder = new StringBuilder().append(string);
-		builder.setCharAt(0, Character.toUpperCase(builder.charAt(0)));
-		return builder.toString();
+		if (string.isEmpty())
+			return string;
+		char[] chars = string.toCharArray();
+		chars[0] = Character.toUpperCase(chars[0]);
+		return String.valueOf(chars);
 	}
 
 	/**

@@ -31,7 +31,8 @@ public class VampireEventHandler {
 	@SubscribeEvent
 	public static void onVampireDrinkingBlood(PlayerInteractEvent.EntityInteractSpecific event) {
 		EntityPlayer player = event.getEntityPlayer();
-		if (VampireHelper.isVampire(player) && player.isSneaking() && event.getTarget() instanceof EntityLivingBase) {
+		if ((TransformationHelper.getTransformation(player) == Transformation.VAMPIRE) && player.isSneaking()
+				&& event.getTarget() instanceof EntityLivingBase) {
 			IVampirePlayer vampire = VampireHelper.getIVampire(player);
 			event.setCancellationResult(EnumActionResult.SUCCESS);
 			event.setCanceled(true);

@@ -24,7 +24,7 @@ public class ItemHuntersJournalPage extends Item {
 		if (!playerIn.world.isRemote) {
 			ItemStack stack = playerIn.getHeldItem(handIn);
 			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(playerIn);
-			HuntersJournalPage page = cap.getRandomNotUnlockedPage();
+			HuntersJournalPage page = cap.getRandomNotUnlockedPage(worldIn.rand);
 			if (page != null) {
 				if (!playerIn.capabilities.isCreativeMode) {
 					stack.shrink(1);

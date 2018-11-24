@@ -9,11 +9,11 @@ import java.util.function.ObjDoubleConsumer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -176,6 +176,16 @@ public class Transformation {
 	}
 
 	/**
+	 * Throws an exception if this transformation does not equal the given
+	 * transformation
+	 */
+	public void validateEquals(Transformation other) {
+		if (this != other)
+			throw new WrongTransformationException(
+					String.format("The transformation should be \"%s\" but is \"%s\"\n", this, other), other);
+	}
+
+	/**
 	 * This method returns the resource location obtained through
 	 * {@link #getResourceLocation()} in a string representation. So for example for
 	 * werewolf with a resource location of new ResourceLocation("huntersdream",
@@ -212,10 +222,12 @@ public class Transformation {
 
 	/**
 	 * Returns a random texture index within the bounds of the given
-	 * transformation's textures
+	 * transformation's textures. The world's random is used to decide which texture
+	 * index should be used
 	 */
-	public int getRandomTextureIndex() {
-		return ChanceHelper.randomInt(this.getTextures().length);
+	public int getRandomTextureIndex(World worldIn) {
+		int textureLength = this.getTextures().length;
+		return textureLength == 0 ? 0 : worldIn.rand.nextInt(textureLength);
 	}
 
 	public Consumer<EntityLivingBase> getInfect() {

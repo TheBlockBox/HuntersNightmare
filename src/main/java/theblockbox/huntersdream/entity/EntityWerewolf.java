@@ -47,7 +47,6 @@ import theblockbox.huntersdream.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -68,6 +67,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	public static final Transformation TRANSFORMATION = Transformation.WEREWOLF;
 	private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
 			.createKey(EntityWerewolf.class, DataSerializers.COMPOUND_TAG);
+	private static final String CLASS_NAME = EntityWerewolf.class.getName();
 	/** the werewolf texture to be used */
 	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
@@ -77,15 +77,19 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName, @Nonnull NBTTagCompound extraData) {
 		super(worldIn);
+		if (entityName == null || CLASS_NAME.equals(entityName))
+			throw new IllegalArgumentException(
+					"Can't transform already transformed werewolf (tried to spawn werewolf with its untransformed entity being werewolf)\nExtra data: ");
+
 		if (textureIndex >= 0 && textureIndex < this.getTransformation().getTextures().length) {
 			this.setTextureIndex(textureIndex);
 		} else {
 			Main.getLogger().warn("A werewolf has been created with a texture index (" + textureIndex
 					+ ") that is out of bounds. This shouldn't happen.\nPath: " + ExecutionPath.get(0, 5));
-			this.setTextureIndexWhenNeeded();
+			this.setTextureIndexWhenNeeded(worldIn);
 		}
 		this.untransformedEntityName = entityName;
-		this.usesAlexSkin = ChanceHelper.randomBoolean();
+		this.usesAlexSkin = this.rand.nextBoolean();
 		this.setSize(0.6F, WerewolfHelper.getWerewolfHeight(this));
 		this.setExtraData(extraData);
 		Validate.notNull(extraData, "Can't spawn werewolf with null extra data");
@@ -105,7 +109,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	}
 
 	public EntityWerewolf(World worldIn) {
-		this(worldIn, TRANSFORMATION.getRandomTextureIndex(), "$bycap" + EntityVillager.class.getName(),
+		this(worldIn, TRANSFORMATION.getRandomTextureIndex(worldIn), "$bycap" + EntityVillager.class.getName(),
 				GeneralHelper.EMPTY_COMPOUND);
 	}
 
@@ -115,13 +119,13 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 		NBTTagCompound transformationData = new NBTTagCompound();
 		transformationData.setString("transformation", TRANSFORMATION.toString());
 		transformationData.setBoolean("transformed", true);
-		this.dataManager.register(TRANSFORMATION_DATA, GeneralHelper.EMPTY_COMPOUND);
+		this.dataManager.register(TRANSFORMATION_DATA, transformationData);
 	}
 
 	@Override
 	protected void initEntityAI() {
+		super.initEntityAI();
 		this.tasks.addTask(0, new EntityAISwimming(this));
-		((PathNavigateGround) this.getNavigator()).setBreakDoors(true);
 		this.tasks.addTask(1, new EntityAIBreakAllDoors(this));
 		this.tasks.addTask(2, new EntityAIWerewolfAttack(this, SPEED + 0.2D, false));
 
@@ -143,6 +147,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
 		this.targetTasks.addTask(2,
 				new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false, predicatePlayer));
+		((PathNavigateGround) this.getNavigator()).setBreakDoors(true);
 	}
 
 	@Override
@@ -159,22 +164,22 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(DamageSource sound) {
+	public SoundEvent getHurtSound(DamageSource sound) {
 		return SoundEvents.ENTITY_WOLF_HURT;
 	}
 
 	@Override
-	protected SoundEvent getDeathSound() {
+	public SoundEvent getDeathSound() {
 		return SoundEvents.ENTITY_WOLF_DEATH;
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, Block blockIn) {
+	public void playStepSound(BlockPos pos, Block blockIn) {
 		this.playSound(SoundEvents.ENTITY_WOLF_STEP, 0.15F, this.getSoundPitch());
 	}
 
 	@Override
-	protected float getSoundPitch() {
+	public float getSoundPitch() {
 		return super.getSoundPitch() - 1.0F;
 	}
 
@@ -218,16 +223,16 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 									e = (EntityCreature) constructor.newInstance(this.world, this.getTextureIndex(),
 											this.getTransformation());
 								} catch (ClassNotFoundException ex) {
-									throw new NullPointerException("Can't find class " + entityName);
+									throw new RuntimeException(ex);
 								} catch (ClassCastException ex) {
-									throw new IllegalArgumentException(
-											"Given class " + entityName + " is not an entity");
+									throw new RuntimeException("Given class " + entityName + " is not an entity", ex);
 								} catch (NoSuchMethodException | InvocationTargetException | SecurityException
 										| IllegalAccessException ex) {
-									throw new NullPointerException("Class " + entityName
-											+ " does not have an accessible constructor with parameters World, int, Transformations");
+									throw new RuntimeException("Class " + entityName
+											+ " does not have an accessible constructor with parameters World, int, Transformation",
+											ex);
 								} catch (InstantiationException ex) {
-									throw new IllegalArgumentException("Can't instantiate class " + entityName);
+									throw new RuntimeException("Can't instantiate class " + entityName, ex);
 								}
 							} else {
 								String eName = entityName.substring(6);

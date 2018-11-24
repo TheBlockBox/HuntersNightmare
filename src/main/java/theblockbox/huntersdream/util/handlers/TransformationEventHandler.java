@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -92,7 +93,6 @@ public class TransformationEventHandler {
 						// don't have to sync the data every time you change something
 						// (though it is recommended)
 						if (player.ticksExisted % 7200 == 0) {
-							PacketHandler.sendTransformationMessage(playerMP);
 							PacketHandler.sendTransformationMessage(playerMP);
 						}
 					}
@@ -193,7 +193,8 @@ public class TransformationEventHandler {
 			EntityCreature creature = (EntityCreature) event.getEntity();
 			Optional<ITransformationCreature> tc = TransformationHelper.getITransformationCreature(creature);
 
-			if (!creature.world.isRemote) {
+			World world = creature.world;
+			if (!world.isRemote) {
 
 				if (creature instanceof EntityGolem) {
 					EntityGolem entity = (EntityGolem) creature;
@@ -202,12 +203,13 @@ public class TransformationEventHandler {
 					entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(entity, EntityPlayer.class, 10,
 							true, false, WerewolfHelper::isTransformed));
 				} else if (creature instanceof EntityGoblinTD) {
-					if (ChanceHelper.chanceOf(1.5F) && (tc.get().getTransformation() == Transformation.HUMAN)) {
+					if (ChanceHelper.chanceOf(creature, 1.5F)
+							&& (tc.get().getTransformation() == Transformation.HUMAN)) {
 						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
 				} else if (creature instanceof EntityVillager) {
-					if (ChanceHelper.chanceOf(5) && (tc.get().getTransformation() == Transformation.HUMAN)) {
+					if (ChanceHelper.chanceOf(creature, 5) && (tc.get().getTransformation() == Transformation.HUMAN)) {
 						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
@@ -215,7 +217,7 @@ public class TransformationEventHandler {
 
 				tc.ifPresent(t -> {
 					if (t.getTransformation().getTextures().length > 0)
-						t.setTextureIndexWhenNeeded();
+						t.setTextureIndexWhenNeeded(world);
 				});
 			}
 

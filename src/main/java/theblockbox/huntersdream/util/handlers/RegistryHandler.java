@@ -156,8 +156,7 @@ public class RegistryHandler {
 		}, false, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
 
 		new EntityEffectiveAgainstTransformation(entity -> {
-			return (entity instanceof EntityLivingBase)
-					&& WerewolfHelper.isTransformed((EntityLivingBase) entity);
+			return (entity instanceof EntityLivingBase) && WerewolfHelper.isTransformed((EntityLivingBase) entity);
 		}, false, new TransformationToFloatMap().put(VAMPIRE, 2.5F)).register();
 	}
 

@@ -12,11 +12,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.CanLivingBeInfectedEvent;
-import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.IsLivingInfectedEvent;
 import theblockbox.huntersdream.event.TransformationEvent;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
@@ -62,7 +62,7 @@ public class TransformationHelper {
 		ITransformationPlayer cap = getITransformationPlayer(player);
 		cap.setRituals(new Rituals[0]); // reset rituals
 		cap.setTransformation(transformation);
-		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex());
+		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex(player.world));
 
 		NBTTagCompound transformationData = new NBTTagCompound();
 		transformationData.setString("transformation", transformation.toString());
@@ -77,15 +77,22 @@ public class TransformationHelper {
 	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformation transformation,
 			TransformationEventReason reason) {
 		if (entity != null && transformation.isTransformation()) {
-			if (!entity.world.isRemote) {
+			World world = entity.world;
+			if (!world.isRemote) {
 				if (!MinecraftForge.EVENT_BUS.post(new TransformationEvent(entity, transformation, reason))) {
 					if (entity instanceof EntityPlayer) {
 						changeTransformation((EntityPlayerMP) entity, transformation);
 					} else if (entity instanceof EntityCreature) {
 						// TODO: Does this here make sense?
-						getITransformation(entity).get().setTransformation(transformation);
+						ITransformation it = getITransformation(entity).get();
+						it.setTransformation(transformation);
+
+						NBTTagCompound transformationData = new NBTTagCompound();
+						transformationData.setString("transformation", transformation.toString());
+						it.setTransformationData(transformationData);
+
 						getITransformationCreature((EntityCreature) entity)
-								.ifPresent(t -> t.setTextureIndex(t.getTransformation().getRandomTextureIndex()));
+								.ifPresent(t -> t.setTextureIndex(t.getTransformation().getRandomTextureIndex(world)));
 					} else {
 						throw new IllegalArgumentException("Can't transform entity " + entity.toString()
 								+ " (it is neither a player nor an instance of EntityCreature)");
@@ -130,7 +137,10 @@ public class TransformationHelper {
 		return transformation.isPresent() && transformation.get().isTransformationChangeable();
 	}
 
-	/** Returns the entity's transformation */
+	/**
+	 * Returns the entity's transformation. If the entity has none or the entity is
+	 * null, {@link Transformation#NONE} is returned
+	 */
 	@Nonnull
 	public static Transformation getTransformation(EntityLivingBase entity) {
 		return getITransformation(entity).map(ITransformation::getTransformation).orElse(Transformation.NONE);
@@ -240,30 +250,31 @@ public class TransformationHelper {
 		}
 	}
 
-	public static NBTTagCompound postExtraDataEvent(EntityCreature creature, boolean onDataSave) {
-		ExtraDataEvent event = new ExtraDataEvent(creature, GeneralHelper.writeEntityToNBT(creature), onDataSave);
-		MinecraftForge.EVENT_BUS.post(event);
-		return event.getExtraData();
-	}
-
-	public static void onTransformationDataModified(EntityLivingBase entity, NBTTagCompound compound) {
-		Transformation transformation = getTransformation(entity);
-		transformation.validateIsTransformation();
-		String transformationValue = compound.getString("transformation");
-		String strTransformation = transformation.toString();
-		Validate.isTrue(transformationValue.equals(strTransformation),
-				"The NBTTagCompound should have the key \"transformation\" with the value %s but it was %s",
-				strTransformation, transformationValue);
-		getITransformation(entity).get().setTransformationData(compound);
-	}
-
 	public static NBTTagCompound getTransformationData(EntityLivingBase entity) {
 		Transformation transformation = getTransformation(entity);
 		transformation.validateIsTransformation();
-		NBTTagCompound compound = getITransformation(entity).get().getTransformationData();
+		ITransformation iTransformation = getITransformation(entity).get();
+		NBTTagCompound compound = iTransformation.getTransformationData();
 
 		String transformationValue = compound.getString("transformation");
 		String strTransformation = transformation.toString();
+
+		// support for old versions
+		if (transformationValue.isEmpty()) {
+			Main.getLogger().warn(
+					"It seems like Hunter's Dream has been updated... (If this was not the case, please report this!)\n"
+							+ "Setting transformation data for entity \"" + entity + "\" to a valid one");
+			compound = new NBTTagCompound();
+			compound.setString("transformation", strTransformation);
+			compound.setBoolean("transformed", true);
+
+			iTransformation.setTransformationData(compound);
+			if (entity instanceof EntityPlayerMP) {
+				PacketHandler.sendTransformationMessage((EntityPlayerMP) entity);
+			}
+			return compound;
+		}
+
 		Validate.isTrue(transformationValue.equals(strTransformation),
 				"The NBTTagCompound should have the key \"transformation\" with the value \"%s\" but it was \"%s\"",
 				strTransformation, transformationValue);

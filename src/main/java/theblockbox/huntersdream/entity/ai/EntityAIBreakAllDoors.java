@@ -9,6 +9,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.ForgeEventFactory;
 
 /**
  * Class that extends EntityAIBreakDoor so that you can also break iron doors.
@@ -24,11 +25,11 @@ public class EntityAIBreakAllDoors extends EntityAIBreakDoor {
 	public boolean shouldExecute() {
 		if (!this.superShouldExecute()) {
 			return false;
-		} else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entity.world, this.entity)
+		} else if (!ForgeEventFactory.getMobGriefingEvent(this.entity.world, this.entity)
 				|| !this.entity.world.getBlockState(this.doorPosition).getBlock().canEntityDestroy(
 						this.entity.world.getBlockState(this.doorPosition), this.entity.world, this.doorPosition,
 						this.entity)
-				|| !net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.entity, this.doorPosition,
+				|| !ForgeEventFactory.onEntityDestroyBlock(this.entity, this.doorPosition,
 						this.entity.world.getBlockState(this.doorPosition))) {
 			return false;
 		} else {

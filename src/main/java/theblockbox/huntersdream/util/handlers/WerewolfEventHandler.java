@@ -24,13 +24,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -70,10 +73,17 @@ public class WerewolfEventHandler {
 			Optional<ITransformation> transformationAttacker = TransformationHelper.getITransformation(attacker);
 
 			if (transformationAttacker.isPresent() && WerewolfHelper.isTransformed(attacker)) {
+				if (attacker instanceof EntityPlayer) {
+					// TODO: Set last attack to bite for player if they have unlocked a certain
+					// skill
+//					if (condition)
+//						WerewolfHelper.setLastAttackBite(player, ChanceHelper.chanceOf(player, percentage));
+				}
+
 				// handle werewolf infection
 				// if the werewolf can infect
 				if (WerewolfHelper.canInfect(attacker)) {
-					if (ChanceHelper.chanceOf(WerewolfHelper.getInfectionPercentage(attacker))) {
+					if (ChanceHelper.chanceOf(attacker, WerewolfHelper.getInfectionPercentage(attacker))) {
 						// and the entity can be infected
 						if (TransformationHelper.canChangeTransformation(attacked)
 								&& TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, attacked)
@@ -82,11 +92,6 @@ public class WerewolfEventHandler {
 							WerewolfHelper.infectEntityAsWerewolf(attacked);
 						}
 					}
-				}
-				if (attacker instanceof EntityPlayer) {
-					// fill hunger
-					EntityPlayer player = (EntityPlayer) attacker;
-					player.getFoodStats().addStats(1, 1);
 				}
 			}
 		}
@@ -104,6 +109,32 @@ public class WerewolfEventHandler {
 							(event.getSource() != DamageSource.MAGIC) || (event.getAmount() >= player.getHealth()));
 				}
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onEntityDeath(LivingDeathEvent event) {
+		EntityLivingBase killed = event.getEntityLiving();
+		DamageSource source = event.getSource();
+		if (source.getDamageType().equals("player")) {
+			// just hope that all this casting won't cause any problems
+			EntityPlayer player = (EntityPlayer) ((EntityDamageSource) source).getTrueSource();
+			if (WerewolfHelper.isTransformed(player)) {
+				// every full heart of the entity's max health gives the player half a hunger
+				player.getFoodStats().addStats((int) (killed.getMaxHealth() / 2), 1);
+			}
+		}
+	}
+
+	// heal werewolf players twice as fast as normal
+	@SubscribeEvent
+	public static void onWerewolfPlayerHeal(LivingHealEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		// TODO: Should this work for human AND werewolf form or only for human form?
+		// TODO: Find better way for regenerating twice as fast
+		if ((entity instanceof EntityPlayerMP)
+				&& (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF)) {
+			event.setAmount(event.getAmount() * 2);
 		}
 	}
 
@@ -136,7 +167,7 @@ public class WerewolfEventHandler {
 	// these methods are here for easier code understanding
 
 	static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-		// WerewolfHelper.applyLevelBuffs(player);
+		WerewolfHelper.applyLevelBuffs(player);
 		Random random = player.world.rand;
 		int soundTicksBefore = WerewolfHelper.getSoundTicks(player);
 		WerewolfHelper.setSoundTicks(player, soundTicksBefore + 1);

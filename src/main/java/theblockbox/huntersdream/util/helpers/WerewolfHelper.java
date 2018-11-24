@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.event.ExtraDataEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -56,7 +57,7 @@ public class WerewolfHelper {
 	 * werewolf)
 	 */
 	public static float calculateUnarmedDamage(EntityLivingBase entity, float initialDamage) {
-		WrongTransformationException.ifNotTransformationThrow(entity, Transformation.WEREWOLF);
+		validateIsWerewolf(entity);
 		// if the werewolf is either not transformed or has something in its hands
 		// (shouldn't happen for players)
 		boolean transformed = isTransformed(entity);
@@ -66,13 +67,15 @@ public class WerewolfHelper {
 				// there is no armed damage for transformed werewolf players
 				return 6F;
 			} else {
+				// "Their [untransformed] melee damage is normal damage +2"
 				return initialDamage + 2;
 			}
 		} else {
 			if (transformed) {
-				// TODO: is it 5 full or half hearts?
-				return wasLastAttackBite(entity) ? 2.5F : 2F;
+				// "Their attack is 4 hearts per slash and 5 hearts per bite"
+				return wasLastAttackBite(entity) ? 5F : 4F;
 			} else {
+				// no damage change for untransformed werewolves
 				return initialDamage;
 			}
 		}
@@ -84,7 +87,7 @@ public class WerewolfHelper {
 	 * the entity is not transformed, as long as it's still a werewolf)
 	 */
 	public static float calculateReducedDamage(EntityLivingBase entity, float initialDamage) {
-		WrongTransformationException.ifNotTransformationThrow(entity, Transformation.WEREWOLF);
+		validateIsWerewolf(entity);
 		if (isTransformed(entity)) {
 			if (entity instanceof EntityPlayer) {
 				// same as leather armour
@@ -101,7 +104,7 @@ public class WerewolfHelper {
 
 	/** Returns true if the werewolf can transform */
 	public static boolean canWerewolfTransform(EntityLivingBase werewolf) {
-		WrongTransformationException.ifNotTransformationThrow(werewolf, Transformation.WEREWOLF);
+		validateIsWerewolf(werewolf);
 		return !werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE);
 	}
 
@@ -133,12 +136,10 @@ public class WerewolfHelper {
 	 * Returns true if the given entity can infect other entities (it also checks if
 	 * the entity is a werewolf and transformed!)
 	 */
-	// TODO: Unnecessary because entities can only infect with bite and they can
-	// only use bite when transformed, so remove this when everything's set in stone
 	public static boolean canInfect(EntityLivingBase entity) {
 		// all werewolves (players included) can always infect (given they're
 		// transformed)
-		return isTransformed(entity);
+		return isTransformed(entity) && wasLastAttackBite(entity);
 	}
 
 	/**
@@ -149,7 +150,8 @@ public class WerewolfHelper {
 	 */
 	public static int getInfectionPercentage(EntityLivingBase entity) {
 		if (canInfect(entity)) {
-			return wasLastAttackBite(entity) ? 25 : 0;
+			// TODO: Return different infection percantage if entity is player
+			return 25;
 		} else {
 			throw new WrongTransformationException("The given entity is not a werewolf",
 					TransformationHelper.getTransformation(entity));
@@ -161,7 +163,7 @@ public class WerewolfHelper {
 	 */
 	public static boolean hasMainlyControl(EntityPlayer player) {
 		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		return (cap.getLevelFloor() > 0);
 	}
 
@@ -173,11 +175,11 @@ public class WerewolfHelper {
 				&& TransformationHelper.getTransformationData(entity).getBoolean("transformed");
 	}
 
+	/** Transforms a werewolf. No packet is being sent to the client. */
 	public static void setTransformed(EntityLivingBase werewolf, boolean transformed) {
-		WrongTransformationException.ifNotTransformationThrow(werewolf, Transformation.WEREWOLF);
+		validateIsWerewolf(werewolf);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(werewolf);
 		compound.setBoolean("transformed", transformed);
-		TransformationHelper.onTransformationDataModified(werewolf, compound);
 	}
 
 	/**
@@ -218,18 +220,18 @@ public class WerewolfHelper {
 				if (canWerewolfTransform(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
-						WrongTransformationException.ifNotTransformationThrow(entity, Transformation.WEREWOLF);
+						validateIsWerewolf(entity);
 						EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
-								entity.getClass().getName(), TransformationHelper.postExtraDataEvent(entity, true));
+								entity.getClass().getName(), postExtraDataEvent(entity, true));
 						return werewolf;
 					} else {
-						WrongTransformationException.ifNotTransformationThrow(entity, Transformation.WEREWOLF);
+						validateIsWerewolf(entity);
 						EntityWerewolf werewolf = new EntityWerewolf(world, TransformationHelper
 								.getITransformationCreature(entity)
 								.orElseThrow(() -> new IllegalArgumentException(
 										"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability"))
 								.getTextureIndex(), "$bycap" + entity.getClass().getName(),
-								TransformationHelper.postExtraDataEvent(entity, true));
+								postExtraDataEvent(entity, true));
 						return werewolf;
 					}
 				}
@@ -240,50 +242,67 @@ public class WerewolfHelper {
 		return null;
 	}
 
+	private static NBTTagCompound postExtraDataEvent(EntityCreature creature, boolean onDataSave) {
+		ExtraDataEvent event = new ExtraDataEvent(creature, GeneralHelper.writeEntityToNBT(creature), onDataSave);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getExtraData();
+	}
+
 	public static int getTransformationStage(EntityPlayerMP player) {
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		return TransformationHelper.getTransformationData(player).getInteger("transformationStage");
 	}
 
 	public static void setTransformationStage(EntityPlayerMP player, int stage) {
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(player);
 		compound.setInteger("transformationStage", stage);
 	}
 
 	/** Returns the player.ticksExisted when the transformation has started */
 	public static int getTimeSinceTransformation(EntityPlayerMP player) {
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		return TransformationHelper.getTransformationData(player).getInteger("timeSinceTransformation");
 	}
 
+	/**
+	 * Sets a werewolf player's time since the last transformation. No packet is
+	 * being sent to the client
+	 */
 	public static void setTimeSinceTransformation(EntityPlayerMP player, int time) {
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(player);
 		compound.setInteger("timeSinceTransformation", time);
 	}
 
 	public static int getSoundTicks(EntityPlayerMP player) {
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		return TransformationHelper.getTransformationData(player).getInteger("soundTicks");
 	}
 
+	/**
+	 * Sets a werewolf player's sound ticks (used for the passive werewolf sounds).
+	 * No packet is being sent to the client
+	 */
 	public static void setSoundTicks(EntityPlayerMP player, int ticks) {
-		WrongTransformationException.ifNotTransformationThrow(player, Transformation.WEREWOLF);
+		validateIsWerewolf(player);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(player);
 		compound.setInteger("soundTicks", ticks);
 	}
 
 	public static boolean wasLastAttackBite(EntityLivingBase entity) {
-		WrongTransformationException.ifNotTransformationThrow(entity, Transformation.WEREWOLF);
+		validateIsWerewolf(entity);
 		return TransformationHelper.getTransformationData(entity).getBoolean("lastAttackBite");
 	}
 
+	/**
+	 * Sets the werewolf's last attack to bite. No packet is being sent to the
+	 * client
+	 */
 	public static void setLastAttackBite(EntityLivingBase entity, boolean wasBite) {
-		WrongTransformationException.ifNotTransformationThrow(entity, Transformation.WEREWOLF);
+		validateIsWerewolf(entity);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
 		compound.setBoolean("lastAttackBite", wasBite);
-		TransformationHelper.onTransformationDataModified(entity, compound);
 	}
 
 	/**
@@ -313,6 +332,17 @@ public class WerewolfHelper {
 		}
 	}
 
+	// add potion effects to werewolves
+	// TODO: Make that it practically would also work when it's day, as long as the
+	// werewolf is transformed
+	public static void applyLevelBuffs(EntityPlayerMP werewolf) {
+		int duration = 100;
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, duration, 0, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, 0, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
+	}
+
 	/**
 	 * Called in
 	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
@@ -326,7 +356,7 @@ public class WerewolfHelper {
 	public static void transformWerewolfWhenPossible(@Nonnull EntityCreature werewolf,
 			WerewolfTransformingReason reason) {
 		Validate.notNull(werewolf, "The argument werewolf is not allowed to be null");
-		WrongTransformationException.ifNotTransformationThrow(werewolf, Transformation.WEREWOLF);
+		validateIsWerewolf(werewolf);
 		if (isTransformed(werewolf)) {
 			throw new IllegalArgumentException(
 					"The given entity " + werewolf.toString() + " is not allowed to be transformed");
@@ -356,5 +386,9 @@ public class WerewolfHelper {
 	public static boolean shouldUseSneakingModel(Entity werewolf) {
 		// if player was sneaking before, don't use sneaking model
 		return werewolf.isSneaking() || !GeneralHelper.canEntityExpandHeight(werewolf, WEREWOLF_HEIGHT);
+	}
+
+	public static void validateIsWerewolf(EntityLivingBase entity) {
+		TransformationHelper.getTransformation(entity).validateEquals(Transformation.WEREWOLF);
 	}
 }

@@ -38,7 +38,6 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
@@ -60,7 +59,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.setSize(0.5F, 1.4F);
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 		this.dataManager.set(TEXTURE_INDEX, textureIndex);
-		this.setTextureIndexWhenNeeded();
+		this.setTextureIndexWhenNeeded(worldIn);
 
 		NBTTagCompound transformationData = new NBTTagCompound();
 		transformationData.setString("transformation", this.dataManager.get(TRANSFORMATION_NAME));
@@ -68,7 +67,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	public EntityGoblinTD(World worldIn) {
-		this(worldIn, 0, ChanceHelper.chanceOf(25) ? Transformation.WEREWOLF : Transformation.HUMAN);
+		this(worldIn, 0, Transformation.HUMAN);
 	}
 
 	@Override
@@ -76,8 +75,12 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		super.entityInit();
 		this.dataManager.register(TEXTURE_INDEX, 0);
 		this.dataManager.register(TRANSFORMATION_NAME, Transformation.HUMAN.toString());
-		this.dataManager.register(GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(TEXTURES));
-		this.dataManager.register(TRANSFORMATION_DATA, GeneralHelper.EMPTY_COMPOUND);
+		this.dataManager.register(GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(this.rand, TEXTURES));
+
+		NBTTagCompound transformationData = new NBTTagCompound();
+		transformationData.setString("transformation", this.getTransformation().toString());
+		this.dataManager.register(TRANSFORMATION_DATA, transformationData);
+
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 	}
 
@@ -148,7 +151,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		int length = this.getTransformation().getTextures().length;
 
 		if (length > 0 && !(textureIndex >= 0 && textureIndex < length)) {
-			this.setTextureIndex(this.getTransformation().getRandomTextureIndex());
+			this.setTextureIndex(this.getTransformation().getRandomTextureIndex(this.world));
 			Main.getLogger()
 					.error("Tried to get a goblin's texture index and failed. Texture index: " + textureIndex
 							+ " Bounds: " + this.getTransformation().getTextures().length

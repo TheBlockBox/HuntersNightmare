@@ -5,6 +5,7 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.entity.renderer.RenderLycantrophePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.TranslationHelper;
@@ -42,6 +44,7 @@ public class TransformationClientEventHandler {
 	private static RenderLycantrophePlayer renderLycantrophePlayer = null;
 	private static RenderPlayer renderPlayerHand = null;
 	public static final ResourceLocation BLOOD_BAR = GeneralHelper.newResLoc("textures/gui/blood_bar.png");
+	public static final ResourceLocation WEREWOLF_HEALTH = GeneralHelper.newResLoc("textures/gui/werewolf_health.png");
 	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("brown", false),
 			getHandTexture("black", false), getHandTexture("white", false), getHandTexture("brown", true),
 			getHandTexture("black", true), getHandTexture("white", true) };
@@ -91,7 +94,8 @@ public class TransformationClientEventHandler {
 						public void bindTextures(AbstractClientPlayer clientPlayer) {
 							ResourceLocation werewolfHand = WEREWOLF_HANDS[((clientPlayer.getSkinType().equals("slim")
 									? 3
-									: 0) + TransformationHelper.getITransformationPlayer(clientPlayer).getTextureIndex())];
+									: 0)
+									+ TransformationHelper.getITransformationPlayer(clientPlayer).getTextureIndex())];
 							this.bindTexture(werewolfHand);
 							Minecraft.getMinecraft().getTextureManager().bindTexture(werewolfHand);
 						}
@@ -129,13 +133,34 @@ public class TransformationClientEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onHungerBarRendered(RenderGameOverlayEvent.Pre event) {
+	public static void onGameOverlayRenderPre(RenderGameOverlayEvent.Pre event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.player;
-		if ((event.getType() == ElementType.FOOD) && VampireHelper.isVampire(player)) {
-			IVampirePlayer vampire = VampireHelper.getIVampire(player);
+		if (event.getType() == ElementType.FOOD) {
+			onHungerBarRendered(event, player, mc);
+		} else if (event.getType() == ElementType.HEALTH) {
+			// render werewolf hearts
+			if (WerewolfHelper.isTransformed(player)) {
+				mc.getTextureManager().bindTexture(WEREWOLF_HEALTH);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onGameOverlayRenderPost(RenderGameOverlayEvent.Post event) {
+		Minecraft mc = Minecraft.getMinecraft();
+		if (event.getType() == ElementType.HEALTH && WerewolfHelper.isTransformed(mc.player)) {
+			// binding icon texture so that food bar still gets shown
+			mc.getTextureManager().bindTexture(Gui.ICONS);
+		}
+	}
+
+	public static void onHungerBarRendered(RenderGameOverlayEvent.Pre event, EntityPlayerSP player, Minecraft mc) {
+		if (TransformationHelper.getTransformation(player) == Transformation.VAMPIRE) {
+			mc.profiler.startSection("huntersdream:hunger_werewolf");
 			event.setCanceled(true);
 			GuiIngameForge ingGUI = (GuiIngameForge) mc.ingameGUI;
+			IVampirePlayer vampire = VampireHelper.getIVampire(player);
 			GlStateManager.enableBlend();
 			{
 				mc.renderEngine.bindTexture(BLOOD_BAR);
@@ -169,6 +194,7 @@ public class TransformationClientEventHandler {
 				}
 			}
 			GlStateManager.disableBlend();
+			mc.profiler.endSection();
 
 			// post new post event so gui rendering from other mods doesn't get canceled
 			MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(event, event.getType()));
