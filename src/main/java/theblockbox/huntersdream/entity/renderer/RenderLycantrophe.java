@@ -1,11 +1,12 @@
 package theblockbox.huntersdream.entity.renderer;
 
+import java.util.Optional;
+
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.model.ModelLycanthropeAlex;
@@ -15,6 +16,7 @@ import theblockbox.huntersdream.entity.model.ModelLycanthropeSteveCrouched;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 public abstract class RenderLycantrophe<T extends EntityLivingBase> extends RenderLivingBase<T> {
 	protected ModelLycanthropeAlex modelAlex = new ModelLycanthropeAlex();
@@ -30,14 +32,9 @@ public abstract class RenderLycantrophe<T extends EntityLivingBase> extends Rend
 
 	@Override
 	public ResourceLocation getEntityTexture(T entity) {
-		if (entity instanceof EntityWerewolf) {
-			return Transformation.WEREWOLF.getTextures()[((EntityWerewolf) entity).getTextureIndex()];
-		} else if (entity instanceof EntityPlayer) {
-			return Transformation.WEREWOLF.getTextures()[TransformationHelper.getITransformationPlayer((EntityPlayer) entity)
-					.getTextureIndex()];
-		} else {
-			return null;
-		}
+		Optional<ITransformation> transformation = TransformationHelper.getITransformation(entity);
+		return Transformation.WEREWOLF.getTextures()[transformation.isPresent() ? transformation.get().getTextureIndex()
+				: 0];
 	}
 
 	@Override

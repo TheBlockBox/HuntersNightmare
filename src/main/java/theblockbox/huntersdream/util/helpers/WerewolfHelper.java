@@ -336,8 +336,8 @@ public class WerewolfHelper {
 	// TODO: Make that it practically would also work when it's day, as long as the
 	// werewolf is transformed
 	public static void applyLevelBuffs(EntityPlayerMP werewolf) {
-		int duration = 100;
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, duration, 0, false, false));
+		int duration = 101;
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0, false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, 0, false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));

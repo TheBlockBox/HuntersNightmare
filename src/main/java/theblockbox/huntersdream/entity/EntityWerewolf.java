@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
@@ -143,9 +144,10 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 			return !((transformation.getTransformation() == Transformation.WEREWOLF)
 					|| ((ionm.isPresent()) && ionm.get().isInfected()));
 		};
-		this.targetTasks.addTask(2,
+		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+		this.targetTasks.addTask(3,
 				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
-		this.targetTasks.addTask(2,
+		this.targetTasks.addTask(3,
 				new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false, predicatePlayer));
 		((PathNavigateGround) this.getNavigator()).setBreakDoors(true);
 	}

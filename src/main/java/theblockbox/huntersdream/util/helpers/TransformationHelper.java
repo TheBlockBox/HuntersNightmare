@@ -177,10 +177,12 @@ public class TransformationHelper {
 		if (canChangeTransformation(entity)) {
 			Optional<IInfectInTicks> iit = getIInfectInTicks(entity);
 			Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
-			if (ionm.isPresent() && infection == Transformation.WEREWOLF) {
+			// can't infect entity that already has the transformation
+			if (TransformationHelper.getTransformation(entity) == infection) {
+				return false;
+			} else if (ionm.isPresent() && infection == Transformation.WEREWOLF) {
 				return true;
-			}
-			if (iit.isPresent()) {
+			} else if (iit.isPresent()) {
 				if (entity instanceof EntityCreature) {
 					Optional<ITransformationCreature> otc = getITransformationCreature((EntityCreature) entity);
 					if (otc.isPresent()) {
