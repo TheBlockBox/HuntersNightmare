@@ -47,8 +47,9 @@ public class TransformationEventHandler {
 		if (event.phase == Phase.END) {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
+			boolean isTransformed = WerewolfHelper.isTransformed(player);
 
-			if (WerewolfHelper.isTransformed(player)) {
+			if (isTransformed) {
 				if (!player.isCreative() && !player.isSpectator()) {
 					if (!player.inventory.isEmpty()) {
 						player.inventory.dropAllItems();
@@ -56,9 +57,13 @@ public class TransformationEventHandler {
 				}
 			}
 
-			if (player.ticksExisted % 20 == 0) {
+			if (!player.world.isRemote) {
+				boolean isWerewolf = cap.getTransformation() == Transformation.WEREWOLF;
+				boolean isWerewolfTime = WerewolfHelper.isWerewolfTime(player.world);
 
-				if (!player.world.isRemote) {
+				if (player.ticksExisted % 20 == 0) {
+
+					EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
 					for (ItemStack stack : player.getEquipmentAndArmor()) {
 						// damage player if item is effective against transformation (also works when
@@ -70,18 +75,16 @@ public class TransformationEventHandler {
 					}
 
 					if (player.ticksExisted % 80 == 0) {
-						EntityPlayerMP playerMP = (EntityPlayerMP) player;
-
 						// call methods in WerewolfEventHandler
-						if (cap.getTransformation() == Transformation.WEREWOLF) {
-							if (WerewolfHelper.isWerewolfTime(player.world)) {
-								if (WerewolfHelper.isTransformed(player)) {
+						if (isWerewolf) {
+							if (isWerewolfTime) {
+								if (isTransformed) {
 									WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap);
 								} else {
 									WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
 								}
 							} else {
-								if (WerewolfHelper.isTransformed(player)) {
+								if (isTransformed) {
 									WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap);
 								} else {
 									WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap);
@@ -89,12 +92,22 @@ public class TransformationEventHandler {
 							}
 						}
 						// this piece of code syncs the player data every six minutes, so basically
-						// you
-						// don't have to sync the data every time you change something
-						// (though it is recommended)
+						// you don't have to sync the data every time you change something (though it is
+						// recommended)
 						if (player.ticksExisted % 7200 == 0) {
 							PacketHandler.sendTransformationMessage(playerMP);
 						}
+					}
+				}
+				// TODO: Does every 35 ticks work or should something be changed?
+				// when a werewolf player is transforming, deal damage
+				if ((player.ticksExisted % 35 == 0) && isWerewolf && !isTransformed && isWerewolfTime
+						&& (WerewolfHelper.getTransformationStage((EntityPlayerMP) player) != 0)) {
+					if (player.getHealth() > 1) {
+						player.attackEntityFrom(WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE, 1F);
+						// TODO: Add sound here
+						// player.world.playSound(null, player.posX, player.posY, player.posZ,
+						// SoundInit.SOUND, SoundCategory.PLAYERS, 100, 1);
 					}
 				}
 			}

@@ -17,13 +17,14 @@ import theblockbox.huntersdream.util.effective_against_transformation.IEffective
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 
 public class EffectivenessHelper {
-	public static final String THORNS_DAMAGE_NAME = "effectiveAgainstTransformationThorns";
+	public static final String THORNS_DAMAGE_NAME = "huntersdream:effectiveAgainstTransformationThorns";
 
 	/** Shortcut for {@link EffectiveAgainstTransformation#getFromObject(Object)} */
 	@SuppressWarnings("unchecked")
 	public static <T> EffectiveAgainstTransformation<T> getEAT(@Nonnull T t) {
 		if (t instanceof ItemStack) {
-			return (EffectiveAgainstTransformation<T>) ItemEffectiveAgainstTransformation.getFromItemStack((ItemStack) t);
+			return (EffectiveAgainstTransformation<T>) ItemEffectiveAgainstTransformation
+					.getFromItemStack((ItemStack) t);
 		} else if (t instanceof Entity) {
 			return (EffectiveAgainstTransformation<T>) EntityEffectiveAgainstTransformation.getFromEntity((Entity) t);
 		} else {

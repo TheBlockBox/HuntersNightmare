@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -17,9 +16,9 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
 import theblockbox.huntersdream.util.HuntersJournalPage;
+import theblockbox.huntersdream.util.Skill;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
-import theblockbox.huntersdream.util.enums.Rituals;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 /**
@@ -41,15 +40,15 @@ public interface ITransformationPlayer extends ITransformation {
 	@Nullable
 	public HuntersJournalPage getRandomNotUnlockedPage(Random random);
 
-	public Rituals[] getRituals();
+	public Skill[] getSkills();
 
-	public void setRituals(Rituals[] rituals);
+	public void setSkills(Skill[] skills);
 
-	public void addRitual(Rituals ritual);
+	public void addSkill(Skill skill);
 
-	public void removeRitual(Rituals ritual);
+	public void removeSkill(Skill skill);
 
-	public boolean hasRitual(Rituals ritual);
+	public boolean hasSkill(Skill skill);
 
 	public ItemHandlerClothingTab getClothingTab();
 
@@ -64,7 +63,7 @@ public interface ITransformationPlayer extends ITransformation {
 		private Transformation transformation = Transformation.HUMAN;
 		private int textureIndex = 0;
 		/** Rituals that the player has done */
-		private Set<Rituals> rituals = EnumSet.noneOf(Rituals.class);
+		private Set<Skill> skills = new HashSet<>();
 		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
 		private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
 		private NBTTagCompound transformationData = DEFAULT_TRANSFORMATION_DATA;
@@ -91,13 +90,13 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 
 		@Override
-		public Rituals[] getRituals() {
-			return this.rituals.toArray(new Rituals[0]);
+		public Skill[] getSkills() {
+			return this.skills.toArray(new Skill[this.skills.size()]);
 		}
 
 		@Override
-		public void setRituals(Rituals[] rituals) {
-			this.rituals = Arrays.stream(rituals).collect(Collectors.toCollection(HashSet::new));
+		public void setSkills(Skill[] skills) {
+			this.skills = Arrays.stream(skills).collect(Collectors.toCollection(HashSet::new));
 		}
 
 		@Override
@@ -142,22 +141,22 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 
 		@Override
-		public void addRitual(Rituals ritual) {
-			if (!this.rituals.add(ritual)) {
+		public void addSkill(Skill skill) {
+			if (!this.skills.add(skill)) {
 				throw new IllegalArgumentException("The player already has this ritual");
 			}
 		}
 
 		@Override
-		public void removeRitual(Rituals ritual) {
-			if (!this.rituals.remove(ritual)) {
+		public void removeSkill(Skill skill) {
+			if (!this.skills.remove(skill)) {
 				throw new IllegalArgumentException("The player didn't have the ritual that should be removed");
 			}
 		}
 
 		@Override
-		public boolean hasRitual(Rituals ritual) {
-			return this.rituals.contains(ritual);
+		public boolean hasSkill(Skill skill) {
+			return this.skills.contains(skill);
 		}
 
 		@Override
@@ -184,7 +183,7 @@ public interface ITransformationPlayer extends ITransformation {
 	public static class TransformationPlayerStorage implements IStorage<ITransformationPlayer> {
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TEXTURE_INDEX = "textureindex";
-		public static final String RITUALS = "ritualsnbt";
+		public static final String SKILLS = "skillsnbt";
 		public static final String PAGES = "pages";
 		public static final String CLOTHING_TAB = "clothingtab";
 		public static final String TRANSFORMATION_DATA = "transformationdata";
@@ -194,7 +193,7 @@ public interface ITransformationPlayer extends ITransformation {
 				EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
-			GeneralHelper.writeArrayToNBT(compound, instance.getRituals(), RITUALS, Rituals::toString);
+			GeneralHelper.writeArrayToNBT(compound, instance.getSkills(), SKILLS, Skill::toString);
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), PAGES, HuntersJournalPage::toString);
 			compound.setTag(CLOTHING_TAB,
@@ -211,7 +210,7 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
 			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
-			instance.setRituals(GeneralHelper.readArrayFromNBT(compound, RITUALS, Rituals::fromName, Rituals[]::new));
+			instance.setSkills(GeneralHelper.readArrayFromNBT(compound, SKILLS, Skill::fromName, Skill[]::new));
 			if (compound.hasKey(CLOTHING_TAB))
 				CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(instance.getClothingTab(), null,
 						compound.getTag(CLOTHING_TAB));

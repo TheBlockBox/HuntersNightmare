@@ -15,7 +15,7 @@ import theblockbox.huntersdream.util.Transformation;
  * allow null values
  */
 public class TransformationSet extends AbstractSet<Transformation> implements Cloneable {
-	private final BoolArray delegate;
+	protected final BoolArray delegate;
 
 	public TransformationSet() {
 		this(BoolArray.of(Transformation.getRegisteredTransformations()));

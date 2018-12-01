@@ -22,12 +22,19 @@ import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class EntityInit {
+	// using the same values used in
+	// net.minecraft.entity.EntityTracker#track(Entity)
+	public static final boolean VEL_UPDATES = true;
+	public static final int TRACKING_RANGE = 80;
+	public static final int UPDATE_FREQ = 3;
 	private static int networkID = 0;
 
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
 		event.getRegistry().registerAll(
-				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255).tracker(20, 1, false).build(),
-				getEntityEntryBuilder("werewolf", EntityWerewolf.class).tracker(20, 1, false)
+				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255)
+						.tracker(TRACKING_RANGE, UPDATE_FREQ, VEL_UPDATES).build(),
+				getEntityEntryBuilder("werewolf", EntityWerewolf.class)
+						.tracker(TRACKING_RANGE, UPDATE_FREQ, VEL_UPDATES)
 						.spawn(EnumCreatureType.CREATURE, 2, 5, 5,
 								StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
 										.filter(b -> b instanceof BiomeForest).collect(Collectors.toSet()))

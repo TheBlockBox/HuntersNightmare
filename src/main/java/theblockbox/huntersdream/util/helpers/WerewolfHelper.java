@@ -12,9 +12,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +38,8 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 public class WerewolfHelper {
 	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
+	public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource(
+			"huntersdream:werewolfTransformationDamage");
 	public static final float WEREWOLF_HEIGHT = 2.4F;
 
 	/**
@@ -63,9 +65,8 @@ public class WerewolfHelper {
 		boolean transformed = isTransformed(entity);
 		if (entity instanceof EntityPlayer) {
 			if (transformed) {
-				// unarmed damage is 6 and transformed werewolf players can't hold items, so
-				// there is no armed damage for transformed werewolf players
-				return 6F;
+				// unarmed damage is 6
+				return entity.getHeldItemMainhand().isEmpty() ? 6F : initialDamage;
 			} else {
 				// "Their [untransformed] melee damage is normal damage +2"
 				return initialDamage + 2;
@@ -303,33 +304,6 @@ public class WerewolfHelper {
 		validateIsWerewolf(entity);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
 		compound.setBoolean("lastAttackBite", wasBite);
-	}
-
-	/**
-	 * This method is called when an entity picks up an item that is effective
-	 * against the entity and then sends a specific message to everyone involved
-	 */
-	public static void sendItemPickupMessage(EntityPlayerMP sendTo, String reply, EntityLivingBase entity,
-			Item pickedUp) {
-		if ((!(reply == null)) && (!reply.equals(""))) {
-			TextComponentTranslation message = null;
-			TextComponentTranslation item = new TextComponentTranslation(pickedUp.getTranslationKey() + ".name");
-
-			if (reply.contains("fp")) {
-				if (reply.contains("picked")) {
-					message = new TextComponentTranslation(reply, item);
-				} else if (reply.contains("touched")) {
-					message = new TextComponentTranslation(reply, item);
-				}
-			} else if (reply.contains("tp")) {
-				if (reply.contains("picked")) {
-					message = new TextComponentTranslation(reply, entity.getDisplayName().getFormattedText(), item);
-				} else if (reply.contains("touched")) {
-					message = new TextComponentTranslation(reply, entity.getDisplayName().getFormattedText(), item);
-				}
-			}
-			sendTo.sendMessage(message);
-		}
 	}
 
 	// add potion effects to werewolves

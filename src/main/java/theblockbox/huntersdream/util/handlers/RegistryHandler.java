@@ -32,7 +32,6 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
-import theblockbox.huntersdream.commands.CommandsRitual;
 import theblockbox.huntersdream.commands.CommandsTransformation;
 import theblockbox.huntersdream.commands.CommandsTransformationTexture;
 import theblockbox.huntersdream.init.BlockInit;
@@ -187,6 +186,5 @@ public class RegistryHandler {
 		event.registerServerCommand(new CommandsMoonphase());
 		event.registerServerCommand(new CommandsTransformation());
 		event.registerServerCommand(new CommandsTransformationTexture());
-		event.registerServerCommand(new CommandsRitual());
 	}
 }

@@ -2,7 +2,7 @@ package theblockbox.huntersdream.util.helpers;
 
 import java.util.Random;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 
 public class ChanceHelper {
@@ -30,16 +30,16 @@ public class ChanceHelper {
 		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10F)));
 	}
 
-	public static boolean chanceOf(Entity entity, float percentage) {
-		return chanceOf(entity.world, percentage);
+	public static boolean chanceOf(EntityLivingBase entity, float percentage) {
+		return chanceOf(entity.getRNG(), percentage);
 	}
 
 	public static boolean chanceOf(World world, float percentage) {
 		return chanceOf(world.rand, percentage);
 	}
 
-	public static boolean chanceOf(Entity entity, int percentage) {
-		return chanceOf(entity.world, percentage);
+	public static boolean chanceOf(EntityLivingBase entity, int percentage) {
+		return chanceOf(entity.getRNG(), percentage);
 	}
 
 	public static boolean chanceOf(World world, int percentage) {

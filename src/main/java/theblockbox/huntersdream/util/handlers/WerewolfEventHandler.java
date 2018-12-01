@@ -16,12 +16,11 @@ import java.util.Random;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
@@ -29,7 +28,10 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -40,18 +42,16 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -61,8 +61,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class WerewolfEventHandler {
-	public static final int[] LEVELS_WITH_EXTRA_HEARTS = { 7, 8, 9, 10, 11, 12 };
-
 	// use LivingDamage only for removing damage and LivingHurt for damage and
 	// damaged resources
 	@SubscribeEvent
@@ -105,8 +103,8 @@ public class WerewolfEventHandler {
 						&& WerewolfHelper.getTransformationStage((EntityPlayerMP) player) > 0) {
 					// cancel event if damage source isn't magic (including poison) or event can
 					// kill player
-					event.setCanceled(
-							(event.getSource() != DamageSource.MAGIC) || (event.getAmount() >= player.getHealth()));
+					event.setCanceled((event.getSource() != WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE)
+							|| (event.getAmount() >= player.getHealth()));
 				}
 			}
 		}
@@ -168,7 +166,7 @@ public class WerewolfEventHandler {
 
 	static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
 		WerewolfHelper.applyLevelBuffs(player);
-		Random random = player.world.rand;
+		Random random = player.getRNG();
 		int soundTicksBefore = WerewolfHelper.getSoundTicks(player);
 		WerewolfHelper.setSoundTicks(player, soundTicksBefore + 1);
 		if (random.nextInt(13) < soundTicksBefore) {
@@ -209,8 +207,10 @@ public class WerewolfEventHandler {
 
 	static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
 		if (WerewolfHelper.getTransformationStage(player) <= 0) {
-			player.sendMessage(
-					new TextComponentTranslation("transformations.huntersdream:werewolf.transformingBack.0"));
+			ITextComponent message = new TextComponentTranslation(
+					"transformations.huntersdream:werewolf.transformingBack.0");
+			message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.BLUE);
+			player.sendMessage(message);
 			WerewolfHelper.transformPlayer(player, false, WerewolfTransformingReason.FULL_MOON_END);
 			PacketHandler.sendTransformationMessage(player);
 			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
@@ -229,9 +229,9 @@ public class WerewolfEventHandler {
 
 		switch (WerewolfHelper.getTransformationStage(player)) {
 		case 1:
-			player.world.playSound(null, player.getPosition(), SoundInit.HEART_BEAT, SoundCategory.PLAYERS, 100, 1);
+			player.world.playSound(null, player.posX, player.posY, player.posZ, SoundInit.HEART_BEAT,
+					SoundCategory.PLAYERS, 100, 1);
 			player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 550, 1));
-			player.addPotionEffect(new PotionEffect(MobEffects.POISON, 550, 0));
 			break;
 		case 2:
 			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 450, 1));
@@ -253,16 +253,20 @@ public class WerewolfEventHandler {
 			WerewolfHelper.setTimeSinceTransformation(player, -1);
 			WerewolfHelper.setTransformationStage(player, 0);
 			WerewolfHelper.transformPlayer(player, true, WerewolfTransformingReason.FULL_MOON);
+			// completely heal player
+			player.setHealth(player.getMaxHealth());
 			break;
 		default:
 			throw new UnexpectedBehaviorException(
 					"Stage " + WerewolfHelper.getTransformationStage(player) + " is not a valid stage");
 		}
 		if (WerewolfHelper.getTransformationStage(player) != 0) {
-			player.sendMessage(new TextComponentTranslation("transformations.huntersdream:werewolf.transformingInto."
-					+ WerewolfHelper.getTransformationStage(player)));
+			ITextComponent message = new TextComponentTranslation(
+					"transformations.huntersdream:werewolf.transformingInto."
+							+ WerewolfHelper.getTransformationStage(player));
+			message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
+			player.sendMessage(message);
 		}
-
 	}
 
 	@SubscribeEvent
@@ -272,60 +276,60 @@ public class WerewolfEventHandler {
 		}
 	}
 
-	// damage player and handle chat messages when player picks up item that is
-	// effective against them
-	@SubscribeEvent
-	public static void onItemPickup(ItemPickupEvent event) {
-		EntityItem originalEntity = event.getOriginalEntity();
-		if (!originalEntity.world.isRemote) {
-			String throwerName = originalEntity.getThrower();
-			EntityPlayer player = event.player;
-			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
-			Item item = event.getStack().getItem();
-			if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), event.getStack())) {
-				// now it is ensured that the item is effective against the player
-				String msg = "transformations." + cap.getTransformation().toString() + ".";
+// TODO: If not needed anymore, remove
+// damage player and handle chat messages when player picks up item that is
+// effective against them
+//	@SubscribeEvent
+//	public static void onItemPickup(ItemPickupEvent event) {
+//		EntityItem originalEntity = event.getOriginalEntity();
+//		if (!originalEntity.world.isRemote) {
+//			String throwerName = originalEntity.getThrower();
+//			EntityPlayer player = event.player;
+//			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
+//			Item item = event.getStack().getItem();
+//			if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), event.getStack())) {
+//				// now it is ensured that the item is effective against the player
+//				String msg = "transformations." + cap.getTransformation().toString() + ".";
+//
+//				EntityPlayer thrower;
+//				if ((throwerName != null) && !(throwerName.equals("null")) && !(throwerName.equals(player.getName()))) {
+//					thrower = originalEntity.world.getPlayerEntityByName(throwerName);
+//					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.touched", player, item);
+//					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.touched", player, item);
+//				} else {
+//					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.picked", player, item);
+//					thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
+//					if (thrower != null) {
+//						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.picked", player, item);
+//					}
+//				}
+//			}
+//		}
+//	}
 
-				EntityPlayer thrower;
-				if ((throwerName != null) && !(throwerName.equals("null")) && !(throwerName.equals(player.getName()))) {
-					thrower = originalEntity.world.getPlayerEntityByName(throwerName);
-					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.touched", player, item);
-					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.touched", player, item);
-				} else {
-					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.picked", player, item);
-					thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
-					if (thrower != null) {
-						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.picked", player, item);
-					}
-				}
-			}
-		}
-	}
-
-	// damage player and handle chat messages when player is clicked with item that
-	// is effective against them
+	// handle werewolves clicked with wolfsbane
 	@SubscribeEvent
 	public static void onRightClick(PlayerInteractEvent.EntityInteractSpecific event) {
-		EntityPlayer player = event.getEntityPlayer();
+		World world = event.getWorld();
 		if (event.getTarget() instanceof EntityLivingBase) {
 			EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
-			if (!(WerewolfHelper.isTransformed(interactedWith))) {
-				Item item = event.getItemStack().getItem();
-				Transformation transformation = TransformationHelper.getTransformation(interactedWith);
-				if (EffectivenessHelper.effectiveAgainstTransformation(transformation, event.getItemStack())) {
-					if (!player.world.isRemote) {
-						String msg = "transformations." + transformation.toString() + ".";
-						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "tp.touched",
-								interactedWith, item);
-						if (interactedWith instanceof EntityPlayer) {
-							WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) interactedWith, msg + "fp.touched",
-									interactedWith, item);
-						}
-					}
-					// we don't want to open any gui, so we say that this interaction was a success
-					event.setCancellationResult(EnumActionResult.SUCCESS);
-					event.setCanceled(true);
+			ItemStack stack = event.getItemStack();
+			// TODO: Use something different than the wolfsbane flower?
+			if ((TransformationHelper.getTransformation(interactedWith) == Transformation.WEREWOLF)
+					&& !WerewolfHelper.isTransformed(interactedWith)
+					&& (stack.getItem() == ItemInit.WOLFSBANE_FLOWER)) {
+				if (!world.isRemote) {
+					// TODO: How long should the effect last?
+					world.playSound(null, interactedWith.posX, interactedWith.posY, interactedWith.posZ,
+							SoundInit.WEREWOLF_HOWLING, interactedWith.getSoundCategory(), 100, 1);
+					interactedWith.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 300));
+					interactedWith.addPotionEffect(new PotionEffect(MobEffects.POISON, 300));
+					interactedWith.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 300, 2));
+					stack.shrink(1);
 				}
+				// we don't want to open any gui, so we say that this interaction was a success
+				event.setCancellationResult(EnumActionResult.SUCCESS);
+				event.setCanceled(true);
 			}
 		}
 	}
@@ -334,6 +338,7 @@ public class WerewolfEventHandler {
 	public static void onPlayerSleep(PlayerSleepInBedEvent event) {
 		EntityPlayer player = event.getEntityPlayer();
 		if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
+			// TODO: set to EntityPlayer.SleepResult#NOT_POSSIBLE_NOW ?
 			event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
 			if (!player.world.isRemote)
 				player.sendStatusMessage(new TextComponentTranslation(Reference.MODID + ".werewolfNotAllowedToSleep"),
@@ -377,7 +382,7 @@ public class WerewolfEventHandler {
 				} else {
 					return;
 				}
-				Random random = player.world.rand;
+				Random random = player.getRNG();
 				event.setPitch((random.nextFloat() - random.nextFloat()) * 0.2F);
 			}
 		}

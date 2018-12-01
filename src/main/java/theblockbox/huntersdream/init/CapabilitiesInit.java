@@ -120,7 +120,7 @@ public class CapabilitiesInit {
 
 			transformationPlayer.setTransformation(oldTransformationPlayer.getTransformation());
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
-			transformationPlayer.setRituals(oldTransformationPlayer.getRituals());
+			transformationPlayer.setSkills(oldTransformationPlayer.getSkills());
 			transformationPlayer.setTransformationData(oldTransformationPlayer.getTransformationData());
 
 			if (transformationPlayer.getTransformation() == Transformation.WEREWOLF) {
