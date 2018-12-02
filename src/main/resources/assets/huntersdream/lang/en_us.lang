@@ -124,12 +124,4 @@ huntersdream.hunters_journal.werewolf.title=Werewolves
 huntersdream.hunters_journal.werewolf.description=W.I.P.
 
 # Other stuff
-# the word you'd use in a list (like Werewolf, Vampire and Hybrid)
-huntersdream.and=and
-# The character you'd use in a list (like Werewolf, Vampire and Hybrid)
-huntersdream.comma=,
-huntersdream.effectiveAgainst.tooltip=Effective against %s
-huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
-# Undead like used in the sentence "Effective against Werewolf and Undead"
-huntersdream.undead=Undead
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.

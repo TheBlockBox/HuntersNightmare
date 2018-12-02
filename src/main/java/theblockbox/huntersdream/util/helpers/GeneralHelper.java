@@ -7,6 +7,8 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -260,6 +262,37 @@ public class GeneralHelper {
 			}
 			return false;
 		};
+	}
+
+	public static boolean itemStackHasOreDict(ItemStack stack, String oreDictName) {
+		if (!stack.isEmpty()) {
+			// need to set damage to make the oredict not care about it
+			// (because some people purposely don't use OreDictionary#WILDCARD_VALUE because
+			// of crafting)
+			int damage = stack.getItemDamage();
+			int[] stackIDs = OreDictionary.getOreIDs(stack);
+			stack.setItemDamage(damage);
+			return ArrayUtils.contains(stackIDs, OreDictionary.getOreID(oreDictName));
+		}
+		return false;
+	}
+
+	public static boolean itemStackHasOreDicts(ItemStack stack, String[] oreDictNames) {
+		if (!stack.isEmpty()) {
+			// need to set damage to make the oredict not care about it
+			// (because some people purposely don't use OreDictionary#WILDCARD_VALUE because
+			// of crafting)
+			int damage = stack.getItemDamage();
+			int[] stackIDs = OreDictionary.getOreIDs(stack);
+			stack.setItemDamage(damage);
+
+			// we want to know if stackIDs has something in common with oreDictNames
+			int[] oreDictIDs = Stream.of(oreDictNames).mapToInt(OreDictionary::getOreID).toArray();
+			for (int i = 0; i < stackIDs.length; i++)
+				if (ArrayUtils.contains(oreDictIDs, stackIDs[i]))
+					return true;
+		}
+		return false;
 	}
 
 	public static boolean canBlockSeeSky(World world, BlockPos pos) {

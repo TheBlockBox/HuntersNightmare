@@ -33,6 +33,6 @@ public class OreDictionaryCompat {
 	}
 
 	private static void registerOreWithoutDamage(String name, String item) {
-		OreDictionary.registerOre(name, new ItemStack(Item.getByNameOrId(item), OreDictionary.WILDCARD_VALUE));
+		OreDictionary.registerOre(name, new ItemStack(Item.getByNameOrId(item), 1, OreDictionary.WILDCARD_VALUE));
 	}
 }

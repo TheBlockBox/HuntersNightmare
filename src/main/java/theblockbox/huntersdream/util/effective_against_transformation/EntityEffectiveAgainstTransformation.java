@@ -13,9 +13,9 @@ import theblockbox.huntersdream.util.collection.TransformationToFloatMap;
 public class EntityEffectiveAgainstTransformation extends EffectiveAgainstTransformation<Entity> {
 	private static final Set<EntityEffectiveAgainstTransformation> OBJECTS = new HashSet<>();
 
-	public EntityEffectiveAgainstTransformation(Predicate<Entity> isForObject, boolean effectiveAgainstUndead,
+	public EntityEffectiveAgainstTransformation(Predicate<Entity> isForObject,
 			TransformationToFloatMap effectivenessMap) {
-		super(isForObject, effectiveAgainstUndead, effectivenessMap);
+		super(isForObject, effectivenessMap);
 	}
 
 	@Nullable

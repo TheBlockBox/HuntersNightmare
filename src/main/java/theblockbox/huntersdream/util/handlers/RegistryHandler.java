@@ -45,10 +45,8 @@ import theblockbox.huntersdream.init.StructureInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.SilverFurnaceRecipe;
 import theblockbox.huntersdream.util.Transformation;
-import theblockbox.huntersdream.util.collection.TransformationToFloatFloatMap;
 import theblockbox.huntersdream.util.collection.TransformationToFloatMap;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
-import theblockbox.huntersdream.util.effective_against_transformation.ArmorEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
@@ -130,16 +128,8 @@ public class RegistryHandler {
 		// TODO: Make better values
 		// register objects that are effective against a specific transformation
 
-		// first index is armor part, second is values for transformations, first value
-		// is thorns and second is protection
-		ArmorEffectiveAgainstTransformation.registerArmorSet("Silver",
-				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.019F, 0.3F),
-				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.026F, 0.4F),
-				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.023F, 0.325F),
-				new TransformationToFloatFloatMap().put(Transformation.WEREWOLF, 0.018F, 0.55F));
-
 		new ItemEffectiveAgainstTransformation(
-				GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES), true,
+				GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES),
 				new TransformationToFloatMap().put(WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS)
 						.put(VAMPIRE, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS)).register();
 
@@ -152,11 +142,11 @@ public class RegistryHandler {
 						.anyMatch(potion -> (potion == MobEffects.POISON) || (potion == PotionInit.POTION_WOLFSBANE));
 			}
 			return false;
-		}, false, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
+		}, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
 
 		new EntityEffectiveAgainstTransformation(entity -> {
 			return (entity instanceof EntityLivingBase) && WerewolfHelper.isTransformed((EntityLivingBase) entity);
-		}, false, new TransformationToFloatMap().put(VAMPIRE, 2.5F)).register();
+		}, new TransformationToFloatMap().put(VAMPIRE, 2.5F)).register();
 	}
 
 	// Client

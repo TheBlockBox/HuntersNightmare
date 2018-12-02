@@ -22,9 +22,6 @@ public interface IEffectiveAgainstTransformation<T> {
 	 */
 	public Transformation[] transformations();
 
-	/** Returns the tooltip that should be shown on items */
-	public String getTooltip();
-
 	/**
 	 * Registers the object and returns true if it was successful and false if it
 	 * has already been registered

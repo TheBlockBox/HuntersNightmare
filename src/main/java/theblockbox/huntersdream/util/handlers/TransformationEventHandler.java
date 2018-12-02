@@ -3,6 +3,8 @@ package theblockbox.huntersdream.util.handlers;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
@@ -13,9 +15,9 @@ import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -24,15 +26,19 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.event.ArmorEffectivenessEvent;
 import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
+import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
@@ -134,10 +140,10 @@ public class TransformationEventHandler {
 			if (hurt != null) {
 				if (attacker != null) {
 					// add effectiveness against undead
-					if (attacker.getHeldItemMainhand() != null)
-						if (hurt.isEntityUndead()
-								&& EffectivenessHelper.effectiveAgainstUndead(attacker.getHeldItemMainhand()))
-							event.setAmount(event.getAmount() + 2.5F);
+					if (hurt.isEntityUndead() && GeneralHelper.itemStackHasOreDicts(attacker.getHeldItemMainhand(),
+							OreDictionaryCompat.SILVER_NAMES))
+						event.setAmount(event.getAmount() + 2.5F);
+
 					if (transformationHurt.isTransformation())
 						addEffectiveAgainst(event, attacker, hurt, transformationHurt);
 				}
@@ -163,6 +169,23 @@ public class TransformationEventHandler {
 						event.setAmount(EffectivenessHelper.getEffectivenessAgainst(transformationHurt, object)
 								* transformationHurt.getReducedDamage(hurt, event.getAmount()));
 					});
+
+// TODO: Finish and uncomment this
+//			Object[] objects = { event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker };
+//			for (Object obj : objects) {
+//				if (obj != null) {
+//					float initialDamage = event.getAmount();
+//					EffectivenessEvent ee = (obj instanceof EntityLivingBase)
+//							? new EntityEffectivenessEvent(hurt, (EntityLivingBase) obj, initialDamage)
+//							: ((obj instanceof ItemStack)
+//									? new ItemEffectivenessEvent(hurt, attacker, initialDamage, (ItemStack) obj)
+//									: null);
+//					if(MinecraftForge.EVENT_BUS.post(ee)) {
+//						TODO: use Transformation#getReducedDamage here?
+//						event.setAmount(transformationHurt.getReducedDamage(hurt, ee.getDamage()));
+//					}
+//				}
+//			}
 		}
 	}
 
@@ -176,25 +199,42 @@ public class TransformationEventHandler {
 			EntityLivingBase attacker = (EntityLivingBase) source;
 			Transformation transformationAttacker = TransformationHelper.getTransformation(attacker);
 			if (transformationAttacker.isTransformation()) {
-				ItemStack[] stacks = Stream
-						.of(EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS,
-								EntityEquipmentSlot.FEET)
-						.map(hurt::getItemStackFromSlot).filter(is -> EffectivenessHelper
-								.armorEffectiveAgainstTransformation(transformationAttacker, is))
-						.toArray(ItemStack[]::new);
-				if (stacks.length > 0) {
-					float thorns = 0;
-					float protection = 0;
-					for (ItemStack stack : stacks) {
-						thorns += EffectivenessHelper.armorGetEffectivenessAgainst(transformationAttacker, stack);
-						protection += EffectivenessHelper.armorGetProtectionAgainst(transformationAttacker, stack);
-						stack.damageItem(4, hurt);
+				Iterable<ItemStack> stacks = hurt.getArmorInventoryList();
+
+				float thorns = 0;
+				float removedDamage = 0;
+				// if at least one armor part's event has been canceled (meaning it was
+				// effective)
+				boolean anyItemEffective = false;
+
+				for (ItemStack stack : stacks) {
+					if (!stack.isEmpty()) {
+						ArmorEffectivenessEvent aee = new ArmorEffectivenessEvent(hurt, attacker, event.getAmount(),
+								stack);
+						if (MinecraftForge.EVENT_BUS.post(aee)) {
+							anyItemEffective = true;
+							// add the thorns value
+							thorns += aee.getThorns();
+							// add the removedDamage value
+							removedDamage += aee.getRemovedDamage();
+							// damage the armor
+							int itemDamage = aee.getArmorDamage();
+							if (itemDamage > 0)
+								stack.damageItem(itemDamage, hurt);
+						}
 					}
-					float thorn = thorns * event.getAmount();
+				}
+
+				// if one or more armor parts were effective,
+				if (anyItemEffective) {
+					// and thorns is bigger than 0,
 					if (thorns > 0)
-						attacker.attackEntityFrom(EffectivenessHelper.causeEffectivenessThornsDamage(hurt), thorn);
-					if (protection > 0)
-						event.setAmount(event.getAmount() / protection);
+						// attack the attacker with thorns
+						attacker.attackEntityFrom(EffectivenessHelper.causeEffectivenessThornsDamage(hurt), thorns);
+
+					// set the damage the entity will receive to the average (the Math#max is there
+					// so there won't be negative damage)
+					event.setAmount(Math.max(event.getAmount() - removedDamage, 0));
 				}
 			}
 		}
@@ -281,6 +321,33 @@ public class TransformationEventHandler {
 				}
 				WerewolfEventHandler.handleWerewolfInfection(entity);
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onArmorEffectiveness(ArmorEffectivenessEvent event) {
+		if (event.getAttackerTransformation() == Transformation.WEREWOLF) {
+			// have to change damage because some mods purposely don't register their
+			// damaged armor to the ore dict because of recipes
+			ItemStack armor = event.getArmor();
+			int damage = armor.getItemDamage();
+			int[] ids = OreDictionary.getOreIDs(armor);
+			armor.setItemDamage(damage);
+
+			float thorns;
+			if (ArrayUtils.contains(ids, OreDictionary.getOreID("helmetSilver"))) {
+				thorns = 0.075F;
+			} else if (ArrayUtils.contains(ids, OreDictionary.getOreID("chestplateSilver"))) {
+				thorns = 0.120F;
+			} else if (ArrayUtils.contains(ids, OreDictionary.getOreID("leggingsSilver"))) {
+				thorns = 0.105F;
+			} else if (ArrayUtils.contains(ids, OreDictionary.getOreID("bootsSilver"))) {
+				thorns = 0.060F;
+			} else {
+				return;
+			}
+			event.setThorns(event.getDamage() * thorns);
+			event.setArmorDamage(4);
 		}
 	}
 }
