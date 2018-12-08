@@ -1,20 +1,26 @@
-package theblockbox.huntersdream.event;
+package theblockbox.huntersdream.api.event;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
- * Called when an entity changes its transformation. If the event is canceled,
- * the player won't change transformation. Before canceling the event, also look
- * what the reason the event was posted was by looking at
- * {@link #getTransformationEventReason()}. Posted on
- * {@link MinecraftForge#EVENT_BUS}
- */
+ * TransformationEvent is fired when an entity changes its transformation. It is
+ * recommended to take a look at the {@link TransformationEventReason} returned
+ * by {@link #getTransformationEventReason()} before deciding what to do. <br>
+ * <br>
+ * This event is {@link Cancelable}.<br>
+ * If this event is canceled, the entity won't change its transformation.<br>
+ * <br>
+ * This event does not have a result.
+ * {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ **/
 @Cancelable
 public class TransformationEvent extends LivingEvent {
 	private Transformation transformationBefore;
@@ -31,18 +37,22 @@ public class TransformationEvent extends LivingEvent {
 		this.reason = reason;
 	}
 
+	/** Returns the entity's current transformation. */
 	public Transformation getTransformationBefore() {
 		return this.transformationBefore;
 	}
 
+	/** Returns the transformation that the entity should get. */
 	public Transformation getTransformationAfter() {
 		return this.transformationAfter;
 	}
 
+	/** Returns the reason why the transformation should be changed. */
 	public TransformationEventReason getTransformationEventReason() {
 		return this.reason;
 	}
 
+	/** The reason for the transformation change. */
 	public enum TransformationEventReason {
 		/** Caused by an infection */
 		INFECTION,

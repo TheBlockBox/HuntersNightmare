@@ -1,10 +1,10 @@
-package theblockbox.huntersdream.event;
+package theblockbox.huntersdream.api.event;
 
-import static theblockbox.huntersdream.util.Transformation.HUMAN;
-import static theblockbox.huntersdream.util.Transformation.HUNTER;
-import static theblockbox.huntersdream.util.Transformation.NONE;
-import static theblockbox.huntersdream.util.Transformation.VAMPIRE;
-import static theblockbox.huntersdream.util.Transformation.WEREWOLF;
+import static theblockbox.huntersdream.api.Transformation.HUMAN;
+import static theblockbox.huntersdream.api.Transformation.HUNTER;
+import static theblockbox.huntersdream.api.Transformation.NONE;
+import static theblockbox.huntersdream.api.Transformation.VAMPIRE;
+import static theblockbox.huntersdream.api.Transformation.WEREWOLF;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,13 +13,25 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
 
 /**
  * Called when transformations are registered. The event is posted on the
  * {@link MinecraftForge#EVENT_BUS} and is not cancelable
  */
+/**
+ * TransformationRegistryEvent is fired when the transformations are being
+ * registered. <br>
+ * <br>
+ * This event is not {@link Cancelable}.<br>
+ * <br>
+ * This event does not have a result.
+ * {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ **/
 public class TransformationRegistryEvent extends Event {
 	private final Set<Transformation> transformationSet = new LinkedHashSet<>();
 
@@ -28,8 +40,8 @@ public class TransformationRegistryEvent extends Event {
 	}
 
 	/**
-	 * Adds a transformations to be registered. Returns true if the adding was
-	 * successful (meaning that the transformations hasn't already been registered).
+	 * Registers a transformation. Returns true if the adding was successful
+	 * (meaning that the transformations hasn't already been registered).
 	 * 
 	 * @throws IllegalArgumentException If a transformation has already been
 	 *                                  registered with the same registry name
@@ -46,7 +58,7 @@ public class TransformationRegistryEvent extends Event {
 
 	/**
 	 * Does the same as {@link #registerTransformation(Transformation)} except that
-	 * it registers more than one
+	 * it registers multiple transformations at once.
 	 */
 	public boolean registerTransformations(Transformation... transformations) {
 		Validate.noNullElements(transformations,
@@ -59,7 +71,7 @@ public class TransformationRegistryEvent extends Event {
 		return flag;
 	}
 
-	/** Returns all transformations that have been registered yet */
+	/** Returns all transformations that have been registered so far. */
 	public Transformation[] getTransformations() {
 		return this.transformationSet.toArray(new Transformation[0]);
 	}

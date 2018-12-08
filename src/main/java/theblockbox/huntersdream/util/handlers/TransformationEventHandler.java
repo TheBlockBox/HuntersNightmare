@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -27,17 +26,19 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.oredict.OreDictionary;
+import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
+import theblockbox.huntersdream.api.event.effectiveness.ArmorEffectivenessEvent;
+import theblockbox.huntersdream.api.event.effectiveness.EffectivenessEvent;
+import theblockbox.huntersdream.api.event.effectiveness.EntityEffectivenessEvent;
+import theblockbox.huntersdream.api.event.effectiveness.ItemEffectivenessEvent;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.event.ArmorEffectivenessEvent;
-import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.EffectivenessHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -71,12 +72,14 @@ public class TransformationEventHandler {
 
 					EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
-					for (ItemStack stack : player.getEquipmentAndArmor()) {
-						// damage player if item is effective against transformation (also works when
-						// player is not transformed)
-						if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), stack)) {
-							player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION, 1);
-							break;
+					if (isWerewolf) {
+						for (ItemStack stack : player.getEquipmentAndArmor()) {
+							// damage player if item is effective against transformation (also works when
+							// player is not transformed)
+							if (GeneralHelper.itemStackHasOreDicts(stack, OreDictionaryCompat.SILVER_NAMES)) {
+								player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION, 1);
+								break;
+							}
 						}
 					}
 
@@ -144,49 +147,50 @@ public class TransformationEventHandler {
 							OreDictionaryCompat.SILVER_NAMES))
 						event.setAmount(event.getAmount() + 2.5F);
 
-					if (transformationHurt.isTransformation())
-						addEffectiveAgainst(event, attacker, hurt, transformationHurt);
+					if (transformationHurt.isTransformation()
+							&& addEffectiveAgainst(event, attacker, hurt, transformationHurt))
+						return;
 				}
 			}
 		}
 
 		// add protection
 		if (transformationHurt.isTransformation()
-				&& !(event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME))
+				&& !(event.getSource().damageType.equals(TransformationHelper.THORNS_DAMAGE_NAME))
 				&& (event.getSource() != TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION)) {
 			event.setAmount(transformationHurt.getReducedDamage(hurt, event.getAmount()));
 		}
 	}
 
-	private static void addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase hurt,
+	private static boolean addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase hurt,
 			Transformation transformationHurt) {
 		// don't apply when it was thorns damage
-		if (!event.getSource().damageType.equals(EffectivenessHelper.THORNS_DAMAGE_NAME)) {
-			// first check if immediate source is effective, then weapon and then attacker
-			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker).filter(
-					obj -> obj != null && EffectivenessHelper.effectiveAgainstTransformation(transformationHurt, obj))
-					.findFirst().ifPresent(object -> {
-						event.setAmount(EffectivenessHelper.getEffectivenessAgainst(transformationHurt, object)
-								* transformationHurt.getReducedDamage(hurt, event.getAmount()));
-					});
+		if (!event.getSource().damageType.equals(TransformationHelper.THORNS_DAMAGE_NAME)) {
+//			// first check if immediate source is effective, then weapon and then attacker
+//			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker).filter(
+//					obj -> obj != null && EffectivenessHelper.effectiveAgainstTransformation(transformationHurt, obj))
+//					.findFirst().ifPresent(object -> {
+//						event.setAmount(EffectivenessHelper.getEffectivenessAgainst(transformationHurt, object)
+//								* transformationHurt.getReducedDamage(hurt, event.getAmount()));
+//					});
 
-// TODO: Finish and uncomment this
-//			Object[] objects = { event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker };
-//			for (Object obj : objects) {
-//				if (obj != null) {
-//					float initialDamage = event.getAmount();
-//					EffectivenessEvent ee = (obj instanceof EntityLivingBase)
-//							? new EntityEffectivenessEvent(hurt, (EntityLivingBase) obj, initialDamage)
-//							: ((obj instanceof ItemStack)
-//									? new ItemEffectivenessEvent(hurt, attacker, initialDamage, (ItemStack) obj)
-//									: null);
-//					if(MinecraftForge.EVENT_BUS.post(ee)) {
-//						TODO: use Transformation#getReducedDamage here?
-//						event.setAmount(transformationHurt.getReducedDamage(hurt, ee.getDamage()));
-//					}
-//				}
-//			}
+			Object[] objects = { event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker };
+			for (Object obj : objects) {
+				if (obj != null) {
+					float damage = transformationHurt.getReducedDamage(hurt, event.getAmount());
+					EffectivenessEvent ee = (obj instanceof Entity)
+							? new EntityEffectivenessEvent(hurt, (Entity) obj, damage)
+							: ((obj instanceof ItemStack)
+									? new ItemEffectivenessEvent(hurt, attacker, damage, (ItemStack) obj)
+									: null);
+					if (MinecraftForge.EVENT_BUS.post(ee)) {
+						event.setAmount(ee.getDamage());
+						return true;
+					}
+				}
+			}
 		}
+		return false;
 	}
 
 	// do this at the end so the real damage can be seen
@@ -194,7 +198,7 @@ public class TransformationEventHandler {
 	public static void addThorns(LivingHurtEvent event) {
 		Entity source = event.getSource().getTrueSource();
 		EntityLivingBase hurt = event.getEntityLiving();
-		if ((!event.getSource().getDamageType().equals(EffectivenessHelper.THORNS_DAMAGE_NAME))
+		if ((!event.getSource().getDamageType().equals(TransformationHelper.THORNS_DAMAGE_NAME))
 				&& source instanceof EntityLivingBase && hurt != null) {
 			EntityLivingBase attacker = (EntityLivingBase) source;
 			Transformation transformationAttacker = TransformationHelper.getTransformation(attacker);
@@ -230,7 +234,7 @@ public class TransformationEventHandler {
 					// and thorns is bigger than 0,
 					if (thorns > 0)
 						// attack the attacker with thorns
-						attacker.attackEntityFrom(EffectivenessHelper.causeEffectivenessThornsDamage(hurt), thorns);
+						attacker.attackEntityFrom(TransformationHelper.causeEffectivenessThornsDamage(hurt), thorns);
 
 					// set the damage the entity will receive to the average (the Math#max is there
 					// so there won't be negative damage)
@@ -330,7 +334,9 @@ public class TransformationEventHandler {
 			// have to change damage because some mods purposely don't register their
 			// damaged armor to the ore dict because of recipes
 			ItemStack armor = event.getArmor();
+
 			int damage = armor.getItemDamage();
+			armor.setItemDamage(0);
 			int[] ids = OreDictionary.getOreIDs(armor);
 			armor.setItemDamage(damage);
 
@@ -350,4 +356,16 @@ public class TransformationEventHandler {
 			event.setArmorDamage(4);
 		}
 	}
+
+	@SubscribeEvent
+	public static void onItemEffectiveness(ItemEffectivenessEvent event) {
+		if ((event.getHurtTransformation() == Transformation.WEREWOLF)
+				&& GeneralHelper.itemStackHasOreDicts(event.getItemStack(), OreDictionaryCompat.SILVER_NAMES)) {
+			event.setDamage(event.getDamage() * (WerewolfHelper.isTransformed(event.getEntityLiving()) ? 4F : 2F));
+		}
+	}
+
+//	@SubscribeEvent
+//	public static void onEntityEffectiveness(EntityEffectivenessEvent event) {
+//	}
 }

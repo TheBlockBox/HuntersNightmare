@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.event;
+package theblockbox.huntersdream.api.event.effectiveness;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -19,7 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * canceled in ALL set methods, so you shouldn't have to manually cancel it),
  * otherwise nothing happens<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result.
+ * {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/

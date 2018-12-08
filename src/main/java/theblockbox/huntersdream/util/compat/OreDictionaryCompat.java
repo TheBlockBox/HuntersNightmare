@@ -5,11 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class OreDictionaryCompat {
-	/**
-	 * A string array of four strings for the conventional ore dictionary names for
-	 * armor parts (helmet, chestplate, leggings and boots)
-	 */
-	public static final String[] ARMOR_PART_NAMES = { "helmet", "chestplate", "leggings", "boots" };
 	public static final String[] SILVER_NAMES = { "blockSilver", "oreSilver", "ingotSilver", "helmetSilver",
 			"chestplateSilver", "leggingsSilver", "bootsSilver", "axeSilver", "pickaxeSilver", "hoeSilver",
 			"swordSilver", "shovelSilver" };

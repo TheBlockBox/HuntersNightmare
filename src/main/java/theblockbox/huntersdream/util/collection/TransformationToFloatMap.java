@@ -2,7 +2,7 @@ package theblockbox.huntersdream.util.collection;
 
 import java.util.stream.Stream;
 
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
 
 public class TransformationToFloatMap implements Cloneable {
 	private final float[] floats;

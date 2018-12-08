@@ -1,11 +1,12 @@
-package theblockbox.huntersdream.event;
+package theblockbox.huntersdream.api.event.effectiveness;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
@@ -19,42 +20,61 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
  * canceled in ALL set methods, so you shouldn't have to manually cancel it),
  * otherwise nothing happens<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result.
+ * {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * 
+ * @see ArmorEffectivenessEvent
+ * @see EntityEffectivenessEvent
+ * @see ItemEffectivenessEvent
  **/
 @Cancelable
 public class EffectivenessEvent extends LivingEvent {
-	private final EntityLivingBase attacker;
+	private final Entity attacker;
 	private float damage;
+	private Transformation hurtTransformation;
 	private Transformation attackerTransformation;
 
-	public EffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float damage) {
+	public EffectivenessEvent(EntityLivingBase hurt, Entity attacker, float damage) {
 		super(hurt);
 		this.attacker = attacker;
 		this.damage = damage;
-		this.attackerTransformation = TransformationHelper.getTransformation(attacker);
-		this.attackerTransformation.validateIsTransformation();
+		this.hurtTransformation = TransformationHelper.getTransformation(hurt);
+		this.attackerTransformation = (attacker instanceof EntityLivingBase)
+				? TransformationHelper.getTransformation((EntityLivingBase) attacker)
+				: Transformation.NONE;
 	}
 
 	/**
-	 * Returns the entity that attacked
+	 * Returns the entity that attacked. Will never be null.
 	 */
-	public EntityLivingBase getAttacker() {
+	public Entity getAttacker() {
 		return this.attacker;
 	}
 
-	/** Returns the entity that was hurt/attacked */
+	/** Returns the entity that was hurt/attacked. */
 	@Override
 	public EntityLivingBase getEntityLiving() {
 		return super.getEntityLiving();
 	}
 
 	/**
+	 * Returns the transformation of the hurt entity.<br>
+	 * Should always return the same as
+	 * {@link TransformationHelper#getTransformation(EntityLivingBase)} with the
+	 * hurt entity as an argument does. Is always guaranteed not to be
+	 * {@link Transformation#NONE}
+	 */
+	public Transformation getHurtTransformation() {
+		return this.hurtTransformation;
+	}
+
+	/**
 	 * Returns the transformation of the attacking entity.<br>
 	 * Should always return the same as
 	 * {@link TransformationHelper#getTransformation(EntityLivingBase)} with the
-	 * attacking entity as an argument does
+	 * attacking entity as an argument does. May be {@link Transformation#NONE}
 	 */
 	public Transformation getAttackerTransformation() {
 		return this.attackerTransformation;
@@ -62,7 +82,8 @@ public class EffectivenessEvent extends LivingEvent {
 
 	/**
 	 * Returns the damage in half hearts that the attacked entity will get after
-	 * this event has been fired
+	 * this event has been fired. The protection of the entity has already been
+	 * added to this value.
 	 */
 	public float getDamage() {
 		return this.damage;

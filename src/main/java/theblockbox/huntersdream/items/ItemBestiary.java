@@ -14,8 +14,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class ItemBestiary extends Item {

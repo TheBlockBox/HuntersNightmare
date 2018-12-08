@@ -13,11 +13,12 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import theblockbox.huntersdream.event.TransformationEvent;
+import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.event.TransformationEvent;
+import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -62,7 +63,7 @@ public class VampireEventHandler {
 		}
 	}
 
-	/** Called from {@link CapabilityHandler#onPlayerClone(PlayerEvent.Clone)} */
+	/** Called from {@link CapabilitiesInit#onPlayerClone(PlayerEvent.Clone)} */
 	public static void onVampireRespawn(EntityPlayer player) {
 		VampireHelper.getIVampire(player).setBlood(10D);
 		if (!player.world.isRemote && player.world.isDaytime())

@@ -32,6 +32,14 @@ public class BoolArray implements Cloneable {
 		return of(longs);
 	}
 
+	public static BoolArray of(boolean[] booleans) {
+		BoolArray array = of(booleans.length);
+		for (int i = 0; i < booleans.length; i++)
+			if (booleans[i])
+				array.set(i);
+		return array;
+	}
+
 	public static BoolArray reduce(BoolArray firstArray, BoolArray secondArray, LongBinaryOperator reducer) {
 		long[] firstLongs = firstArray.getBackingLongs();
 		long[] secondLongs = secondArray.getBackingLongs();

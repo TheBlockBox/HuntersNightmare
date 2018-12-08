@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
-import net.minecraft.entity.ai.EntityAIDoorInteract;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
@@ -13,7 +12,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 /**
  * Class that extends EntityAIBreakDoor so that you can also break iron doors.
- * Made because {@link EntityAIDoorInteract#getBlockDoor(BlockPos)} is private.
+ * Made because EntityAIDoorInteract#getBlockDoor(BlockPos) is private.
  */
 public class EntityAIBreakAllDoors extends EntityAIBreakDoor {
 

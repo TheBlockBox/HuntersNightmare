@@ -6,23 +6,25 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.event.CanLivingBeInfectedEvent;
-import theblockbox.huntersdream.event.IsLivingInfectedEvent;
-import theblockbox.huntersdream.event.TransformationEvent;
-import theblockbox.huntersdream.event.TransformationEvent.TransformationEventReason;
+import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
+import theblockbox.huntersdream.api.event.IsLivingInfectedEvent;
+import theblockbox.huntersdream.api.event.TransformationEvent;
+import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.Skill;
-import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
@@ -38,6 +40,7 @@ public class TransformationHelper {
 	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
 	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS;
 	public static final Skill[] EMPTY_SKILL_ARRAY = new Skill[0];
+	public static final String THORNS_DAMAGE_NAME = "huntersdream:effectiveAgainstTransformationThorns";
 	/**
 	 * Special damage source for things that are effective against specific
 	 * transformations. If used, the attacked entity's protection won't work
@@ -282,5 +285,9 @@ public class TransformationHelper {
 				"The NBTTagCompound should have the key \"transformation\" with the value \"%s\" but it was \"%s\"",
 				strTransformation, transformationValue);
 		return compound;
+	}
+
+	public static DamageSource causeEffectivenessThornsDamage(Entity source) {
+		return new EntityDamageSource(THORNS_DAMAGE_NAME, source).setIsThornsDamage().setMagicDamage();
 	}
 }

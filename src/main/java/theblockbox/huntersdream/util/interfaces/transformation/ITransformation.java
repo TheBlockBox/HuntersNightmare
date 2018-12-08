@@ -3,7 +3,7 @@ package theblockbox.huntersdream.util.interfaces.transformation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**

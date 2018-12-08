@@ -13,11 +13,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
+import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
 import theblockbox.huntersdream.util.HuntersJournalPage;
-import theblockbox.huntersdream.util.Skill;
-import theblockbox.huntersdream.util.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
@@ -143,14 +143,14 @@ public interface ITransformationPlayer extends ITransformation {
 		@Override
 		public void addSkill(Skill skill) {
 			if (!this.skills.add(skill)) {
-				throw new IllegalArgumentException("The player already has this ritual");
+				throw new IllegalArgumentException("The player already has this skill");
 			}
 		}
 
 		@Override
 		public void removeSkill(Skill skill) {
 			if (!this.skills.remove(skill)) {
-				throw new IllegalArgumentException("The player didn't have the ritual that should be removed");
+				throw new IllegalArgumentException("The player didn't have the skill that should be removed");
 			}
 		}
 

@@ -1,19 +1,12 @@
 package theblockbox.huntersdream.util.handlers;
 
-import static theblockbox.huntersdream.util.Transformation.VAMPIRE;
-import static theblockbox.huntersdream.util.Transformation.WEREWOLF;
-
 import java.io.File;
 import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -29,6 +22,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandsMoonphase;
@@ -44,14 +38,8 @@ import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.init.StructureInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.SilverFurnaceRecipe;
-import theblockbox.huntersdream.util.Transformation;
-import theblockbox.huntersdream.util.collection.TransformationToFloatMap;
 import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
-import theblockbox.huntersdream.util.effective_against_transformation.EffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.effective_against_transformation.EntityEffectiveAgainstTransformation;
-import theblockbox.huntersdream.util.effective_against_transformation.ItemEffectiveAgainstTransformation;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
 
 /**
@@ -125,28 +113,17 @@ public class RegistryHandler {
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
-		// TODO: Make better values
-		// register objects that are effective against a specific transformation
-
-		new ItemEffectiveAgainstTransformation(
-				GeneralHelper.getPredicateMatchesOreDict(OreDictionaryCompat.SILVER_NAMES),
-				new TransformationToFloatMap().put(WEREWOLF, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS)
-						.put(VAMPIRE, EffectiveAgainstTransformation.DEFAULT_EFFECTIVENESS)).register();
-
-		new EntityEffectiveAgainstTransformation(entity -> {
-			if (entity instanceof EntityTippedArrow) {
-				EntityTippedArrow arrow = (EntityTippedArrow) entity;
-				// using AT to access fields
-				return Stream.concat(arrow.potion.getEffects().stream(), arrow.customPotionEffects.stream())
-						.map(PotionEffect::getPotion)
-						.anyMatch(potion -> (potion == MobEffects.POISON) || (potion == PotionInit.POTION_WOLFSBANE));
-			}
-			return false;
-		}, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
-
-		new EntityEffectiveAgainstTransformation(entity -> {
-			return (entity instanceof EntityLivingBase) && WerewolfHelper.isTransformed((EntityLivingBase) entity);
-		}, new TransformationToFloatMap().put(VAMPIRE, 2.5F)).register();
+// TODO: Remove this
+//		new EntityEffectiveAgainstTransformation(entity -> {
+//			if (entity instanceof EntityTippedArrow) {
+//				EntityTippedArrow arrow = (EntityTippedArrow) entity;
+//				// using AT to access fields
+//				return Stream.concat(arrow.potion.getEffects().stream(), arrow.customPotionEffects.stream())
+//						.map(PotionEffect::getPotion)
+//						.anyMatch(potion -> (potion == MobEffects.POISON) || (potion == PotionInit.POTION_WOLFSBANE));
+//			}
+//			return false;
+//		}, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
 	}
 
 	// Client

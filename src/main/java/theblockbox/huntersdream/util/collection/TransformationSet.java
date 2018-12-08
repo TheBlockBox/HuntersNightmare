@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
 
 /**
  * A set for storing Transformation instances via storing their temporary id

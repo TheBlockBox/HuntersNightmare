@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.util.exceptions;
 
-import theblockbox.huntersdream.util.Transformation;
+import theblockbox.huntersdream.api.Transformation;
 
 public class WrongTransformationException extends RuntimeException {
 	private static final long serialVersionUID = 1581449395217223441L;

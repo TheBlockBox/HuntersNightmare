@@ -1,5 +1,6 @@
-package theblockbox.huntersdream.event;
+package theblockbox.huntersdream.api.event.effectiveness;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -18,13 +19,23 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * canceled in ALL set methods, so you shouldn't have to manually cancel it),
  * otherwise nothing happens<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
+ * This event does not have a result.
+ * {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class EntityEffectivenessEvent extends EffectivenessEvent {
 
-	public EntityEffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float damage) {
+	public EntityEffectivenessEvent(EntityLivingBase hurt, Entity attacker, float damage) {
 		super(hurt, attacker, damage);
+	}
+
+	/**
+	 * Returns the entity that attacked. Will never be null, but may be the
+	 * immediate source (an arrow for example).
+	 */
+	@Override
+	public Entity getAttacker() {
+		return super.getAttacker();
 	}
 }

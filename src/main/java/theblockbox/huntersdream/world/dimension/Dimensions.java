@@ -35,7 +35,7 @@ public enum Dimensions {
 	}
 
 	/**
-	 * Same as {@link Dimension#name}
+	 * Same as {@link Dimensions#name}
 	 * 
 	 * @return Returns the dimension name
 	 */

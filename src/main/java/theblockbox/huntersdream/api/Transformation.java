@@ -1,10 +1,12 @@
-package theblockbox.huntersdream.util;
+package theblockbox.huntersdream.api;
 
-import static theblockbox.huntersdream.util.Transformation.TransformationEntry.of;
+import static theblockbox.huntersdream.api.Transformation.TransformationEntry.of;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
@@ -12,7 +14,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.event.TransformationRegistryEvent;
+import theblockbox.huntersdream.api.event.TransformationRegistryEvent;
+import theblockbox.huntersdream.util.ExecutionPath;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
@@ -22,24 +26,27 @@ import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFuncti
 /**
  * A class to represent transformations and their properties. To register new
  * ones subscribe to
- * {@link theblockbox.huntersdream.event.TransformationRegistryEvent} and add
- * your transformation. Create a new one with
- * {@link TransformationEntry#create(ResourceLocation)}
+ * {@link theblockbox.huntersdream.api.event.TransformationRegistryEvent} and
+ * add your transformation. Create a new one with
+ * {@link TransformationEntry#create(ResourceLocation)}.
  */
 public class Transformation {
 	// Transformation constants
 	/** Used to indicate that no transformation is present and it won't change */
 	public static final Transformation NONE = of().setSupernatural(false).create("none");
 	/**
-	 * Used to indicate that no transformation is currently present but it is
-	 * possible that it will change
+	 * Used to indicate that no transformation is currently present but it could
+	 * change
 	 */
 	public static final Transformation HUMAN = of().setSupernatural(false).create("human");
+	/** The transformation for werewolves */
 	public static final Transformation WEREWOLF = of().setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
 			.setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage).setTexturesHD("lycantrophe")
 			.create("werewolf");
+	/** The transformation for vampires */
 	public static final Transformation VAMPIRE = of().setCalculateDamage(VampireHelper::calculateDamage)
 			.setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create("vampire");
+	/** The transformation for hunters */
 	public static final Transformation HUNTER = of().create("hunter");
 
 	private static Transformation[] transformations = null;
@@ -62,6 +69,7 @@ public class Transformation {
 	 * @param name The name of the resourcelocation (obtained through
 	 *             {@link ResourceLocation#toString()}, something like
 	 *             "huntersdream:werewolf"
+	 * @see #fromNameWithoutError(String)
 	 */
 	public static Transformation fromName(String name) {
 		Transformation transformation = fromNameWithoutError(name);
@@ -70,7 +78,6 @@ public class Transformation {
 					.error("The given string \"" + name
 							+ "\" does not have a corresponding transformation. Please report this\nStacktrace: "
 							+ ExecutionPath.getAll());
-			return NONE;
 		}
 		return transformation;
 	}
@@ -82,8 +89,10 @@ public class Transformation {
 	}
 
 	/**
-	 * Does exactly the same thing as {@link #fromName(String)} but without logging
-	 * an error
+	 * Does exactly the same as {@link #fromName(String)} but without logging an
+	 * error
+	 * 
+	 * @see #fromName(String)
 	 */
 	public static Transformation fromNameWithoutError(String name) {
 		for (Transformation transformation : transformations)
@@ -92,10 +101,22 @@ public class Transformation {
 		return NONE;
 	}
 
+	/**
+	 * Does exactly the same as {@link #fromName(String)} except that it accepts a
+	 * {@link ResourceLocation}.
+	 * 
+	 * @see #fromName(String)
+	 */
 	public static Transformation fromResourceLocation(ResourceLocation resourceLocation) {
 		return fromName(resourceLocation.toString());
 	}
 
+	/**
+	 * Tries to get a transformation from its temporary id. For a version that works
+	 * without temporary ids over game restarts, use {@link #fromName(String)}.
+	 * 
+	 * @see #fromName(String)
+	 */
 	public static Transformation fromTemporaryID(int temporaryID) throws ArrayIndexOutOfBoundsException {
 		return transformations[temporaryID];
 	}
@@ -103,7 +124,7 @@ public class Transformation {
 	/**
 	 * Gets the transformation with the temporary id of the given transformation + 1
 	 * or 1 if a higher one doesn't exist (because 0 would be
-	 * {@link theblockbox.huntersdream.util.Transformation#NONE}). Doesn't allow
+	 * {@link theblockbox.huntersdream.api.Transformation#NONE}). Doesn't allow
 	 * {@link Transformation#NONE}
 	 */
 	public static Transformation cycle(Transformation transformation) {
@@ -117,6 +138,10 @@ public class Transformation {
 		return transformations.clone();
 	}
 
+	/**
+	 * Called in the preInit phase to register all transformations. Should
+	 * <b>not</b> be called outside of Hunter's Dream.
+	 */
 	public static void preInit() {
 		TransformationRegistryEvent event = new TransformationRegistryEvent();
 		MinecraftForge.EVENT_BUS.post(event);
@@ -126,6 +151,11 @@ public class Transformation {
 		}
 	}
 
+	/**
+	 * A protected constructor for everyone who needs to extend this class.
+	 * 
+	 * @see TransformationEntry#create(ResourceLocation)
+	 */
 	protected Transformation(TransformationEntry entry, ResourceLocation registryName) {
 		this.entry = entry;
 		this.registryName = registryName;
@@ -148,10 +178,12 @@ public class Transformation {
 		return this.temporaryID >= 0;
 	}
 
+	/** Returns this transformation's registry name */
 	public ResourceLocation getRegistryName() {
 		return this.registryName;
 	}
 
+	/** Returns true if this transformation is supernatural */
 	public boolean isSupernatural() {
 		return this.entry.supernatural;
 	}
@@ -187,7 +219,7 @@ public class Transformation {
 
 	/**
 	 * This method returns the resource location obtained through
-	 * {@link #getResourceLocation()} in a string representation. So for example for
+	 * {@link #getRegistryName()} in a string representation. So for example for
 	 * werewolf with a resource location of new ResourceLocation("huntersdream",
 	 * "werewolf") this method here would return "huntersdream:werewolf"
 	 */
@@ -243,16 +275,28 @@ public class Transformation {
 		return this.temporaryID;
 	}
 
+	/**
+	 * Returns this transformation in form of an {@link Optional}. Always returns
+	 * the same optional
+	 */
 	public Optional<Transformation> toOptional() {
 		return this.optional;
 	}
 
+	/**
+	 * {@inheritDoc}<br>
+	 * <br>
+	 * The transformation version always returns the temporary id
+	 * ({@link #getTemporaryID()})
+	 * 
+	 * @see #getTemporaryID()
+	 */
 	@Override
 	public int hashCode() {
 		return this.getTemporaryID();
 	}
 
-	/** Used to register new transformations */
+	/** Used to register new transformations. All set methods are optional. */
 	public static class TransformationEntry {
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
@@ -270,32 +314,40 @@ public class Transformation {
 			return new TransformationEntry();
 		}
 
+		/** Sets this transformation to be supernatural */
 		public TransformationEntry setSupernatural(boolean supernatural) {
 			this.supernatural = supernatural;
 			return this;
 		}
 
+		/**
+		 * Sets a {@link ToFloatObjFloatFunction} to calculate the damage an entity,
+		 * that has this transformation, deals
+		 */
 		public TransformationEntry setCalculateDamage(ToFloatObjFloatFunction<EntityLivingBase> calculateDamage) {
 			this.calculateDamage = calculateDamage;
 			return this;
 		}
 
+		/**
+		 * Sets a {@link ToFloatObjFloatFunction} to calculate the damage an entity,
+		 * that has this transformation, gets
+		 */
 		public TransformationEntry setCalculateReducedDamage(
 				ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage) {
 			this.calculateReducedDamage = calculateReducedDamage;
 			return this;
 		}
 
+		/**
+		 * Sets the {@link ResourceLocation}s of the textures for this transformation.
+		 */
 		public TransformationEntry setTextures(ResourceLocation... textures) {
 			this.textures = textures;
 			return this;
 		}
 
-		/**
-		 * Don't use this method when creating an addon (use
-		 * {@link #setTextures(ResourceLocation...)}
-		 */
-		public TransformationEntry setTexturesHD(String... textures) {
+		private TransformationEntry setTexturesHD(String... textures) {
 			ResourceLocation[] resourceLocations = new ResourceLocation[textures.length];
 			for (int i = 0; i < textures.length; i++) {
 				resourceLocations[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + textures[i] + ".png");
@@ -304,7 +356,14 @@ public class Transformation {
 			return this;
 		}
 
-		public TransformationEntry setInfect(Consumer<EntityLivingBase> infect) {
+		/**
+		 * Sets the given {@link Consumer} to the function that is called when an entity
+		 * is infected with this tranformation
+		 * 
+		 * @param infect Gets called when an entity is infected with this tranformation.
+		 *               Is allowed to be null.
+		 */
+		public TransformationEntry setInfect(@Nullable Consumer<EntityLivingBase> infect) {
 			this.infect = infect;
 			return this;
 		}
@@ -318,7 +377,7 @@ public class Transformation {
 		 * Does exactly the same as {@link #create(ResourceLocation)} except that, if a
 		 * string with ':' is given, the domain defaults to hunter's dream
 		 */
-		public Transformation create(String registryName) {
+		private Transformation create(String registryName) {
 			return new Transformation(this, GeneralHelper.newResLoc(registryName));
 		}
 	}
