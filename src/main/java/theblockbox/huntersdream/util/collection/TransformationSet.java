@@ -3,9 +3,13 @@ package theblockbox.huntersdream.util.collection;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+
+import com.google.common.collect.Iterators;
 
 import theblockbox.huntersdream.api.Transformation;
 
@@ -35,8 +39,12 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 				() -> BoolArray.of(Transformation.getRegisteredTransformations()), BoolArray::set, BoolArray::or));
 	}
 
+	public static TransformationSet singletonSet(Transformation transformation) {
+		return new SingletonTransformationSet(transformation);
+	}
+
 	@Override
-	public boolean add(Transformation transformation) {
+	public boolean add(@Nonnull Transformation transformation) {
 		int id = transformation.getTemporaryID();
 		if (!this.delegate.get(id)) {
 			this.delegate.set(id);
@@ -85,12 +93,37 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 
 	@Override
 	public Iterator<Transformation> iterator() {
-		return this.stream().iterator();
+		return new Iterator<Transformation>() {
+			private int current = -1;
+			private int next = TransformationSet.this.delegate.getNextTrueIndex(0);
+
+			@Override
+			public boolean hasNext() {
+				return this.next != -1;
+			}
+
+			@Override
+			public Transformation next() {
+				this.current = this.next;
+				this.next = TransformationSet.this.delegate.getNextTrueIndex(this.current);
+				if (this.current == -1) {
+					throw new NoSuchElementException();
+				} else {
+					return Transformation.fromTemporaryID(this.next);
+				}
+			}
+
+			@Override
+			public void remove() {
+				if (!TransformationSet.this.remove(Transformation.fromTemporaryID(this.current)))
+					throw new IllegalStateException();
+			}
+		};
 	}
 
 	@Override
 	public int size() {
-		return this.delegate.length();
+		return this.delegate.getTrueElements();
 	}
 
 	@Override
@@ -110,5 +143,60 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 	@Override
 	public TransformationSet clone() {
 		return new TransformationSet(this.delegate.clone());
+	}
+
+	@Immutable
+	private static class SingletonTransformationSet extends TransformationSet {
+		private final Transformation transformation;
+
+		public SingletonTransformationSet(Transformation transformation) {
+			super((BoolArray) null);
+			this.transformation = transformation;
+		}
+
+		@Override
+		public boolean add(Transformation t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean remove(Transformation t) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int size() {
+			return 1;
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean contains(Transformation t) {
+			return this.transformation == t;
+		}
+
+		@Override
+		public Iterator<Transformation> iterator() {
+			return Iterators.singletonIterator(this.transformation);
+		}
+
+		@Override
+		public Stream<Transformation> stream() {
+			return Stream.of(this.transformation);
+		}
+
+		@Override
+		public Transformation[] toArray() {
+			return new Transformation[] { this.transformation };
+		}
+
+		@Override
+		public TransformationSet clone() {
+			return new SingletonTransformationSet(this.transformation);
+		}
 	}
 }

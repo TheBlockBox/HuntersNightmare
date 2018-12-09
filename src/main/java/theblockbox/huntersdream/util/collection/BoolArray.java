@@ -100,7 +100,7 @@ public class BoolArray implements Cloneable {
 	 */
 	public int getNextTrueIndex(int startIndex) {
 		int length = this.length();
-		for (int i = 0; i < length; i++)
+		for (int i = startIndex; i < length; i++)
 			if (this.get(i))
 				return i;
 		return -1;
@@ -112,7 +112,7 @@ public class BoolArray implements Cloneable {
 	 */
 	public int getNextFalseIndex(int startIndex) {
 		int length = this.length();
-		for (int i = 0; i < length; i++)
+		for (int i = startIndex; i < length; i++)
 			if (!this.get(i))
 				return i;
 		return -1;
@@ -128,6 +128,14 @@ public class BoolArray implements Cloneable {
 
 	public int length() {
 		return this.backingLongs.length * 64;
+	}
+
+	public int getTrueElements() {
+		int elements = 0;
+		for (int i = 0; i < this.backingLongs.length; i++)
+			if (this.backingLongs[i] != 0)
+				elements += Long.bitCount(this.backingLongs[i]);
+		return elements;
 	}
 
 	public void clear() {

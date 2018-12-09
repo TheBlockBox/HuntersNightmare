@@ -5,7 +5,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
-public abstract class ModelLycantrophe extends ModelBase {
+public abstract class ModelLycanthrope extends ModelBase {
 	public ModelRenderer body;
 	public ModelRenderer head;
 	public ModelRenderer legl;
@@ -16,7 +16,7 @@ public abstract class ModelLycantrophe extends ModelBase {
 	protected final boolean isCrouched;
 	protected boolean isTailGoingLeft = false;
 
-	public ModelLycantrophe(boolean isCrouched) {
+	public ModelLycanthrope(boolean isCrouched) {
 		this.isCrouched = isCrouched;
 	}
 

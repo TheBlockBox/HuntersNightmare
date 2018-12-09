@@ -59,7 +59,9 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.setSize(0.5F, 1.4F);
 		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
 		this.dataManager.set(TEXTURE_INDEX, textureIndex);
-		this.setTextureIndexWhenNeeded(worldIn);
+		// set the texture index if the given one is invalid
+		if (!this.textureIndexInBounds())
+			this.setTextureIndex(this);
 
 		NBTTagCompound transformationData = new NBTTagCompound();
 		transformationData.setString("transformation", this.dataManager.get(TRANSFORMATION_NAME));
@@ -67,6 +69,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	public EntityGoblinTD(World worldIn) {
+		// texture index of 0 because humans don't have special textures
 		this(worldIn, 0, Transformation.HUMAN);
 	}
 
@@ -151,11 +154,11 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		int length = this.getTransformation().getTextures().length;
 
 		if (length > 0 && !(textureIndex >= 0 && textureIndex < length)) {
-			this.setTextureIndex(this.getTransformation().getRandomTextureIndex(this.world));
 			Main.getLogger()
 					.error("Tried to get a goblin's texture index and failed. Texture index: " + textureIndex
 							+ " Bounds: " + this.getTransformation().getTextures().length
 							+ "\nAttempting to retry...\nStacktrace: " + ExecutionPath.getAll());
+			this.setTextureIndex(this);
 			return this.getTextureIndex();
 		} else {
 			// return texture index if either length is 0 or texture index is in bounds

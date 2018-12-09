@@ -43,6 +43,7 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -270,11 +271,15 @@ public class TransformationEventHandler {
 						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
 								TransformationEventReason.SPAWN);
 					}
+				} else if (creature instanceof EntityWerewolf) {
+					ITransformation transformation = TransformationHelper.getITransformation(creature).get();
+					if (!transformation.textureIndexInBounds())
+						transformation.setTextureIndex(creature);
 				}
 
 				tc.ifPresent(t -> {
-					if (t.getTransformation().getTextures().length > 0)
-						t.setTextureIndexWhenNeeded(world);
+					if (!t.textureIndexInBounds())
+						t.setTextureIndex(creature);
 				});
 			}
 

@@ -2,8 +2,8 @@ package theblockbox.huntersdream.util.interfaces.transformation;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
@@ -18,19 +18,22 @@ public interface ITransformation {
 
 	public void setTextureIndex(int index);
 
-	default public boolean textureIndexInBounds() {
-		return (this.getTextureIndex() >= 0)
-				&& (this.getTextureIndex() < this.getTransformation().getTextures().length);
+	/**
+	 * Sets the texture index of this capability to the texture returned from
+	 * {@link Transformation#getTextureIndexForEntity(EntityLivingBase)}. The entity
+	 * should be the entity to which this capability belongs, otherwise the texture
+	 * index won't be chosen properly and method may even throw a
+	 * {@link WrongTransformationException}.
+	 */
+	default public void setTextureIndex(EntityLivingBase entity) {
+		this.setTextureIndex(this.getTransformation().getTextureIndexForEntity(entity));
 	}
 
-	/**
-	 * When the texture index is not in the bounds, it will be set, otherwise not.
-	 * The world's random is used to decide which texture index should be used.
-	 */
-	default public void setTextureIndexWhenNeeded(World worldIn) {
-		if (!textureIndexInBounds()) {
-			this.setTextureIndex(this.getTransformation().getRandomTextureIndex(worldIn));
-		}
+	default public boolean textureIndexInBounds() {
+		int textureLength = this.getTransformation().getTextures().length;
+		// if the texture length is 0, the texture index won't be used and we can return
+		// true because nothing needs to be changed
+		return ((textureLength == 0) || (this.getTextureIndex() >= 0 && this.getTextureIndex() < textureLength));
 	}
 
 	/**

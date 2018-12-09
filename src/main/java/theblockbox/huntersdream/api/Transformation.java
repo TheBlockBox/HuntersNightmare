@@ -5,13 +5,13 @@ import static theblockbox.huntersdream.api.Transformation.TransformationEntry.of
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
+import java.util.function.ToIntFunction;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.event.TransformationRegistryEvent;
@@ -41,8 +41,10 @@ public class Transformation {
 	public static final Transformation HUMAN = of().setSupernatural(false).create("human");
 	/** The transformation for werewolves */
 	public static final Transformation WEREWOLF = of().setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
-			.setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage).setTexturesHD("lycantrophe")
-			.create("werewolf");
+			.setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage)
+			.setTexturesHD("werewolf/lycanthrope_brown", "werewolf/lycanthrope_black", "werewolf/lycanthrope_white",
+					"werewolf/lycanthrope_yellow")
+			.setGetTextureIndex(WerewolfHelper::getTextureIndexForWerewolf).create("werewolf");
 	/** The transformation for vampires */
 	public static final Transformation VAMPIRE = of().setCalculateDamage(VampireHelper::calculateDamage)
 			.setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create("vampire");
@@ -253,13 +255,11 @@ public class Transformation {
 	}
 
 	/**
-	 * Returns a random texture index within the bounds of the given
-	 * transformation's textures. The world's random is used to decide which texture
-	 * index should be used
+	 * Returns the texture index an entity should get when it just spawned/changed
+	 * transformation.
 	 */
-	public int getRandomTextureIndex(World worldIn) {
-		int textureLength = this.getTextures().length;
-		return textureLength == 0 ? 0 : worldIn.rand.nextInt(textureLength);
+	public int getTextureIndexForEntity(EntityLivingBase entity) {
+		return this.entry.getTextureIndex.applyAsInt(entity);
 	}
 
 	public Consumer<EntityLivingBase> getInfect() {
@@ -304,6 +304,7 @@ public class Transformation {
 		/** An {@link ObjDoubleConsumer} that is executed when the player levels up */
 		private ToFloatObjFloatFunction<EntityLivingBase> calculateDamage = (e, f) -> f;
 		private ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage = (e, f) -> f;
+		private ToIntFunction<EntityLivingBase> getTextureIndex = e -> 0;
 
 		private TransformationEntry() {
 		}
@@ -365,6 +366,15 @@ public class Transformation {
 		 */
 		public TransformationEntry setInfect(@Nullable Consumer<EntityLivingBase> infect) {
 			this.infect = infect;
+			return this;
+		}
+
+		/**
+		 * Sets the getTextureIndex method to the given {@link ToIntFunction} that will
+		 * be called to determine the texture index of an entity.
+		 */
+		public TransformationEntry setGetTextureIndex(ToIntFunction<EntityLivingBase> getTextureIndex) {
+			this.getTextureIndex = getTextureIndex;
 			return this;
 		}
 

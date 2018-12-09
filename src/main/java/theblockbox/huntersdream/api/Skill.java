@@ -1,5 +1,7 @@
 package theblockbox.huntersdream.api;
 
+import static theblockbox.huntersdream.util.helpers.GeneralHelper.newResLoc;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +33,30 @@ public class Skill {
 	private final TransformationSet forTransformations;
 	private final Skill[] requiredSkills;
 
+	public static final TransformationSet WEREWOLF_SET = TransformationSet.singletonSet(Transformation.WEREWOLF);
 	// Hunter's Dream Skills
-	// TODO: Add skills here
+	public static final Skill BITE_1 = new Skill(newResLoc("bite_1"), 40, WEREWOLF_SET);
+	public static final Skill BITE_2 = new Skill(newResLoc("bite_2"), 80, WEREWOLF_SET, BITE_1);
+	public static final Skill BITE_3 = new Skill(newResLoc("bite_3"), 120, WEREWOLF_SET, BITE_2);
+
+	public static final Skill SPEED_1 = new Skill(newResLoc("speed_1"), 40, WEREWOLF_SET);
+	public static final Skill SPEED_2 = new Skill(newResLoc("speed_2"), 80, WEREWOLF_SET, SPEED_1);
+	public static final Skill SPEED_3 = new Skill(newResLoc("speed_3"), 120, WEREWOLF_SET, SPEED_2);
+
+	public static final Skill JUMP_1 = new Skill(newResLoc("jump_1"), 40, WEREWOLF_SET);
+	public static final Skill JUMP_2 = new Skill(newResLoc("jump_2"), 80, WEREWOLF_SET, JUMP_1);
+	public static final Skill JUMP_3 = new Skill(newResLoc("jump_3"), 120, WEREWOLF_SET, JUMP_2);
+
+	public static final Skill UNARMED_1 = new Skill(newResLoc("unarmed_1"), 40, WEREWOLF_SET);
+	public static final Skill UNARMED_2 = new Skill(newResLoc("unarmed_2"), 80, WEREWOLF_SET, UNARMED_1);
+	public static final Skill UNARMED_3 = new Skill(newResLoc("unarmed_3"), 120, WEREWOLF_SET, UNARMED_2);
+
+	public static final Skill ARMOR_1 = new Skill(newResLoc("natural_armor_1"), 40, WEREWOLF_SET);
+	public static final Skill ARMOR_2 = new Skill(newResLoc("natural_armor_2"), 80, WEREWOLF_SET, ARMOR_1);
+	public static final Skill ARMOR_3 = new Skill(newResLoc("natural_armor_3"), 120, WEREWOLF_SET, ARMOR_2);
+
+	public static final Skill WILLFUL_TRANSFORMATION = new Skill(newResLoc("willful_transformation"), 200,
+			WEREWOLF_SET);
 
 	/**
 	 * Creates a new Skill instance with the given arguments.

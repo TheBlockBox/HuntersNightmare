@@ -40,14 +40,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.entity.ai.EntityAIBreakAllDoors;
 import theblockbox.huntersdream.entity.ai.EntityAIWerewolfAttack;
-import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
@@ -68,9 +66,9 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	public static final Transformation TRANSFORMATION = Transformation.WEREWOLF;
 	private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
 			.createKey(EntityWerewolf.class, DataSerializers.COMPOUND_TAG);
+	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager.createKey(EntityWerewolf.class,
+			DataSerializers.VARINT);
 	private static final String CLASS_NAME = EntityWerewolf.class.getName();
-	/** the werewolf texture to be used */
-	private int textureIndex;
 	/** name of the entity the werewolf was before transformation */
 	private String untransformedEntityName;
 	private NBTTagCompound extraData;
@@ -82,18 +80,24 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 			throw new IllegalArgumentException(
 					"Can't transform already transformed werewolf (tried to spawn werewolf with its untransformed entity being werewolf)\nExtra data: ");
 
-		if (textureIndex >= 0 && textureIndex < this.getTransformation().getTextures().length) {
-			this.setTextureIndex(textureIndex);
-		} else {
-			Main.getLogger().warn("A werewolf has been created with a texture index (" + textureIndex
-					+ ") that is out of bounds. This shouldn't happen.\nPath: " + ExecutionPath.get(0, 5));
-			this.setTextureIndexWhenNeeded(worldIn);
-		}
+		// if the texture index is not a valid texture index, it'll be set in
+		// TransformationEventHandler#onEntityJoin(EntityJoinWorldEvent)
+		this.setTextureIndex(textureIndex);
+
 		this.untransformedEntityName = entityName;
 		this.usesAlexSkin = this.rand.nextBoolean();
 		this.setSize(0.6F, WerewolfHelper.getWerewolfHeight(this));
 		this.setExtraData(extraData);
 		Validate.notNull(extraData, "Can't spawn werewolf with null extra data");
+	}
+
+	public EntityWerewolf(World worldIn, int textureIndex, EntityCreature entity, NBTTagCompound extraData) {
+		this(worldIn, textureIndex, ((TransformationHelper.getITransformationCreature(entity) != null) ? "$bycap" : "")
+				+ entity.getClass().getName(), extraData);
+	}
+
+	public EntityWerewolf(World worldIn) {
+		this(worldIn, -1, "$bycap" + EntityVillager.class.getName(), GeneralHelper.EMPTY_COMPOUND);
 	}
 
 	public boolean usesAlexSkin() {
@@ -104,16 +108,6 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 		this.usesAlexSkin = useAlexSkin;
 	}
 
-	public EntityWerewolf(World worldIn, int textureIndex, EntityCreature entity, NBTTagCompound extraData) {
-		this(worldIn, textureIndex, ((TransformationHelper.getITransformationCreature(entity) != null) ? "$bycap" : "")
-				+ entity.getClass().getName(), extraData);
-	}
-
-	public EntityWerewolf(World worldIn) {
-		this(worldIn, TRANSFORMATION.getRandomTextureIndex(worldIn), "$bycap" + EntityVillager.class.getName(),
-				GeneralHelper.EMPTY_COMPOUND);
-	}
-
 	@Override
 	protected void entityInit() {
 		super.entityInit();
@@ -121,6 +115,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 		transformationData.setString("transformation", TRANSFORMATION.toString());
 		transformationData.setBoolean("transformed", true);
 		this.dataManager.register(TRANSFORMATION_DATA, transformationData);
+		this.dataManager.register(TEXTURE_INDEX, 0);
 	}
 
 	@Override
@@ -302,12 +297,12 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	@Override
 	public int getTextureIndex() {
-		return this.textureIndex;
+		return this.dataManager.get(TEXTURE_INDEX);
 	}
 
 	@Override
 	public void setTextureIndex(int index) {
-		this.textureIndex = index;
+		this.dataManager.set(TEXTURE_INDEX, index);
 	}
 
 	@Override
@@ -323,7 +318,6 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		ByteBufUtils.writeUTF8String(buffer, this.getUntransformedEntityName());
-		buffer.writeInt(this.getTextureIndex());
 		buffer.writeBoolean(this.usesAlexSkin());
 		ByteBufUtils.writeTag(buffer, this.getEntityData());
 	}
@@ -331,7 +325,6 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	@Override
 	public void readSpawnData(ByteBuf buffer) {
 		this.untransformedEntityName = ByteBufUtils.readUTF8String(buffer);
-		this.setTextureIndex(buffer.readInt());
 		this.setUseAlexSkin(buffer.readBoolean());
 		this.setExtraData(ObjectUtils.defaultIfNull(ByteBufUtils.readTag(buffer), GeneralHelper.EMPTY_COMPOUND));
 	}

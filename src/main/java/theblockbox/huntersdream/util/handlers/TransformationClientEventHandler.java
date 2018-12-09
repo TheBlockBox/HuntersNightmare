@@ -25,13 +25,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.entity.renderer.RenderLycantrophePlayer;
+import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 /**
@@ -39,17 +40,18 @@ import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
  */
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Reference.MODID)
 public class TransformationClientEventHandler {
-	private static RenderLycantrophePlayer renderLycantrophePlayer = null;
+	private static RenderLycanthropePlayer renderLycantrophePlayer = null;
 	private static RenderPlayer renderPlayerHand = null;
 	public static final ResourceLocation BLOOD_BAR = GeneralHelper.newResLoc("textures/gui/blood_bar.png");
 	public static final ResourceLocation WEREWOLF_HEALTH = GeneralHelper.newResLoc("textures/gui/werewolf_health.png");
 	public static final ResourceLocation[] WEREWOLF_HANDS = { getHandTexture("brown", false),
-			getHandTexture("black", false), getHandTexture("white", false), getHandTexture("brown", true),
-			getHandTexture("black", true), getHandTexture("white", true) };
+			getHandTexture("black", false), getHandTexture("white", false), getHandTexture("yellow", false),
+			getHandTexture("brown", true), getHandTexture("black", true), getHandTexture("white", true),
+			getHandTexture("yellow", true) };
 
 	private static ResourceLocation getHandTexture(String variant, boolean slim) {
-		return GeneralHelper.newResLoc(
-				Reference.ENTITY_TEXTURE_PATH + "werewolf_arms_" + (slim ? "slim" : "normal") + "_" + variant + ".png");
+		return GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms_"
+				+ (slim ? "slim" : "normal") + "_" + variant + ".png");
 	}
 
 	@SubscribeEvent
@@ -61,7 +63,7 @@ public class TransformationClientEventHandler {
 			if (WerewolfHelper.isTransformed(player)) {
 				event.setCanceled(true);
 				if (renderLycantrophePlayer == null)
-					renderLycantrophePlayer = new RenderLycantrophePlayer(Minecraft.getMinecraft().getRenderManager());
+					renderLycantrophePlayer = new RenderLycanthropePlayer(Minecraft.getMinecraft().getRenderManager());
 				renderLycantrophePlayer.doRender(player, event.getX(), event.getY(), event.getZ(), player.rotationYaw,
 						event.getPartialRenderTick());
 			}
@@ -90,8 +92,10 @@ public class TransformationClientEventHandler {
 						}
 
 						public void bindTextures(AbstractClientPlayer clientPlayer) {
+							ITransformationPlayer transformation = TransformationHelper
+									.getITransformationPlayer(player);
 							ResourceLocation werewolfHand = WEREWOLF_HANDS[((clientPlayer.getSkinType().equals("slim")
-									? 3
+									? transformation.getTransformation().getTextures().length
 									: 0)
 									+ TransformationHelper.getITransformationPlayer(clientPlayer).getTextureIndex())];
 							this.bindTexture(werewolfHand);

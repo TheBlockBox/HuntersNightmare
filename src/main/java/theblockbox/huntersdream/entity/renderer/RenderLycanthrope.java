@@ -18,13 +18,13 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
-public abstract class RenderLycantrophe<T extends EntityLivingBase> extends RenderLivingBase<T> {
+public abstract class RenderLycanthrope<T extends EntityLivingBase> extends RenderLivingBase<T> {
 	protected ModelLycanthropeAlex modelAlex = new ModelLycanthropeAlex();
 	protected ModelLycanthropeAlexCrouched modelAlexCrouched = new ModelLycanthropeAlexCrouched();
 	protected ModelLycanthropeSteve modelSteve;
 	protected ModelLycanthropeSteveCrouched modelSteveCrouched = new ModelLycanthropeSteveCrouched();
 
-	public RenderLycantrophe(RenderManager manager) {
+	public RenderLycanthrope(RenderManager manager) {
 		super(manager, new ModelLycanthropeSteve(), 0.5F);
 		// assign this so the model that the steve model is always the same
 		this.modelSteve = (ModelLycanthropeSteve) this.mainModel;

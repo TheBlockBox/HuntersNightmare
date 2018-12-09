@@ -66,7 +66,7 @@ public class TransformationHelper {
 		ITransformationPlayer cap = getITransformationPlayer(player);
 		cap.setSkills(EMPTY_SKILL_ARRAY); // reset rituals
 		cap.setTransformation(transformation);
-		cap.setTextureIndex(cap.getTransformation().getRandomTextureIndex(player.world));
+		cap.setTextureIndex(player);
 
 		NBTTagCompound transformationData = new NBTTagCompound();
 		transformationData.setString("transformation", transformation.toString());
@@ -95,8 +95,7 @@ public class TransformationHelper {
 						transformationData.setString("transformation", transformation.toString());
 						it.setTransformationData(transformationData);
 
-						getITransformationCreature((EntityCreature) entity)
-								.ifPresent(t -> t.setTextureIndex(t.getTransformation().getRandomTextureIndex(world)));
+						getITransformationCreature((EntityCreature) entity).ifPresent(t -> t.setTextureIndex(entity));
 					} else {
 						throw new IllegalArgumentException("Can't transform entity " + entity.toString()
 								+ " (it is neither a player nor an instance of EntityCreature)");
