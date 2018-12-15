@@ -1,10 +1,10 @@
-package theblockbox.huntersdream.util.compat;
+package theblockbox.huntersdream.init;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class OreDictionaryCompat {
+public class OreDictionaryInit {
 	public static final String[] SILVER_NAMES = { "blockSilver", "oreSilver", "ingotSilver", "helmetSilver",
 			"chestplateSilver", "leggingsSilver", "bootsSilver", "axeSilver", "pickaxeSilver", "hoeSilver",
 			"swordSilver", "shovelSilver" };

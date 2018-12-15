@@ -33,7 +33,7 @@ public class Skill {
 	private final TransformationSet forTransformations;
 	private final Skill[] requiredSkills;
 
-	public static final TransformationSet WEREWOLF_SET = TransformationSet.singletonSet(Transformation.WEREWOLF);
+	private static final TransformationSet WEREWOLF_SET = TransformationSet.singletonSet(Transformation.WEREWOLF);
 	// Hunter's Dream Skills
 	public static final Skill BITE_1 = new Skill(newResLoc("bite_1"), 40, WEREWOLF_SET);
 	public static final Skill BITE_2 = new Skill(newResLoc("bite_2"), 80, WEREWOLF_SET, BITE_1);
@@ -63,12 +63,12 @@ public class Skill {
 	 * 
 	 * @param registryName           A unique {@link ResourceLocation} for this
 	 *                               skill.
-	 * @param forTransformations     A {@link TransformationSet} that contains all
-	 *                               Transformations that should be able to unlock
-	 *                               this skill. Mustn't be null or empty.
 	 * @param neededExperienceLevels The levels that are removed from the player
 	 *                               when the skill is unlocked. Is not allowed to
-	 *                               be negative.
+	 *                               be negative. * @param forTransformations A
+	 *                               {@link TransformationSet} that contains all
+	 *                               Transformations that should be able to unlock
+	 *                               this skill. Mustn't be null or empty.
 	 * @param requiredSkills         An array of Skills that a player needs to have
 	 *                               unlocked before this Skill can be unlocked.
 	 * @throws IllegalArgumentException If the forTransformations argument is null
@@ -87,7 +87,7 @@ public class Skill {
 		Validate.isTrue(!forTransformations.isEmpty(), "The skill \"" + registryNameString
 				+ "\" should have at least one Transformation in the TransformationSet");
 		this.forTransformations = forTransformations.clone();
-		this.requiredSkills = requiredSkills;
+		this.requiredSkills = requiredSkills.clone();
 		SKILLS.put(registryNameString, this);
 	}
 

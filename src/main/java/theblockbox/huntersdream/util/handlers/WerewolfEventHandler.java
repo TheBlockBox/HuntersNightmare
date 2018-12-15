@@ -348,6 +348,7 @@ public class WerewolfEventHandler {
 
 	// removes hunger effect from werewolves when eating food that would normally
 	// cause hunger
+	// TODO: Find better way?
 	@SubscribeEvent
 	public static void onItemUseFinish(LivingEntityUseItemEvent.Finish event) {
 		EntityLivingBase entity = event.getEntityLiving();

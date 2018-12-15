@@ -67,7 +67,7 @@ public class VampireEventHandler {
 	public static void onVampireRespawn(EntityPlayer player) {
 		VampireHelper.getIVampire(player).setBlood(10D);
 		if (!player.world.isRemote && player.world.isDaytime())
-			player.addPotionEffect(new PotionEffect(PotionInit.SUNSCREEN, 300, 0, false, false));
+			player.addPotionEffect(new PotionEffect(PotionInit.POTION_SUNSCREEN, 300, 0, false, false));
 	}
 
 	/** Called from {@link EventHandler#onPlayerJoin(PlayerLoggedInEvent)} */

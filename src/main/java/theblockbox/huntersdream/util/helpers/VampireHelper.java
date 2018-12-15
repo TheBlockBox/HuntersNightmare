@@ -80,6 +80,6 @@ public class VampireHelper {
 		if (!canSeeSky) {
 			canSeeSky = GeneralHelper.canBlockSeeSky(world, pos);
 		}
-		return !vampire.isPotionActive(PotionInit.SUNSCREEN) && world.isDaytime() && canSeeSky;
+		return !vampire.isPotionActive(PotionInit.POTION_SUNSCREEN) && world.isDaytime() && canSeeSky;
 	}
 }

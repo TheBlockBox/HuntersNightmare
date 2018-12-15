@@ -58,10 +58,11 @@ command.huntersdream.transformation.transformationGet=%s's transformation is %s
 command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
 command.huntersdream.transformationtexture.get=%s's texture index is %s
 command.huntersdream.transformationtexture.set=%s's texture was set to %s
-command.huntersdream.ritual.usage=hdritual <clear|add|remove> <player> <ritual>
-command.huntersdream.ritual.add=The ritual %s has been added to %s
-command.huntersdream.ritual.remove=The ritual %s has been removed from %s
-command.huntersdream.ritual.clear=%s's rituals have been cleared
+command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill>
+command.huntersdream.skill.add=The skill %s has been added to %s
+command.huntersdream.skill.remove=The skill %s has been removed from %s
+command.huntersdream.skill.clear=%s's skill have been cleared
+command.huntersdream.skill.list=%s's skills are: %s
 
 # Chat messages
 transformations.huntersdream.infected.werewolf=You've been bitten but the wound is ... healing?

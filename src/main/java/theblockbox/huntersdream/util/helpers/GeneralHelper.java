@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.util.helpers;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
@@ -373,5 +374,12 @@ public class GeneralHelper {
 				world.spawnEntity(new EntityXPOrb(world, pos.getX(), pos.getY() + 0.5D, pos.getZ() + 0.5D, splitXP));
 			}
 		}
+	}
+
+	public static <T> boolean containsAll(Collection<? super T> c, T[] elements) {
+		for (T element : elements)
+			if (!c.contains(element))
+				return false;
+		return true;
 	}
 }

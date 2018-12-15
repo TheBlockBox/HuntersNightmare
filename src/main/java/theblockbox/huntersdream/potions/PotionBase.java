@@ -5,7 +5,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
@@ -17,8 +16,6 @@ public abstract class PotionBase extends Potion {
 		setRegistryName(GeneralHelper.newResLoc(name));
 		setPotionName("effect." + Reference.MODID + "." + name);
 		setIconIndex(iconIndex % 6, MathHelper.floor(iconIndex / 6.0D));
-
-		PotionInit.POTIONS.add(this);
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -134,10 +134,10 @@ public class CapabilitiesInit {
 			MinecraftServer server = player.getServer();
 			GeneralHelper.executeOnMainThreadIn(() -> {
 				sendPackets(server, player);
-			}, 100, server, "SyncCapAfterPlayerDeath1");
+			}, 100, server, Reference.MODID + ":syncCapAfterPlayerDeath1");
 			GeneralHelper.executeOnMainThreadIn(() -> {
 				sendPackets(server, player);
-			}, 40000, server, "SyncCapAfterPlayerDeath2");
+			}, 40000, server, Reference.MODID + ":syncCapAfterPlayerDeath2");
 		}
 	}
 

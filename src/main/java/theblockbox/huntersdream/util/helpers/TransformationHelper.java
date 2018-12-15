@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.helpers;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -18,13 +19,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.api.event.IsLivingInfectedEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
@@ -39,14 +40,13 @@ public class TransformationHelper {
 	public static final Capability<ITransformationPlayer> CAPABILITY_TRANSFORMATION_PLAYER = CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER;
 	public static final Capability<ITransformationCreature> CAPABILITY_TRANSFORMATION_CREATURE = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
 	public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS;
-	public static final Skill[] EMPTY_SKILL_ARRAY = new Skill[0];
-	public static final String THORNS_DAMAGE_NAME = "huntersdream:effectiveAgainstTransformationThorns";
+	public static final String THORNS_DAMAGE_NAME = Reference.MODID + ":effectiveAgainstTransformationThorns";
 	/**
 	 * Special damage source for things that are effective against specific
 	 * transformations. If used, the attacked entity's protection won't work
 	 */
 	public static final DamageSource EFFECTIVE_AGAINST_TRANSFORMATION = new DamageSource(
-			"effectiveAgainstTransformation");
+			Reference.MODID + "effectiveAgainstTransformation");
 
 	/**
 	 * Returns the transformation capability of the given player (just a short-cut
@@ -64,7 +64,7 @@ public class TransformationHelper {
 	private static void changeTransformation(EntityPlayerMP player, Transformation transformation) {
 		transformation.validateIsTransformation();
 		ITransformationPlayer cap = getITransformationPlayer(player);
-		cap.setSkills(EMPTY_SKILL_ARRAY); // reset rituals
+		cap.setSkills(Collections.emptySet()); // reset skills
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(player);
 

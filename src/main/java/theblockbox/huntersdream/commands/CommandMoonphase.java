@@ -12,7 +12,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 
-public class CommandsMoonphase extends CommandBase {
+public class CommandMoonphase extends CommandBase {
+	private static final Exception AIOOBE = new ArrayIndexOutOfBoundsException(0);
 
 	@Override
 	public String getName() {
@@ -60,7 +61,7 @@ public class CommandsMoonphase extends CommandBase {
 								sender.getEntityWorld().getCurrentMoonPhaseFactor()));
 					}
 				} catch (Exception e) {
-					CommandHelper.invalidCommand(sender);
+					CommandHelper.invalidCommand(sender, e);
 				}
 			} else if (args[0].equals("add")) {
 				try {
@@ -77,12 +78,11 @@ public class CommandsMoonphase extends CommandBase {
 					sender.sendMessage(new TextComponentTranslation("command.huntersdream.moonphase.getSet",
 							world.getCurrentMoonPhaseFactor()));
 				} catch (Exception e) {
-					CommandHelper.invalidCommand(sender);
+					CommandHelper.invalidCommand(sender, e);
 				}
 			}
 		} else {
-			CommandHelper.invalidCommand(sender);
+			CommandHelper.invalidCommand(sender, AIOOBE);
 		}
 	}
-
 }

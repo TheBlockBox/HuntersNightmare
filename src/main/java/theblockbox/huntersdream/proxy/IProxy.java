@@ -15,10 +15,10 @@ public interface IProxy {
 
 	public void postInit();
 
-	public boolean physicalClient();
+	public boolean isPhysicalClient();
 
 	default public Side getPhysicalSide() {
-		return this.physicalClient() ? Side.CLIENT : Side.SERVER;
+		return this.isPhysicalClient() ? Side.CLIENT : Side.SERVER;
 	}
 
 	public EntityPlayer getPlayer();

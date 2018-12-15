@@ -16,7 +16,7 @@ import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-public class CommandsTransformationTexture extends CommandBase {
+public class CommandTransformationTexture extends CommandBase {
 
 	@Override
 	public String getName() {
@@ -76,7 +76,7 @@ public class CommandsTransformationTexture extends CommandBase {
 				PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
 			}
 		} catch (Exception e) {
-			CommandHelper.invalidCommand(sender);
+			CommandHelper.invalidCommand(sender, e);
 		}
 	}
 

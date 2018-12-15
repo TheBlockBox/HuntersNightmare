@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import theblockbox.huntersdream.gui.GuiHuntersJournal;
 import theblockbox.huntersdream.util.HuntersJournalPage;
@@ -32,7 +33,7 @@ public class ClientProxy implements IProxy {
 	}
 
 	@Override
-	public boolean physicalClient() {
+	public boolean isPhysicalClient() {
 		return true;
 	}
 
@@ -49,11 +50,11 @@ public class ClientProxy implements IProxy {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Entity> T getEntityFromID(int id) {
-		Minecraft mc = Minecraft.getMinecraft();
-		Entity entity = mc.world.getEntityByID(id);
+		World world = Minecraft.getMinecraft().world;
+		Entity entity = world.getEntityByID(id);
 		if (entity == null) {
 			throw new IllegalArgumentException("No entity with the id " + id + " exists in the world "
-					+ mc.world.getProviderName() + " (Side: CLIENT)");
+					+ world.getProviderName() + " (Side: CLIENT)");
 		}
 		return (T) entity;
 	}

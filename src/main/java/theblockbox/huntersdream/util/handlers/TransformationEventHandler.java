@@ -35,8 +35,8 @@ import theblockbox.huntersdream.api.event.effectiveness.ItemEffectivenessEvent;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.init.OreDictionaryInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -77,7 +77,7 @@ public class TransformationEventHandler {
 						for (ItemStack stack : player.getEquipmentAndArmor()) {
 							// damage player if item is effective against transformation (also works when
 							// player is not transformed)
-							if (GeneralHelper.itemStackHasOreDicts(stack, OreDictionaryCompat.SILVER_NAMES)) {
+							if (GeneralHelper.itemStackHasOreDicts(stack, OreDictionaryInit.SILVER_NAMES)) {
 								player.attackEntityFrom(TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION, 1);
 								break;
 							}
@@ -145,7 +145,7 @@ public class TransformationEventHandler {
 				if (attacker != null) {
 					// add effectiveness against undead
 					if (hurt.isEntityUndead() && GeneralHelper.itemStackHasOreDicts(attacker.getHeldItemMainhand(),
-							OreDictionaryCompat.SILVER_NAMES))
+							OreDictionaryInit.SILVER_NAMES))
 						event.setAmount(event.getAmount() + 2.5F);
 
 					if (transformationHurt.isTransformation()
@@ -365,7 +365,7 @@ public class TransformationEventHandler {
 	@SubscribeEvent
 	public static void onItemEffectiveness(ItemEffectivenessEvent event) {
 		if ((event.getHurtTransformation() == Transformation.WEREWOLF)
-				&& GeneralHelper.itemStackHasOreDicts(event.getItemStack(), OreDictionaryCompat.SILVER_NAMES)) {
+				&& GeneralHelper.itemStackHasOreDicts(event.getItemStack(), OreDictionaryInit.SILVER_NAMES)) {
 			event.setDamage(event.getDamage() * (WerewolfHelper.isTransformed(event.getEntityLiving()) ? 4F : 2F));
 		}
 	}

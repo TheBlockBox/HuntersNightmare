@@ -16,7 +16,7 @@ public class CommandHelper {
 	 * Sends the given command sender a message that the executed command had
 	 * invalid parameters
 	 */
-	public static void invalidCommand(ICommandSender sender) {
+	public static void invalidCommand(ICommandSender sender, Exception e) {
 		sender.sendMessage(COMMAND_INVALID);
 	}
 }

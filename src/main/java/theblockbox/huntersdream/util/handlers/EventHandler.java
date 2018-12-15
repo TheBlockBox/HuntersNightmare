@@ -25,21 +25,30 @@ public class EventHandler {
 	@SubscribeEvent
 	public static void onPlayerJoin(PlayerLoggedInEvent event) {
 		VampireEventHandler.onPlayerJoin(event);
-		try {
-			EntityPlayer player = event.player;
-			JsonObject jsonObject = new JsonParser()
-					.parse(new InputStreamReader(new URL(Reference.UPDATE_JSON).openStream())).getAsJsonObject();
-			Iterator<JsonElement> iterator = jsonObject.get("supportedmcversions").getAsJsonArray().iterator();
-			while (iterator.hasNext())
-				if (iterator.next().getAsString().equals(Reference.MC_VERSION))
-					return;
-			TextComponentTranslation tct = new TextComponentTranslation(Reference.MODID + ".versionNotSupported",
-					Reference.MC_VERSION);
-			tct.getStyle().setColor(TextFormatting.DARK_RED);
-			player.sendMessage(tct);
-		} catch (Exception e) {
-			Main.getLogger().error("Something went wrong while trying to test for supported minecraft versions");
-		}
+
+		// in its own thread so that this won't block the whole main thred
+		new Thread(Reference.MODID + ":getIsOutdatedVersion") {
+			@Override
+			public void run() {
+				try {
+					EntityPlayer player = event.player;
+					JsonObject jsonObject = new JsonParser()
+							.parse(new InputStreamReader(new URL(Reference.UPDATE_JSON).openStream()))
+							.getAsJsonObject();
+					Iterator<JsonElement> iterator = jsonObject.get("supportedmcversions").getAsJsonArray().iterator();
+					while (iterator.hasNext())
+						if (iterator.next().getAsString().equals(Reference.MC_VERSION))
+							return;
+					TextComponentTranslation tct = new TextComponentTranslation(
+							Reference.MODID + ".versionNotSupported", Reference.MC_VERSION);
+					tct.getStyle().setColor(TextFormatting.DARK_RED);
+					player.getServer().addScheduledTask(() -> player.sendMessage(tct));
+				} catch (Exception e) {
+					Main.getLogger()
+							.error("Something went wrong while trying to test for supported minecraft versions");
+				}
+			}
+		}.start();
 	}
 
 	@SubscribeEvent

@@ -21,7 +21,6 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
 public class BlockInit {
-	public static final List<Block> BLOCKS = new ArrayList<>(); // also includes ores
 	public static final List<BlockOre> ORES = new ArrayList<>();
 
 	@ObjectHolder("huntersdream:block_silver")
@@ -60,7 +59,6 @@ public class BlockInit {
 	private static void registerBlock(Block block, String name, CreativeTabs tab, RegistryEvent.Register<Block> event) {
 		event.getRegistry().register(block.setTranslationKey(Reference.MODID + "." + name).setCreativeTab(tab)
 				.setRegistryName(GeneralHelper.newResLoc(name)));
-		BLOCKS.add(block);
 		ItemInit.ITEMS.add(new ItemBlock(block).setRegistryName(GeneralHelper.newResLoc(name)));
 	}
 
@@ -68,7 +66,6 @@ public class BlockInit {
 			RegistryEvent.Register<Block> event) {
 		event.getRegistry().register(block.setTranslationKey(Reference.MODID + "." + name).setCreativeTab(tab)
 				.setRegistryName(GeneralHelper.newResLoc(name)));
-		BLOCKS.add(block);
 		ItemInit.ITEMS
 				.add(new ItemBlockWithMaxStackSize(block, maxStackSize).setRegistryName(GeneralHelper.newResLoc(name)));
 	}

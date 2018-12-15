@@ -50,6 +50,6 @@ public class Main {
 
 	@EventHandler
 	public static void serverInit(FMLServerStartingEvent event) {
-		RegistryHandler.serverRegistries(event);
+		RegistryHandler.onServerStart(event);
 	}
 }

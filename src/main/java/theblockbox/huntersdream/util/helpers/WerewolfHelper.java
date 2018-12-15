@@ -22,6 +22,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
@@ -68,8 +69,15 @@ public class WerewolfHelper {
 		boolean transformed = isTransformed(entity);
 		if (entity instanceof EntityPlayer) {
 			if (transformed) {
-				// unarmed damage is 6
-				return entity.getHeldItemMainhand().isEmpty() ? 6F : initialDamage;
+				// default: 6 lvl 1: 7 lvl 2: 8 lvl 3: 9
+				if (entity.getHeldItemMainhand().isEmpty()) {
+					ITransformationPlayer t = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
+					return t.hasSkill(Skill.UNARMED_1)
+							? (t.hasSkill(Skill.UNARMED_2) ? (t.hasSkill(Skill.UNARMED_3) ? 9F : 8F) : 7F)
+							: 6F;
+				} else {
+					return initialDamage;
+				}
 			} else {
 				// "Their [untransformed] melee damage is normal damage +2"
 				return initialDamage + 2;
@@ -94,8 +102,13 @@ public class WerewolfHelper {
 		validateIsWerewolf(entity);
 		if (isTransformed(entity)) {
 			if (entity instanceof EntityPlayer) {
-				// same as leather armour
-				return initialDamage / 1.28F;
+				ITransformationPlayer t = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
+				// default: 1.28 lvl 1: 1.72 lvl 2: 2.17 lvl 3: 4.35
+				float damageReduction = t.hasSkill(Skill.ARMOR_1)
+						? (t.hasSkill(Skill.ARMOR_2) ? (t.hasSkill(Skill.ARMOR_3) ? 4.35F : 2.17F) : 1.72F)
+						: 1.28F;
+
+				return initialDamage / damageReduction;
 			} else {
 				// same as diamond armor
 				return initialDamage / 4.35F;
@@ -314,10 +327,31 @@ public class WerewolfHelper {
 	// werewolf is transformed
 	public static void applyLevelBuffs(EntityPlayerMP werewolf) {
 		int duration = 101;
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, false, false));
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0, false, false));
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, 0, false, false));
+		ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 401, 0, false, false));
+		werewolf.addPotionEffect(
+				new PotionEffect(MobEffects.SPEED, duration, getSpeedSkillLevel(transformation), false, false));
+		werewolf.addPotionEffect(
+				new PotionEffect(MobEffects.JUMP_BOOST, duration, getJumpSkillLevel(transformation), false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
+	}
+
+	/**
+	 * Returns an int from 0 (inclusive) to 3 (inclusive) that represents the level
+	 * of the speed skill the given {@link ITransformationPlayer} has. Returns 0 for
+	 * no level, 1 for {@link Skill#SPEED_1} etc.
+	 */
+	public static int getSpeedSkillLevel(ITransformationPlayer t) {
+		return t.hasSkill(Skill.SPEED_1) ? (t.hasSkill(Skill.SPEED_2) ? (t.hasSkill(Skill.SPEED_3) ? 3 : 2) : 1) : 0;
+	}
+
+	/**
+	 * Returns an int from 0 (inclusive) to 3 (inclusive) that represents the level
+	 * of the jump skill the given {@link ITransformationPlayer} has. Returns 0 for
+	 * no level, 1 for {@link Skill#JUMP_1} etc.
+	 */
+	public static int getJumpSkillLevel(ITransformationPlayer t) {
+		return t.hasSkill(Skill.JUMP_1) ? (t.hasSkill(Skill.JUMP_2) ? (t.hasSkill(Skill.JUMP_3) ? 3 : 2) : 1) : 0;
 	}
 
 	/**

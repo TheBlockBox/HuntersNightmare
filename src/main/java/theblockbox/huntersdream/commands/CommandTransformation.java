@@ -18,7 +18,7 @@ import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
-public class CommandsTransformation extends CommandBase {
+public class CommandTransformation extends CommandBase {
 
 	@Override
 	public String getName() {
@@ -70,7 +70,7 @@ public class CommandsTransformation extends CommandBase {
 						player.getName(), t.toString()));
 			}
 		} catch (Exception e) {
-			CommandHelper.invalidCommand(sender);
+			CommandHelper.invalidCommand(sender, e);
 		}
 	}
 

@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.interfaces;
 
 import net.minecraft.item.ItemStack;
 
+/** An interface all clothes implement. Currently unused. */
 public interface ICloth {
 	/**
 	 * Returns true if the given ItemStack can be put in the slot in the clothing

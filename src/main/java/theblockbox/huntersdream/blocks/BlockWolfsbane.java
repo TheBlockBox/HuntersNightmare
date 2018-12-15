@@ -4,6 +4,8 @@ import net.minecraft.block.BlockCrops;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -12,7 +14,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.ItemInit;
+import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class BlockWolfsbane extends BlockCrops {
 	public static final PropertyInteger AGE_PROPERTY = PropertyInteger.create("age", 0, 4);
@@ -77,6 +81,16 @@ public class BlockWolfsbane extends BlockCrops {
 			this.getDrops(items, worldIn, pos, state, fortune);
 			for (ItemStack item : items) {
 				spawnAsEntity(worldIn, pos, item);
+			}
+		}
+	}
+
+	@Override
+	public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+		if (entityIn instanceof EntityLivingBase) {
+			EntityLivingBase living = (EntityLivingBase) entityIn;
+			if (TransformationHelper.getTransformation(living) == Transformation.WEREWOLF) {
+				// TODO: Add effects here
 			}
 		}
 	}

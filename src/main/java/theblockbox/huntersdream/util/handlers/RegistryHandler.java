@@ -1,7 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
 import java.io.File;
-import java.util.stream.Stream;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -25,20 +24,21 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
-import theblockbox.huntersdream.commands.CommandsMoonphase;
-import theblockbox.huntersdream.commands.CommandsTransformation;
-import theblockbox.huntersdream.commands.CommandsTransformationTexture;
+import theblockbox.huntersdream.commands.CommandMoonphase;
+import theblockbox.huntersdream.commands.CommandSkill;
+import theblockbox.huntersdream.commands.CommandTransformation;
+import theblockbox.huntersdream.commands.CommandTransformationTexture;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.EntityInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.LootTableInit;
+import theblockbox.huntersdream.init.OreDictionaryInit;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.init.StructureInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.SilverFurnaceRecipe;
-import theblockbox.huntersdream.util.compat.OreDictionaryCompat;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
 
@@ -69,13 +69,12 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onPotionRegister(RegistryEvent.Register<Potion> event) {
-		event.getRegistry().registerAll(PotionInit.POTIONS.toArray(new Potion[0]));
+		PotionInit.registerPotions(event);
 	}
 
 	@SubscribeEvent
 	public static void onPotionTypeRegister(RegistryEvent.Register<PotionType> event) {
-		PotionInit.registerPotionTypes();
-		event.getRegistry().registerAll(PotionInit.POTION_TYPES.toArray(new PotionType[0]));
+		PotionInit.registerPotionTypes(event);
 	}
 
 	@SubscribeEvent
@@ -85,8 +84,7 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
-		Stream.concat(ItemInit.ITEMS.stream(), BlockInit.BLOCKS.stream().map(Item::getItemFromBlock))
-				.forEach(item -> Main.proxy.registerItemRenderer(item, 0, "inventory"));
+		ItemInit.ITEMS.forEach(item -> Main.proxy.registerItemRenderer(item, 0, "inventory"));
 		EntityInit.registerEntityRenders();
 	}
 
@@ -96,9 +94,8 @@ public class RegistryHandler {
 		CapabilitiesInit.registerCapabilities();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
 		Transformation.preInit();
-		GameRegistry.registerTileEntity(TileEntitySilverFurnace.class,
-				GeneralHelper.newResLoc("tile_entity_silver_furnace"));
-		GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("tile_entity_campfire"));
+		GameRegistry.registerTileEntity(TileEntitySilverFurnace.class, GeneralHelper.newResLoc("furnace_silver"));
+		GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
 		directory = event.getModConfigurationDirectory();
 	}
 
@@ -108,22 +105,11 @@ public class RegistryHandler {
 		MinecraftForge.addGrassSeed(new ItemStack(BlockInit.WOLFSBANE), 5);
 		LootTableInit.register();
 		StructureInit.register();
-		OreDictionaryCompat.registerOres();
+		OreDictionaryInit.registerOres();
 		GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
 	}
 
 	public static void postInitCommon(FMLPostInitializationEvent event) {
-// TODO: Remove this
-//		new EntityEffectiveAgainstTransformation(entity -> {
-//			if (entity instanceof EntityTippedArrow) {
-//				EntityTippedArrow arrow = (EntityTippedArrow) entity;
-//				// using AT to access fields
-//				return Stream.concat(arrow.potion.getEffects().stream(), arrow.customPotionEffects.stream())
-//						.map(PotionEffect::getPotion)
-//						.anyMatch(potion -> (potion == MobEffects.POISON) || (potion == PotionInit.POTION_WOLFSBANE));
-//			}
-//			return false;
-//		}, new TransformationToFloatMap().put(WEREWOLF, 1F)).register();
 	}
 
 	// Client
@@ -149,9 +135,10 @@ public class RegistryHandler {
 		SilverFurnaceRecipe.setAndLoadFiles(directory);
 	}
 
-	public static void serverRegistries(FMLServerStartingEvent event) {
-		event.registerServerCommand(new CommandsMoonphase());
-		event.registerServerCommand(new CommandsTransformation());
-		event.registerServerCommand(new CommandsTransformationTexture());
+	public static void onServerStart(FMLServerStartingEvent event) {
+		event.registerServerCommand(new CommandMoonphase());
+		event.registerServerCommand(new CommandTransformation());
+		event.registerServerCommand(new CommandTransformationTexture());
+		event.registerServerCommand(new CommandSkill());
 	}
 }

@@ -1,5 +1,9 @@
 package theblockbox.huntersdream.network;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,12 +28,12 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	public TransformationMessage() {
 	}
 
-	public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex, Skill[] skills,
-			HuntersJournalPage[] pages, NBTTagCompound transformationData) {
+	public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex,
+			Set<Skill> skills, HuntersJournalPage[] pages, NBTTagCompound transformationData) {
 		this.transformation = transformation;
 		this.textureIndex = textureIndex;
 		this.player = player.getEntityId();
-		this.skills = skills;
+		this.skills = skills.toArray(new Skill[skills.size()]);
 		this.pages = pages;
 		this.transformationData = transformationData;
 	}
@@ -76,7 +80,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 					ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 					cap.setTransformation(message.transformation);
 					cap.setTextureIndex(message.textureIndex);
-					cap.setSkills(message.skills);
+					cap.setSkills(Sets.newHashSet(message.skills));
 					cap.setUnlockedPages(message.pages);
 					cap.setTransformationData(message.transformationData);
 					if (message.transformation == Transformation.VAMPIRE)
