@@ -122,6 +122,7 @@ public class CapabilitiesInit {
 			transformationPlayer.setTextureIndex(oldTransformationPlayer.getTextureIndex());
 			transformationPlayer.setSkills(oldTransformationPlayer.getSkills());
 			transformationPlayer.setTransformationData(oldTransformationPlayer.getTransformationData());
+			transformationPlayer.setActiveSkill(oldTransformationPlayer.getActiveSkill().orElse(null));
 
 			if (transformationPlayer.getTransformation() == Transformation.WEREWOLF) {
 				WerewolfHelper.setTransformed(player, false);

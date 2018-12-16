@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +45,17 @@ public interface ITransformationPlayer extends ITransformation {
 	/** Returns a random not unlocked page or null if all pages are unlocked */
 	@Nullable
 	public HuntersJournalPage getRandomNotUnlockedPage(Random random);
+
+	/**
+	 * Returns an optional of the skill the player is currently using. Returns an
+	 * empty optional if no skill is in use.
+	 */
+	public Optional<Skill> getActiveSkill();
+
+	/**
+	 * Sets the skill the player is currently using to the given skill. May be null.
+	 */
+	public void setActiveSkill(@Nullable Skill skill);
 
 	/**
 	 * Returns an unmodifiable set of all the skills the player this capability
@@ -106,6 +119,7 @@ public interface ITransformationPlayer extends ITransformation {
 		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
 		private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
 		private NBTTagCompound transformationData = DEFAULT_TRANSFORMATION_DATA;
+		private Skill activeSkill = null;
 
 		@Override
 		public Transformation getTransformation() {
@@ -129,6 +143,16 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 
 		@Override
+		public Optional<Skill> getActiveSkill() {
+			return Optional.ofNullable(this.activeSkill);
+		}
+
+		@Override
+		public void setActiveSkill(Skill skill) {
+			this.activeSkill = skill;
+		}
+
+		@Override
 		public Set<Skill> getSkills() {
 			return Collections.unmodifiableSet(this.skills);
 		}
@@ -138,21 +162,16 @@ public interface ITransformationPlayer extends ITransformation {
 			this.skills = new HashSet<>(skills);
 		}
 
+		// TODO: Add something to prevent skills that can't be added from being added.
 		@Override
 		public boolean addSkill(Skill skill) throws IllegalArgumentException {
-			if (!GeneralHelper.containsAll(this.skills, skill.getRequiredSkills()))
-				throw new IllegalArgumentException("Can't add skill " + skill + " because it requires the skills "
-						+ Arrays.toString(skill.getRequiredSkills()) + ", but only " + this.skills.toString()
-						+ " are present");
-			return this.skills.add(skill);
+			return this.skills.add(Objects.requireNonNull(skill, "Cannot add null skill"));
 		}
 
+		// TODO: Add something to prevent skills that can't be removed because other
+		// skills require them from being removed.
 		@Override
 		public boolean removeSkill(Skill skill) throws IllegalArgumentException {
-			for (Skill s : this.skills)
-				if (s.requiresSkill(skill))
-					throw new IllegalArgumentException(
-							"The skill " + s + " still requires the skill " + skill + " that should be removed");
 			return this.skills.remove(skill);
 		}
 
@@ -230,6 +249,7 @@ public interface ITransformationPlayer extends ITransformation {
 		public static final String PAGES = "pages";
 		public static final String CLOTHING_TAB = "clothingtab";
 		public static final String TRANSFORMATION_DATA = "transformationdata";
+		public static final String ACTIVE_SKILL = "activeskill";
 
 		@Override
 		public NBTBase writeNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
@@ -243,6 +263,7 @@ public interface ITransformationPlayer extends ITransformation {
 			compound.setTag(CLOTHING_TAB,
 					CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(instance.getClothingTab(), null));
 			compound.setTag(TRANSFORMATION_DATA, instance.getTransformationData());
+			compound.setString(ACTIVE_SKILL, Objects.toString(instance.getActiveSkill(), ""));
 			return compound;
 		}
 
@@ -254,16 +275,13 @@ public interface ITransformationPlayer extends ITransformation {
 			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
 			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
-			instance.setSkills(
-					Sets.newHashSet(GeneralHelper.readArrayFromNBT(compound, SKILLS, Skill::fromName, Skill[]::new)));
+			instance.setSkills(Sets.newHashSet(GeneralHelper.readArrayFromNBT(compound, SKILLS,
+					s -> Objects.requireNonNull(Skill.fromName(s)), Skill[]::new)));
 			if (compound.hasKey(CLOTHING_TAB))
 				CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(instance.getClothingTab(), null,
 						compound.getTag(CLOTHING_TAB));
 			instance.setTransformationData((NBTTagCompound) compound.getTag(TRANSFORMATION_DATA));
+			instance.setActiveSkill(Skill.fromName(compound.getString(ACTIVE_SKILL)));
 		}
-	}
-
-	default public int getLevelFloor() {
-		return 0;
 	}
 }

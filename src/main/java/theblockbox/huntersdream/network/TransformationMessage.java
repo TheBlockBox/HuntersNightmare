@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.network;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -24,18 +25,21 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private Skill[] skills;
 	private HuntersJournalPage[] pages;
 	private NBTTagCompound transformationData;
+	private String activeSkill;
 
 	public TransformationMessage() {
 	}
 
 	public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex,
-			Set<Skill> skills, HuntersJournalPage[] pages, NBTTagCompound transformationData) {
+			Set<Skill> skills, HuntersJournalPage[] pages, NBTTagCompound transformationData,
+			Optional<Skill> activeSkill) {
 		this.transformation = transformation;
 		this.textureIndex = textureIndex;
 		this.player = player.getEntityId();
 		this.skills = skills.toArray(new Skill[skills.size()]);
 		this.pages = pages;
 		this.transformationData = transformationData;
+		this.activeSkill = activeSkill.map(Skill::toString).orElse("");
 	}
 
 	@Override
@@ -46,6 +50,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		this.skills = readArray(buf, Skill::fromName, Skill[]::new);
 		this.pages = readArray(buf, HuntersJournalPage::fromName, HuntersJournalPage[]::new);
 		this.transformationData = readTag(buf);
+		this.activeSkill = readString(buf);
 	}
 
 	@Override
@@ -56,6 +61,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 		writeArray(buf, this.skills, Skill::toString);
 		writeArray(buf, this.pages, HuntersJournalPage::toString);
 		writeTag(buf, this.transformationData);
+		writeString(buf, this.activeSkill);
 	}
 
 	@Override
@@ -83,6 +89,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 					cap.setSkills(Sets.newHashSet(message.skills));
 					cap.setUnlockedPages(message.pages);
 					cap.setTransformationData(message.transformationData);
+					cap.setActiveSkill(Skill.fromName(message.activeSkill));
 					if (message.transformation == Transformation.VAMPIRE)
 						player.foodStats = VampireFoodStats.INSTANCE;
 				});

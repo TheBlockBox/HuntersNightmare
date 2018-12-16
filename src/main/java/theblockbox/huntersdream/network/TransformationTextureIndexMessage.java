@@ -1,15 +1,12 @@
 package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
+// TODO: Remove this class if it won't be of any use
 public class TransformationTextureIndexMessage extends MessageBase<TransformationTextureIndexMessage> {
-
 	private int textureIndex;
 
 	public TransformationTextureIndexMessage() {
@@ -46,12 +43,12 @@ public class TransformationTextureIndexMessage extends MessageBase<Transformatio
 		@Override
 		public IMessage onMessageReceived(TransformationTextureIndexMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
-				addScheduledTask(ctx, () -> {
-					EntityPlayerMP player = ctx.getServerHandler().player;
-					TransformationHelper.getITransformationPlayer(player).setTextureIndex(message.textureIndex);
-					// notify everyone that one player has a new texture
-					PacketHandler.sendTransformationMessage(player);
-				});
+//				addScheduledTask(ctx, () -> {
+//					EntityPlayerMP player = ctx.getServerHandler().player;
+//					TransformationHelper.getITransformationPlayer(player).setTextureIndex(message.textureIndex);
+//					// notify everyone that one player has a new texture
+//					PacketHandler.sendTransformationMessage(player);
+//				});
 			}
 			return null;
 		}

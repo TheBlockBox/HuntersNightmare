@@ -28,28 +28,29 @@ import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFuncti
  * ones subscribe to
  * {@link theblockbox.huntersdream.api.event.TransformationRegistryEvent} and
  * add your transformation. Create a new one with
- * {@link TransformationEntry#create(ResourceLocation)}.
+ * {@link TransformationEntry#create()}.
  */
 public class Transformation {
 	// Transformation constants
 	/** Used to indicate that no transformation is present and it won't change */
-	public static final Transformation NONE = of().setSupernatural(false).create("none");
+	public static final Transformation NONE = of("none").setSupernatural(false).create();
 	/**
 	 * Used to indicate that no transformation is currently present but it could
 	 * change
 	 */
-	public static final Transformation HUMAN = of().setSupernatural(false).create("human");
+	public static final Transformation HUMAN = of("human").setSupernatural(false).create();
 	/** The transformation for werewolves */
-	public static final Transformation WEREWOLF = of().setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
+	public static final Transformation WEREWOLF = of("werewolf")
+			.setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
 			.setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage)
 			.setTexturesHD("werewolf/lycanthrope_brown", "werewolf/lycanthrope_black", "werewolf/lycanthrope_white",
 					"werewolf/lycanthrope_yellow")
-			.setGetTextureIndex(WerewolfHelper::getTextureIndexForWerewolf).create("werewolf");
+			.setGetTextureIndex(WerewolfHelper::getTextureIndexForWerewolf).create();
 	/** The transformation for vampires */
-	public static final Transformation VAMPIRE = of().setCalculateDamage(VampireHelper::calculateDamage)
-			.setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create("vampire");
+	public static final Transformation VAMPIRE = of("vampire").setCalculateDamage(VampireHelper::calculateDamage)
+			.setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create();
 	/** The transformation for hunters */
-	public static final Transformation HUNTER = of().create("hunter");
+	public static final Transformation HUNTER = of("hunter").create();
 
 	private static Transformation[] transformations = null;
 
@@ -156,12 +157,12 @@ public class Transformation {
 	/**
 	 * A protected constructor for everyone who needs to extend this class.
 	 * 
-	 * @see TransformationEntry#create(ResourceLocation)
+	 * @see TransformationEntry#create()
 	 */
-	protected Transformation(TransformationEntry entry, ResourceLocation registryName) {
+	protected Transformation(TransformationEntry entry) {
 		this.entry = entry;
-		this.registryName = registryName;
-		this.registryNameString = registryName.toString();
+		this.registryName = entry.registryName;
+		this.registryNameString = this.registryName.toString();
 		this.translation = new TextComponentTranslation(this.registryNameString);
 	}
 
@@ -267,6 +268,14 @@ public class Transformation {
 	}
 
 	/**
+	 * Returns the resource location to the icon of this transformation. The icon is
+	 * used in the skill survival tab.
+	 */
+	public ResourceLocation getIcon() {
+		return this.entry.icon;
+	}
+
+	/**
 	 * Returns a temporary id for the transformation. Don't use the id for writing
 	 * to or reading from nbt because it may change the next time the game is
 	 * started
@@ -298,6 +307,7 @@ public class Transformation {
 
 	/** Used to register new transformations. All set methods are optional. */
 	public static class TransformationEntry {
+		private ResourceLocation registryName;
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
 		private Consumer<EntityLivingBase> infect = null;
@@ -305,14 +315,31 @@ public class Transformation {
 		private ToFloatObjFloatFunction<EntityLivingBase> calculateDamage = (e, f) -> f;
 		private ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage = (e, f) -> f;
 		private ToIntFunction<EntityLivingBase> getTextureIndex = e -> 0;
+		private ResourceLocation icon;
 
-		private TransformationEntry() {
+		private TransformationEntry(ResourceLocation registryName) {
+			this.registryName = registryName;
+			this.icon = new ResourceLocation(registryName.getNamespace(),
+					"textures/gui/icon_" + registryName.getPath() + ".png");
 		}
 
-		// TODO: Find better name for method?
-		/** Returns a new instance of type TransformationEntry */
-		public static TransformationEntry of() {
-			return new TransformationEntry();
+		/**
+		 * Returns a new instance of type TransformationEntry from the given
+		 * ResourceLocation.
+		 * 
+		 * @param registryName A ResourceLocation that should be used as the registry
+		 *                     name for the Transformation that is going to be created.
+		 */
+		public static TransformationEntry of(ResourceLocation registryName) {
+			return new TransformationEntry(registryName);
+		}
+
+		/**
+		 * Returns a new instance of type TransformationEntry from the given
+		 * ResourceLocation. Exists for Hunter's Dream only!
+		 */
+		static TransformationEntry of(String name) {
+			return new TransformationEntry(GeneralHelper.newResLoc(name));
 		}
 
 		/** Sets this transformation to be supernatural */
@@ -378,17 +405,19 @@ public class Transformation {
 			return this;
 		}
 
-		/** Creates a new Transformation with the given registry name */
-		public Transformation create(ResourceLocation registryName) {
-			return new Transformation(this, registryName);
+		/**
+		 * Sets the icon that is used in {@link Transformation#getIcon()} to the given
+		 * ResourceLocation. If this method is not called, the icon will be an auto
+		 * generated ResourceLocation in the format
+		 * {@code modid:textures/gui/icon_transformation_name.png}.
+		 */
+		public void setIcon(ResourceLocation icon) {
+			this.icon = icon;
 		}
 
-		/**
-		 * Does exactly the same as {@link #create(ResourceLocation)} except that, if a
-		 * string with ':' is given, the domain defaults to hunter's dream
-		 */
-		private Transformation create(String registryName) {
-			return new Transformation(this, GeneralHelper.newResLoc(registryName));
+		/** Creates a new Transformation from this TransformationEntry */
+		public Transformation create() {
+			return new Transformation(this);
 		}
 	}
 }

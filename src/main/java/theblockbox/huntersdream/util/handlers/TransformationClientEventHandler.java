@@ -7,6 +7,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
@@ -124,7 +125,9 @@ public class TransformationClientEventHandler {
 		if (event.getGui() instanceof GuiInventory) {
 			GuiContainer gui = (GuiContainer) event.getGui();
 			GuiButton button = new GuiButtonSurvivalTab(event.getButtonList().size(), gui.getGuiLeft() + 2,
-					gui.getGuiTop() - 18);
+					gui.getGuiTop() - 18,
+					new GuiScreenAdvancements(Minecraft.getMinecraft().player.connection.getAdvancementManager()),
+					TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIcon());
 			event.getButtonList().add(button);
 		}
 	}

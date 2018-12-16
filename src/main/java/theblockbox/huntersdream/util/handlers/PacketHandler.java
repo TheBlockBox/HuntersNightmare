@@ -12,9 +12,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.network.BloodMessage;
 import theblockbox.huntersdream.network.MessageBase;
+import theblockbox.huntersdream.network.SkillUnlockMessage;
 import theblockbox.huntersdream.network.TransformationMessage;
 import theblockbox.huntersdream.network.TransformationTextureIndexMessage;
 import theblockbox.huntersdream.util.ExecutionPath;
@@ -34,6 +36,7 @@ public class PacketHandler {
 		INSTANCE.registerMessage(TransformationTextureIndexMessage.Handler.class,
 				TransformationTextureIndexMessage.class, networkID++, Side.SERVER);
 		registerMessage(BloodMessage.Handler.class, BloodMessage.class);
+		INSTANCE.registerMessage(SkillUnlockMessage.Handler.class, SkillUnlockMessage.class, networkID++, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage> void registerMessage(
@@ -59,7 +62,8 @@ public class PacketHandler {
 	public static void sendTransformationMessage(EntityPlayerMP applyOn) {
 		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
 		TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
-				cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData());
+				cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData(),
+				cap.getActiveSkill());
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> INSTANCE.sendToDimension(message, applyOn.world.provider.getDimension()));
 	}
@@ -68,7 +72,8 @@ public class PacketHandler {
 	public static void sendTransformationMessageToPlayer(EntityPlayerMP applyOn, EntityPlayerMP sendTo) {
 		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
 		TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
-				cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData());
+				cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData(),
+				cap.getActiveSkill());
 		if (cap.getTransformation() == Transformation.VAMPIRE)
 			applyOn.foodStats = VampireFoodStats.INSTANCE;
 		afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
@@ -78,6 +83,12 @@ public class PacketHandler {
 	public static void sendTextureIndexMessage(World forSideCheck) {
 		TransformationTextureIndexMessage message = new TransformationTextureIndexMessage(
 				TransformationHelper.getITransformationPlayer(Main.proxy.getPlayer()).getTextureIndex());
+		afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
+				() -> INSTANCE.sendToServer(message));
+	}
+
+	public static void sendSkillUnlockMessage(World forSideCheck, Skill skillToUnlock) {
+		SkillUnlockMessage message = new SkillUnlockMessage(skillToUnlock);
 		afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
 				() -> INSTANCE.sendToServer(message));
 	}

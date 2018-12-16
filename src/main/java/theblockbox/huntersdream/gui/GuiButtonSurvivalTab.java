@@ -3,16 +3,18 @@ package theblockbox.huntersdream.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.item.ItemStack;
-import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.init.ItemInit;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonSurvivalTab extends GuiButton {
 	private boolean hasMouseBeenPressed = false;
-	private static final ItemStack ICON = new ItemStack(ItemInit.HUNTERS_JOURNAL);
+	private final GuiScreen guiToOpen;
+	private final ResourceLocation icon;
 
-	public GuiButtonSurvivalTab(int buttonId, int x, int y) {
+	public GuiButtonSurvivalTab(int buttonId, int x, int y, GuiScreen guiToOpen, ResourceLocation icon) {
 		super(buttonId, x, y, 18, 18, "");
+		this.guiToOpen = guiToOpen;
+		this.icon = icon;
 	}
 
 	@Override
@@ -20,17 +22,19 @@ public class GuiButtonSurvivalTab extends GuiButton {
 		if (this.visible) {
 			super.drawButton(mc, mouseX, mouseY, partialTicks);
 			if (this.mousePressed(mc, mouseX, mouseY) && this.hasMouseBeenPressed) {
-				// TODO: Add opening of survival tab here
-				Main.getLogger().debug("Survival tab button has been clicked");
+				Minecraft.getMinecraft().displayGuiScreen(this.guiToOpen);
 				this.hasMouseBeenPressed = false;
 			}
-			// TODO: Make special texture render
-			mc.getRenderItem().renderItemIntoGUI(ICON, this.x + 1, this.y + 1);
+			// TODO: Make this draw correctly without needing giant textures
+			mc.renderEngine.bindTexture(this.icon);
+			this.drawTexturedModalRect(this.x + 1, this.y + 1, 0, 0, 16, 16);
 		}
 	}
 
+	// TODO: Is there a better way to do this?
 	@Override
 	public void playPressSound(SoundHandler soundHandlerIn) {
+		super.playPressSound(soundHandlerIn);
 		this.hasMouseBeenPressed = true;
 	}
 

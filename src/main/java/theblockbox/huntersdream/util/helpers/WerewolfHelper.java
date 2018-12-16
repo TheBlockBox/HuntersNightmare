@@ -38,7 +38,6 @@ import theblockbox.huntersdream.util.handlers.TransformationEventHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class WerewolfHelper {
 	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
@@ -69,12 +68,11 @@ public class WerewolfHelper {
 		boolean transformed = isTransformed(entity);
 		if (entity instanceof EntityPlayer) {
 			if (transformed) {
-				// default: 6 lvl 1: 7 lvl 2: 8 lvl 3: 9
+				// default: 6 lvl 0: 7 lvl 1: 8 lvl 2: 9
 				if (entity.getHeldItemMainhand().isEmpty()) {
-					ITransformationPlayer t = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
-					return t.hasSkill(Skill.UNARMED_1)
-							? (t.hasSkill(Skill.UNARMED_2) ? (t.hasSkill(Skill.UNARMED_3) ? 9F : 8F) : 7F)
-							: 6F;
+					Optional<Skill> as = TransformationHelper.getITransformationPlayer((EntityPlayer) entity)
+							.getActiveSkill();
+					return (as.isPresent() && as.get().isLevelOf(Skill.UNARMED_0) ? as.get().getLevel() + 1F : 0F) + 6F;
 				} else {
 					return initialDamage;
 				}
@@ -102,11 +100,11 @@ public class WerewolfHelper {
 		validateIsWerewolf(entity);
 		if (isTransformed(entity)) {
 			if (entity instanceof EntityPlayer) {
-				ITransformationPlayer t = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
-				// default: 1.28 lvl 1: 1.72 lvl 2: 2.17 lvl 3: 4.35
-				float damageReduction = t.hasSkill(Skill.ARMOR_1)
-						? (t.hasSkill(Skill.ARMOR_2) ? (t.hasSkill(Skill.ARMOR_3) ? 4.35F : 2.17F) : 1.72F)
-						: 1.28F;
+				// default: 1.28 lvl 0: 1.72 lvl 1: 2.17 lvl 2: 4.35
+				Skill as = TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getActiveSkill()
+						.orElse(null);
+				float damageReduction = (as == Skill.ARMOR_2) ? 4.35F
+						: ((as == Skill.ARMOR_1) ? 2.17F : ((as == Skill.ARMOR_0) ? 1.72F : 1.28F));
 
 				return initialDamage / damageReduction;
 			} else {
@@ -179,9 +177,8 @@ public class WerewolfHelper {
 	 * Returns true when the given player has mainly control in the werewolf form
 	 */
 	public static boolean hasMainlyControl(EntityPlayer player) {
-		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 		validateIsWerewolf(player);
-		return (cap.getLevelFloor() > 0);
+		return true;
 	}
 
 	/**
@@ -327,31 +324,13 @@ public class WerewolfHelper {
 	// werewolf is transformed
 	public static void applyLevelBuffs(EntityPlayerMP werewolf) {
 		int duration = 101;
-		ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
+		Optional<Skill> as = TransformationHelper.getITransformationPlayer(werewolf).getActiveSkill();
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 401, 0, false, false));
-		werewolf.addPotionEffect(
-				new PotionEffect(MobEffects.SPEED, duration, getSpeedSkillLevel(transformation), false, false));
-		werewolf.addPotionEffect(
-				new PotionEffect(MobEffects.JUMP_BOOST, duration, getJumpSkillLevel(transformation), false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration,
+				(as.isPresent() && as.get().isLevelOf(Skill.SPEED_0)) ? as.get().getLevel() + 1 : 0, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration,
+				(as.isPresent() && as.get().isLevelOf(Skill.JUMP_0)) ? as.get().getLevel() + 1 : 0, false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
-	}
-
-	/**
-	 * Returns an int from 0 (inclusive) to 3 (inclusive) that represents the level
-	 * of the speed skill the given {@link ITransformationPlayer} has. Returns 0 for
-	 * no level, 1 for {@link Skill#SPEED_1} etc.
-	 */
-	public static int getSpeedSkillLevel(ITransformationPlayer t) {
-		return t.hasSkill(Skill.SPEED_1) ? (t.hasSkill(Skill.SPEED_2) ? (t.hasSkill(Skill.SPEED_3) ? 3 : 2) : 1) : 0;
-	}
-
-	/**
-	 * Returns an int from 0 (inclusive) to 3 (inclusive) that represents the level
-	 * of the jump skill the given {@link ITransformationPlayer} has. Returns 0 for
-	 * no level, 1 for {@link Skill#JUMP_1} etc.
-	 */
-	public static int getJumpSkillLevel(ITransformationPlayer t) {
-		return t.hasSkill(Skill.JUMP_1) ? (t.hasSkill(Skill.JUMP_2) ? (t.hasSkill(Skill.JUMP_3) ? 3 : 2) : 1) : 0;
 	}
 
 	/**
