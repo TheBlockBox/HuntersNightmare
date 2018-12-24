@@ -29,7 +29,7 @@ public class GuiHuntersJournal extends GuiScreen {
 
 	@Override
 	public void initGui() {
-		this.buttonList.clear();
+		super.initGui();
 		Keyboard.enableRepeatEvents(true);
 		this.nextPage = new NextButton(0, true);
 		this.pageBefore = new NextButton(1, false);
@@ -39,6 +39,7 @@ public class GuiHuntersJournal extends GuiScreen {
 
 	@Override
 	public void updateScreen() {
+		super.updateScreen();
 		this.nextPage.visible = this.currentPage < this.pages.length - 1;
 		this.pageBefore.visible = this.currentPage > 0;
 	}
@@ -74,6 +75,7 @@ public class GuiHuntersJournal extends GuiScreen {
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
+		super.actionPerformed(button);
 		if (button instanceof NextButton) {
 			this.currentPage += ((NextButton) button).isNextPageButton ? 1 : -1;
 			if (this.currentPage < 0) {
@@ -85,7 +87,7 @@ public class GuiHuntersJournal extends GuiScreen {
 		}
 	}
 
-	public class NextButton extends GuiButton {
+	public static class NextButton extends GuiButton {
 		private boolean isNextPageButton;
 
 		public NextButton(int buttonId, boolean isNextPageButton) {

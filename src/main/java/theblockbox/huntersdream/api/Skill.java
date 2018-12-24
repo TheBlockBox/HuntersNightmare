@@ -4,20 +4,25 @@ import static theblockbox.huntersdream.util.helpers.GeneralHelper.newResLoc;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Preconditions;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import theblockbox.huntersdream.api.event.SkillRegistryEvent;
 import theblockbox.huntersdream.util.collection.TransformationSet;
 
 /**
@@ -25,7 +30,7 @@ import theblockbox.huntersdream.util.collection.TransformationSet;
  * that can be unlocked by players.
  */
 public class Skill {
-	private static final Map<String, Skill> SKILLS = new HashMap<>();
+	private static Map<String, Skill> skills = null;
 	private final ResourceLocation registryName;
 	private final int neededExperienceLevels;
 	private final TransformationSet forTransformations;
@@ -33,8 +38,10 @@ public class Skill {
 	private final int level;
 	private final Set<Skill> childSkills = new HashSet<>();
 	private Skill parent = null;
+	private Object iconSprite = null;
 
 	private static final TransformationSet WEREWOLF_SET = TransformationSet.singletonSet(Transformation.WEREWOLF);
+
 	// Hunter's Dream Skills
 	public static final Skill BITE_0 = new Skill(newResLoc("bite"), 40, WEREWOLF_SET);
 	public static final Skill BITE_1 = new Skill(80, BITE_0, 1);
@@ -45,8 +52,8 @@ public class Skill {
 	public static final Skill SPEED_2 = new Skill(120, SPEED_0, 2);
 
 	public static final Skill JUMP_0 = new Skill(newResLoc("jump"), 40, WEREWOLF_SET);
-	public static final Skill JUMP_1 = new Skill(80, JUMP_0, 2);
-	public static final Skill JUMP_2 = new Skill(120, JUMP_0, 3);
+	public static final Skill JUMP_1 = new Skill(80, JUMP_0, 1);
+	public static final Skill JUMP_2 = new Skill(120, JUMP_0, 2);
 
 	public static final Skill UNARMED_0 = new Skill(newResLoc("unarmed"), 40, WEREWOLF_SET);
 	public static final Skill UNARMED_1 = new Skill(80, UNARMED_0, 1);
@@ -63,21 +70,18 @@ public class Skill {
 	 * this one.
 	 */
 	protected Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-			TransformationSet forTransformations, ResourceLocation icon, int level) {
+			Collection<Transformation> forTransformations, ResourceLocation icon, int level) {
 		this.registryName = registryName;
 		Preconditions.checkArgument(neededExperienceLevels >= 0,
 				"The argument neededExperienceLevels should be positive but had the value %s", neededExperienceLevels);
 		this.neededExperienceLevels = neededExperienceLevels;
 		String registryNameString = registryName.toString();
-		Validate.isTrue(SKILLS.get(registryNameString) == null,
-				"The skill \"" + registryNameString + "\" has already been registered");
 		Validate.isTrue(!forTransformations.isEmpty(), "The skill \"" + registryNameString
 				+ "\" should have at least one Transformation in the TransformationSet");
-		this.forTransformations = forTransformations.clone();
+		this.forTransformations = new TransformationSet(forTransformations);
 		this.icon = icon;
 		Preconditions.checkArgument(level >= 0, "The argument level should be positive but had the value %s", level);
 		this.level = level;
-		SKILLS.put(registryNameString, this);
 	}
 
 	/**
@@ -92,7 +96,12 @@ public class Skill {
 	 *                               Transformations that should be able to unlock
 	 *                               this skill. Mustn't be null or empty.
 	 * @param icon                   The icon that should be shown in the skill tab
-	 *                               for this Skill.
+	 *                               for this Skill. You don't have to add textures/
+	 *                               and .png as they're automatically being added
+	 *                               (so if the resource location is
+	 *                               {@code huntersdream:gui/skills/jump} it'll
+	 *                               automatically be converted to
+	 *                               {@code huntersdream:textures/gui/skills/jump.png}.
 	 * @throws IllegalArgumentException If the forTransformations argument is null
 	 *                                  or empty, a Skill with the same registry
 	 *                                  name already exists or the
@@ -125,8 +134,8 @@ public class Skill {
 	 */
 	public Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
 			TransformationSet forTransformations) throws IllegalArgumentException {
-		this(registryName, neededExperienceLevels, forTransformations, new ResourceLocation(registryName.getNamespace(),
-				"textures/gui/skills/" + registryName.getPath() + ".png"));
+		this(registryName, neededExperienceLevels, forTransformations,
+				new ResourceLocation(registryName.getNamespace(), "gui/skills/" + registryName.getPath()));
 	}
 
 	/**
@@ -163,7 +172,7 @@ public class Skill {
 
 	/** Returns an unmodifiable collection of all skills. */
 	public static Collection<Skill> getAllSkills() {
-		return Collections.unmodifiableCollection(SKILLS.values());
+		return skills == null ? Collections.emptySet() : Collections.unmodifiableCollection(skills.values());
 	}
 
 	/**
@@ -175,7 +184,7 @@ public class Skill {
 	 */
 	@Nullable
 	public static Skill fromName(String name) {
-		return SKILLS.get(name);
+		return skills == null ? null : skills.get(name);
 	}
 
 	/**
@@ -190,9 +199,38 @@ public class Skill {
 		return fromName(registryName.toString());
 	}
 
-	/** Returns the icon this Skill should have in the skill tab. */
+	/**
+	 * Called in the preInit phase to register all skills. Should <b>not</b> be
+	 * called outside of Hunter's Dream.
+	 */
+	public static void preInit() {
+		SkillRegistryEvent event = new SkillRegistryEvent();
+		MinecraftForge.EVENT_BUS.post(event);
+		skills = event.getSkills();
+	}
+
+	/**
+	 * Returns the icon this Skill should have in the skill tab. Currently only used
+	 * for getting the {@link TextureAtlasSprite} from it.
+	 */
 	public ResourceLocation getIcon() {
 		return this.icon;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public TextureAtlasSprite getIconAsSprite() {
+		return (TextureAtlasSprite) this.iconSprite;
+	}
+
+	/**
+	 * Sets the icon sprite for this Skill. Should only be used internally and on
+	 * the client side. Don't call this outside of Hunter's Dream!
+	 */
+	@SideOnly(Side.CLIENT)
+	public void setIconSprite(@Nonnull TextureAtlasSprite sprite) {
+		if (sprite == null)
+			throw new NullPointerException("The icon sprite is not allowed to be null");
+		this.iconSprite = sprite;
 	}
 
 	/**

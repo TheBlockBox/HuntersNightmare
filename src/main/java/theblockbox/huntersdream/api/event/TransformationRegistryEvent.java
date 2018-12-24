@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -41,18 +42,20 @@ public class TransformationRegistryEvent extends Event {
 
 	/**
 	 * Registers a transformation. Returns true if the adding was successful
-	 * (meaning that the transformations hasn't already been registered).
+	 * (meaning that the transformation hasn't already been registered).
 	 * 
 	 * @throws IllegalArgumentException If a transformation has already been
 	 *                                  registered with the same registry name
 	 */
 	public boolean registerTransformation(Transformation transformation) {
 		Validate.notNull(transformation);
-		this.transformationSet.stream().map(Transformation::getRegistryName).forEach(name -> {
-			if (transformation.getRegistryName().equals(name))
+		for (Transformation t : this.transformationSet) {
+			ResourceLocation registryName = t.getRegistryName();
+			if (transformation.getRegistryName().equals(registryName)) {
 				throw new IllegalArgumentException(
-						"Found duplicate registry name \"" + name + "\" while registering transformations");
-		});
+						"Found duplicate registry name \"" + registryName + "\" while registering transformations");
+			}
+		}
 		return this.transformationSet.add(transformation);
 	}
 
@@ -73,6 +76,6 @@ public class TransformationRegistryEvent extends Event {
 
 	/** Returns all transformations that have been registered so far. */
 	public Transformation[] getTransformations() {
-		return this.transformationSet.toArray(new Transformation[0]);
+		return this.transformationSet.toArray(new Transformation[this.transformationSet.size()]);
 	}
 }

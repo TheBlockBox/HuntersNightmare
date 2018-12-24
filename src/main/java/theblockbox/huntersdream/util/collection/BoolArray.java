@@ -5,7 +5,7 @@ import java.util.function.LongBinaryOperator;
 
 /**
  * An array of booleans that is hopefully more efficient than traditional
- * boolean[] arrays
+ * boolean arrays
  */
 public class BoolArray implements Cloneable {
 	private long[] backingLongs;
@@ -95,8 +95,8 @@ public class BoolArray implements Cloneable {
 	}
 
 	/**
-	 * Returns the next true index starting from the position or -1 if no true index
-	 * could be found
+	 * Returns the next true index starting from the position (position inclusive)
+	 * or -1 if no true index could be found
 	 */
 	public int getNextTrueIndex(int startIndex) {
 		int length = this.length();
@@ -107,8 +107,8 @@ public class BoolArray implements Cloneable {
 	}
 
 	/**
-	 * Returns the next false index starting from the position or -1 if no false
-	 * index could be found
+	 * Returns the next false index starting from the position (position inclusive)
+	 * or -1 if no false index could be found
 	 */
 	public int getNextFalseIndex(int startIndex) {
 		int length = this.length();

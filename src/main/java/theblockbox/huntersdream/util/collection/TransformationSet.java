@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.collection;
 
 import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
@@ -15,8 +16,8 @@ import theblockbox.huntersdream.api.Transformation;
 
 /**
  * A set for storing Transformation instances via storing their temporary id
- * obtained from {@link Transformation#getTemporaryID()} in a BitSet. Does not
- * allow null values
+ * obtained from {@link Transformation#getTemporaryID()} in a {@link BoolArray}.
+ * Does not allow null values.
  */
 public class TransformationSet extends AbstractSet<Transformation> implements Cloneable {
 	protected final BoolArray delegate;
@@ -26,17 +27,17 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 	}
 
 	public TransformationSet(Collection<Transformation> collection) {
-		this(collection.stream().mapToInt(Transformation::getTemporaryID).collect(
-				() -> BoolArray.of(Transformation.getRegisteredTransformations()), BoolArray::set, BoolArray::or));
+		this();
+		this.addAll(collection);
+	}
+
+	public TransformationSet(Transformation... transformations) {
+		this();
+		Collections.addAll(this, transformations);
 	}
 
 	public TransformationSet(BoolArray delegate) {
 		this.delegate = delegate;
-	}
-
-	public TransformationSet(Transformation... transformations) {
-		this(Stream.of(transformations).mapToInt(Transformation::getTemporaryID).collect(
-				() -> BoolArray.of(Transformation.getRegisteredTransformations()), BoolArray::set, BoolArray::or));
 	}
 
 	public static TransformationSet singletonSet(Transformation transformation) {
@@ -104,12 +105,16 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 
 			@Override
 			public Transformation next() {
+				// set current index
 				this.current = this.next;
-				this.next = TransformationSet.this.delegate.getNextTrueIndex(this.current);
+				// calculate next index
+				this.next = TransformationSet.this.delegate.getNextTrueIndex(this.current + 1);
+				// if current has no transformation, throw NoSuchElementException
 				if (this.current == -1) {
 					throw new NoSuchElementException();
 				} else {
-					return Transformation.fromTemporaryID(this.next);
+					// otherwise return current transformation
+					return Transformation.fromTemporaryID(this.current);
 				}
 			}
 

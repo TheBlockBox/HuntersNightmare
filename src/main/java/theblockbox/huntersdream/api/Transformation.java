@@ -7,12 +7,16 @@ import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToIntFunction;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.util.ExecutionPath;
@@ -64,6 +68,7 @@ public class Transformation {
 	private final Optional<Transformation> optional = Optional.of(this);
 	private final TextComponentTranslation translation;
 	private final String registryNameString;
+	private Object iconSprite = null;
 
 	/**
 	 * Returns the transformation that has the same name. If no transformation has
@@ -269,10 +274,39 @@ public class Transformation {
 
 	/**
 	 * Returns the resource location to the icon of this transformation. The icon is
-	 * used in the skill survival tab.
+	 * used in the skill survival tab. This is currently only used to get the
+	 * {@link TextureAtlasSprite} for this transformation. The returned resource
+	 * location doesn't include textures/ and .png because they're not required to
+	 * get a {@link TextureAtlasSprite}. So a resource location
+	 * {@code huntersdream:gui/icon_werewolf} would point to
+	 * {@code huntersdream:textures/gui/icon_werewolf.png}.
 	 */
 	public ResourceLocation getIcon() {
 		return this.entry.icon;
+	}
+
+	/**
+	 * Returns the {@link TextureAtlasSprite} for the icon of this transformation.
+	 * If this transformation is {@link Transformation#NONE} or this method is
+	 * called before {@link net.minecraftforge.client.event.TextureStitchEvent.Pre}
+	 * has been fired for the first time, null will be returned. This method is
+	 * client side only to prevent crashes.
+	 */
+	@SideOnly(Side.CLIENT)
+	@Nullable
+	public TextureAtlasSprite getIconAsSprite() {
+		return (TextureAtlasSprite) this.iconSprite;
+	}
+
+	/**
+	 * Sets the icon sprite for this transformation. Should only be used internally
+	 * and on the client side. Don't call this outside of Hunter's Dream!
+	 */
+	@SideOnly(Side.CLIENT)
+	public void setIconSprite(@Nonnull TextureAtlasSprite sprite) {
+		if (sprite == null)
+			throw new NullPointerException("The icon sprite is not allowed to be null");
+		this.iconSprite = sprite;
 	}
 
 	/**
@@ -319,8 +353,7 @@ public class Transformation {
 
 		private TransformationEntry(ResourceLocation registryName) {
 			this.registryName = registryName;
-			this.icon = new ResourceLocation(registryName.getNamespace(),
-					"textures/gui/icon_" + registryName.getPath() + ".png");
+			this.icon = new ResourceLocation(registryName.getNamespace(), "gui/icon_" + registryName.getPath());
 		}
 
 		/**

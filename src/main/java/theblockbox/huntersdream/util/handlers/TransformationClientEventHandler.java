@@ -7,11 +7,11 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.ResourceLocation;
@@ -21,13 +21,16 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
+import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -125,9 +128,8 @@ public class TransformationClientEventHandler {
 		if (event.getGui() instanceof GuiInventory) {
 			GuiContainer gui = (GuiContainer) event.getGui();
 			GuiButton button = new GuiButtonSurvivalTab(event.getButtonList().size(), gui.getGuiLeft() + 2,
-					gui.getGuiTop() - 18,
-					new GuiScreenAdvancements(Minecraft.getMinecraft().player.connection.getAdvancementManager()),
-					TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIcon());
+					gui.getGuiTop() - 18, new GuiSkillTab(),
+					TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIconAsSprite());
 			event.getButtonList().add(button);
 		}
 	}
@@ -198,6 +200,20 @@ public class TransformationClientEventHandler {
 
 			// post new post event so gui rendering from other mods doesn't get canceled
 			MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(event, event.getType()));
+		}
+	}
+
+	// Add transformation icons to atlas
+	@SubscribeEvent
+	public static void onTextureStichPre(TextureStitchEvent.Pre event) {
+		TextureMap map = event.getMap();
+		for (Transformation transformation : Transformation.getAllTransformations()) {
+			if (transformation.isTransformation()) {
+				transformation.setIconSprite(map.registerSprite(transformation.getIcon()));
+			}
+		}
+		for (Skill skill : Skill.getAllSkills()) {
+			skill.setIconSprite(map.registerSprite(skill.getIcon()));
 		}
 	}
 }
