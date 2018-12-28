@@ -23,9 +23,9 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
  **/
 @Cancelable
 public class TransformationEvent extends LivingEvent {
-	private Transformation transformationBefore;
-	private Transformation transformationAfter;
-	private TransformationEventReason reason;
+	private final Transformation transformationBefore;
+	private final Transformation transformationAfter;
+	private final TransformationEventReason reason;
 
 	public TransformationEvent(EntityLivingBase entity, Transformation transformationAfter,
 			TransformationEventReason reason) {
@@ -64,6 +64,6 @@ public class TransformationEvent extends LivingEvent {
 		/** When a command is executed */
 		COMMAND,
 		/** When the bestiary item is clicked in creative mode */
-		BESTIARY;
+		BESTIARY
 	}
 }

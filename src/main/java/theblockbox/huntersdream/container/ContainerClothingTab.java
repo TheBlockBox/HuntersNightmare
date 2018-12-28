@@ -52,11 +52,6 @@ public class ContainerClothingTab extends Container {
 	}
 
 	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-	}
-
-	@Override
 	public void updateProgressBar(int id, int data) {
 		super.updateProgressBar(id, data);
 	}

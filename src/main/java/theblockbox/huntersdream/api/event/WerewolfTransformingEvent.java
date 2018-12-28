@@ -8,12 +8,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
- * Called when an entity transforms (back). If the event is canceled, the entity
- * won't transform back. The entity's transformation is always
- * {@link theblockbox.huntersdream.util.Transformation#WEREWOLF} Posted on
- * {@link MinecraftForge#EVENT_BUS}.
- */
-/**
  * WerewolfTransformingEvent is fired when an entity transforms (back). The
  * entity's transformation is always
  * {@link theblockbox.huntersdream.api.Transformation#NONE}. <br>
@@ -28,8 +22,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  **/
 @Cancelable
 public class WerewolfTransformingEvent extends LivingEvent {
-	private boolean transformingBack;
-	private WerewolfTransformingReason reason;
+	private final boolean transformingBack;
+	private final WerewolfTransformingReason reason;
 
 	public WerewolfTransformingEvent(EntityLivingBase entity, boolean transformingBack,
 			WerewolfTransformingReason reason) {
@@ -68,8 +62,8 @@ public class WerewolfTransformingEvent extends LivingEvent {
 	/** This event is the player version of {@link WerewolfTransformingEvent} */
 	@Cancelable
 	public class PlayerWerewolfTransformingEvent extends PlayerEvent {
-		private boolean isTransformingBack;
-		private WerewolfTransformingReason transformationReason;
+		private final boolean isTransformingBack;
+		private final WerewolfTransformingReason transformationReason;
 
 		public PlayerWerewolfTransformingEvent(EntityPlayer player, boolean transformingBack,
 				WerewolfTransformingReason reason) {

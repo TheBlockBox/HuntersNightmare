@@ -17,7 +17,6 @@ import net.minecraftforge.items.IItemHandler;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.capabilities.CapabilityProvider;
 import theblockbox.huntersdream.capabilities.TransformationCreatureProvider;
-import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.handlers.VampireEventHandler;
@@ -87,7 +86,7 @@ public class CapabilitiesInit {
 					new TransformationCreatureProvider(Transformation.WEREWOLF, Transformation.VAMPIRE));
 		}
 
-		if (entity instanceof EntityVillager || entity instanceof EntityGoblinTD || entity instanceof EntityPlayer
+		if (entity instanceof EntityVillager || entity instanceof EntityPlayer
 				|| entity instanceof ITransformationCreature) {
 			event.addCapability(INFECT_IN_TICKS_CAPABILITY,
 					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
@@ -133,12 +132,8 @@ public class CapabilitiesInit {
 			}
 
 			MinecraftServer server = player.getServer();
-			GeneralHelper.executeOnMainThreadIn(() -> {
-				sendPackets(server, player);
-			}, 100, server, Reference.MODID + ":syncCapAfterPlayerDeath1");
-			GeneralHelper.executeOnMainThreadIn(() -> {
-				sendPackets(server, player);
-			}, 40000, server, Reference.MODID + ":syncCapAfterPlayerDeath2");
+			GeneralHelper.executeOnMainThreadIn(() -> sendPackets(server, player), 100, server, Reference.MODID + ":syncCapAfterPlayerDeath1");
+			GeneralHelper.executeOnMainThreadIn(() -> sendPackets(server, player), 40000, server, Reference.MODID + ":syncCapAfterPlayerDeath2");
 		}
 	}
 

@@ -27,7 +27,7 @@ public class TransformationCreatureProvider implements ICapabilitySerializable<N
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return capability == CAP ? CAP.<T>cast(this.instance) : null;
+		return capability == CAP ? CAP.cast(this.instance) : null;
 	}
 
 	@Override

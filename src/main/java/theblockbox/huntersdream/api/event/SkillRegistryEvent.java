@@ -29,10 +29,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import theblockbox.huntersdream.api.Skill;
 
 /**
- * Called when skills should be registered. The event is posted on the
- * {@link MinecraftForge#EVENT_BUS} and is not cancelable.
- */
-/**
  * SkillRegistryEvent is fired when the skills are being registered. <br>
  * <br>
  * This event is not {@link Cancelable}.<br>
@@ -67,7 +63,6 @@ public class SkillRegistryEvent extends Event {
 			throw new IllegalArgumentException(
 					"Found duplicate registry name \"" + registryName + "\" while registering skills");
 		}
-
 		return this.skillMap.put(skill.toString(), skill) == null;
 	}
 

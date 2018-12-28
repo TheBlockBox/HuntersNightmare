@@ -2,17 +2,15 @@ package theblockbox.huntersdream.init;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
+import net.minecraft.item.*;
 import net.minecraft.item.Item.ToolMaterial;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemSpade;
-import net.minecraft.item.ItemSword;
+import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -48,7 +46,10 @@ public class ItemInit {
 
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		ITEMS.forEach(item -> registerItemBlock(item, event));
-		registerItem(new Item(), "ingot_silver", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		// TODO: Is there a better way to do this?
+		Item silverIngot = registerItem(new Item(), "ingot_silver", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		TOOL_SILVER.setRepairItem(new ItemStack(silverIngot));
+		ARMOR_SILVER.setRepairItem(new ItemStack(silverIngot));
 		registerItem(new ItemWolfsbane(), "wolfsbane", CreativeTabInit.HUNTERSDREAM_MISC, event);
 		registerItem(new ItemHuntersJournal(), "hunters_journal", event);
 		registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
@@ -57,20 +58,22 @@ public class ItemInit {
 		registerArmorSet("silver", ARMOR_SILVER, event);
 	}
 
-	private static void registerItem(Item item, String name, RegistryEvent.Register<Item> event) {
-		registerItem(item, name,
+	private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {
+		return registerItem(item, name,
 				item.getCreativeTab() == null ? CreativeTabInit.HUNTERSDREAM_MISC : item.getCreativeTab(), event);
 	}
 
-	private static void registerItem(Item item, String name, CreativeTabs tab, RegistryEvent.Register<Item> event) {
+	private static Item registerItem(Item item, String name, CreativeTabs tab, RegistryEvent.Register<Item> event) {
 		event.getRegistry().register(item.setRegistryName(GeneralHelper.newResLoc(name))
 				.setTranslationKey(Reference.MODID + "." + name).setCreativeTab(tab));
 		ITEMS.add(item);
+		return item;
 	}
 
-	private static void registerItemBlock(Item itemBlock, RegistryEvent.Register<Item> event) {
+	private static Item registerItemBlock(Item itemBlock, RegistryEvent.Register<Item> event) {
 		event.getRegistry()
 				.register(itemBlock.setTranslationKey(itemBlock.getRegistryName().toString().replace(':', '.')));
+		return itemBlock;
 	}
 
 	private static void registerToolSet(String name, ToolMaterial toolMaterial, RegistryEvent.Register<Item> event) {

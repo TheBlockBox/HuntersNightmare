@@ -45,11 +45,11 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	/** The amount of textures available for the goblins */
 	public static final byte TEXTURES = 7;
 	private static final DataParameter<Integer> TEXTURE_INDEX = EntityDataManager
-			.<Integer>createKey(EntityGoblinTD.class, DataSerializers.VARINT);
+			.createKey(EntityGoblinTD.class, DataSerializers.VARINT);
 	private static final DataParameter<String> TRANSFORMATION_NAME = EntityDataManager
-			.<String>createKey(EntityGoblinTD.class, DataSerializers.STRING);
+			.createKey(EntityGoblinTD.class, DataSerializers.STRING);
 	private static final DataParameter<Byte> GOBLIN_TEXTURE_INDEX = EntityDataManager
-			.<Byte>createKey(EntityGoblinTD.class, DataSerializers.BYTE);
+			.createKey(EntityGoblinTD.class, DataSerializers.BYTE);
 	private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
 			.createKey(EntityGoblinTD.class, DataSerializers.COMPOUND_TAG);
 
@@ -96,10 +96,10 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-		this.applyEntityAI();
+		this.applyGoblinAI();
 	}
 
-	protected void applyEntityAI() {
+	protected void applyGoblinAI() {
 		Predicate<EntityCreature> predicateMob = input -> !(input instanceof EntityGoblinTD);
 		this.targetTasks.addTask(3,
 				new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
@@ -115,11 +115,6 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	protected SoundEvent getHurtSound(DamageSource sound) {
 		return super.getHurtSound(sound);
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return super.getDeathSound();
 	}
 
 	@Override

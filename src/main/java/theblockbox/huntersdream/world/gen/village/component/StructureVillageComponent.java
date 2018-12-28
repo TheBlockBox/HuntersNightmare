@@ -15,7 +15,7 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 
 public class StructureVillageComponent extends StructureVillagePieces.House1 {
-	protected ResourceLocation structureLocation;
+	protected final ResourceLocation structureLocation;
 	protected int avgGroundLevel = -1;
 	protected int xSize;
 	protected int ySize;

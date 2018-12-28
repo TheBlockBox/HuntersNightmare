@@ -133,7 +133,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 
 	@Override
 	public Transformation[] toArray() {
-		return this.stream().toArray(Transformation[]::new).clone();
+		return this.toArray(new Transformation[0]).clone();
 	}
 
 	@SuppressWarnings("unchecked")

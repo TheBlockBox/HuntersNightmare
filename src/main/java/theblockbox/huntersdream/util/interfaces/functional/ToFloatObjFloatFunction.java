@@ -14,11 +14,11 @@ public interface ToFloatObjFloatFunction<T> extends BiFunction<T, Float, Float>,
 
 	@Override
 	default Float apply(T t, Float f) {
-		return Float.valueOf(this.applyAsFloat(t, f.floatValue()));
+		return this.applyAsFloat(t, f);
 	}
 
 	@Override
 	default double applyAsDouble(T t, Float f) {
-		return this.applyAsFloat(t, f.floatValue());
+		return this.applyAsFloat(t, f);
 	}
 }

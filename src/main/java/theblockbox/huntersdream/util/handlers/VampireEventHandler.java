@@ -42,9 +42,7 @@ public class VampireEventHandler {
 				player.world.playSound(null, player.getPosition(), SoundInit.VAMPIRE_GULP, SoundCategory.PLAYERS, 10,
 						1);
 				vampire.setTimeDrinking(player.ticksExisted);
-				GeneralHelper.executeOnMainThreadIn(() -> {
-					VampireHelper.drinkBlood(player, (EntityLivingBase) event.getTarget());
-				}, 400, player.world.getMinecraftServer(), "VampireBloodDrinking");
+				GeneralHelper.executeOnMainThreadIn(() -> VampireHelper.drinkBlood(player, (EntityLivingBase) event.getTarget()), 400, player.world.getMinecraftServer(), "VampireBloodDrinking");
 			}
 		}
 	}

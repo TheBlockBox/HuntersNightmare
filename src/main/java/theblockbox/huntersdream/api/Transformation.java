@@ -2,7 +2,6 @@ package theblockbox.huntersdream.api;
 
 import static theblockbox.huntersdream.api.Transformation.TransformationEntry.of;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToIntFunction;
@@ -65,7 +64,6 @@ public class Transformation {
 	 * transformation gets registered
 	 */
 	private int temporaryID = -1;
-	private final Optional<Transformation> optional = Optional.of(this);
 	private final TextComponentTranslation translation;
 	private final String registryNameString;
 	private Object iconSprite = null;
@@ -319,14 +317,6 @@ public class Transformation {
 	}
 
 	/**
-	 * Returns this transformation in form of an {@link Optional}. Always returns
-	 * the same optional
-	 */
-	public Optional<Transformation> toOptional() {
-		return this.optional;
-	}
-
-	/**
 	 * {@inheritDoc}<br>
 	 * <br>
 	 * The transformation version always returns the temporary id
@@ -341,7 +331,7 @@ public class Transformation {
 
 	/** Used to register new transformations. All set methods are optional. */
 	public static class TransformationEntry {
-		private ResourceLocation registryName;
+		private final ResourceLocation registryName;
 		private boolean supernatural = true;
 		private ResourceLocation[] textures = new ResourceLocation[0];
 		private Consumer<EntityLivingBase> infect = null;

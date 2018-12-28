@@ -57,8 +57,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 
 	public static <T> void writeArray(ByteBuf buf, @Nonnull T[] array, Function<T, String> tToString) {
 		buf.writeInt(array.length);
-		for (int i = 0; i < array.length; i++)
-			writeString(buf, tToString.apply(array[i]));
+		for (T t : array) writeString(buf, tToString.apply(t));
 	}
 
 	public static <T> T[] readArray(ByteBuf buf, Function<String, T> stringToT,
@@ -71,8 +70,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 
 	public static void writeByteArray(ByteBuf buf, @Nonnull byte[] bytes) {
 		buf.writeInt(bytes.length);
-		for (int i = 0; i < bytes.length; i++)
-			buf.writeByte(bytes[i]);
+		for (byte aByte : bytes) buf.writeByte(aByte);
 	}
 
 	public static byte[] readByteArray(ByteBuf buf) {

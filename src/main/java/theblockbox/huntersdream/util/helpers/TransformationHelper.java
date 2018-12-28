@@ -117,7 +117,7 @@ public class TransformationHelper {
 
 		Optional<ITransformationCreature> tc = getITransformationCreature(entity);
 		boolean flag = canChangeTransformation(entity)
-				&& (tc.isPresent() ? tc.get().notImmuneToTransformation(transformation) : true);
+				&& (!tc.isPresent() || tc.get().notImmuneToTransformation(transformation));
 		if (flag) {
 			changeTransformation(entity, transformation, reason);
 		}
@@ -159,7 +159,7 @@ public class TransformationHelper {
 		} else if (entity instanceof ITransformation) {
 			return Optional.ofNullable((ITransformation) entity);
 		} else if (entity instanceof EntityCreature) {
-			return getITransformationCreature((EntityCreature) entity).map(t -> (ITransformation) t);
+			return getITransformationCreature((EntityCreature) entity).map(t -> t);
 		} else {
 			return Optional.empty();
 		}
@@ -207,7 +207,7 @@ public class TransformationHelper {
 		Validate.notNull(infection, "The transformation isn't allowed to be null");
 		if (canChangeTransformationOnInfection(entity)) {
 			Optional<ITransformationCreature> tc = getITransformationCreature(entity);
-			return tc.isPresent() ? tc.get().notImmuneToTransformation(infection) : true;
+			return !tc.isPresent() || tc.get().notImmuneToTransformation(infection);
 		} else {
 			return false;
 		}

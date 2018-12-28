@@ -29,7 +29,7 @@ public class WorldGenOres implements IWorldGenerator {
 			IChunkProvider chunkProvider) {
 
 		BlockInit.ORES.stream().filter(e -> e.dimension == world.provider.getDimension())
-				.filter(e -> e == BlockInit.ORE_SILVER ? ConfigHandler.server.ores.generateSilverOre : true)
+				.filter(e -> e != BlockInit.ORE_SILVER || ConfigHandler.server.ores.generateSilverOre)
 				.forEach(e -> {
 					if (e.getWorldGenMinable() == null) {
 						Main.getLogger().error(

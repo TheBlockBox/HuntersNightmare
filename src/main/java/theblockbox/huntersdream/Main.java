@@ -24,10 +24,10 @@ public class Main {
 	@SidedProxy(clientSide = Reference.CLIENT, serverSide = Reference.SERVER)
 	public static IProxy proxy;
 
-	private static Logger logger = LogManager.getLogger(Reference.MODID);
+	private static final Logger LOGGER = LogManager.getLogger(Reference.MODID);
 
 	public static synchronized Logger getLogger() {
-		return logger;
+		return LOGGER;
 	}
 
 	@EventHandler

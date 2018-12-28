@@ -187,7 +187,8 @@ public interface ITransformationPlayer extends ITransformation {
 
 		@Override
 		public HuntersJournalPage[] getUnlockedPages() {
-			return this.unlockedPages.toArray(new HuntersJournalPage[0]);
+			Set<HuntersJournalPage> var = this.unlockedPages;
+			return var.toArray(new HuntersJournalPage[0]);
 		}
 
 		@Override
@@ -257,7 +258,7 @@ public interface ITransformationPlayer extends ITransformation {
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
 			Set<Skill> skills = instance.getSkills();
-			GeneralHelper.writeArrayToNBT(compound, skills.toArray(new Skill[skills.size()]), SKILLS, Skill::toString);
+			GeneralHelper.writeArrayToNBT(compound, skills.toArray(new Skill[0]), SKILLS, Skill::toString);
 			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
 			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), PAGES, HuntersJournalPage::toString);
 			compound.setTag(CLOTHING_TAB,

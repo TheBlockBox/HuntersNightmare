@@ -31,12 +31,12 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 	public static final String KEY_HAS_RECIPE = "hasRecipe";
 
 	// slot 0: input, 1: fuel, 2: output
-	private CampfireItemHandler itemHandler = new CampfireItemHandler();
-	private IItemHandler itemHandlerTop = new SideItemHandler(this.itemHandler, i -> i == 0,
+	private final CampfireItemHandler itemHandler = new CampfireItemHandler();
+	private final IItemHandler itemHandlerTop = new SideItemHandler(this.itemHandler, i -> i == 0,
 			GeneralHelper.FALSE_PREDICATE);
-	private IItemHandler itemHandlerSide = new SideItemHandler(this.itemHandler, i -> i == 1,
+	private final IItemHandler itemHandlerSide = new SideItemHandler(this.itemHandler, i -> i == 1,
 			GeneralHelper.FALSE_PREDICATE);
-	private IItemHandler itemHandlerBottom = new SideItemHandler(this.itemHandler, GeneralHelper.FALSE_PREDICATE,
+	private final IItemHandler itemHandlerBottom = new SideItemHandler(this.itemHandler, GeneralHelper.FALSE_PREDICATE,
 			i -> i == 2);
 	private int smeltingRecipeSince = 0;
 	private int ticks = 0;
@@ -219,7 +219,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
 		@Override
 		public boolean isItemValid(int slot, ItemStack stack) {
-			return (slot == 0) ? true : ((slot == 1) ? TileEntityFurnace.isItemFuel(stack) : false);
+			return (slot == 0) || ((slot == 1) && TileEntityFurnace.isItemFuel(stack));
 		}
 	}
 }

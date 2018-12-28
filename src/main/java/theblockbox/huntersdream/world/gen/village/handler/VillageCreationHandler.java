@@ -7,9 +7,9 @@ import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 
 public abstract class VillageCreationHandler implements VillagerRegistry.IVillageCreationHandler {
-	private Class<? extends StructureVillagePieces.Village> componentClass;
-	private int pieceWeight;
-	private int maxStructuresInVillage;
+	private final Class<? extends StructureVillagePieces.Village> componentClass;
+	private final int pieceWeight;
+	private final int maxStructuresInVillage;
 
 	public VillageCreationHandler(Class<? extends StructureVillagePieces.Village> componentClass, int pieceWeight,
 			int maxStructuresInVillage) {

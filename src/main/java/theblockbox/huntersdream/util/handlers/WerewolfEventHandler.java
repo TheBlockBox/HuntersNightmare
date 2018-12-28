@@ -23,7 +23,6 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -116,7 +115,7 @@ public class WerewolfEventHandler {
 		DamageSource source = event.getSource();
 		if (source.getDamageType().equals("player")) {
 			// just hope that all this casting won't cause any problems
-			EntityPlayer player = (EntityPlayer) ((EntityDamageSource) source).getTrueSource();
+			EntityPlayer player = (EntityPlayer) source.getTrueSource();
 			if (WerewolfHelper.isTransformed(player)) {
 				// every full heart of the entity's max health gives the player half a hunger
 				player.getFoodStats().addStats((int) (killed.getMaxHealth() / 2), 1);

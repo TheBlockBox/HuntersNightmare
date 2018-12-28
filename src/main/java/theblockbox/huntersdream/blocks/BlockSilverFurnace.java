@@ -89,9 +89,7 @@ public class BlockSilverFurnace extends BlockContainer {
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (te instanceof TileEntitySilverFurnace)
-			((TileEntitySilverFurnace) te).getInventory().forEach(stack -> {
-				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
-			});
+			((TileEntitySilverFurnace) te).getInventory().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack));
 		super.breakBlock(worldIn, pos, state);
 	}
 

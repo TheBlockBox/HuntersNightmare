@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.network;
 
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -18,6 +18,8 @@ import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
+import javax.annotation.Nullable;
+
 public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private Transformation transformation;
 	private int textureIndex;
@@ -31,15 +33,15 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	}
 
 	public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex,
-			Set<Skill> skills, HuntersJournalPage[] pages, NBTTagCompound transformationData,
-			Optional<Skill> activeSkill) {
+								 Set<Skill> skills, HuntersJournalPage[] pages, NBTTagCompound transformationData,
+								 @Nullable Skill activeSkill) {
 		this.transformation = transformation;
 		this.textureIndex = textureIndex;
 		this.player = player.getEntityId();
-		this.skills = skills.toArray(new Skill[skills.size()]);
+		this.skills = skills.toArray(new Skill[0]);
 		this.pages = pages;
 		this.transformationData = transformationData;
-		this.activeSkill = activeSkill.map(Skill::toString).orElse("");
+		this.activeSkill = Objects.toString(activeSkill,"");
 	}
 
 	@Override

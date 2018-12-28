@@ -43,7 +43,8 @@ public interface ITransformationCreature extends ITransformation {
 
 		@Override
 		public Transformation[] getTransformationsNotImmuneTo() {
-			return this.transformationsNotImmuneTo.toArray(new Transformation[0]);
+			Set<Transformation> var = this.transformationsNotImmuneTo;
+			return var.toArray(new Transformation[0]);
 		}
 
 		@Override

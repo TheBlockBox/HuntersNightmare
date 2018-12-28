@@ -16,10 +16,10 @@ public class HuntersJournalPage {
 	public static final HuntersJournalPage TEST_PAGE = new HuntersJournalPage(
 			Reference.MODID + ".huntersjournal.test.title", null, Reference.MODID + ".huntersjournal.test.description");
 	public static final HuntersJournalPage WEREWOLF = HuntersJournalPage.of("werewolf", null);
-	private String title;
-	private ResourceLocation imagePath;
-	private String description;
-	private boolean hasImage;
+	private final String title;
+	private final ResourceLocation imagePath;
+	private final String description;
+	private final boolean hasImage;
 
 	private HuntersJournalPage(String keyTitle, ResourceLocation imagePath, String keyDescription) {
 		this.title = I18n.format(keyTitle);
@@ -66,7 +66,7 @@ public class HuntersJournalPage {
 	}
 
 	public static HuntersJournalPage fromName(String name) {
-		HuntersJournalPage page = PAGES.get(Integer.parseInt(name.substring(name.lastIndexOf('?') + 1, name.length())));
+		HuntersJournalPage page = PAGES.get(Integer.parseInt(name.substring(name.lastIndexOf('?') + 1)));
 		if (name.equals(page.toString())) {
 			return page;
 		} else {

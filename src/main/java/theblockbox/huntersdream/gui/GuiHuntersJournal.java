@@ -14,9 +14,9 @@ import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiHuntersJournal extends GuiScreen {
+	private final HuntersJournalPage[] pages;
 	public final EntityPlayer player;
 	private int currentPage = 0;
-	private HuntersJournalPage[] pages;
 	private GuiButton nextPage;
 	private GuiButton pageBefore;
 
@@ -88,7 +88,7 @@ public class GuiHuntersJournal extends GuiScreen {
 	}
 
 	public static class NextButton extends GuiButton {
-		private boolean isNextPageButton;
+		private final boolean isNextPageButton;
 
 		public NextButton(int buttonId, boolean isNextPageButton) {
 			super(buttonId, 0, 163, 18, 10, "");

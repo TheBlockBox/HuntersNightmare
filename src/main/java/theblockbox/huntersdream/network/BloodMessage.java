@@ -48,9 +48,7 @@ public class BloodMessage extends MessageBase<BloodMessage> {
 		@Override
 		public IMessage onMessageReceived(BloodMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				addScheduledTask(ctx, () -> {
-					VampireHelper.getIVampire(getPlayerFromID(message.player)).setBlood(message.blood);
-				});
+				addScheduledTask(ctx, () -> VampireHelper.getIVampire(getPlayerFromID(message.player)).setBlood(message.blood));
 			}
 			return null;
 		}

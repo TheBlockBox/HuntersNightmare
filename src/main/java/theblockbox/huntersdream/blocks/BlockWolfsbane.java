@@ -38,7 +38,7 @@ public class BlockWolfsbane extends BlockCrops {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return WOLFSBANE_AABB[state.getValue(this.getAgeProperty()).intValue()];
+		return WOLFSBANE_AABB[state.getValue(this.getAgeProperty())];
 	}
 
 	@Override

@@ -27,7 +27,7 @@ import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 public class ExtraDataEvent extends Event {
 	private final EntityCreature creature;
 	private NBTTagCompound extraData;
-	private boolean onDataSave;
+	private final boolean onDataSave;
 
 	public ExtraDataEvent(EntityCreature creature, NBTTagCompound extraData, boolean onDataSave) {
 		this.creature = creature;

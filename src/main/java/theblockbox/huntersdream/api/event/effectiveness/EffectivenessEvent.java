@@ -33,8 +33,8 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 public class EffectivenessEvent extends LivingEvent {
 	private final Entity attacker;
 	private float damage;
-	private Transformation hurtTransformation;
-	private Transformation attackerTransformation;
+	private final Transformation hurtTransformation;
+	private final Transformation attackerTransformation;
 
 	public EffectivenessEvent(EntityLivingBase hurt, Entity attacker, float damage) {
 		super(hurt);

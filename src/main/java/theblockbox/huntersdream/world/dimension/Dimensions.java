@@ -15,7 +15,7 @@ public enum Dimensions {
 	 */
 	public final Block spawnOn;
 
-	private Dimensions(Block spawnOn, int id) {
+	Dimensions(Block spawnOn, int id) {
 		this.name = this.toString();
 		this.id = id;
 		this.spawnOn = spawnOn;

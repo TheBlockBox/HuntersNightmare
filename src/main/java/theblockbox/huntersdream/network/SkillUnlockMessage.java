@@ -2,9 +2,11 @@ package theblockbox.huntersdream.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -50,16 +52,12 @@ public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
 				addScheduledTask(ctx, () -> {
 					EntityPlayerMP player = ctx.getServerHandler().player;
 					Skill skill = Skill.fromName(message.skill);
-					int neededExperience = skill.getNeededExperienceLevels();
-					ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(player);
-					if (player.experienceLevel >= neededExperience) {
-						// test if player has all the skills that are needed to unlock the skill
-						for (Skill s : skill.getRequiredSkills())
-							if (!transformation.hasSkill(s))
-								return;
-						player.addExperienceLevel(-neededExperience);
-						transformation.addSkill(skill);
-						PacketHandler.sendTransformationMessage(player);
+					if(skill.unlockSkillForPlayer(player)){
+						player.sendMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
+								new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()));
+					} else {
+						Main.getLogger().error("The player " + player + " tried to unlock the skill " + message.skill
+								+ " but wasn't allowed to unlock it");
 					}
 				});
 			}

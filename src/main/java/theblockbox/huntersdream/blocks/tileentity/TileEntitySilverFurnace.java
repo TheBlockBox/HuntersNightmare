@@ -56,14 +56,14 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 	 * furnace successfully smelted a recipe
 	 */
 	private int amount2;
-	private MutablePair<ItemStack, ItemStack> outputs = new MutablePair<>(ItemStack.EMPTY, ItemStack.EMPTY);
+	private final MutablePair<ItemStack, ItemStack> outputs = new MutablePair<>(ItemStack.EMPTY, ItemStack.EMPTY);
 	private boolean hasRecipe = false;
-	private SilverFurnaceItemHandler itemHandler = new SilverFurnaceItemHandler();
-	private IItemHandler itemHandlerTop = new SideItemHandler(this.itemHandler, i -> i == 1 || i == 2,
+	private final SilverFurnaceItemHandler itemHandler = new SilverFurnaceItemHandler();
+	private final IItemHandler itemHandlerTop = new SideItemHandler(this.itemHandler, i -> i == 1 || i == 2,
 			GeneralHelper.FALSE_PREDICATE);
-	private IItemHandler itemHandlerSide = new SideItemHandler(this.itemHandler, i -> i == 0,
+	private final IItemHandler itemHandlerSide = new SideItemHandler(this.itemHandler, i -> i == 0,
 			GeneralHelper.FALSE_PREDICATE);
-	private IItemHandler itemHandlerBottom = new SideItemHandler(this.itemHandler, GeneralHelper.FALSE_PREDICATE,
+	private final IItemHandler itemHandlerBottom = new SideItemHandler(this.itemHandler, GeneralHelper.FALSE_PREDICATE,
 			i -> i == 3 || i == 4);
 
 	@Override
@@ -77,11 +77,11 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 				if (this.isBurning()) {
 					if (this.ticks >= (this.smeltingRecipeSince + this.fullNeededSmeltingTime)) {
 						if (this.addItemsToOutputIfPossible(this.outputs.getLeft(), this.outputs.getRight())) {
-							this.itemHandler.extractItem(1, this.amount1, false).isEmpty();
-							this.itemHandler.extractItem(2, this.amount2, false).isEmpty();
+							this.itemHandler.extractItem(1, this.amount1, false);
+							this.itemHandler.extractItem(2, this.amount2, false);
 						}
 						this.setHasRecipe(false);
-						this.onRecipeSmelted();
+						// the smelting process should be done by now
 					}
 				} else {
 					this.setHasRecipe(false);
@@ -96,9 +96,6 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 						this.world.getBlockState(this.pos).withProperty(BlockSilverFurnace.BURNING, this.isBurning()));
 			}
 		}
-	}
-
-	private void onRecipeSmelted() {
 	}
 
 	private void updateBurnTime(int toDecrease) {
@@ -154,21 +151,21 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 	 * Tries to set the current recipe. Returns false if it wasn't successful
 	 * (meaning that the output items couldn't be added to the output)
 	 */
-	private boolean setRecipe(int amount1, int amount2, ItemStack output1, ItemStack output2,
-			int fullNeededSmeltingTime) {
+	private boolean setRecipe(int itemAmount1, int itemAmount2, ItemStack output1, ItemStack output2,
+			int neededSmeltingTime) {
 		// make recipes burn faster because furnace smelts a bit slower
-		int fullSmeltingTime = fullNeededSmeltingTime - 12;
+		int fullSmeltingTime = neededSmeltingTime - 12;
 		if (this.canAddItemsToOutput(output1, output2)) {
 			// if everything is still the same, just return true and do nothing
-			if (this.hasRecipe() && (this.amount1 == amount1) && (this.amount2 == amount2)
+			if (this.hasRecipe() && (this.amount1 == itemAmount1) && (this.amount2 == itemAmount2)
 					&& ItemStack.areItemStacksEqual(this.outputs.getLeft(), output1)
 					&& ItemStack.areItemStacksEqual(this.outputs.getRight(), output2)
 					&& this.fullNeededSmeltingTime == fullSmeltingTime && this.hasRecipe()) {
 				return true;
 			}
 
-			this.amount1 = amount1;
-			this.amount2 = amount2;
+			this.amount1 = itemAmount1;
+			this.amount2 = itemAmount2;
 			this.outputs.setLeft(output1);
 			this.outputs.setRight(output2);
 			this.fullNeededSmeltingTime = fullSmeltingTime;
@@ -351,11 +348,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 		public boolean isItemValid(int slot, ItemStack stack) {
 			if (slot == 0) {
 				return TileEntityFurnace.isItemFuel(stack);
-			} else if (slot == 3 || slot == 4) {
-				return false;
-			} else {
-				return true;
-			}
+			} else return slot != 3 && slot != 4;
 		}
 
 		private NonNullList<ItemStack> getInventory() {

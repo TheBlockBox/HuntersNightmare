@@ -19,10 +19,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import theblockbox.huntersdream.api.Transformation;
 
 /**
- * Called when transformations are registered. The event is posted on the
- * {@link MinecraftForge#EVENT_BUS} and is not cancelable
- */
-/**
  * TransformationRegistryEvent is fired when the transformations are being
  * registered. <br>
  * <br>
@@ -76,6 +72,6 @@ public class TransformationRegistryEvent extends Event {
 
 	/** Returns all transformations that have been registered so far. */
 	public Transformation[] getTransformations() {
-		return this.transformationSet.toArray(new Transformation[this.transformationSet.size()]);
+		return this.transformationSet.toArray(new Transformation[0]);
 	}
 }

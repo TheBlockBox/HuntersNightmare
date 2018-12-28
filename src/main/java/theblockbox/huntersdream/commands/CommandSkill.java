@@ -10,7 +10,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -25,7 +24,7 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 public class CommandSkill extends CommandBase {
 	public static final Joiner SKILL_JOINER = Joiner.on(", ").skipNulls();
 	private static final Collection<String> OPERATIONS = Arrays
-			.asList(new String[] { "add", "remove", "clear", "list" });
+			.asList("add", "remove", "clear", "list");
 
 	@Override
 	public String getName() {
@@ -57,7 +56,7 @@ public class CommandSkill extends CommandBase {
 	}
 
 	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
 		try {
 			EntityPlayerMP player;
 			if (args.length >= 2) {

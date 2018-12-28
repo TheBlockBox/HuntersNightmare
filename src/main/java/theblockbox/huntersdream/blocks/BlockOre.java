@@ -46,7 +46,6 @@ public class BlockOre extends Block {
 	public void setWorldGenMinable(WorldGenMinable worldGenMinable) {
 		if (!this.modified) {
 			this.worldGenMinable = worldGenMinable;
-		} else {
 			this.modified = true;
 		}
 	}

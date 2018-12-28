@@ -12,6 +12,6 @@ public interface ICloth {
 	public boolean isOfClothType(ItemStack stack, ClothType type);
 
 	public enum ClothType {
-		HAT, SHIRT, TROUSERS, SHOE, MASK, COAT, GLOVE, CLOAK, ACCESSIORE, BACKPACK;
+		HAT, SHIRT, TROUSERS, SHOE, MASK, COAT, GLOVE, CLOAK, ACCESSIORE, BACKPACK
 	}
 }

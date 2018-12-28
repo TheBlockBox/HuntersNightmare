@@ -1,13 +1,16 @@
 package theblockbox.huntersdream.util.helpers;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ObjectArrays;
+import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -31,8 +34,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
+
+import javax.annotation.Nonnegative;
 
 /** A utility class for all things that don't fit into the other helpers */
 public class GeneralHelper {
@@ -53,7 +59,7 @@ public class GeneralHelper {
 		}
 
 		@Override
-		public byte[] read(PacketBuffer buf) throws IOException {
+		public byte[] read(PacketBuffer buf) {
 			return buf.readByteArray();
 		}
 
@@ -289,8 +295,8 @@ public class GeneralHelper {
 
 			// we want to know if stackIDs has something in common with oreDictNames
 			int[] oreDictIDs = Stream.of(oreDictNames).mapToInt(OreDictionary::getOreID).toArray();
-			for (int i = 0; i < stackIDs.length; i++)
-				if (ArrayUtils.contains(oreDictIDs, stackIDs[i]))
+			for (int stackID : stackIDs)
+				if (ArrayUtils.contains(oreDictIDs, stackID))
 					return true;
 		}
 		return false;
@@ -381,5 +387,51 @@ public class GeneralHelper {
 			if (!c.contains(element))
 				return false;
 		return true;
+	}
+
+	/**
+	 * Out of the two numbers a and b, the method returns the closest number to numberToCheck
+	 */
+	public static double getClosest(double numberToCheck, double a, double b){
+		return (Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b)) ? a : b;
+	}
+
+	/**
+	 * Out of the two numbers a and b, the method returns the closest number to numberToCheck
+	 */
+	public static int getClosest(int numberToCheck, int a, int b){
+		return (Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b)) ? a : b;
+	}
+
+	/**
+	 * Returns true when a is closer to numberToCheck than b, otherwise returns false.
+	 */
+	public static boolean isACloserThanB(double numberToCheck, double a, double b) {
+		return (Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b)) ? true : false;
+	}
+
+	/**
+	 * Returns true when a is closer to numberToCheck than b, otherwise returns false.
+	 */
+	public static boolean isACloserThanB(int numberToCheck, int a, int b) {
+		return (Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b)) ? true : false;
+	}
+
+	/**
+	 * Tries to safely set the given element at the given index in the given
+	 * list without causing an ArrayIndexOutOfBoundsException. Only works
+	 * with automatically resizing lists (like {@link java.util.ArrayList})
+	 */
+	public static <E> void safeSet(List<E> list, int index, E element) {
+		int listSize = list.size();
+		if (listSize > index) {
+			list.set(index, element);
+		} else {
+			int neededGrowing = index - listSize;
+			for (int i = 0; i < neededGrowing; i++) {
+				list.add(null);
+			}
+			list.add(element);
+		}
 	}
 }

@@ -5,8 +5,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class WrongSideException extends RuntimeException {
-	private static final long serialVersionUID = 7281095896269746349L;
-
 	public WrongSideException(String message, Side side) {
 		super("Wrong side: " + side.toString() + "\n" + message);
 	}

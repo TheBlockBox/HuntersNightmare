@@ -38,9 +38,8 @@ public class ContainerCampfire extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return this.world.getTileEntity(this.pos) != this.tileEntity ? false
-				: playerIn.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D,
-						this.pos.getZ() + 0.5D) <= 64.0D;
+		return this.world.getTileEntity(this.pos) == this.tileEntity && playerIn.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D,
+				this.pos.getZ() + 0.5D) <= 64.0D;
 	}
 
 	public IInventory getPlayerInventory() {

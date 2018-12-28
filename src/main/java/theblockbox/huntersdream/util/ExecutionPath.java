@@ -7,8 +7,6 @@ import theblockbox.huntersdream.util.handlers.ConfigHandler;
  * object, you have to make a new one. Don't throw this
  */
 public class ExecutionPath extends Exception {
-	private static final long serialVersionUID = 1L;
-
 	private ExecutionPath() {
 	}
 
@@ -28,7 +26,7 @@ public class ExecutionPath extends Exception {
 			StringBuilder toReturn = new StringBuilder();
 			for (int i = beginIndex; i < endIndex; i++) {
 				try {
-					toReturn.append("\n\tat " + path.getFromIndex(i));
+					toReturn.append("\n\tat ").append(path.getFromIndex(i));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					break;
 				}

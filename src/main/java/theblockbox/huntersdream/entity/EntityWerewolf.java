@@ -92,7 +92,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	}
 
 	public EntityWerewolf(World worldIn, int textureIndex, EntityCreature entity, NBTTagCompound extraData) {
-		this(worldIn, textureIndex, ((TransformationHelper.getITransformationCreature(entity) != null) ? "$bycap" : "")
+		this(worldIn, textureIndex, (TransformationHelper.getITransformationCreature(entity).isPresent() ? "$bycap" : "")
 				+ entity.getClass().getName(), extraData);
 	}
 
@@ -203,7 +203,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 				if (!WerewolfHelper.isWerewolfTime(this.world)) {
 					if (!MinecraftForge.EVENT_BUS.post(
 							new WerewolfTransformingEvent(this, true, WerewolfTransformingReason.FULL_MOON_END))) {
-						EntityCreature e = null;
+						EntityCreature e;
 						String entityName = this.getUntransformedEntityName();
 
 						// TODO: Remove this when no control is done (only the line below and its

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -112,11 +113,11 @@ public class SilverFurnaceRecipe {
 						file.getName(), file.getAbsolutePath(), e.toString(), ExceptionUtils.getStackTrace(e)));
 			}
 			return json;
-		}).filter(json -> json != null).forEach(SilverFurnaceRecipe::addRecipe);
+		}).filter(Objects::nonNull).forEach(SilverFurnaceRecipe::addRecipe);
 	}
 
 	private static Pair<ItemStack, String> readInputStack(JsonObject json) {
-		boolean usesOreDict = json.has("useOreDict") ? json.get("useOreDict").getAsBoolean() : false;
+		boolean usesOreDict = json.has("useOreDict") && json.get("useOreDict").getAsBoolean();
 		int meta = json.has("meta") ? json.get("meta").getAsInt() : OreDictionary.WILDCARD_VALUE;
 		int count = json.has("count") ? json.get("count").getAsInt() : 1;
 		String item = json.get("item").getAsString();
@@ -205,8 +206,8 @@ public class SilverFurnaceRecipe {
 					return false;
 				final int[] oreDictIDs = OreDictionary.getOreIDs(stack2);
 				final int oreDictID = OreDictionary.getOreID(oreDictName);
-				for (int i = 0; i < oreDictIDs.length; i++)
-					if (oreDictID == oreDictIDs[i])
+				for (int oreDictID1 : oreDictIDs)
+					if (oreDictID == oreDictID1)
 						return true;
 			} else {
 				return (stack1.getItem() == stack2.getItem());

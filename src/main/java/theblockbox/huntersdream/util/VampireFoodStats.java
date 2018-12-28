@@ -20,7 +20,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
  */
 public class VampireFoodStats extends FoodStats {
 	public static final VampireFoodStats INSTANCE = new VampireFoodStats();
-	long millis = 0;
 
 	private VampireFoodStats() {
 	}

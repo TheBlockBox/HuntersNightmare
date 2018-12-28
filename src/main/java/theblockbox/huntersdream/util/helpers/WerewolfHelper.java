@@ -51,9 +51,7 @@ public class WerewolfHelper {
 	public static boolean isWerewolfTime(World world) {
 		if (world.isRemote)
 			throw new WrongSideException("Can only test if it is werewolf time on server side", world);
-		boolean isNight = !world.isDaytime();
-		boolean werewolfTime = world.getCurrentMoonPhaseFactor() == 1F && isNight;
-		return werewolfTime;
+		return (world.getCurrentMoonPhaseFactor() == 1F) && !world.isDaytime();
 	}
 
 	/**
@@ -235,18 +233,16 @@ public class WerewolfHelper {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
 						validateIsWerewolf(entity);
-						EntityWerewolf werewolf = new EntityWerewolf(world, transformation.getTextureIndex(),
+						return new EntityWerewolf(world, transformation.getTextureIndex(),
 								entity.getClass().getName(), postExtraDataEvent(entity, true));
-						return werewolf;
 					} else {
 						validateIsWerewolf(entity);
-						EntityWerewolf werewolf = new EntityWerewolf(world, TransformationHelper
+						return new EntityWerewolf(world, TransformationHelper
 								.getITransformationCreature(entity)
 								.orElseThrow(() -> new IllegalArgumentException(
 										"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability"))
 								.getTextureIndex(), "$bycap" + entity.getClass().getName(),
 								postExtraDataEvent(entity, true));
-						return werewolf;
 					}
 				}
 			}
