@@ -21,6 +21,7 @@ item.huntersdream.wolfsbane.name=Wolfsbane
 item.huntersdream.hunters_journal.name=Hunter's Journal
 item.huntersdream.hunters_journal_page.name=Hunter's Note
 item.huntersdream.bestiary.name=Bestiary
+item.huntersdream.tent.name=Tent
 
 # Potions
 effect.huntersdream.fear=Fear
@@ -38,6 +39,7 @@ tile.huntersdream.plant_wolfsbane.name=Wolfsbane Seed
 tile.huntersdream.tent.name=Tent
 tile.huntersdream.campfire.name=Campfire
 tile.huntersdream.furnace_silver.name=Silver Furnace
+tile.huntersdream.tile_tent.name=Tent
 
 # Entities
 entity.goblintd.name=Goblin

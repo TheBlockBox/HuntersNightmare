@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import theblockbox.huntersdream.items.ItemBestiary;
 import theblockbox.huntersdream.items.ItemHuntersJournal;
 import theblockbox.huntersdream.items.ItemHuntersJournalPage;
+import theblockbox.huntersdream.items.ItemTent;
 import theblockbox.huntersdream.items.ItemWolfsbane;
 import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
@@ -37,6 +38,9 @@ public class ItemInit {
 
 	@ObjectHolder("huntersdream:hunters_journal")
 	public static final Item HUNTERS_JOURNAL = null;
+	
+	@ObjectHolder("huntersdream:tent")
+	public static final Item TENT = null;
 
 	// Materials
 	public static final ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,
@@ -54,6 +58,7 @@ public class ItemInit {
 		registerItem(new ItemHuntersJournal(), "hunters_journal", event);
 		registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
 		registerItem(new ItemBestiary(), "bestiary", CreativeTabInit.HUNTERSDREAM_MISC, event);
+		registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);
 		registerToolSet("silver", TOOL_SILVER, event);
 		registerArmorSet("silver", ARMOR_SILVER, event);
 	}

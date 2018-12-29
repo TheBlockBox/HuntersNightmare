@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import theblockbox.huntersdream.blocks.BlockCampfire;
 import theblockbox.huntersdream.blocks.BlockOre;
 import theblockbox.huntersdream.blocks.BlockSilverFurnace;
+import theblockbox.huntersdream.blocks.BlockTent;
 import theblockbox.huntersdream.blocks.BlockWolfsbane;
 import theblockbox.huntersdream.items.ItemBlockWithMaxStackSize;
 import theblockbox.huntersdream.util.Reference;
@@ -37,6 +38,9 @@ public class BlockInit {
 
 	@ObjectHolder("huntersdream:plant_wolfsbane")
 	public static final Block WOLFSBANE = null;
+	
+	@ObjectHolder("huntersdream:tile_tent")
+	public static final Block TENT = null;
 
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
 		registerBlock(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC).setHardness(5.0F),
@@ -49,6 +53,7 @@ public class BlockInit {
 
 		registerBlock(new BlockSilverFurnace(), "furnace_silver", event);
 		registerBlock(new BlockCampfire(), "campfire", CreativeTabInit.HUNTERSDREAM_MISC, 1, event);
+		registerBlock(new BlockTent(), "tile_tent", null, event);
 	}
 
 	private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {
