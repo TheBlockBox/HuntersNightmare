@@ -310,6 +310,14 @@ public class Skill {
     }
 
     /**
+     * Returns the amount of child Skills this Skill has. Should be prefered over a {@link Collection#size()}
+     * call on {@link #getChildSkills()} as in this method, no new list is allocated.
+     */
+    public int getAmountOfChildSkills() {
+        return this.childSkills.size();
+    }
+
+    /**
      * Returns a modifiable list of all Skills this Skill requires in order to be
      * unlocked.<br>
      * Note: Parent Skills (with or without children) don't have required Skills. If

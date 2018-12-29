@@ -1,9 +1,11 @@
 package theblockbox.huntersdream.util.helpers;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
@@ -11,6 +13,7 @@ import org.lwjgl.opengl.GL11;
  * Provides utilities for client-side only things like localization and rendering
  */
 public class ClientHelper {
+    public static final int GL_LINES = GL11.GL_LINES;
 
     /**
      * Draws a rectangle onto the screen between the given coordinates (from x, y to secondX, secondY).
@@ -51,20 +54,21 @@ public class ClientHelper {
     }
 
     public static void drawConnection(int x1, int y1, int x2, int y2, float zLevel) {
+        // TODO: Can you do all this in one draw?
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         GlStateManager.disableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.disableAlpha();
 
-        bufferBuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        bufferBuilder.begin(GL_LINES, DefaultVertexFormats.POSITION);
         GlStateManager.glLineWidth(11F);
         GlStateManager.color(0, 0, 0);
         bufferBuilder.pos(x1, y1, zLevel).endVertex();
         bufferBuilder.pos(x2, y2, zLevel).endVertex();
         tessellator.draw();
 
-        bufferBuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        bufferBuilder.begin(GL_LINES, DefaultVertexFormats.POSITION);
         GlStateManager.glLineWidth(3F);
         GlStateManager.color(1, 1, 1);
         bufferBuilder.pos(x1, y1, zLevel).endVertex();

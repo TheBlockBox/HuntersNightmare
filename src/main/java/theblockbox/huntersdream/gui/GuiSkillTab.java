@@ -8,17 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.opengl.GL11;
 import theblockbox.huntersdream.api.Skill;
-import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.ClientHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -29,9 +24,11 @@ public class GuiSkillTab extends GuiScreen {
 	public static final int TEXTURE_WIDTH = 256;
 	public static final int TEXTURE_HEIGHT = 190;
 	public static final int TOOLTIP_COLOR = 11250603;
-	public static final int RECT_SIZE = 32;
-	public static final int LONG_CONNECTION_LENGTH = 32;
-	public static final int SHORT_CONNECTION_LENGTH = 8;
+	public static final int RECT_SIZE = 24;
+	// length of a connections of button and rect
+	public static final int RECT_CONNECTION_LENGTH = 18;
+	// length of a connection of two buttons
+	public static final int BUTTON_CONNECTION_LENGTH = 22;
 	public static final int MAX_TEXT_WIDTH = 200;
 	private static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/skills/skill_window.png");
 	// tp = TransformationPlayer
@@ -53,36 +50,51 @@ public class GuiSkillTab extends GuiScreen {
 		super.initGui();
 		int halfRectSize = RECT_SIZE / 2;
 		this.rectMiddleX = this.width / 2;
-		this.rectMiddleY = this.height / 2;
+		this.rectMiddleY = this.height / 2 + 4;
 		this.rectMinX = this.rectMiddleX - halfRectSize;
 		this.rectMinY = this.rectMiddleY - halfRectSize;
 		this.rectMaxX = this.rectMiddleX + halfRectSize;
 		this.rectMaxY = this.rectMiddleY + halfRectSize;
 
 		// TODO: Use different collection?
-		Collection<Skill> skills = Skill.getAllSkills().stream().filter(Skill::isParentSkill).collect(Collectors.toSet());
+		Collection<Skill> skills = Skill.getAllSkills().stream().filter(Skill::isParentSkill)
+				.filter(s -> s.isForTransformation(this.tp.getTransformation()))
+				.collect(Collectors.toCollection(ArrayDeque::new));
 
-		// thanks a lot stackoverflow!
-		// (https://stackoverflow.com/questions/10152390/dynamically-arrange-some-elements-around-a-circle)
+		// I did not think of this myself
+		// https://stackoverflow.com/questions/10152390/dynamically-arrange-some-elements-around-a-circle
 
 		// radius of the circle
-		double radius = halfRectSize + LONG_CONNECTION_LENGTH;
+		double radius = halfRectSize + RECT_CONNECTION_LENGTH;
 		double angle = 0;
 		double step = (Math.PI * 2) / skills.size();
 
-		int index = 0;
-
-		// create parent buttons
+		// create buttons
+		int buttonId = 0;
 		for(Skill skill : skills) {
-			int x = (int) (this.rectMiddleX + radius * Math.cos(angle) - 8);
-			int y = (int) (this.rectMiddleY + radius * Math.sin(angle) - 8);
-			this.buttonList.add(new GuiButtonSkill(skill, index, x, y, null, this.fontRenderer, MAX_TEXT_WIDTH));
-			angle += step;
-			index++;
-		}
+			double cos = Math.cos(angle);
+			double sin = Math.sin(angle);
+			int xOffset = this.rectMiddleX - 8;
+			int yOffset = this.rectMiddleY - 8;
 
-		// TODO: Make child buttons work
-		// create child buttons
+			// create parent button
+			int x = (int) (xOffset + radius * cos);
+			int y = (int) (yOffset + radius * sin);
+			GuiButtonSkill lastButton = new GuiButtonSkill(skill, buttonId++, x, y, null, this.fontRenderer, MAX_TEXT_WIDTH);
+			this.buttonList.add(lastButton);
+
+			// create child buttons
+			for(Skill childSkill : skill.getChildSkills()) {
+				double r = radius + BUTTON_CONNECTION_LENGTH * childSkill.getLevel();
+				int childX = (int) (xOffset + r * cos);
+				int childY = (int) (yOffset + r * sin);
+				lastButton = new GuiButtonSkill(childSkill, buttonId++, childX, childY, lastButton,
+						this.fontRenderer, MAX_TEXT_WIDTH);
+				this.buttonList.add(lastButton);
+			}
+
+			angle += step;
+		}
 	}
 
 	@Override
@@ -101,9 +113,8 @@ public class GuiSkillTab extends GuiScreen {
 		this.mc.getTextureManager().bindTexture(TEXTURE);
 		this.drawTexturedModalRect(drawX, drawY, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
+		// update buttons, draw connections and get hovered button
 		GuiButtonSkill hoveredButton = null;
-
-		this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		for (GuiButton guiButton : this.buttonList) {
 			if ((guiButton instanceof GuiButtonSkill) && guiButton.visible) {
 				GuiButtonSkill button = (GuiButtonSkill) guiButton;
@@ -112,21 +123,37 @@ public class GuiSkillTab extends GuiScreen {
 				button.drawButton(this.mc, mouseX, mouseY, partialTicks);
 
 				// draw connection between button and rect
-				ClientHelper.drawConnection(button.x + 8, button.y + 8, this.rectMiddleX, this.rectMiddleY, this.zLevel);
+				ClientHelper.drawConnection(button.getMiddleX(), button.getMiddleY(), this.rectMiddleX, this.rectMiddleY,
+						this.zLevel);
+
+				// draw connection between button and child button
+				GuiButtonSkill child = button.getChildButton();
+				if(child != null) {
+					ClientHelper.drawConnection(button.getMiddleX(), button.getMiddleY(), child.getMiddleX(),
+							child.getMiddleY(), this.zLevel - 1);
+				}
 
 				// if the player is hovering over the button
 				if (button.isMouseOver()) {
 					// set the hovered button to this button (it will be drawn later)
 					hoveredButton = button;
-				} else {
-					// draw the actual skill
-					this.drawSkillButton(button);
 				}
+			}
+		}
+
+		this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		for(GuiButton button : this.buttonList) {
+			// if the button is a skill button and is not hovered,
+			if((button instanceof  GuiButtonSkill) && (button != hoveredButton)) {
+				// draw it
+				this.drawSkillButton((GuiButtonSkill) button);
 			}
 		}
 
 		// draw rect (the one in the middle)
 		ClientHelper.drawRect(this.rectMinX, this.rectMinY, this.rectMaxX, this.rectMaxY, this.zLevel);
+
+		// draw xp
 		String xp = String.valueOf(this.mc.player.experienceLevel);
 		ClientHelper.drawCentralString(xp, this.rectMiddleX, this.rectMiddleY, 3141706, 1.5F, RECT_SIZE,
 				this.fontRenderer);
@@ -160,7 +187,7 @@ public class GuiSkillTab extends GuiScreen {
 		// decide where the x position of the text should be. If the text is nearer
 		// to the right side, draw it on the left, otherwise on the right
 		int textX = hoveredButton.x + (GeneralHelper.isACloserThanB(hoveredButton.x, 0, this.width)
-				? 20 : -hoveredButton.highestWidth - 4);
+				? hoveredButton.width + 4 : -hoveredButton.highestWidth - 4);
 
 		// draw the background for the description
 		ClientHelper.drawRect(textX - 2, textY - 2,textX + hoveredButton.highestWidth, descriptionY
@@ -188,10 +215,11 @@ public class GuiSkillTab extends GuiScreen {
 		if (this.tp.hasSkill(button.getSkill())) {
 			GlStateManager.color(208, 136, 0);
 		} else {
-			// otherwise set the color to 0 (the color actually gets reset)
+			// otherwise reset the color
 			GlStateManager.color(255, 255, 255);
 		}
-		this.drawTexturedModalRect(button.x, button.y, button.getSkill().getIconAsSprite(), 16, 16);
+		this.drawTexturedModalRect(button.x, button.y, button.getSkill().getIconAsSprite(), button.width,
+				button.height);
 	}
 
 	@Override
