@@ -16,9 +16,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 public class ItemHuntersJournalPage extends Item {
 
-	public ItemHuntersJournalPage() {
-	}
-
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		if (!playerIn.world.isRemote) {

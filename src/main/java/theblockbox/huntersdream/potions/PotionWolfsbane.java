@@ -11,7 +11,7 @@ import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 public class PotionWolfsbane extends PotionBase {
@@ -50,7 +50,7 @@ public class PotionWolfsbane extends PotionBase {
 		// remove infection
 		WerewolfHelper.getIInfectOnNextMoon(entityIn).ifPresent(ionm -> {
 			if (entityIn.isPotionActive(PotionInit.POTION_WOLFSBANE) && ionm.isInfected()) {
-				ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
+				ionm.setInfectionStatus(IInfectOnNextMoon.InfectionStatus.NOT_INFECTED);
 				ionm.setInfectionTick(-1);
 				ionm.setInfectionTransformation(Transformation.HUMAN);
 			}

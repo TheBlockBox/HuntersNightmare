@@ -2,6 +2,7 @@ package theblockbox.huntersdream.items;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,7 +47,7 @@ public class ItemTent extends Item {
                 pos = pos.up();
             }
 
-            int i = MathHelper.floor((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+            int i = MathHelper.floor((player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
             EnumFacing enumfacing = EnumFacing.byHorizontalIndex(i);
             BlockPos blockpos = pos.offset(enumfacing);
             ItemStack itemstack = player.getHeldItem(hand);
@@ -60,11 +61,11 @@ public class ItemTent extends Item {
 
                 if (flag2 && flag3 && worldIn.getBlockState(pos.down()).isTopSolid() && worldIn.getBlockState(blockpos.down()).isTopSolid())
                 {
-                    IBlockState iblockstate2 = BlockInit.TENT.getDefaultState().withProperty(BlockTent.OCCUPIED, Boolean.valueOf(false)).withProperty(BlockTent.FACING, enumfacing).withProperty(BlockTent.PART, BlockTent.EnumPartType.FOOT);
+                    IBlockState iblockstate2 = BlockInit.TENT.getDefaultState().withProperty(BlockTent.OCCUPIED, Boolean.FALSE).withProperty(BlockHorizontal.FACING, enumfacing).withProperty(BlockTent.PART, BlockTent.EnumPartType.FOOT);
                     worldIn.setBlockState(pos, iblockstate2, 10);
                     worldIn.setBlockState(blockpos, iblockstate2.withProperty(BlockTent.PART, BlockTent.EnumPartType.HEAD), 10);
                     SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, player);
-                    worldIn.playSound((EntityPlayer)null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                    worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                     
                     worldIn.notifyNeighborsRespectDebug(pos, block, false);
                     worldIn.notifyNeighborsRespectDebug(blockpos, iblockstate1.getBlock(), false);

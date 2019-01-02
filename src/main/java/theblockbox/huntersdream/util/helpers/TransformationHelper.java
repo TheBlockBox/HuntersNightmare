@@ -23,7 +23,6 @@ import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.api.event.IsLivingInfectedEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
-import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
@@ -31,7 +30,6 @@ import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -54,7 +52,7 @@ public class TransformationHelper {
 	 */
 	public static ITransformationPlayer getITransformationPlayer(@Nonnull EntityPlayer player) {
 		Validate.notNull(player);
-		return player.getCapability(CAPABILITY_TRANSFORMATION_PLAYER, null);
+		return player.getCapability(TransformationHelper.CAPABILITY_TRANSFORMATION_PLAYER, null);
 	}
 
 	/**
@@ -63,8 +61,11 @@ public class TransformationHelper {
 	 */
 	private static void changeTransformation(EntityPlayerMP player, Transformation transformation) {
 		transformation.validateIsTransformation();
-		ITransformationPlayer cap = getITransformationPlayer(player);
-		cap.setSkills(Collections.emptySet()); // reset skills
+		ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
+		// reset skills
+		cap.setSkills(Collections.emptySet());
+		// reset active skill
+		cap.setActiveSkill(null);
 		cap.setTransformation(transformation);
 		cap.setTextureIndex(player);
 
@@ -74,35 +75,35 @@ public class TransformationHelper {
 
 		if (ConfigHandler.common.showPacketMessages)
 			Main.getLogger()
-					.info("Transformation of player " + player.getName() + " changed to " + transformation.toString());
+					.info("Transformation of player " + player.getName() + " changed to " + transformation);
 		PacketHandler.sendTransformationMessage(player); // sync data with client
 	}
 
 	public static void changeTransformation(@Nonnull EntityLivingBase entity, @Nonnull Transformation transformation,
-			TransformationEventReason reason) {
+			TransformationEvent.TransformationEventReason reason) {
 		if (entity != null && transformation.isTransformation()) {
 			World world = entity.world;
-			if (!world.isRemote) {
+			if (world.isRemote) {
+				throw new WrongSideException("Can only change transformation on server side", entity.world);
+			} else {
 				if (!MinecraftForge.EVENT_BUS.post(new TransformationEvent(entity, transformation, reason))) {
-					if (entity instanceof EntityPlayer) {
-						changeTransformation((EntityPlayerMP) entity, transformation);
+					if (entity instanceof EntityPlayerMP) {
+						TransformationHelper.changeTransformation((EntityPlayerMP) entity, transformation);
 					} else if (entity instanceof EntityCreature) {
 						// TODO: Does this here make sense?
-						ITransformation it = getITransformation(entity).get();
+						ITransformation it = TransformationHelper.getITransformation(entity).get();
 						it.setTransformation(transformation);
 
 						NBTTagCompound transformationData = new NBTTagCompound();
 						transformationData.setString("transformation", transformation.toString());
 						it.setTransformationData(transformationData);
 
-						getITransformationCreature((EntityCreature) entity).ifPresent(t -> t.setTextureIndex(entity));
+						TransformationHelper.getITransformationCreature((EntityCreature) entity).ifPresent(t -> t.setTextureIndex(entity));
 					} else {
-						throw new IllegalArgumentException("Can't transform entity " + entity.toString()
+						throw new IllegalArgumentException("Can't transform entity " + entity
 								+ " (it is neither a player nor an instance of EntityCreature)");
 					}
 				}
-			} else {
-				throw new WrongSideException("Can only change transformation on server side", entity.world);
 			}
 		} else {
 			throw new NullPointerException("A null argument was passed. Entity null: " + (entity == null)
@@ -111,15 +112,15 @@ public class TransformationHelper {
 	}
 
 	public static void changeTransformationWhenPossible(EntityCreature entity, Transformation transformation,
-			TransformationEventReason reason) {
+			TransformationEvent.TransformationEventReason reason) {
 		Validate.notNull(entity, "The entity isn't allowed to be null");
 		Validate.notNull(transformation, "The transformation isn't allowed to be null");
 
-		Optional<ITransformationCreature> tc = getITransformationCreature(entity);
-		boolean flag = canChangeTransformation(entity)
+		Optional<ITransformationCreature> tc = TransformationHelper.getITransformationCreature(entity);
+		boolean flag = TransformationHelper.canChangeTransformation(entity)
 				&& (!tc.isPresent() || tc.get().notImmuneToTransformation(transformation));
 		if (flag) {
-			changeTransformation(entity, transformation, reason);
+			TransformationHelper.changeTransformation(entity, transformation, reason);
 		}
 	}
 
@@ -128,7 +129,7 @@ public class TransformationHelper {
 	 * (e.g. by werewolf infection)
 	 */
 	public static boolean canChangeTransformation(EntityLivingBase entity) {
-		return canChangeTransformationOnInfection(entity) && !isInfected(entity);
+		return TransformationHelper.canChangeTransformationOnInfection(entity) && !TransformationHelper.isInfected(entity);
 	}
 
 	/**
@@ -136,7 +137,7 @@ public class TransformationHelper {
 	 * accounting for infection
 	 */
 	public static boolean canChangeTransformationOnInfection(EntityLivingBase entity) {
-		Optional<ITransformation> transformation = getITransformation(entity);
+		Optional<ITransformation> transformation = TransformationHelper.getITransformation(entity);
 		return transformation.isPresent() && transformation.get().isTransformationChangeable();
 	}
 
@@ -146,7 +147,7 @@ public class TransformationHelper {
 	 */
 	@Nonnull
 	public static Transformation getTransformation(EntityLivingBase entity) {
-		return getITransformation(entity).map(ITransformation::getTransformation).orElse(Transformation.NONE);
+		return TransformationHelper.getITransformation(entity).map(ITransformation::getTransformation).orElse(Transformation.NONE);
 	}
 
 	/**
@@ -155,11 +156,11 @@ public class TransformationHelper {
 	 */
 	public static Optional<ITransformation> getITransformation(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
-			return Optional.ofNullable(getITransformationPlayer((EntityPlayer) entity));
+			return Optional.ofNullable(TransformationHelper.getITransformationPlayer((EntityPlayer) entity));
 		} else if (entity instanceof ITransformation) {
 			return Optional.ofNullable((ITransformation) entity);
 		} else if (entity instanceof EntityCreature) {
-			return getITransformationCreature((EntityCreature) entity).map(t -> t);
+			return TransformationHelper.getITransformationCreature((EntityCreature) entity).map(t -> t);
 		} else {
 			return Optional.empty();
 		}
@@ -168,7 +169,7 @@ public class TransformationHelper {
 	public static Optional<ITransformationCreature> getITransformationCreature(@Nonnull EntityCreature entity) {
 		Validate.notNull(entity);
 		return Optional.ofNullable((entity instanceof ITransformationCreature) ? (ITransformationCreature) entity
-				: entity.getCapability(CAPABILITY_TRANSFORMATION_CREATURE, null));
+				: entity.getCapability(TransformationHelper.CAPABILITY_TRANSFORMATION_CREATURE, null));
 	}
 
 	/**
@@ -177,8 +178,8 @@ public class TransformationHelper {
 	 */
 	public static boolean canBeInfectedWith(Transformation infection, EntityLivingBase entity) {
 		Validate.notNull(infection, "The transformation isn't allowed to be null");
-		if (canChangeTransformation(entity)) {
-			Optional<IInfectInTicks> iit = getIInfectInTicks(entity);
+		if (TransformationHelper.canChangeTransformation(entity)) {
+			Optional<IInfectInTicks> iit = TransformationHelper.getIInfectInTicks(entity);
 			Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
 			// can't infect entity that already has the transformation
 			if (TransformationHelper.getTransformation(entity) == infection) {
@@ -187,7 +188,7 @@ public class TransformationHelper {
 				return true;
 			} else if (iit.isPresent()) {
 				if (entity instanceof EntityCreature) {
-					Optional<ITransformationCreature> otc = getITransformationCreature((EntityCreature) entity);
+					Optional<ITransformationCreature> otc = TransformationHelper.getITransformationCreature((EntityCreature) entity);
 					if (otc.isPresent()) {
 						return otc.get().notImmuneToTransformation(infection)
 								|| MinecraftForge.EVENT_BUS.post(new CanLivingBeInfectedEvent(entity, infection));
@@ -205,8 +206,8 @@ public class TransformationHelper {
 	 */
 	public static boolean onInfectionCanBeInfectedWith(Transformation infection, EntityCreature entity) {
 		Validate.notNull(infection, "The transformation isn't allowed to be null");
-		if (canChangeTransformationOnInfection(entity)) {
-			Optional<ITransformationCreature> tc = getITransformationCreature(entity);
+		if (TransformationHelper.canChangeTransformationOnInfection(entity)) {
+			Optional<ITransformationCreature> tc = TransformationHelper.getITransformationCreature(entity);
 			return !tc.isPresent() || tc.get().notImmuneToTransformation(infection);
 		} else {
 			return false;
@@ -216,7 +217,7 @@ public class TransformationHelper {
 	/** Returns the {@link IInfectInTicks} capability of the given entity */
 	public static Optional<IInfectInTicks> getIInfectInTicks(@Nonnull EntityLivingBase entity) {
 		Validate.notNull(entity);
-		return Optional.ofNullable(entity.getCapability(CAPABILITY_INFECT_IN_TICKS, null));
+		return Optional.ofNullable(entity.getCapability(TransformationHelper.CAPABILITY_INFECT_IN_TICKS, null));
 	}
 
 	/**
@@ -225,7 +226,7 @@ public class TransformationHelper {
 	 */
 	public static void infectIn(int ticksUntilInfection, EntityLivingBase entityToBeInfected, Transformation infectTo) {
 		Validate.notNull(infectTo, "The transformation isn't allowed to be null");
-		IInfectInTicks iit = getIInfectInTicks(entityToBeInfected).orElseThrow(() -> new IllegalArgumentException(
+		IInfectInTicks iit = TransformationHelper.getIInfectInTicks(entityToBeInfected).orElseThrow(() -> new IllegalArgumentException(
 				"The given entity does not have the capability IInfectInTicks/infectinticks"));
 		iit.setTime(ticksUntilInfection);
 		iit.setCurrentlyInfected(true);
@@ -234,10 +235,10 @@ public class TransformationHelper {
 
 	/** Returns true if the given entity is infected */
 	public static boolean isInfected(EntityLivingBase entity) {
-		Optional<IInfectInTicks> iit = getIInfectInTicks(entity);
+		Optional<IInfectInTicks> iit = TransformationHelper.getIInfectInTicks(entity);
 		Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
 		if (((iit.isPresent()) && iit.get().currentlyInfected())
-				|| (ionm.isPresent() && (ionm.get().getInfectionStatus() != InfectionStatus.NOT_INFECTED))) {
+				|| (ionm.isPresent() && (ionm.get().getInfectionStatus() != IInfectOnNextMoon.InfectionStatus.NOT_INFECTED))) {
 			return true;
 		}
 		return MinecraftForge.EVENT_BUS.post(new IsLivingInfectedEvent(entity));
@@ -256,9 +257,9 @@ public class TransformationHelper {
 	}
 
 	public static NBTTagCompound getTransformationData(EntityLivingBase entity) {
-		Transformation transformation = getTransformation(entity);
+		Transformation transformation = TransformationHelper.getTransformation(entity);
 		transformation.validateIsTransformation();
-		ITransformation iTransformation = getITransformation(entity).get();
+		ITransformation iTransformation = TransformationHelper.getITransformation(entity).get();
 		NBTTagCompound compound = iTransformation.getTransformationData();
 
 		String transformationValue = compound.getString("transformation");
@@ -287,6 +288,6 @@ public class TransformationHelper {
 	}
 
 	public static DamageSource causeEffectivenessThornsDamage(Entity source) {
-		return new EntityDamageSource(THORNS_DAMAGE_NAME, source).setIsThornsDamage().setMagicDamage();
+		return new EntityDamageSource(TransformationHelper.THORNS_DAMAGE_NAME, source).setIsThornsDamage().setMagicDamage();
 	}
 }

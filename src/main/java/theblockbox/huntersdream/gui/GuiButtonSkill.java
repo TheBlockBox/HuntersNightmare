@@ -5,12 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
-import scala.collection.parallel.ParIterableLike;
 import theblockbox.huntersdream.api.Skill;
-import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.helpers.ClientHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import javax.annotation.Nullable;
 
@@ -62,8 +58,6 @@ public class GuiButtonSkill extends GuiButton {
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width
                 && mouseY < this.y + this.height;
-        // TODO: Uncomment?
-        // super.drawButton(mc, mouseX, mouseY, partialTicks);
     }
 
     @Override

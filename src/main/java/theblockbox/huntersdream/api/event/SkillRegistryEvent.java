@@ -79,7 +79,7 @@ public class SkillRegistryEvent extends Event {
 				ArrayUtils.toString(skills));
 		boolean flag = false;
 		for (Skill skill : skills)
-			if (registerSkill(skill) && !flag)
+			if (this.registerSkill(skill) && !flag)
 				flag = true;
 		return flag;
 	}

@@ -24,9 +24,6 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public abstract class MessageBase<T extends MessageBase<T>> implements IMessage {
 
-	public MessageBase() {
-	}
-
 	public abstract String getName();
 
 	public static void writeString(ByteBuf buf, String string) {
@@ -38,33 +35,33 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 	}
 
 	public static ResourceLocation readResourceLocation(ByteBuf buf) {
-		return GeneralHelper.newResLoc(readString(buf));
+		return GeneralHelper.newResLoc(MessageBase.readString(buf));
 	}
 
 	public static void writeResourceLocation(ByteBuf buf, ResourceLocation resourceLocation) {
-		writeString(buf, resourceLocation.toString());
+		MessageBase.writeString(buf, resourceLocation.toString());
 	}
 
 	public static Transformation readTransformation(ByteBuf buf) {
-		String transformationName = readString(buf);
+		String transformationName = MessageBase.readString(buf);
 		return Validate.notNull(Transformation.fromName(transformationName),
 				"Found null transformation with name %s while reading transformation", transformationName);
 	}
 
 	public static void writeTransformation(ByteBuf buf, Transformation transformation) {
-		writeString(buf, Validate.notNull(transformation, "The transformation is not allowed to be null").toString());
+		MessageBase.writeString(buf, Validate.notNull(transformation, "The transformation is not allowed to be null").toString());
 	}
 
 	public static <T> void writeArray(ByteBuf buf, @Nonnull T[] array, Function<T, String> tToString) {
 		buf.writeInt(array.length);
-		for (T t : array) writeString(buf, tToString.apply(t));
+		for (T t : array) MessageBase.writeString(buf, tToString.apply(t));
 	}
 
 	public static <T> T[] readArray(ByteBuf buf, Function<String, T> stringToT,
 			IntFunction<T[]> newEmptyArrayWithSize) {
 		T[] array = newEmptyArrayWithSize.apply(buf.readInt());
 		for (int i = 0; i < array.length; i++)
-			array[i] = stringToT.apply(readString(buf));
+			array[i] = stringToT.apply(MessageBase.readString(buf));
 		return array;
 	}
 
@@ -89,7 +86,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 	}
 
 	public static EntityPlayer getPlayerFromID(int id) {
-		return getEntityFromID(id);
+		return MessageBase.getEntityFromID(id);
 	}
 
 	public static <T extends Entity> T getEntityFromID(int id) {
@@ -100,18 +97,16 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(runnableToSchedule);
 	}
 
-	public abstract MessageHandler<T, ? extends IMessage> getMessageHandler();
+	public abstract MessageBase.MessageHandler<T, ? extends IMessage> getMessageHandler();
 
 	public abstract static class MessageHandler<T extends MessageBase<T>, REPLY extends IMessage>
 			implements IMessageHandler<T, REPLY> {
-		public MessageHandler() {
-		}
 
 		@Override
 		public REPLY onMessage(T message, MessageContext ctx) {
-			REPLY answer = onMessageReceived(message, ctx);
+			REPLY answer = this.onMessageReceived(message, ctx);
 			if (ConfigHandler.common.showPacketMessages)
-				Main.getLogger().info(name() + " packet received on side " + ctx.side.toString());
+				Main.getLogger().info(this.name() + " packet received on side " + ctx.side);
 			return answer;
 		}
 
@@ -119,7 +114,7 @@ public abstract class MessageBase<T extends MessageBase<T>> implements IMessage 
 
 		public String name() {
 			try {
-				Object instance = getClass().getDeclaringClass().getConstructor().newInstance();
+				Object instance = this.getClass().getDeclaringClass().getConstructor().newInstance();
 				return (String) instance.getClass().getMethod("getName").invoke(instance);
 			} catch (Exception e) {
 				return null;

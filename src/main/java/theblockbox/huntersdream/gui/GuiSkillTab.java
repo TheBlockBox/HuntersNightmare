@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
@@ -20,6 +21,7 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
+// TODO: Make that there isn't a new instance every tick
 public class GuiSkillTab extends GuiScreen {
 	public static final int TEXTURE_WIDTH = 256;
 	public static final int TEXTURE_HEIGHT = 190;
@@ -33,7 +35,7 @@ public class GuiSkillTab extends GuiScreen {
 	private static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/skills/skill_window.png");
 	// tp = TransformationPlayer
 	private final ITransformationPlayer tp;
-	private float fade = 0F;
+	private float fade = 0.0F;
 	private int rectMinX;
 	private int rectMinY;
 	private int rectMaxX;
@@ -48,7 +50,7 @@ public class GuiSkillTab extends GuiScreen {
 	@Override
 	public void initGui() {
 		super.initGui();
-		int halfRectSize = RECT_SIZE / 2;
+		int halfRectSize = GuiSkillTab.RECT_SIZE / 2;
 		this.rectMiddleX = this.width / 2;
 		this.rectMiddleY = this.height / 2 + 4;
 		this.rectMinX = this.rectMiddleX - halfRectSize;
@@ -65,7 +67,7 @@ public class GuiSkillTab extends GuiScreen {
 		// https://stackoverflow.com/questions/10152390/dynamically-arrange-some-elements-around-a-circle
 
 		// radius of the circle
-		double radius = halfRectSize + RECT_CONNECTION_LENGTH;
+		double radius = halfRectSize + GuiSkillTab.RECT_CONNECTION_LENGTH;
 		double angle = 0;
 		double step = (Math.PI * 2) / skills.size();
 
@@ -80,16 +82,16 @@ public class GuiSkillTab extends GuiScreen {
 			// create parent button
 			int x = (int) (xOffset + radius * cos);
 			int y = (int) (yOffset + radius * sin);
-			GuiButtonSkill lastButton = new GuiButtonSkill(skill, buttonId++, x, y, null, this.fontRenderer, MAX_TEXT_WIDTH);
+			GuiButtonSkill lastButton = new GuiButtonSkill(skill, buttonId++, x, y, null, this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH);
 			this.buttonList.add(lastButton);
 
 			// create child buttons
 			for(Skill childSkill : skill.getChildSkills()) {
-				double r = radius + BUTTON_CONNECTION_LENGTH * childSkill.getLevel();
+				double r = radius + GuiSkillTab.BUTTON_CONNECTION_LENGTH * childSkill.getLevel();
 				int childX = (int) (xOffset + r * cos);
 				int childY = (int) (yOffset + r * sin);
 				lastButton = new GuiButtonSkill(childSkill, buttonId++, childX, childY, lastButton,
-						this.fontRenderer, MAX_TEXT_WIDTH);
+						this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH);
 				this.buttonList.add(lastButton);
 			}
 
@@ -106,12 +108,12 @@ public class GuiSkillTab extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		int drawX = (this.width - TEXTURE_WIDTH) / 2;
-		int drawY = (this.height - TEXTURE_HEIGHT) / 2;
+		int drawX = (this.width - GuiSkillTab.TEXTURE_WIDTH) / 2;
+		int drawY = (this.height - GuiSkillTab.TEXTURE_HEIGHT) / 2;
 
 		// draw background
-		this.mc.getTextureManager().bindTexture(TEXTURE);
-		this.drawTexturedModalRect(drawX, drawY, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		this.mc.getTextureManager().bindTexture(GuiSkillTab.TEXTURE);
+		this.drawTexturedModalRect(drawX, drawY, 0, 0, GuiSkillTab.TEXTURE_WIDTH, GuiSkillTab.TEXTURE_HEIGHT);
 
 		// update buttons, draw connections and get hovered button
 		GuiButtonSkill hoveredButton = null;
@@ -155,13 +157,13 @@ public class GuiSkillTab extends GuiScreen {
 
 		// draw xp
 		String xp = String.valueOf(this.mc.player.experienceLevel);
-		ClientHelper.drawCentralString(xp, this.rectMiddleX, this.rectMiddleY, 3141706, 1.5F, RECT_SIZE,
+		ClientHelper.drawCentralString(xp, this.rectMiddleX, this.rectMiddleY, 3141706, 1.5F, GuiSkillTab.RECT_SIZE,
 				this.fontRenderer);
 
 		// make everything darker if player hovers over button (fade gets set to 0 when
 		// the player doesn't hover over something and thus the rectangle will become
 		// completely transparent)
-		drawRect(drawX + 8, drawY + 17, drawX + TEXTURE_WIDTH - 12, drawY + TEXTURE_HEIGHT - 8,
+		Gui.drawRect(drawX + 8, drawY + 17, drawX + GuiSkillTab.TEXTURE_WIDTH - 12, drawY + GuiSkillTab.TEXTURE_HEIGHT - 8,
 				MathHelper.floor(this.fade * 255.0F) << 24);
 
 		// if no button is being hovered,
@@ -194,12 +196,12 @@ public class GuiSkillTab extends GuiScreen {
 				+ hoveredButton.descriptionHeight + 2, this.zLevel);
 
 		// if the player has the skill, the name is golden, otherwise black
-		this.fontRenderer.drawString(hoveredButton.name, textX, textY, hasSkill ? 13666304 : TOOLTIP_COLOR);
+		this.fontRenderer.drawString(hoveredButton.name, textX, textY, hasSkill ? 13666304 : GuiSkillTab.TOOLTIP_COLOR);
 		// if the player can unlock the skill, the price is green, otherwise red
 		this.fontRenderer.drawSplitString(hoveredButton.cost, textX, textY + hoveredButton.nameHeight,
-				MAX_TEXT_WIDTH, hasSkill ? TOOLTIP_COLOR : (skill.canPlayerUnlockSkill(mc.player) ?
+				GuiSkillTab.MAX_TEXT_WIDTH, hasSkill ? GuiSkillTab.TOOLTIP_COLOR : (skill.canPlayerUnlockSkill(this.mc.player) ?
 				47360 : 11141120));
-		this.fontRenderer.drawSplitString(hoveredButton.description, textX, descriptionY, MAX_TEXT_WIDTH, TOOLTIP_COLOR);
+		this.fontRenderer.drawSplitString(hoveredButton.description, textX, descriptionY, GuiSkillTab.MAX_TEXT_WIDTH, GuiSkillTab.TOOLTIP_COLOR);
 
 		// draw the actual skill button
 		this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -228,7 +230,7 @@ public class GuiSkillTab extends GuiScreen {
 		if(guiButton instanceof GuiButtonSkill){
 			Skill skill = ((GuiButtonSkill) guiButton).getSkill();
 			if(skill.canPlayerUnlockSkill(this.mc.player)){
-				mc.displayGuiScreen(new GuiSkillBuyConfirmation(skill));
+				this.mc.displayGuiScreen(new GuiSkillBuyConfirmation(skill));
 			}
 		}
 	}
@@ -236,14 +238,14 @@ public class GuiSkillTab extends GuiScreen {
 	private class GuiSkillBuyConfirmation extends GuiYesNo {
 		private final Skill skill;
 
-		public GuiSkillBuyConfirmation(Skill skill){
+		private GuiSkillBuyConfirmation(Skill skill){
 			super(GuiSkillTab.this, I18n.format("huntersdream.permissionUnlockSkill",
 					I18n.format(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()), "", -1);
 			this.skill = skill;
 		}
 
 		@Override
-		protected void actionPerformed(GuiButton button) throws IOException {
+		protected void actionPerformed(GuiButton button) {
 			if(button.id == 0) {
 				PacketHandler.sendSkillUnlockMessage(this.mc.world, this.skill);
 			}

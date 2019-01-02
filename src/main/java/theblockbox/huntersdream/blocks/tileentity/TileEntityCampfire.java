@@ -31,7 +31,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 	public static final String KEY_HAS_RECIPE = "hasRecipe";
 
 	// slot 0: input, 1: fuel, 2: output
-	private final CampfireItemHandler itemHandler = new CampfireItemHandler();
+	private final TileEntityCampfire.CampfireItemHandler itemHandler = new TileEntityCampfire.CampfireItemHandler();
 	private final IItemHandler itemHandlerTop = new SideItemHandler(this.itemHandler, i -> i == 0,
 			GeneralHelper.FALSE_PREDICATE);
 	private final IItemHandler itemHandlerSide = new SideItemHandler(this.itemHandler, i -> i == 1,
@@ -170,37 +170,37 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey(KEY_ITEM_HANDLER))
-			CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(this.itemHandler, null, compound.getTag(KEY_ITEM_HANDLER));
-		if (compound.hasKey(KEY_BURN_TIME))
-			this.burnTime = compound.getInteger(KEY_BURN_TIME);
-		if (compound.hasKey(KEY_FULL_BURN_TIME))
-			this.fullBurnTime = compound.getInteger(KEY_FULL_BURN_TIME);
-		if (compound.hasKey(KEY_SMELTING_RECIPE_SINCE))
-			this.smeltingRecipeSince = compound.getInteger(KEY_SMELTING_RECIPE_SINCE);
-		if (compound.hasKey(KEY_TICKS))
-			this.ticks = compound.getInteger(KEY_TICKS);
-		if (compound.hasKey(KEY_HAS_RECIPE))
-			this.hasRecipe = compound.getBoolean(KEY_HAS_RECIPE);
-		if (compound.hasKey(KEY_OUTPUT))
-			this.output = new ItemStack(compound.getCompoundTag(KEY_OUTPUT));
+		if (compound.hasKey(TileEntityCampfire.KEY_ITEM_HANDLER))
+			CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(this.itemHandler, null, compound.getTag(TileEntityCampfire.KEY_ITEM_HANDLER));
+		if (compound.hasKey(TileEntityCampfire.KEY_BURN_TIME))
+			this.burnTime = compound.getInteger(TileEntityCampfire.KEY_BURN_TIME);
+		if (compound.hasKey(TileEntityCampfire.KEY_FULL_BURN_TIME))
+			this.fullBurnTime = compound.getInteger(TileEntityCampfire.KEY_FULL_BURN_TIME);
+		if (compound.hasKey(TileEntityCampfire.KEY_SMELTING_RECIPE_SINCE))
+			this.smeltingRecipeSince = compound.getInteger(TileEntityCampfire.KEY_SMELTING_RECIPE_SINCE);
+		if (compound.hasKey(TileEntityCampfire.KEY_TICKS))
+			this.ticks = compound.getInteger(TileEntityCampfire.KEY_TICKS);
+		if (compound.hasKey(TileEntityCampfire.KEY_HAS_RECIPE))
+			this.hasRecipe = compound.getBoolean(TileEntityCampfire.KEY_HAS_RECIPE);
+		if (compound.hasKey(TileEntityCampfire.KEY_OUTPUT))
+			this.output = new ItemStack(compound.getCompoundTag(TileEntityCampfire.KEY_OUTPUT));
 		super.readFromNBT(compound);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setTag(KEY_ITEM_HANDLER, CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(this.itemHandler, null));
-		compound.setInteger(KEY_BURN_TIME, this.burnTime);
-		compound.setInteger(KEY_FULL_BURN_TIME, this.fullBurnTime);
-		compound.setInteger(KEY_SMELTING_RECIPE_SINCE, this.smeltingRecipeSince);
-		compound.setInteger(KEY_TICKS, this.ticks);
-		compound.setBoolean(KEY_HAS_RECIPE, this.hasRecipe);
-		compound.setTag(KEY_OUTPUT, this.output.serializeNBT());
+		compound.setTag(TileEntityCampfire.KEY_ITEM_HANDLER, CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(this.itemHandler, null));
+		compound.setInteger(TileEntityCampfire.KEY_BURN_TIME, this.burnTime);
+		compound.setInteger(TileEntityCampfire.KEY_FULL_BURN_TIME, this.fullBurnTime);
+		compound.setInteger(TileEntityCampfire.KEY_SMELTING_RECIPE_SINCE, this.smeltingRecipeSince);
+		compound.setInteger(TileEntityCampfire.KEY_TICKS, this.ticks);
+		compound.setBoolean(TileEntityCampfire.KEY_HAS_RECIPE, this.hasRecipe);
+		compound.setTag(TileEntityCampfire.KEY_OUTPUT, this.output.serializeNBT());
 		return super.writeToNBT(compound);
 	}
 
 	private class CampfireItemHandler extends ItemStackHandler {
-		public CampfireItemHandler() {
+		private CampfireItemHandler() {
 			super(3);
 		}
 
@@ -212,8 +212,8 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 		protected void onContentsChanged(int slot) {
 			if (TileEntityCampfire.this.world != null && !TileEntityCampfire.this.world.isRemote) {
 				// checks if recipe has changed
-				checkForRecipe();
-				markDirty();
+				TileEntityCampfire.this.checkForRecipe();
+				TileEntityCampfire.this.markDirty();
 			}
 		}
 

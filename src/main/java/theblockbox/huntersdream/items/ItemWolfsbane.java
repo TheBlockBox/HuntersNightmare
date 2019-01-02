@@ -15,8 +15,6 @@ import net.minecraftforge.common.IPlantable;
 import theblockbox.huntersdream.init.BlockInit;
 
 public class ItemWolfsbane extends Item implements IPlantable {
-	public ItemWolfsbane() {
-	}
 
 	@Override
 	public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos) {

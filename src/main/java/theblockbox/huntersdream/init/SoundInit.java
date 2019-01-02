@@ -13,9 +13,9 @@ public class SoundInit {
 	public static final SoundEvent VAMPIRE_GULP;
 
 	static {
-		HEART_BEAT = new SoundEventBase("transformation.heartbeat");
-		WEREWOLF_HOWLING = new SoundEventBase("transformation.werewolf.howling");
-		VAMPIRE_GULP = new SoundEventBase("transformation.vampire.gulp");
+		HEART_BEAT = new SoundInit.SoundEventBase("transformation.heartbeat");
+		WEREWOLF_HOWLING = new SoundInit.SoundEventBase("transformation.werewolf.howling");
+		VAMPIRE_GULP = new SoundInit.SoundEventBase("transformation.vampire.gulp");
 	}
 
 	public static class SoundEventBase extends SoundEvent {

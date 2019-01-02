@@ -41,14 +41,14 @@ public abstract class RenderLycanthrope<T extends EntityLivingBase> extends Rend
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		// set correct model
 		this.mainModel = WerewolfHelper.shouldUseSneakingModel(entity)
-				? (isAlex(entity) ? this.modelAlexCrouched : this.modelSteveCrouched)
-				: (isAlex(entity) ? this.modelAlex : this.modelSteve);
+				? (RenderLycanthrope.isAlex(entity) ? this.modelAlexCrouched : this.modelSteveCrouched)
+				: (RenderLycanthrope.isAlex(entity) ? this.modelAlex : this.modelSteve);
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
 	public static boolean isAlex(Entity entity) {
 		if (entity instanceof AbstractClientPlayer) {
-			return ((AbstractClientPlayer) entity).getSkinType().equals("slim");
+			return "slim".equals(((AbstractClientPlayer) entity).getSkinType());
 		} else if (entity instanceof EntityWerewolf) {
 			return ((EntityWerewolf) entity).usesAlexSkin();
 		} else {

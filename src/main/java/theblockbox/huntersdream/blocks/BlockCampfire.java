@@ -32,7 +32,7 @@ public class BlockCampfire extends BlockContainer {
 		this.setHardness(2.0F);
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 		this.setHarvestLevel("axe", 0);
-		this.setDefaultState(this.getDefaultState().withProperty(BURNING, false));
+		this.setDefaultState(this.getDefaultState().withProperty(BlockCampfire.BURNING, false));
 	}
 
 	@Override
@@ -47,22 +47,22 @@ public class BlockCampfire extends BlockContainer {
 
 	@Override
 	public int getLightValue(IBlockState state) {
-		return state.getValue(BURNING) ? 13 : 0;
+		return state.getValue(BlockCampfire.BURNING) ? 13 : 0;
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, BURNING);
+		return new BlockStateContainer(this, BlockCampfire.BURNING);
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(BURNING, meta != 0);
+		return this.getDefaultState().withProperty(BlockCampfire.BURNING, meta != 0);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return state.getValue(BURNING) ? 1 : 0;
+		return state.getValue(BlockCampfire.BURNING) ? 1 : 0;
 	}
 
 	@Override
@@ -112,12 +112,12 @@ public class BlockCampfire extends BlockContainer {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return BOUNDING_BOX;
+		return BlockCampfire.BOUNDING_BOX;
 	}
 
 	@Override
 	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random random) {
-		if (stateIn.getValue(BURNING)) {
+		if (stateIn.getValue(BlockCampfire.BURNING)) {
 			Blocks.FIRE.randomDisplayTick(stateIn, worldIn, pos, random);
 		}
 	}

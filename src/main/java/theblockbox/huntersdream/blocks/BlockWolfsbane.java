@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -21,29 +22,26 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 public class BlockWolfsbane extends BlockCrops {
 	public static final PropertyInteger AGE_PROPERTY = PropertyInteger.create("age", 0, 4);
 
-	public static final AxisAlignedBB[] WOLFSBANE_AABB = {
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(2), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(6), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(9), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(13), 1.0D),
-			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, getSixteenth(15), 1.0D) };
-
-	public BlockWolfsbane() {
-	}
+	private static final AxisAlignedBB[] WOLFSBANE_AABB = {
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.375D, 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5625D, 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.8125D, 1.0D),
+			new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.9375D, 1.0D) };
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, AGE_PROPERTY);
+		return new BlockStateContainer(this, BlockWolfsbane.AGE_PROPERTY);
 	}
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return WOLFSBANE_AABB[state.getValue(this.getAgeProperty())];
+		return BlockWolfsbane.WOLFSBANE_AABB[state.getValue(this.getAgeProperty())];
 	}
 
 	@Override
 	protected PropertyInteger getAgeProperty() {
-		return AGE_PROPERTY;
+		return BlockWolfsbane.AGE_PROPERTY;
 	}
 
 	@Override
@@ -61,26 +59,22 @@ public class BlockWolfsbane extends BlockCrops {
 		return EnumPlantType.Crop;
 	}
 
-	private static double getSixteenth(double numerator) {
-		return numerator / 16.0D;
-	}
-
 	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
 			int fortune) {
-		drops.add(new ItemStack(getSeed()));
-		if (getAge(state) >= getMaxAge()) {
-			drops.add(new ItemStack(getSeed()));
+		drops.add(new ItemStack(this.getSeed()));
+		if (this.getAge(state) >= this.getMaxAge()) {
+			drops.add(new ItemStack(this.getSeed()));
 		}
 	}
 
 	@Override
 	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
 		if (!worldIn.isRemote && !worldIn.restoringBlockSnapshots) {
-			final NonNullList<ItemStack> items = NonNullList.create();
+			NonNullList<ItemStack> items = NonNullList.create();
 			this.getDrops(items, worldIn, pos, state, fortune);
 			for (ItemStack item : items) {
-				spawnAsEntity(worldIn, pos, item);
+				Block.spawnAsEntity(worldIn, pos, item);
 			}
 		}
 	}

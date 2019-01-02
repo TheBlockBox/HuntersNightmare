@@ -32,15 +32,13 @@ public class TransformationTextureIndexMessage extends MessageBase<Transformatio
 	}
 
 	@Override
-	public MessageHandler<TransformationTextureIndexMessage, ? extends IMessage> getMessageHandler() {
-		return new Handler();
+	public MessageBase.MessageHandler<TransformationTextureIndexMessage, ? extends IMessage> getMessageHandler() {
+		return new TransformationTextureIndexMessage.Handler();
 	}
 
-	public static class Handler extends MessageHandler<TransformationTextureIndexMessage, IMessage> {
-		public Handler() {
-		}
+	public static class Handler extends MessageBase.MessageHandler<TransformationTextureIndexMessage, IMessage> {
 
-		@Override
+        @Override
 		public IMessage onMessageReceived(TransformationTextureIndexMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
 //				addScheduledTask(ctx, () -> {

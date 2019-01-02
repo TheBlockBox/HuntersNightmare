@@ -10,40 +10,39 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature.TransformationCreature;
 
 public class TransformationCreatureProvider implements ICapabilitySerializable<NBTTagCompound> {
 	public static final Capability<ITransformationCreature> CAP = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
 	private final ITransformationCreature instance;
 
 	public TransformationCreatureProvider(Transformation... notImmuneTo) {
-		this.instance = new TransformationCreatureImplementation(notImmuneTo);
+		this.instance = new TransformationCreatureProvider.TransformationCreatureImplementation(notImmuneTo);
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return (capability == CAP);
+		return (capability == TransformationCreatureProvider.CAP);
 	}
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return capability == CAP ? CAP.cast(this.instance) : null;
+		return capability == TransformationCreatureProvider.CAP ? TransformationCreatureProvider.CAP.cast(this.instance) : null;
 	}
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		return (NBTTagCompound) CAP.getStorage().writeNBT(CAP, this.instance, null);
+		return (NBTTagCompound) TransformationCreatureProvider.CAP.getStorage().writeNBT(TransformationCreatureProvider.CAP, this.instance, null);
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		CAP.getStorage().readNBT(CAP, this.instance, null, nbt);
+		TransformationCreatureProvider.CAP.getStorage().readNBT(TransformationCreatureProvider.CAP, this.instance, null, nbt);
 	}
 
-	private static class TransformationCreatureImplementation extends TransformationCreature {
+	private static class TransformationCreatureImplementation extends ITransformationCreature.TransformationCreature {
 		private Transformation[] transformationsNotImmuneTo = new Transformation[0];
 
-		public TransformationCreatureImplementation(Transformation[] notImmuneTo) {
+		private TransformationCreatureImplementation(Transformation[] notImmuneTo) {
 			Validate.noNullElements(notImmuneTo,
 					"Null transformations not allowed (null transformation in array %s at index %d)",
 					ArrayUtils.toString(notImmuneTo));

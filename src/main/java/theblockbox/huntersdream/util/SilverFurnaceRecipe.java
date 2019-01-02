@@ -50,12 +50,12 @@ public class SilverFurnaceRecipe {
 		this.out1 = output1;
 		this.out2 = output2;
 		this.smeltingTime = smeltingTime;
-		this.id = currentID++;
+		this.id = SilverFurnaceRecipe.currentID++;
 	}
 
 	public static void addRecipe(ItemStack input1, ItemStack input2, @Nullable String oreDictName1,
 			@Nullable String oreDictName2, ItemStack output1, ItemStack output2, int smeltingTime) {
-		RECIPES.add(
+		SilverFurnaceRecipe.RECIPES.add(
 				new SilverFurnaceRecipe(input1, input2, oreDictName1, oreDictName2, output1, output2, smeltingTime));
 	}
 
@@ -67,22 +67,22 @@ public class SilverFurnaceRecipe {
 								json.get("type").getAsString(), Reference.MODID + ":silver_furnace_recipe"));
 
 			int smeltingTime = json.has("smeltingTime") ? json.get("smeltingTime").getAsInt() : 200;
-			Pair<ItemStack, String> input1 = readInputStack(json.get("input1").getAsJsonObject());
-			Pair<ItemStack, String> input2 = json.has("input2") ? readInputStack(json.get("input2").getAsJsonObject())
-					: EMPTY_PAIR;
-			ItemStack output1 = json.has("output1") ? readOutputStack(json.get("output1").getAsJsonObject())
+			Pair<ItemStack, String> input1 = SilverFurnaceRecipe.readInputStack(json.get("input1").getAsJsonObject());
+			Pair<ItemStack, String> input2 = json.has("input2") ? SilverFurnaceRecipe.readInputStack(json.get("input2").getAsJsonObject())
+					: SilverFurnaceRecipe.EMPTY_PAIR;
+			ItemStack output1 = json.has("output1") ? SilverFurnaceRecipe.readOutputStack(json.get("output1").getAsJsonObject())
 					: ItemStack.EMPTY;
-			ItemStack output2 = json.has("output2") ? readOutputStack(json.get("output2").getAsJsonObject())
+			ItemStack output2 = json.has("output2") ? SilverFurnaceRecipe.readOutputStack(json.get("output2").getAsJsonObject())
 					: ItemStack.EMPTY;
 
-			addRecipe(input1.getLeft(), input2.getLeft(), input1.getRight(), input2.getRight(), output1, output2,
+			SilverFurnaceRecipe.addRecipe(input1.getLeft(), input2.getLeft(), input1.getRight(), input2.getRight(), output1, output2,
 					smeltingTime);
 			if (json.has("generateMirror") && json.get("generateMirror").getAsBoolean())
-				addRecipe(input2.getLeft(), input1.getLeft(), input2.getRight(), input1.getRight(), output1, output2,
+				SilverFurnaceRecipe.addRecipe(input2.getLeft(), input1.getLeft(), input2.getRight(), input1.getRight(), output1, output2,
 						smeltingTime);
 		} catch (Exception e) {
 			Main.getLogger().error("An exception occured while trying to parse from json to silver furnace recipe\n"
-					+ "Exception: " + e.toString() + " Stacktrace:\n" + ExceptionUtils.getStackTrace(e));
+					+ "Exception: " + e + " Stacktrace:\n" + ExceptionUtils.getStackTrace(e));
 		}
 	}
 
@@ -137,7 +137,7 @@ public class SilverFurnaceRecipe {
 	}
 
 	public static Optional<SilverFurnaceRecipe> getFromInput(ItemStack input1, ItemStack input2) {
-		return RECIPES.stream().filter(recipe -> recipe.matches(input1, input2)).findFirst();
+		return SilverFurnaceRecipe.RECIPES.stream().filter(recipe -> recipe.matches(input1, input2)).findFirst();
 	}
 
 	/** Returns the count of the itemstack that is in input 1 */
@@ -204,8 +204,8 @@ public class SilverFurnaceRecipe {
 			if (oreDictName != null) {
 				if (stack2.isEmpty())
 					return false;
-				final int[] oreDictIDs = OreDictionary.getOreIDs(stack2);
-				final int oreDictID = OreDictionary.getOreID(oreDictName);
+				int[] oreDictIDs = OreDictionary.getOreIDs(stack2);
+				int oreDictID = OreDictionary.getOreID(oreDictName);
 				for (int oreDictID1 : oreDictIDs)
 					if (oreDictID == oreDictID1)
 						return true;
@@ -217,7 +217,7 @@ public class SilverFurnaceRecipe {
 	}
 
 	public boolean matches(ItemStack input1, ItemStack input2) {
-		return doItemStacksMatch(this.in1, input1, this.oreDictName1)
-				&& doItemStacksMatch(this.in2, input2, this.oreDictName2);
+		return SilverFurnaceRecipe.doItemStacksMatch(this.in1, input1, this.oreDictName1)
+				&& SilverFurnaceRecipe.doItemStacksMatch(this.in2, input2, this.oreDictName2);
 	}
 }

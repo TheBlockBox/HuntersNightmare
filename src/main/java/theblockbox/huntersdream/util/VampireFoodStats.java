@@ -26,7 +26,7 @@ public class VampireFoodStats extends FoodStats {
 
 	@Override
 	public float getSaturationLevel() {
-		return 0F;
+		return 0.0F;
 	}
 
 	@Override

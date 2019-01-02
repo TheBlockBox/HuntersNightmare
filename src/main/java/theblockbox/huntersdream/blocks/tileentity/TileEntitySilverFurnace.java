@@ -58,7 +58,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 	private int amount2;
 	private final MutablePair<ItemStack, ItemStack> outputs = new MutablePair<>(ItemStack.EMPTY, ItemStack.EMPTY);
 	private boolean hasRecipe = false;
-	private final SilverFurnaceItemHandler itemHandler = new SilverFurnaceItemHandler();
+	private final TileEntitySilverFurnace.SilverFurnaceItemHandler itemHandler = new TileEntitySilverFurnace.SilverFurnaceItemHandler();
 	private final IItemHandler itemHandlerTop = new SideItemHandler(this.itemHandler, i -> i == 1 || i == 2,
 			GeneralHelper.FALSE_PREDICATE);
 	private final IItemHandler itemHandlerSide = new SideItemHandler(this.itemHandler, i -> i == 0,
@@ -160,7 +160,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 			if (this.hasRecipe() && (this.amount1 == itemAmount1) && (this.amount2 == itemAmount2)
 					&& ItemStack.areItemStacksEqual(this.outputs.getLeft(), output1)
 					&& ItemStack.areItemStacksEqual(this.outputs.getRight(), output2)
-					&& this.fullNeededSmeltingTime == fullSmeltingTime && this.hasRecipe()) {
+					&& this.fullNeededSmeltingTime == fullSmeltingTime) {
 				return true;
 			}
 
@@ -261,44 +261,44 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey(KEY_ITEM_HANDLER))
-			CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(this.itemHandler, null, compound.getTag(KEY_ITEM_HANDLER));
-		if (compound.hasKey(KEY_FUEL))
-			this.burnTime = compound.getInteger(KEY_FUEL);
-		if (compound.hasKey(KEY_TICKS))
-			this.ticks = compound.getInteger(KEY_TICKS);
-		if (compound.hasKey(KEY_AMOUNT1))
-			this.amount1 = compound.getInteger(KEY_AMOUNT1);
-		if (compound.hasKey(KEY_AMOUNT2))
-			this.amount2 = compound.getInteger(KEY_AMOUNT2);
-		if (compound.hasKey(KEY_FULL_BURN_TIME))
-			this.fullBurnTime = compound.getInteger(KEY_FULL_BURN_TIME);
-		if (compound.hasKey(KEY_FULL_NEEDED_SMELTING_TIME))
-			this.fullNeededSmeltingTime = compound.getInteger(KEY_FULL_NEEDED_SMELTING_TIME);
-		if (compound.hasKey(KEY_HAS_RECIPE))
-			this.hasRecipe = compound.getBoolean(KEY_HAS_RECIPE);
-		if (compound.hasKey(KEY_OUTPUT1))
-			this.outputs.setLeft(new ItemStack(compound.getCompoundTag(KEY_OUTPUT1)));
-		if (compound.hasKey(KEY_OUTPUT2))
-			this.outputs.setRight(new ItemStack(compound.getCompoundTag(KEY_OUTPUT2)));
-		if (compound.hasKey(KEY_SMELTING_RECIPE_SINCE))
-			this.smeltingRecipeSince = compound.getInteger(KEY_SMELTING_RECIPE_SINCE);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_ITEM_HANDLER))
+			CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(this.itemHandler, null, compound.getTag(TileEntitySilverFurnace.KEY_ITEM_HANDLER));
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_FUEL))
+			this.burnTime = compound.getInteger(TileEntitySilverFurnace.KEY_FUEL);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_TICKS))
+			this.ticks = compound.getInteger(TileEntitySilverFurnace.KEY_TICKS);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_AMOUNT1))
+			this.amount1 = compound.getInteger(TileEntitySilverFurnace.KEY_AMOUNT1);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_AMOUNT2))
+			this.amount2 = compound.getInteger(TileEntitySilverFurnace.KEY_AMOUNT2);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_FULL_BURN_TIME))
+			this.fullBurnTime = compound.getInteger(TileEntitySilverFurnace.KEY_FULL_BURN_TIME);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_FULL_NEEDED_SMELTING_TIME))
+			this.fullNeededSmeltingTime = compound.getInteger(TileEntitySilverFurnace.KEY_FULL_NEEDED_SMELTING_TIME);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_HAS_RECIPE))
+			this.hasRecipe = compound.getBoolean(TileEntitySilverFurnace.KEY_HAS_RECIPE);
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_OUTPUT1))
+			this.outputs.setLeft(new ItemStack(compound.getCompoundTag(TileEntitySilverFurnace.KEY_OUTPUT1)));
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_OUTPUT2))
+			this.outputs.setRight(new ItemStack(compound.getCompoundTag(TileEntitySilverFurnace.KEY_OUTPUT2)));
+		if (compound.hasKey(TileEntitySilverFurnace.KEY_SMELTING_RECIPE_SINCE))
+			this.smeltingRecipeSince = compound.getInteger(TileEntitySilverFurnace.KEY_SMELTING_RECIPE_SINCE);
 		super.readFromNBT(compound);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setTag(KEY_ITEM_HANDLER, CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(this.itemHandler, null));
-		compound.setInteger(KEY_FUEL, this.burnTime);
-		compound.setInteger(KEY_TICKS, this.ticks);
-		compound.setInteger(KEY_AMOUNT1, this.amount1);
-		compound.setInteger(KEY_AMOUNT2, this.amount2);
-		compound.setInteger(KEY_FULL_BURN_TIME, this.fullBurnTime);
-		compound.setInteger(KEY_FULL_NEEDED_SMELTING_TIME, this.fullNeededSmeltingTime);
-		compound.setBoolean(KEY_HAS_RECIPE, this.hasRecipe);
-		compound.setTag(KEY_OUTPUT1, this.outputs.getLeft().serializeNBT());
-		compound.setTag(KEY_OUTPUT2, this.outputs.getRight().serializeNBT());
-		compound.setInteger(KEY_SMELTING_RECIPE_SINCE, this.smeltingRecipeSince);
+		compound.setTag(TileEntitySilverFurnace.KEY_ITEM_HANDLER, CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(this.itemHandler, null));
+		compound.setInteger(TileEntitySilverFurnace.KEY_FUEL, this.burnTime);
+		compound.setInteger(TileEntitySilverFurnace.KEY_TICKS, this.ticks);
+		compound.setInteger(TileEntitySilverFurnace.KEY_AMOUNT1, this.amount1);
+		compound.setInteger(TileEntitySilverFurnace.KEY_AMOUNT2, this.amount2);
+		compound.setInteger(TileEntitySilverFurnace.KEY_FULL_BURN_TIME, this.fullBurnTime);
+		compound.setInteger(TileEntitySilverFurnace.KEY_FULL_NEEDED_SMELTING_TIME, this.fullNeededSmeltingTime);
+		compound.setBoolean(TileEntitySilverFurnace.KEY_HAS_RECIPE, this.hasRecipe);
+		compound.setTag(TileEntitySilverFurnace.KEY_OUTPUT1, this.outputs.getLeft().serializeNBT());
+		compound.setTag(TileEntitySilverFurnace.KEY_OUTPUT2, this.outputs.getRight().serializeNBT());
+		compound.setInteger(TileEntitySilverFurnace.KEY_SMELTING_RECIPE_SINCE, this.smeltingRecipeSince);
 		return super.writeToNBT(compound);
 	}
 
@@ -331,7 +331,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 
 	private class SilverFurnaceItemHandler extends ItemStackHandler {
 
-		public SilverFurnaceItemHandler() {
+		private SilverFurnaceItemHandler() {
 			super(5);
 		}
 
@@ -339,8 +339,8 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 		protected void onContentsChanged(int slot) {
 			if (TileEntitySilverFurnace.this.world != null && !TileEntitySilverFurnace.this.world.isRemote) {
 				// checks if recipe has changed
-				checkForRecipe();
-				markDirty();
+				TileEntitySilverFurnace.this.checkForRecipe();
+				TileEntitySilverFurnace.this.markDirty();
 			}
 		}
 

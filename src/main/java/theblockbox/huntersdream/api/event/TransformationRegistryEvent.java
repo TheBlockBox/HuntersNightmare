@@ -65,7 +65,7 @@ public class TransformationRegistryEvent extends Event {
 				ArrayUtils.toString(transformations));
 		boolean flag = false;
 		for (Transformation transformation : transformations)
-			if (registerTransformation(transformation) && !flag)
+			if (this.registerTransformation(transformation) && !flag)
 				flag = true;
 		return flag;
 	}

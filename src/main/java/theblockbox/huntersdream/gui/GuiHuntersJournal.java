@@ -15,7 +15,6 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiHuntersJournal extends GuiScreen {
 	private final HuntersJournalPage[] pages;
-	public final EntityPlayer player;
 	private int currentPage = 0;
 	private GuiButton nextPage;
 	private GuiButton pageBefore;
@@ -23,7 +22,6 @@ public class GuiHuntersJournal extends GuiScreen {
 	public static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/hunters_journal.png");
 
 	public GuiHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
-		this.player = player;
 		this.pages = pages;
 	}
 
@@ -31,8 +29,8 @@ public class GuiHuntersJournal extends GuiScreen {
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		this.nextPage = new NextButton(0, true);
-		this.pageBefore = new NextButton(1, false);
+		this.nextPage = new GuiHuntersJournal.NextButton(0, true);
+		this.pageBefore = new GuiHuntersJournal.NextButton(1, false);
 		this.buttonList.add(this.nextPage);
 		this.buttonList.add(this.pageBefore);
 	}
@@ -57,7 +55,7 @@ public class GuiHuntersJournal extends GuiScreen {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		HuntersJournalPage page = this.pages[this.currentPage];
-		this.mc.getTextureManager().bindTexture(TEXTURE);
+		this.mc.getTextureManager().bindTexture(GuiHuntersJournal.TEXTURE);
 		int middle = (this.width / 2);
 		this.drawTexturedModalRect(middle - (this.width / 2), 3, 20, 0, this.width, this.height);
 		this.pageBefore.x = (int) (middle - (this.width / 2.5D));
@@ -76,8 +74,8 @@ public class GuiHuntersJournal extends GuiScreen {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		if (button instanceof NextButton) {
-			this.currentPage += ((NextButton) button).isNextPageButton ? 1 : -1;
+		if (button instanceof GuiHuntersJournal.NextButton) {
+			this.currentPage += ((GuiHuntersJournal.NextButton) button).isNextPageButton ? 1 : -1;
 			if (this.currentPage < 0) {
 				this.currentPage = 0;
 			}
@@ -105,7 +103,7 @@ public class GuiHuntersJournal extends GuiScreen {
 				// when button is pressed, use red texture, otherwise use white one
 				int textureX = isButtonPressed ? 26 : 3;
 				int textureY = this.isNextPageButton ? 194 : 207;
-				minecraft.getTextureManager().bindTexture(TEXTURE);
+				minecraft.getTextureManager().bindTexture(GuiHuntersJournal.TEXTURE);
 				// draw button
 				this.drawTexturedModalRect(this.x, this.y, textureX, textureY, 18, 10);
 			}

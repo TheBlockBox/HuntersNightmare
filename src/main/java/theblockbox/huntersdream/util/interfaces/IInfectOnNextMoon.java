@@ -6,7 +6,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
@@ -15,8 +14,8 @@ public interface IInfectOnNextMoon {
 	public enum InfectionStatus {
 		NOT_INFECTED, MOON_ON_INFECTION, AFTER_INFECTION;
 
-		public static InfectionStatus fromString(String string) {
-			for (InfectionStatus status : values()) {
+		public static IInfectOnNextMoon.InfectionStatus fromString(String string) {
+			for (IInfectOnNextMoon.InfectionStatus status : IInfectOnNextMoon.InfectionStatus.values()) {
 				if (status.toString().equals(string))
 					return status;
 			}
@@ -25,9 +24,9 @@ public interface IInfectOnNextMoon {
 		}
 	}
 
-	public InfectionStatus getInfectionStatus();
+	public IInfectOnNextMoon.InfectionStatus getInfectionStatus();
 
-	public void setInfectionStatus(InfectionStatus status);
+	public void setInfectionStatus(IInfectOnNextMoon.InfectionStatus status);
 
 	public int getInfectionTick();
 
@@ -41,22 +40,22 @@ public interface IInfectOnNextMoon {
 
 	public void setInfectionTransformation(Transformation transformation);
 
-	default public boolean isInfected() {
-		return !(this.getInfectionStatus() == InfectionStatus.NOT_INFECTED);
+	public default boolean isInfected() {
+		return this.getInfectionStatus() != IInfectOnNextMoon.InfectionStatus.NOT_INFECTED;
 	}
 
 	public static class InfectOnNextMoon implements IInfectOnNextMoon {
-		private InfectionStatus status = InfectionStatus.NOT_INFECTED;
+		private IInfectOnNextMoon.InfectionStatus status = IInfectOnNextMoon.InfectionStatus.NOT_INFECTED;
 		private int infectionTick = -1;
 		private Transformation infectionTransformation = Transformation.HUMAN;
 
 		@Override
-		public InfectionStatus getInfectionStatus() {
+		public IInfectOnNextMoon.InfectionStatus getInfectionStatus() {
 			return this.status;
 		}
 
 		@Override
-		public void setInfectionStatus(InfectionStatus status) {
+		public void setInfectionStatus(IInfectOnNextMoon.InfectionStatus status) {
 			this.status = status;
 		}
 
@@ -82,7 +81,7 @@ public interface IInfectOnNextMoon {
 		}
 	}
 
-	public static class InfectOnNextMoonStorage implements IStorage<IInfectOnNextMoon> {
+	public static class InfectOnNextMoonStorage implements Capability.IStorage<IInfectOnNextMoon> {
 		public static final String INFECTION_STATUS = "infectionstatus";
 		public static final String INFECTION_TICK = "infectiontick";
 		public static final String INFECTION_TRANSFORMTION = "infectiontransformation";
@@ -90,9 +89,9 @@ public interface IInfectOnNextMoon {
 		@Override
 		public NBTBase writeNBT(Capability<IInfectOnNextMoon> capability, IInfectOnNextMoon instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setString(INFECTION_STATUS, instance.getInfectionStatus().toString());
-			compound.setInteger(INFECTION_TICK, instance.getInfectionTick());
-			compound.setString(INFECTION_TRANSFORMTION, instance.getInfectionTransformation().toString());
+			compound.setString(IInfectOnNextMoon.InfectOnNextMoonStorage.INFECTION_STATUS, instance.getInfectionStatus().toString());
+			compound.setInteger(IInfectOnNextMoon.InfectOnNextMoonStorage.INFECTION_TICK, instance.getInfectionTick());
+			compound.setString(IInfectOnNextMoon.InfectOnNextMoonStorage.INFECTION_TRANSFORMTION, instance.getInfectionTransformation().toString());
 			return compound;
 		}
 
@@ -100,9 +99,9 @@ public interface IInfectOnNextMoon {
 		public void readNBT(Capability<IInfectOnNextMoon> capability, IInfectOnNextMoon instance, EnumFacing side,
 				NBTBase nbt) {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
-			instance.setInfectionStatus(InfectionStatus.fromString(compound.getString(INFECTION_STATUS)));
-			instance.setInfectionTick(compound.getInteger(INFECTION_TICK));
-			instance.setInfectionTransformation(Transformation.fromName(compound.getString(INFECTION_TRANSFORMTION)));
+			instance.setInfectionStatus(IInfectOnNextMoon.InfectionStatus.fromString(compound.getString(IInfectOnNextMoon.InfectOnNextMoonStorage.INFECTION_STATUS)));
+			instance.setInfectionTick(compound.getInteger(IInfectOnNextMoon.InfectOnNextMoonStorage.INFECTION_TICK));
+			instance.setInfectionTransformation(Transformation.fromName(compound.getString(IInfectOnNextMoon.InfectOnNextMoonStorage.INFECTION_TRANSFORMTION)));
 		}
 	}
 }

@@ -63,6 +63,10 @@ huntersdream.transformation.vampire.gulp=Vampire drinking blood
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools
 itemGroup.huntersdream.misc=Hunter's Dream Miscellaneous
 
+# Key Bindings
+huntersdream.keyCategory=Hunter's Dream
+huntersdream.key.activateSkillBar=Activate Skill Bar
+
 # Commands
 command.huntersdream.invalid=Invalid arguments
 command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
@@ -77,7 +81,7 @@ command.huntersdream.transformationtexture.set=%s's texture was set to %s
 command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill>
 command.huntersdream.skill.add=The skill %s has been added to %s
 command.huntersdream.skill.remove=The skill %s has been removed from %s
-command.huntersdream.skill.clear=%s's skill have been cleared
+command.huntersdream.skill.clear=%s's skills have been cleared
 command.huntersdream.skill.list=%s's skills are: %s
 
 # Chat messages
@@ -119,6 +123,7 @@ huntersdream.config.topLeft=Top Left
 huntersdream.config.topRight=Top Right
 huntersdream.config.bottomLeft=Bottom Left
 huntersdream.config.bottomRight=Bottom Right
+huntersdream.config.showActiveSkill=Show Active Skill
 
 # Skills
 huntersdream.skillCost=Price: %s experience levels

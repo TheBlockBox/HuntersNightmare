@@ -28,7 +28,7 @@ public class BlockOre extends Block {
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 
 		BlockInit.ORES.add(this);
-		setHarvestLevel("pickaxe", 2);
+		this.setHarvestLevel("pickaxe", 2);
 	}
 
 	public BlockOre(Dimensions dimension, int minHeight, int maxHeight, int chance, Block spawnOn) {

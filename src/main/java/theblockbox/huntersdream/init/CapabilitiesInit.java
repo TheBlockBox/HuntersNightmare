@@ -24,20 +24,10 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
-import theblockbox.huntersdream.util.interfaces.IInfectInTicks.InfectInTicks;
-import theblockbox.huntersdream.util.interfaces.IInfectInTicks.InfectInTicksStorage;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectOnNextMoonStorage;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature.TransformationCreature;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature.TransformationCreatureStorage;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer.TransformationPlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer.TransformationPlayerStorage;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer.Vampire;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer.VampireStorage;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class CapabilitiesInit {
@@ -55,17 +45,17 @@ public class CapabilitiesInit {
 	public static final Capability<IItemHandler> CAPABILITY_ITEM_HANDLER = null;
 
 	public static void registerCapabilities() {
-		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new TransformationPlayerStorage(),
-				TransformationPlayer::new);
-		CapabilityManager.INSTANCE.register(ITransformationCreature.class, new TransformationCreatureStorage(),
-				TransformationCreature::new);
-		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new InfectInTicksStorage(), InfectInTicks::new);
-		CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new InfectOnNextMoonStorage(),
-				InfectOnNextMoon::new);
-		CapabilityManager.INSTANCE.register(IVampirePlayer.class, new VampireStorage(), Vampire::new);
+		CapabilityManager.INSTANCE.register(ITransformationPlayer.class, new ITransformationPlayer.TransformationPlayerStorage(),
+				ITransformationPlayer.TransformationPlayer::new);
+		CapabilityManager.INSTANCE.register(ITransformationCreature.class, new ITransformationCreature.TransformationCreatureStorage(),
+				ITransformationCreature.TransformationCreature::new);
+		CapabilityManager.INSTANCE.register(IInfectInTicks.class, new IInfectInTicks.InfectInTicksStorage(), IInfectInTicks.InfectInTicks::new);
+		CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new IInfectOnNextMoon.InfectOnNextMoonStorage(),
+				IInfectOnNextMoon.InfectOnNextMoon::new);
+		CapabilityManager.INSTANCE.register(IVampirePlayer.class, new IVampirePlayer.VampireStorage(), IVampirePlayer.Vampire::new);
 	}
 
-	public final static ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = GeneralHelper
+	public static final ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = GeneralHelper
 			.newResLoc("transformationplayer");
 	public static final ResourceLocation TRANSFORMATION_CREATURE_CAPABILITY = GeneralHelper
 			.newResLoc("transformationcreature");
@@ -78,19 +68,19 @@ public class CapabilitiesInit {
 	public static void onCapabilityAttach(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
 		if (entity instanceof EntityPlayer) {
-			event.addCapability(TRANSFORMATION_PLAYER_CAPABILITIY,
+			event.addCapability(CapabilitiesInit.TRANSFORMATION_PLAYER_CAPABILITIY,
 					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
-			event.addCapability(VAMPIRE, new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_VAMPIRE));
+			event.addCapability(CapabilitiesInit.VAMPIRE, new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_VAMPIRE));
 		} else if (entity instanceof EntityVillager) {
-			event.addCapability(TRANSFORMATION_CREATURE_CAPABILITY,
+			event.addCapability(CapabilitiesInit.TRANSFORMATION_CREATURE_CAPABILITY,
 					new TransformationCreatureProvider(Transformation.WEREWOLF, Transformation.VAMPIRE));
 		}
 
 		if (entity instanceof EntityVillager || entity instanceof EntityPlayer
 				|| entity instanceof ITransformationCreature) {
-			event.addCapability(INFECT_IN_TICKS_CAPABILITY,
+			event.addCapability(CapabilitiesInit.INFECT_IN_TICKS_CAPABILITY,
 					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
-			event.addCapability(INFECT_ON_NEXT_MOON,
+			event.addCapability(CapabilitiesInit.INFECT_ON_NEXT_MOON,
 					new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON));
 		}
 	}
@@ -132,8 +122,8 @@ public class CapabilitiesInit {
 			}
 
 			MinecraftServer server = player.getServer();
-			GeneralHelper.executeOnMainThreadIn(() -> sendPackets(server, player), 100, server, Reference.MODID + ":syncCapAfterPlayerDeath1");
-			GeneralHelper.executeOnMainThreadIn(() -> sendPackets(server, player), 40000, server, Reference.MODID + ":syncCapAfterPlayerDeath2");
+			GeneralHelper.executeOnMainThreadIn(() -> CapabilitiesInit.sendPackets(server, player), 100, server, Reference.MODID + ":syncCapAfterPlayerDeath1");
+			GeneralHelper.executeOnMainThreadIn(() -> CapabilitiesInit.sendPackets(server, player), 40000, server, Reference.MODID + ":syncCapAfterPlayerDeath2");
 		}
 	}
 

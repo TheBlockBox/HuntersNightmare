@@ -19,14 +19,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.api.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
@@ -36,8 +34,8 @@ import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.handlers.TransformationEventHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class WerewolfHelper {
 	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
@@ -51,7 +49,7 @@ public class WerewolfHelper {
 	public static boolean isWerewolfTime(World world) {
 		if (world.isRemote)
 			throw new WrongSideException("Can only test if it is werewolf time on server side", world);
-		return (world.getCurrentMoonPhaseFactor() == 1F) && !world.isDaytime();
+		return (world.getCurrentMoonPhaseFactor() == 1.0F) && !world.isDaytime();
 	}
 
 	/**
@@ -60,17 +58,15 @@ public class WerewolfHelper {
 	 * werewolf)
 	 */
 	public static float calculateUnarmedDamage(EntityLivingBase entity, float initialDamage) {
-		validateIsWerewolf(entity);
+		WerewolfHelper.validateIsWerewolf(entity);
 		// if the werewolf is either not transformed or has something in its hands
 		// (shouldn't happen for players)
-		boolean transformed = isTransformed(entity);
+		boolean transformed = WerewolfHelper.isTransformed(entity);
 		if (entity instanceof EntityPlayer) {
 			if (transformed) {
 				// default: 6 lvl 0: 7 lvl 1: 8 lvl 2: 9
 				if (entity.getHeldItemMainhand().isEmpty()) {
-					Optional<Skill> as = TransformationHelper.getITransformationPlayer((EntityPlayer) entity)
-							.getActiveSkill();
-					return (as.isPresent() && as.get().isLevelOf(Skill.UNARMED_0) ? as.get().getLevel() + 1F : 0F) + 6F;
+					return TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(Skill.UNARMED_0) + 7.0F;
 				} else {
 					return initialDamage;
 				}
@@ -81,7 +77,7 @@ public class WerewolfHelper {
 		} else {
 			if (transformed) {
 				// "Their attack is 4 hearts per slash and 5 hearts per bite"
-				return wasLastAttackBite(entity) ? 5F : 4F;
+				return WerewolfHelper.wasLastAttackBite(entity) ? 5.0F : 4.0F;
 			} else {
 				// no damage change for untransformed werewolves
 				return initialDamage;
@@ -95,15 +91,23 @@ public class WerewolfHelper {
 	 * the entity is not transformed, as long as it's still a werewolf)
 	 */
 	public static float calculateReducedDamage(EntityLivingBase entity, float initialDamage) {
-		validateIsWerewolf(entity);
-		if (isTransformed(entity)) {
+		WerewolfHelper.validateIsWerewolf(entity);
+		if (WerewolfHelper.isTransformed(entity)) {
 			if (entity instanceof EntityPlayer) {
 				// default: 1.28 lvl 0: 1.72 lvl 1: 2.17 lvl 2: 4.35
-				Skill as = TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getActiveSkill()
-						.orElse(null);
-				float damageReduction = (as == Skill.ARMOR_2) ? 4.35F
-						: ((as == Skill.ARMOR_1) ? 2.17F : ((as == Skill.ARMOR_0) ? 1.72F : 1.28F));
-
+				int level = TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(Skill.ARMOR_0);
+				float damageReduction = 1.28F;
+				switch (level) {
+					case 0:
+						damageReduction = 1.72F;
+						break;
+					case 1:
+						damageReduction = 2.17F;
+						break;
+					case 2:
+						damageReduction = 4.35F;
+						break;
+				}
 				return initialDamage / damageReduction;
 			} else {
 				// same as diamond armor
@@ -117,7 +121,7 @@ public class WerewolfHelper {
 
 	/** Returns true if the werewolf can transform */
 	public static boolean canWerewolfTransform(EntityLivingBase werewolf) {
-		validateIsWerewolf(werewolf);
+		WerewolfHelper.validateIsWerewolf(werewolf);
 		return !werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE);
 	}
 
@@ -134,7 +138,7 @@ public class WerewolfHelper {
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 1, false, true));
 			entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0, false, false));
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entityToBeInfected).get();
-			ionm.setInfectionStatus(InfectionStatus.MOON_ON_INFECTION);
+			ionm.setInfectionStatus(IInfectOnNextMoon.InfectionStatus.MOON_ON_INFECTION);
 			ionm.setInfectionTick(entityToBeInfected.ticksExisted);
 			ionm.setInfectionTransformation(Transformation.WEREWOLF);
 		}
@@ -142,7 +146,7 @@ public class WerewolfHelper {
 
 	public static Optional<IInfectOnNextMoon> getIInfectOnNextMoon(@Nonnull EntityLivingBase entity) {
 		Validate.notNull(entity);
-		return Optional.ofNullable(entity.getCapability(CAPABILITY_INFECT_ON_NEXT_MOON, null));
+		return Optional.ofNullable(entity.getCapability(WerewolfHelper.CAPABILITY_INFECT_ON_NEXT_MOON, null));
 	}
 
 	/**
@@ -152,7 +156,7 @@ public class WerewolfHelper {
 	public static boolean canInfect(EntityLivingBase entity) {
 		// all werewolves (players included) can always infect (given they're
 		// transformed)
-		return isTransformed(entity) && wasLastAttackBite(entity);
+		return WerewolfHelper.isTransformed(entity) && WerewolfHelper.wasLastAttackBite(entity);
 	}
 
 	/**
@@ -162,7 +166,7 @@ public class WerewolfHelper {
 	 * @return Returns the chance of infection (100% = always, 0% = never)
 	 */
 	public static int getInfectionPercentage(EntityLivingBase entity) {
-		if (canInfect(entity)) {
+		if (WerewolfHelper.canInfect(entity)) {
 			// TODO: Return different infection percantage if entity is player
 			return 25;
 		} else {
@@ -175,7 +179,7 @@ public class WerewolfHelper {
 	 * Returns true when the given player has mainly control in the werewolf form
 	 */
 	public static boolean hasMainlyControl(EntityPlayer player) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		return true;
 	}
 
@@ -189,7 +193,7 @@ public class WerewolfHelper {
 
 	/** Transforms a werewolf. No packet is being sent to the client. */
 	public static void setTransformed(EntityLivingBase werewolf, boolean transformed) {
-		validateIsWerewolf(werewolf);
+		WerewolfHelper.validateIsWerewolf(werewolf);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(werewolf);
 		compound.setBoolean("transformed", transformed);
 	}
@@ -200,15 +204,15 @@ public class WerewolfHelper {
 	 * packet if something changed.
 	 */
 	public static boolean transformPlayer(@Nonnull EntityPlayerMP player, boolean transformed,
-			WerewolfTransformingReason reason) {
-		if (isTransformed(player) != transformed) {
-			if (!MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(player, !transformed, reason))) {
+			WerewolfTransformingEvent.WerewolfTransformingReason reason) {
+		if (WerewolfHelper.isTransformed(player) != transformed) {
+			if (MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(player, !transformed, reason))) {
+				return false;
+			} else {
 				// TODO: Send packet
-				setTransformed(player, transformed);
+				WerewolfHelper.setTransformed(player, transformed);
 				PacketHandler.sendTransformationMessage(player);
 				return true;
-			} else {
-				return false;
 			}
 		}
 		return true;
@@ -222,32 +226,32 @@ public class WerewolfHelper {
 	 * be {@link EntityWerewolf#getEntityWorld()}, int will be
 	 * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
 	 * {@link Transformation#WEREWOLF}
-	 * 
+	 *
 	 * @param entity The entity to be transformed
 	 */
 	public static EntityWerewolf toWerewolfWhenNight(EntityCreature entity) {
 		World world = entity.world;
-		if (!world.isRemote) {
+		if (world.isRemote) {
+			throw new WrongSideException("Can't transform entity to werewolf on client side", world);
+		} else {
 			if (WerewolfHelper.isWerewolfTime(entity.world)) {
-				if (canWerewolfTransform(entity)) {
+				if (WerewolfHelper.canWerewolfTransform(entity)) {
 					if (entity instanceof ITransformation) {
 						ITransformation transformation = (ITransformation) entity;
-						validateIsWerewolf(entity);
+						WerewolfHelper.validateIsWerewolf(entity);
 						return new EntityWerewolf(world, transformation.getTextureIndex(),
-								entity.getClass().getName(), postExtraDataEvent(entity, true));
+								entity.getClass().getName(), WerewolfHelper.postExtraDataEvent(entity, true));
 					} else {
-						validateIsWerewolf(entity);
+						WerewolfHelper.validateIsWerewolf(entity);
 						return new EntityWerewolf(world, TransformationHelper
 								.getITransformationCreature(entity)
 								.orElseThrow(() -> new IllegalArgumentException(
 										"Entity does not implement interface \"ITransformation\" or has TransformationCreature capability"))
 								.getTextureIndex(), "$bycap" + entity.getClass().getName(),
-								postExtraDataEvent(entity, true));
+								WerewolfHelper.postExtraDataEvent(entity, true));
 					}
 				}
 			}
-		} else {
-			throw new WrongSideException("Can't transform entity to werewolf on client side", world);
 		}
 		return null;
 	}
@@ -259,19 +263,19 @@ public class WerewolfHelper {
 	}
 
 	public static int getTransformationStage(EntityPlayerMP player) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		return TransformationHelper.getTransformationData(player).getInteger("transformationStage");
 	}
 
 	public static void setTransformationStage(EntityPlayerMP player, int stage) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(player);
 		compound.setInteger("transformationStage", stage);
 	}
 
 	/** Returns the player.ticksExisted when the transformation has started */
 	public static int getTimeSinceTransformation(EntityPlayerMP player) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		return TransformationHelper.getTransformationData(player).getInteger("timeSinceTransformation");
 	}
 
@@ -280,13 +284,13 @@ public class WerewolfHelper {
 	 * being sent to the client
 	 */
 	public static void setTimeSinceTransformation(EntityPlayerMP player, int time) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(player);
 		compound.setInteger("timeSinceTransformation", time);
 	}
 
 	public static int getSoundTicks(EntityPlayerMP player) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		return TransformationHelper.getTransformationData(player).getInteger("soundTicks");
 	}
 
@@ -295,13 +299,13 @@ public class WerewolfHelper {
 	 * No packet is being sent to the client
 	 */
 	public static void setSoundTicks(EntityPlayerMP player, int ticks) {
-		validateIsWerewolf(player);
+		WerewolfHelper.validateIsWerewolf(player);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(player);
 		compound.setInteger("soundTicks", ticks);
 	}
 
 	public static boolean wasLastAttackBite(EntityLivingBase entity) {
-		validateIsWerewolf(entity);
+		WerewolfHelper.validateIsWerewolf(entity);
 		return TransformationHelper.getTransformationData(entity).getBoolean("lastAttackBite");
 	}
 
@@ -310,7 +314,7 @@ public class WerewolfHelper {
 	 * client
 	 */
 	public static void setLastAttackBite(EntityLivingBase entity, boolean wasBite) {
-		validateIsWerewolf(entity);
+		WerewolfHelper.validateIsWerewolf(entity);
 		NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
 		compound.setBoolean("lastAttackBite", wasBite);
 	}
@@ -320,12 +324,10 @@ public class WerewolfHelper {
 	// werewolf is transformed
 	public static void applyLevelBuffs(EntityPlayerMP werewolf) {
 		int duration = 101;
-		Optional<Skill> as = TransformationHelper.getITransformationPlayer(werewolf).getActiveSkill();
+		ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(werewolf);
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 401, 0, false, false));
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration,
-				(as.isPresent() && as.get().isLevelOf(Skill.SPEED_0)) ? as.get().getLevel() + 1 : 0, false, false));
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration,
-				(as.isPresent() && as.get().isLevelOf(Skill.JUMP_0)) ? as.get().getLevel() + 1 : 0, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, tp.getSkillLevel(Skill.SPEED_0) + 1, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, tp.getSkillLevel(Skill.JUMP_0) + 1, false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
 	}
 
@@ -334,21 +336,21 @@ public class WerewolfHelper {
 	 * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
 	 */
 	public static void onWerewolfTick(EntityCreature werewolf) {
-		if (!isTransformed(werewolf)) {
-			transformWerewolfWhenPossible(werewolf, WerewolfTransformingReason.FULL_MOON);
+		if (!WerewolfHelper.isTransformed(werewolf)) {
+			WerewolfHelper.transformWerewolfWhenPossible(werewolf, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON);
 		}
 	}
 
 	public static void transformWerewolfWhenPossible(@Nonnull EntityCreature werewolf,
-			WerewolfTransformingReason reason) {
+			WerewolfTransformingEvent.WerewolfTransformingReason reason) {
 		Validate.notNull(werewolf, "The argument werewolf is not allowed to be null");
-		validateIsWerewolf(werewolf);
-		if (isTransformed(werewolf)) {
+		WerewolfHelper.validateIsWerewolf(werewolf);
+		if (WerewolfHelper.isTransformed(werewolf)) {
 			throw new IllegalArgumentException(
-					"The given entity " + werewolf.toString() + " is not allowed to be transformed");
+					"The given entity " + werewolf + " is not allowed to be transformed");
 		}
 		if (!MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(werewolf, false, reason))) {
-			EntityLivingBase returned = toWerewolfWhenNight(werewolf);
+			EntityLivingBase returned = WerewolfHelper.toWerewolfWhenNight(werewolf);
 			if (returned != null) {
 				World world = returned.world;
 				returned.setPosition(werewolf.posX, werewolf.posY, werewolf.posZ);
@@ -362,16 +364,16 @@ public class WerewolfHelper {
 
 	public static float getWerewolfHeight(Entity werewolf) {
 		// TODO: Change eye height if it's possible to change it when sneaking
-		return shouldUseSneakingModel(werewolf) ? 2F : WEREWOLF_HEIGHT;
+		return WerewolfHelper.shouldUseSneakingModel(werewolf) ? 2.0F : WerewolfHelper.WEREWOLF_HEIGHT;
 	}
 
 	public static float getWerewolfEyeHeight(Entity werewolf) {
-		return shouldUseSneakingModel(werewolf) ? 1.85F : 2.1F;
+		return WerewolfHelper.shouldUseSneakingModel(werewolf) ? 1.85F : 2.1F;
 	}
 
 	public static boolean shouldUseSneakingModel(Entity werewolf) {
 		// if player was sneaking before, don't use sneaking model
-		return werewolf.isSneaking() || !GeneralHelper.canEntityExpandHeight(werewolf, WEREWOLF_HEIGHT);
+		return werewolf.isSneaking() || !GeneralHelper.canEntityExpandHeight(werewolf, WerewolfHelper.WEREWOLF_HEIGHT);
 	}
 
 	public static void validateIsWerewolf(EntityLivingBase entity) {
@@ -388,7 +390,7 @@ public class WerewolfHelper {
 		World world = werewolf.world;
 		if (world.isBlockLoaded(pos)) {
 			Biome biome = world.getBiome(pos);
-			if (biome.getTempCategory() == TempCategory.WARM)
+			if (biome.getTempCategory() == Biome.TempCategory.WARM)
 				return 3;
 			// if the biome is snowy or there can be snow where the werewolf is, use the
 			// white skin (also works on mountains with snow)

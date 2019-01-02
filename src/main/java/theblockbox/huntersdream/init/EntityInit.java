@@ -31,15 +31,16 @@ public class EntityInit {
 
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
 		event.getRegistry().registerAll(
-				getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255)
-						.tracker(TRACKING_RANGE, UPDATE_FREQ, VEL_UPDATES).build(),
-				getEntityEntryBuilder("werewolf", EntityWerewolf.class)
-						.tracker(TRACKING_RANGE, UPDATE_FREQ, VEL_UPDATES)
+				EntityInit.getEntityEntryBuilder("goblintd", EntityGoblinTD.class).egg(29696, 255)
+						.tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
+				EntityInit.getEntityEntryBuilder("werewolf", EntityWerewolf.class)
+						.tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES)
 						.spawn(EnumCreatureType.CREATURE, 2, 5, 5,
 								StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
 										.filter(b -> b instanceof BiomeForest).collect(Collectors.toSet()))
 						.build(),
-				getEntityEntryBuilder("chair", EntityChair.class).tracker(0, 1, false).build());
+				// TODO: Better tracker
+				EntityInit.getEntityEntryBuilder("chair", EntityChair.class).tracker(0, 1, false).build());
 	}
 
 	public static void registerEntityRenders() {
@@ -64,6 +65,6 @@ public class EntityInit {
 	 */
 
 	private static EntityEntryBuilder<Entity> getEntityEntryBuilder(String name, Class<? extends Entity> clazz) {
-		return EntityEntryBuilder.create().entity(clazz).id(GeneralHelper.newResLoc(name), networkID++).name(name);
+		return EntityEntryBuilder.create().entity(clazz).id(GeneralHelper.newResLoc(name), EntityInit.networkID++).name(name);
 	}
 }

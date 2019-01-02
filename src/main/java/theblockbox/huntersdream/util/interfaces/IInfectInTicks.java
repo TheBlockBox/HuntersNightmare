@@ -6,7 +6,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
@@ -78,7 +77,7 @@ public interface IInfectInTicks {
 		}
 	}
 
-	public static class InfectInTicksStorage implements IStorage<IInfectInTicks> {
+	public static class InfectInTicksStorage implements Capability.IStorage<IInfectInTicks> {
 		public static final String TIME = "time";
 		public static final String TIME_UNTIL_INFECTION = "timeuntilinfection";
 		public static final String INFECTION_TRANSFORMATION = "infectiontransformation";
@@ -87,10 +86,10 @@ public interface IInfectInTicks {
 		@Override
 		public NBTBase writeNBT(Capability<IInfectInTicks> capability, IInfectInTicks instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setInteger(TIME, instance.getTime());
-			compound.setInteger(TIME_UNTIL_INFECTION, instance.getTimeUntilInfection());
-			compound.setString(INFECTION_TRANSFORMATION, instance.getInfectionTransformation().toString());
-			compound.setBoolean(CURRENTLY_INFECTED, instance.currentlyInfected());
+			compound.setInteger(IInfectInTicks.InfectInTicksStorage.TIME, instance.getTime());
+			compound.setInteger(IInfectInTicks.InfectInTicksStorage.TIME_UNTIL_INFECTION, instance.getTimeUntilInfection());
+			compound.setString(IInfectInTicks.InfectInTicksStorage.INFECTION_TRANSFORMATION, instance.getInfectionTransformation().toString());
+			compound.setBoolean(IInfectInTicks.InfectInTicksStorage.CURRENTLY_INFECTED, instance.currentlyInfected());
 			return compound;
 		}
 
@@ -98,10 +97,10 @@ public interface IInfectInTicks {
 		public void readNBT(Capability<IInfectInTicks> capability, IInfectInTicks instance, EnumFacing side,
 				NBTBase nbt) {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
-			instance.setTime(compound.getInteger(TIME));
-			instance.setTimeUntilInfection(compound.getInteger(TIME_UNTIL_INFECTION));
-			instance.setInfectionTransformation(Transformation.fromName(compound.getString(INFECTION_TRANSFORMATION)));
-			instance.setCurrentlyInfected(compound.getBoolean(CURRENTLY_INFECTED));
+			instance.setTime(compound.getInteger(IInfectInTicks.InfectInTicksStorage.TIME));
+			instance.setTimeUntilInfection(compound.getInteger(IInfectInTicks.InfectInTicksStorage.TIME_UNTIL_INFECTION));
+			instance.setInfectionTransformation(Transformation.fromName(compound.getString(IInfectInTicks.InfectInTicksStorage.INFECTION_TRANSFORMATION)));
+			instance.setCurrentlyInfected(compound.getBoolean(IInfectInTicks.InfectInTicksStorage.CURRENTLY_INFECTED));
 		}
 	}
 }

@@ -44,13 +44,13 @@ public class CommandSkill extends CommandBase {
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
-		ArrayList<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<>();
 		if (args.length == 1) {
-			return getListOfStringsMatchingLastWord(args, OPERATIONS);
+			return CommandBase.getListOfStringsMatchingLastWord(args, CommandSkill.OPERATIONS);
 		} else if (args.length == 2) {
-			return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
+			return CommandBase.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 		} else if (args.length == 3) {
-			return getListOfStringsMatchingLastWord(args, Skill.getAllSkills());
+			return CommandBase.getListOfStringsMatchingLastWord(args, Skill.getAllSkills());
 		}
 		return toReturn;
 	}
@@ -67,7 +67,7 @@ public class CommandSkill extends CommandBase {
 
 			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 
-			Skill skill = (args[0].equals("clear") || args[0].equals("list")) ? null
+			Skill skill = ("clear".equals(args[0]) || "list".equals(args[0])) ? null
 					: Preconditions.checkNotNull(Skill.fromName(args[2]));
 			switch (args[0]) {
 			case "clear":
@@ -76,7 +76,7 @@ public class CommandSkill extends CommandBase {
 				break;
 			case "list":
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.skill.list", player.getName(),
-						SKILL_JOINER.join(cap.getSkills())));
+						CommandSkill.SKILL_JOINER.join(cap.getSkills())));
 				break;
 			case "add":
 				if (!cap.hasSkill(skill)) {

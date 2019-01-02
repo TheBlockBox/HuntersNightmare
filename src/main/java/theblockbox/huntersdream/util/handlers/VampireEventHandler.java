@@ -12,7 +12,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -63,13 +62,13 @@ public class VampireEventHandler {
 
 	/** Called from {@link CapabilitiesInit#onPlayerClone(PlayerEvent.Clone)} */
 	public static void onVampireRespawn(EntityPlayer player) {
-		VampireHelper.getIVampire(player).setBlood(10D);
+		VampireHelper.getIVampire(player).setBlood(10.0D);
 		if (!player.world.isRemote && player.world.isDaytime())
 			player.addPotionEffect(new PotionEffect(PotionInit.POTION_SUNSCREEN, 300, 0, false, false));
 	}
 
-	/** Called from {@link EventHandler#onPlayerJoin(PlayerLoggedInEvent)} */
-	public static void onPlayerJoin(PlayerLoggedInEvent event) {
+	/** Called from {@link EventHandler#onPlayerJoin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent)} */
+	public static void onPlayerJoin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
 		if (!player.world.isRemote) {
 			if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {

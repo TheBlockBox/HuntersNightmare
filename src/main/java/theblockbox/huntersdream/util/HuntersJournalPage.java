@@ -30,12 +30,12 @@ public class HuntersJournalPage {
 
 	public static HuntersJournalPage of(String keyTitle, @Nullable ResourceLocation imagePath, String keyDescription) {
 		HuntersJournalPage page = new HuntersJournalPage(keyTitle, imagePath, keyDescription);
-		PAGES.add(page);
+        HuntersJournalPage.PAGES.add(page);
 		return page;
 	}
 
 	public static HuntersJournalPage of(String name, @Nullable ResourceLocation imagePath) {
-		return of(Reference.MODID + ".hunters_journal." + name + ".title", imagePath,
+		return HuntersJournalPage.of(Reference.MODID + ".hunters_journal." + name + ".title", imagePath,
 				Reference.MODID + ".hunters_journal." + name + ".description");
 	}
 
@@ -57,7 +57,7 @@ public class HuntersJournalPage {
 
 	@Override
 	public String toString() {
-		int index = PAGES.indexOf(this);
+		int index = HuntersJournalPage.PAGES.indexOf(this);
 		if (index == -1) {
 			throw new UnexpectedBehaviorException(
 					"The page " + this.getTitle() + " couldn't be found in the HuntersJournalPage.PAGES list");
@@ -66,7 +66,7 @@ public class HuntersJournalPage {
 	}
 
 	public static HuntersJournalPage fromName(String name) {
-		HuntersJournalPage page = PAGES.get(Integer.parseInt(name.substring(name.lastIndexOf('?') + 1)));
+		HuntersJournalPage page = HuntersJournalPage.PAGES.get(Integer.parseInt(name.substring(name.lastIndexOf('?') + 1)));
 		if (name.equals(page.toString())) {
 			return page;
 		} else {

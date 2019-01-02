@@ -10,7 +10,7 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
  * TransformationEvent is fired when an entity changes its transformation. It is
- * recommended to take a look at the {@link TransformationEventReason} returned
+ * recommended to take a look at the {@link TransformationEvent.TransformationEventReason} returned
  * by {@link #getTransformationEventReason()} before deciding what to do. <br>
  * <br>
  * This event is {@link Cancelable}.<br>
@@ -25,10 +25,10 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 public class TransformationEvent extends LivingEvent {
 	private final Transformation transformationBefore;
 	private final Transformation transformationAfter;
-	private final TransformationEventReason reason;
+	private final TransformationEvent.TransformationEventReason reason;
 
 	public TransformationEvent(EntityLivingBase entity, Transformation transformationAfter,
-			TransformationEventReason reason) {
+			TransformationEvent.TransformationEventReason reason) {
 		super(entity);
 		this.transformationBefore = TransformationHelper.getTransformation(entity);
 		this.transformationAfter = transformationAfter;
@@ -48,7 +48,7 @@ public class TransformationEvent extends LivingEvent {
 	}
 
 	/** Returns the reason why the transformation should be changed. */
-	public TransformationEventReason getTransformationEventReason() {
+	public TransformationEvent.TransformationEventReason getTransformationEventReason() {
 		return this.reason;
 	}
 

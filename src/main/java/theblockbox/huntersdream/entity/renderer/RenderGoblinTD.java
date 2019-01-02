@@ -9,11 +9,11 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
-	public static final ResourceLocation[] TEXTURES = new ResourceLocation[EntityGoblinTD.TEXTURES];
+	private static final ResourceLocation[] TEXTURES = new ResourceLocation[EntityGoblinTD.TEXTURES];
 
 	static {
 		for (int i = 0; i < EntityGoblinTD.TEXTURES; i++) {
-			TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin" + i + ".png");
+			RenderGoblinTD.TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin" + i + ".png");
 		}
 	}
 
@@ -23,12 +23,6 @@ public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityGoblinTD entity) {
-		return TEXTURES[entity.getTexture()];
-	}
-
-	@Override
-	protected void applyRotations(EntityGoblinTD entityLiving, float p_77043_2_, float rotationYaw,
-			float partialTicks) {
-		super.applyRotations(entityLiving, p_77043_2_, rotationYaw, partialTicks);
+		return RenderGoblinTD.TEXTURES[entity.getTexture()];
 	}
 }

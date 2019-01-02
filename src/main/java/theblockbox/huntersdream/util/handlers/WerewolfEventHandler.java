@@ -43,8 +43,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
-import theblockbox.huntersdream.api.event.WerewolfTransformingEvent.WerewolfTransformingReason;
+import theblockbox.huntersdream.api.event.TransformationEvent;
+import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.ItemInit;
 import theblockbox.huntersdream.init.SoundInit;
@@ -54,7 +54,6 @@ import theblockbox.huntersdream.util.helpers.ChanceHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon.InfectionStatus;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
@@ -113,7 +112,7 @@ public class WerewolfEventHandler {
 	public static void onEntityDeath(LivingDeathEvent event) {
 		EntityLivingBase killed = event.getEntityLiving();
 		DamageSource source = event.getSource();
-		if (source.getDamageType().equals("player")) {
+		if ("player".equals(source.getDamageType())) {
 			// just hope that all this casting won't cause any problems
 			EntityPlayer player = (EntityPlayer) source.getTrueSource();
 			if (WerewolfHelper.isTransformed(player)) {
@@ -144,17 +143,17 @@ public class WerewolfEventHandler {
 			IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entity).get();
 			if (ionm.getInfectionTransformation() == Transformation.WEREWOLF) {
 				if (!WerewolfHelper.isWerewolfTime(entity.world)) {
-					if (ionm.getInfectionStatus() == InfectionStatus.MOON_ON_INFECTION) {
-						ionm.setInfectionStatus(InfectionStatus.AFTER_INFECTION);
+					if (ionm.getInfectionStatus() == IInfectOnNextMoon.InfectionStatus.MOON_ON_INFECTION) {
+						ionm.setInfectionStatus(IInfectOnNextMoon.InfectionStatus.AFTER_INFECTION);
 					}
 				} else if (WerewolfHelper.isWerewolfTime(entity.world)) {
-					if (ionm.getInfectionStatus() == InfectionStatus.AFTER_INFECTION) {
-						ionm.setInfectionStatus(InfectionStatus.NOT_INFECTED);
+					if (ionm.getInfectionStatus() == IInfectOnNextMoon.InfectionStatus.AFTER_INFECTION) {
+						ionm.setInfectionStatus(IInfectOnNextMoon.InfectionStatus.NOT_INFECTED);
 						ionm.setInfectionTick(-1);
 						ionm.setInfectionTransformation(Transformation.HUMAN);
 						// change transformation
 						TransformationHelper.changeTransformation(entity, Transformation.WEREWOLF,
-								TransformationEventReason.INFECTION);
+								TransformationEvent.TransformationEventReason.INFECTION);
 					}
 				}
 			}
@@ -171,7 +170,7 @@ public class WerewolfEventHandler {
 		if (random.nextInt(13) < soundTicksBefore) {
 			WerewolfHelper.setSoundTicks(player, -80);
 			player.world.playSound(null, player.posX, player.posY, player.posZ, ENTITY_WOLF_GROWL,
-					player.getSoundCategory(), 1F, (random.nextFloat() - random.nextFloat()) * 0.2F);
+					player.getSoundCategory(), 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F);
 		}
 	}
 
@@ -179,7 +178,7 @@ public class WerewolfEventHandler {
 		if (WerewolfHelper.canWerewolfTransform(player)) {
 			if (WerewolfHelper.getTransformationStage(player) <= 0) {
 				WerewolfHelper.setTimeSinceTransformation(player, player.ticksExisted);
-				onStageChanged(player, 1);
+				WerewolfEventHandler.onStageChanged(player, 1);
 			}
 
 			// every five seconds (20 * 5 = 100) one stage up
@@ -195,7 +194,7 @@ public class WerewolfEventHandler {
 				return;
 			}
 			if (nextStage > WerewolfHelper.getTransformationStage(player)) {
-				onStageChanged(player, nextStage);
+				WerewolfEventHandler.onStageChanged(player, nextStage);
 			}
 		}
 	}
@@ -210,7 +209,7 @@ public class WerewolfEventHandler {
 					"transformations.huntersdream:werewolf.transformingBack.0");
 			message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.BLUE);
 			player.sendMessage(message);
-			WerewolfHelper.transformPlayer(player, false, WerewolfTransformingReason.FULL_MOON_END);
+			WerewolfHelper.transformPlayer(player, false, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END);
 			PacketHandler.sendTransformationMessage(player);
 			player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
 			player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
@@ -251,7 +250,7 @@ public class WerewolfEventHandler {
 					1);
 			WerewolfHelper.setTimeSinceTransformation(player, -1);
 			WerewolfHelper.setTransformationStage(player, 0);
-			WerewolfHelper.transformPlayer(player, true, WerewolfTransformingReason.FULL_MOON);
+			WerewolfHelper.transformPlayer(player, true, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON);
 			// completely heal player
 			player.setHealth(player.getMaxHealth());
 			break;

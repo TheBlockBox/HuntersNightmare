@@ -55,14 +55,14 @@ public abstract class ModelLycanthrope extends ModelBase {
 			this.armr.rotateAngleX -= -0.2235987755982988D;
 			this.arml.rotateAngleX -= -0.2235987755982988D;
 		}
-		if (limbSwingAmount <= .1F) {
+		if (limbSwingAmount <= 0.1F) {
 			float tailY = this.tail.rotateAngleY;
-			this.isTailGoingLeft = tailY >= .2F || (tailY > -.15F && this.isTailGoingLeft);
-			this.tail.rotateAngleY += this.isTailGoingLeft ? -.005F : .005F;
-			this.tail.rotateAngleX -= this.tail.rotateAngleX > -.85F ? .1F : 0;
+			this.isTailGoingLeft = tailY >= 0.2F || (tailY > -0.15F && this.isTailGoingLeft);
+			this.tail.rotateAngleY += this.isTailGoingLeft ? -0.005F : 0.005F;
+			this.tail.rotateAngleX -= this.tail.rotateAngleX > -0.85F ? 0.1F : 0;
 		} else {
-			this.tail.rotateAngleY = 0F;
-			this.tail.rotateAngleX += this.tail.rotateAngleX < .4F ? .1F : 0;
+			this.tail.rotateAngleY = 0.0F;
+			this.tail.rotateAngleX += this.tail.rotateAngleX < 0.4F ? 0.1F : 0;
 		}
 	}
 

@@ -1,11 +1,9 @@
 package theblockbox.huntersdream.util.helpers;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
@@ -61,15 +59,15 @@ public class ClientHelper {
         GlStateManager.disableBlend();
         GlStateManager.disableAlpha();
 
-        bufferBuilder.begin(GL_LINES, DefaultVertexFormats.POSITION);
-        GlStateManager.glLineWidth(11F);
+        bufferBuilder.begin(ClientHelper.GL_LINES, DefaultVertexFormats.POSITION);
+        GlStateManager.glLineWidth(11.0F);
         GlStateManager.color(0, 0, 0);
         bufferBuilder.pos(x1, y1, zLevel).endVertex();
         bufferBuilder.pos(x2, y2, zLevel).endVertex();
         tessellator.draw();
 
-        bufferBuilder.begin(GL_LINES, DefaultVertexFormats.POSITION);
-        GlStateManager.glLineWidth(3F);
+        bufferBuilder.begin(ClientHelper.GL_LINES, DefaultVertexFormats.POSITION);
+        GlStateManager.glLineWidth(3.0F);
         GlStateManager.color(1, 1, 1);
         bufferBuilder.pos(x1, y1, zLevel).endVertex();
         bufferBuilder.pos(x2, y2, zLevel).endVertex();
@@ -81,8 +79,8 @@ public class ClientHelper {
     public static void drawCentralString(String text, int x, int y, int color, float size, FontRenderer fontRenderer) {
         GlStateManager.pushMatrix();
         GlStateManager.scale(size, size, 1);
-        fontRenderer.drawStringWithShadow(text, (x / size) - (fontRenderer.getStringWidth(text) / 2F),
-                (y - ((fontRenderer.FONT_HEIGHT * size) / 2F)) / size, color);
+        fontRenderer.drawStringWithShadow(text, (x / size) - (fontRenderer.getStringWidth(text) / 2.0F),
+                (y - ((fontRenderer.FONT_HEIGHT * size) / 2.0F)) / size, color);
         GlStateManager.popMatrix();
     }
 
@@ -94,8 +92,27 @@ public class ClientHelper {
             size = maximumSize / (float) textWidth;
 
         GlStateManager.scale(size, size, 1);
-        fontRenderer.drawStringWithShadow(text, (x / size) - (fontRenderer.getStringWidth(text) / 2F),
-                (y - ((fontRenderer.FONT_HEIGHT * size) / 2F)) / size, color);
+        fontRenderer.drawStringWithShadow(text, (x / size) - (fontRenderer.getStringWidth(text) / 2.0F),
+                (y - ((fontRenderer.FONT_HEIGHT * size) / 2.0F)) / size, color);
         GlStateManager.popMatrix();
+    }
+
+    /**
+     * Does the same thing as
+     * {@link net.minecraft.client.gui.GuiIngame#drawTexturedModalRect(int, int, int, int, int, int)} except that
+     * in this version you can also specify a custom zLevel.
+     * @see net.minecraft.client.gui.GuiIngame#drawTexturedModalRect(int, int, int, int, int, int)
+     */
+    public static void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height, float zLevel) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+
+        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferBuilder.pos(x, y + height, zLevel).tex(textureX * 0.00390625F, (textureY + height) * 0.00390625F).endVertex();
+        bufferBuilder.pos(x + width, y + height, zLevel).tex((textureX + width) * 0.00390625F, (textureY + height) * 0.00390625F).endVertex();
+        bufferBuilder.pos(x + width, y, zLevel).tex((textureX + width) * 0.00390625F, textureY * 0.00390625F).endVertex();
+        bufferBuilder.pos(x, y, zLevel).tex(textureX * 0.00390625F, textureY * 0.00390625F).endVertex();
+
+        tessellator.draw();
     }
 }

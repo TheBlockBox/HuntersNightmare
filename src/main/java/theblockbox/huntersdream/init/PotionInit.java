@@ -17,15 +17,15 @@ public class PotionInit {
 	public static final Potion POTION_WOLFSBANE = new PotionWolfsbane();
 	public static final Potion POTION_SUNSCREEN = new PotionSunscreen();
 
-	public static final PotionType WOLFSBANE = new PotionType("wolfsbane", new PotionEffect(POTION_WOLFSBANE, 12000))
+	public static final PotionType WOLFSBANE = new PotionType("wolfsbane", new PotionEffect(PotionInit.POTION_WOLFSBANE, 12000))
 			.setRegistryName(GeneralHelper.newResLoc("wolfsbane"));
 
 	public static void registerPotions(RegistryEvent.Register<Potion> event) {
-		event.getRegistry().registerAll(POTION_FEAR, POTION_WOLFSBANE, POTION_SUNSCREEN);
+		event.getRegistry().registerAll(PotionInit.POTION_FEAR, PotionInit.POTION_WOLFSBANE, PotionInit.POTION_SUNSCREEN);
 	}
 
 	public static void registerPotionTypes(RegistryEvent.Register<PotionType> event) {
-		event.getRegistry().registerAll(WOLFSBANE);
-		PotionHelper.addMix(PotionTypes.AWKWARD, ItemInit.WOLFSBANE_FLOWER, WOLFSBANE);
+		event.getRegistry().registerAll(PotionInit.WOLFSBANE);
+		PotionHelper.addMix(PotionTypes.AWKWARD, ItemInit.WOLFSBANE_FLOWER, PotionInit.WOLFSBANE);
 	}
 }

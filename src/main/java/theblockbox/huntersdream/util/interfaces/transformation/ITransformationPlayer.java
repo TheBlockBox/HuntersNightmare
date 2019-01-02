@@ -1,14 +1,8 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +12,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -102,6 +95,19 @@ public interface ITransformationPlayer extends ITransformation {
 		this.setSkills(Collections.emptySet());
 	}
 
+	/**
+	 * Returns the level of the given skill the player has.
+	 * If the player doesn't have the skill, -1 is returned.
+	 * The passed skill should always be a parent skill.
+	 */
+	// TODO: Other way?
+	public default int getSkillLevel(Skill skill) {
+		Stream.Builder<Skill> builder = Stream.builder();
+		for(Skill s : skill.getChildSkills())
+			builder.add(s);
+		return builder.add(skill).build().filter(this::hasSkill).mapToInt(Skill::getLevel).max().orElse(-1);
+	}
+
 	public ItemHandlerClothingTab getClothingTab();
 
 	public void setClothingTab(ItemHandlerClothingTab clothingTab);
@@ -109,7 +115,8 @@ public interface ITransformationPlayer extends ITransformation {
 	public static class TransformationPlayer implements ITransformationPlayer {
 		private static final NBTTagCompound DEFAULT_TRANSFORMATION_DATA = new NBTTagCompound();
 		static {
-			DEFAULT_TRANSFORMATION_DATA.setString("transformation", Transformation.WEREWOLF.toString());
+			// TODO: Test if this makes sense
+			ITransformationPlayer.TransformationPlayer.DEFAULT_TRANSFORMATION_DATA.setString("transformation", Transformation.WEREWOLF.toString());
 		}
 
 		private Transformation transformation = Transformation.HUMAN;
@@ -118,7 +125,7 @@ public interface ITransformationPlayer extends ITransformation {
 		private Set<Skill> skills = new HashSet<>();
 		private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
 		private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
-		private NBTTagCompound transformationData = DEFAULT_TRANSFORMATION_DATA;
+		private NBTTagCompound transformationData = ITransformationPlayer.TransformationPlayer.DEFAULT_TRANSFORMATION_DATA;
 		private Skill activeSkill = null;
 
 		@Override
@@ -243,7 +250,7 @@ public interface ITransformationPlayer extends ITransformation {
 		}
 	}
 
-	public static class TransformationPlayerStorage implements IStorage<ITransformationPlayer> {
+	public static class TransformationPlayerStorage implements Capability.IStorage<ITransformationPlayer> {
 		public static final String TRANSFORMATION = "transformation";
 		public static final String TEXTURE_INDEX = "textureindex";
 		public static final String SKILLS = "skillsnbt";
@@ -256,15 +263,15 @@ public interface ITransformationPlayer extends ITransformation {
 		public NBTBase writeNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
 				EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setInteger(TEXTURE_INDEX, instance.getTextureIndex());
+			compound.setInteger(ITransformationPlayer.TransformationPlayerStorage.TEXTURE_INDEX, instance.getTextureIndex());
 			Set<Skill> skills = instance.getSkills();
-			GeneralHelper.writeArrayToNBT(compound, skills.toArray(new Skill[0]), SKILLS, Skill::toString);
-			compound.setString(TRANSFORMATION, instance.getTransformation().toString());
-			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), PAGES, HuntersJournalPage::toString);
-			compound.setTag(CLOTHING_TAB,
+			GeneralHelper.writeArrayToNBT(compound, skills.toArray(new Skill[0]), ITransformationPlayer.TransformationPlayerStorage.SKILLS, Skill::toString);
+			compound.setString(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION, instance.getTransformation().toString());
+			GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), ITransformationPlayer.TransformationPlayerStorage.PAGES, HuntersJournalPage::toString);
+			compound.setTag(ITransformationPlayer.TransformationPlayerStorage.CLOTHING_TAB,
 					CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(instance.getClothingTab(), null));
-			compound.setTag(TRANSFORMATION_DATA, instance.getTransformationData());
-			compound.setString(ACTIVE_SKILL, Objects.toString(instance.getActiveSkill(), ""));
+			compound.setTag(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION_DATA, instance.getTransformationData());
+			compound.setString(ITransformationPlayer.TransformationPlayerStorage.ACTIVE_SKILL, Objects.toString(instance.getActiveSkill(), ""));
 			return compound;
 		}
 
@@ -272,17 +279,17 @@ public interface ITransformationPlayer extends ITransformation {
 		public void readNBT(Capability<ITransformationPlayer> capability, ITransformationPlayer instance,
 				EnumFacing side, NBTBase nbt) {
 			NBTTagCompound compound = (NBTTagCompound) nbt;
-			instance.setTextureIndex(compound.getInteger(TEXTURE_INDEX));
-			instance.setTransformation(Transformation.fromName(compound.getString(TRANSFORMATION)));
-			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, PAGES, HuntersJournalPage::fromName,
+			instance.setTextureIndex(compound.getInteger(ITransformationPlayer.TransformationPlayerStorage.TEXTURE_INDEX));
+			instance.setTransformation(Transformation.fromName(compound.getString(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION)));
+			instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, ITransformationPlayer.TransformationPlayerStorage.PAGES, HuntersJournalPage::fromName,
 					HuntersJournalPage[]::new));
-			instance.setSkills(Sets.newHashSet(GeneralHelper.readArrayFromNBT(compound, SKILLS,
+			instance.setSkills(Sets.newHashSet(GeneralHelper.readArrayFromNBT(compound, ITransformationPlayer.TransformationPlayerStorage.SKILLS,
 					s -> Objects.requireNonNull(Skill.fromName(s)), Skill[]::new)));
-			if (compound.hasKey(CLOTHING_TAB))
+			if (compound.hasKey(ITransformationPlayer.TransformationPlayerStorage.CLOTHING_TAB))
 				CapabilitiesInit.CAPABILITY_ITEM_HANDLER.readNBT(instance.getClothingTab(), null,
-						compound.getTag(CLOTHING_TAB));
-			instance.setTransformationData((NBTTagCompound) compound.getTag(TRANSFORMATION_DATA));
-			instance.setActiveSkill(Skill.fromName(compound.getString(ACTIVE_SKILL)));
+						compound.getTag(ITransformationPlayer.TransformationPlayerStorage.CLOTHING_TAB));
+			instance.setTransformationData((NBTTagCompound) compound.getTag(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION_DATA));
+			instance.setActiveSkill(Skill.fromName(compound.getString(ITransformationPlayer.TransformationPlayerStorage.ACTIVE_SKILL)));
 		}
 	}
 }

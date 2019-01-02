@@ -35,7 +35,7 @@ public class CommandTransformationTexture extends CommandBase {
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
-		ArrayList<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<>();
 		if (args.length == 1) {
 			if (sender instanceof EntityPlayer) {
 				toReturn.add("get");
@@ -45,7 +45,7 @@ public class CommandTransformationTexture extends CommandBase {
 				}
 			}
 		} else if (args.length == 2) {
-			return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
+			return CommandBase.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 		}
 		return toReturn;
 	}
@@ -61,7 +61,7 @@ public class CommandTransformationTexture extends CommandBase {
 			}
 			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 
-			if (args[0].equals("get")) {
+			if ("get".equals(args[0])) {
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformationtexture.get",
 						player.getName(), cap.getTextureIndex()));
 			} else {

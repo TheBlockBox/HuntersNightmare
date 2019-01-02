@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
+import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class ItemBestiary extends Item {
@@ -26,19 +26,19 @@ public class ItemBestiary extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack heldStack = playerIn.getHeldItem(handIn);
-		if (!worldIn.isRemote) {
-			if (playerIn.isCreative()) {
-				Transformation transformation = TransformationHelper.getTransformation(playerIn).cycle();
-				TransformationHelper.changeTransformation(playerIn, transformation, TransformationEventReason.BESTIARY);
-				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick",
-						transformation.getTranslation()));
-				return new ActionResult<>(EnumActionResult.SUCCESS, heldStack);
-			} else {
-				return new ActionResult<>(EnumActionResult.FAIL, heldStack);
-			}
-		} else {
-			return new ActionResult<>(EnumActionResult.PASS, heldStack);
-		}
+        if (worldIn.isRemote) {
+            return new ActionResult<>(EnumActionResult.PASS, heldStack);
+        } else {
+            if (playerIn.isCreative()) {
+                Transformation transformation = TransformationHelper.getTransformation(playerIn).cycle();
+                TransformationHelper.changeTransformation(playerIn, transformation, TransformationEvent.TransformationEventReason.BESTIARY);
+                playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick",
+                        transformation.getTranslation()));
+                return new ActionResult<>(EnumActionResult.SUCCESS, heldStack);
+            } else {
+                return new ActionResult<>(EnumActionResult.FAIL, heldStack);
+            }
+        }
 	}
 
 	@SideOnly(Side.CLIENT)

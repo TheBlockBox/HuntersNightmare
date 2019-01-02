@@ -11,7 +11,7 @@ public class ExecutionPath extends Exception {
 	}
 
 	public static String get(int index) {
-		return ConfigHandler.common.showFullStackTrace ? getAll() : (new ExecutionPath()).getFromIndex(index);
+		return ConfigHandler.common.showFullStackTrace ? ExecutionPath.getAll() : (new ExecutionPath()).getFromIndex(index);
 	}
 
 	/**
@@ -20,7 +20,7 @@ public class ExecutionPath extends Exception {
 	 */
 	public static String get(int beginIndex, int endIndex) {
 		if (ConfigHandler.common.showFullStackTrace) {
-			return getAll();
+			return ExecutionPath.getAll();
 		} else {
 			ExecutionPath path = new ExecutionPath();
 			StringBuilder toReturn = new StringBuilder();
@@ -42,14 +42,14 @@ public class ExecutionPath extends Exception {
 		int repetitions = 0;
 		for (int i = 0; i < path.getStackTrace().length; i++) {
 			String str = "\n\tat " + path.getFromIndex(i);
-			if (!str.equals(last)) {
+			if (str.equals(last)) {
+				repetitions++;
+			} else {
 				if (repetitions > 0) {
 					toReturn.append("\n\t(times ").append(repetitions).append(")");
 					repetitions = 0;
 				}
 				toReturn.append(str);
-			} else {
-				repetitions++;
 			}
 			last = str;
 		}
@@ -60,7 +60,7 @@ public class ExecutionPath extends Exception {
 	}
 
 	private String getFromIndex(int index) {
-		StackTraceElement ste = getStackTrace()[index];
+		StackTraceElement ste = this.getStackTrace()[index];
 		if (ste.isNativeMethod()) {
 			return "Native method: " + ste.getFileName() + ":" + ste.getClassName() + "." + ste.getMethodName() + ":"
 					+ ste.getLineNumber();

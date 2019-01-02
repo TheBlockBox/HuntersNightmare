@@ -17,8 +17,8 @@ public class GuiSilverFurnace extends GuiContainer {
 
 	public GuiSilverFurnace(ContainerSilverFurnace inventorySlotsIn) {
 		super(inventorySlotsIn);
-		this.xSize = WIDTH;
-		this.ySize = HEIGHT;
+		this.xSize = GuiSilverFurnace.WIDTH;
+		this.ySize = GuiSilverFurnace.HEIGHT;
 		this.container = inventorySlotsIn;
 	}
 
@@ -32,13 +32,13 @@ public class GuiSilverFurnace extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.getTextureManager().bindTexture(IMAGE);
+		this.mc.getTextureManager().bindTexture(GuiSilverFurnace.IMAGE);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		this.mc.getTextureManager().bindTexture(IMAGE);
+		this.mc.getTextureManager().bindTexture(GuiSilverFurnace.IMAGE);
 		// draw fuel
 		int burnTime = this.container.getBurnTime();
 		if (burnTime > 0) {

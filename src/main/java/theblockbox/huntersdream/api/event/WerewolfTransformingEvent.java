@@ -23,23 +23,23 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class WerewolfTransformingEvent extends LivingEvent {
 	private final boolean transformingBack;
-	private final WerewolfTransformingReason reason;
+	private final WerewolfTransformingEvent.WerewolfTransformingReason reason;
 
 	public WerewolfTransformingEvent(EntityLivingBase entity, boolean transformingBack,
-			WerewolfTransformingReason reason) {
+			WerewolfTransformingEvent.WerewolfTransformingReason reason) {
 		super(entity);
 		this.transformingBack = transformingBack;
 		this.reason = reason;
 		if (entity instanceof EntityPlayer) {
 			this.setCanceled(MinecraftForge.EVENT_BUS
-					.post(new PlayerWerewolfTransformingEvent((EntityPlayer) entity, transformingBack, reason)));
+					.post(new WerewolfTransformingEvent.PlayerWerewolfTransformingEvent((EntityPlayer) entity, transformingBack, reason)));
 		}
 	}
 
 	/**
 	 * Returns the reason why the werewolf transformed.
 	 */
-	public WerewolfTransformingReason getTransformingEventReason() {
+	public WerewolfTransformingEvent.WerewolfTransformingReason getTransformingEventReason() {
 		return this.reason;
 	}
 
@@ -54,19 +54,19 @@ public class WerewolfTransformingEvent extends LivingEvent {
 	/** The reason why the werewolf transformed */
 	public static class WerewolfTransformingReason {
 		/** Caused by full moon */
-		public static final WerewolfTransformingReason FULL_MOON = new WerewolfTransformingReason();
+		public static final WerewolfTransformingEvent.WerewolfTransformingReason FULL_MOON = new WerewolfTransformingEvent.WerewolfTransformingReason();
 		/** Caused by full moon ending */
-		public static final WerewolfTransformingReason FULL_MOON_END = new WerewolfTransformingReason();
+		public static final WerewolfTransformingEvent.WerewolfTransformingReason FULL_MOON_END = new WerewolfTransformingEvent.WerewolfTransformingReason();
 	}
 
 	/** This event is the player version of {@link WerewolfTransformingEvent} */
 	@Cancelable
-	public class PlayerWerewolfTransformingEvent extends PlayerEvent {
+	public static class PlayerWerewolfTransformingEvent extends PlayerEvent {
 		private final boolean isTransformingBack;
-		private final WerewolfTransformingReason transformationReason;
+		private final WerewolfTransformingEvent.WerewolfTransformingReason transformationReason;
 
 		public PlayerWerewolfTransformingEvent(EntityPlayer player, boolean transformingBack,
-				WerewolfTransformingReason reason) {
+				WerewolfTransformingEvent.WerewolfTransformingReason reason) {
 			super(player);
 			this.isTransformingBack = transformingBack;
 			this.transformationReason = reason;
@@ -75,7 +75,7 @@ public class WerewolfTransformingEvent extends LivingEvent {
 		/**
 		 * Returns the reason why the werewolf transformed.
 		 */
-		public WerewolfTransformingReason getTransformingEventReason() {
+		public WerewolfTransformingEvent.WerewolfTransformingReason getTransformingEventReason() {
 			return this.transformationReason;
 		}
 

@@ -17,7 +17,7 @@ public interface IProxy {
 
 	public boolean isPhysicalClient();
 
-	default public Side getPhysicalSide() {
+	public default Side getPhysicalSide() {
 		return this.isPhysicalClient() ? Side.CLIENT : Side.SERVER;
 	}
 

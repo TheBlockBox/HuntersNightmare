@@ -8,9 +8,6 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ObjectArrays;
-import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -29,16 +26,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
-import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
-
-import javax.annotation.Nonnegative;
 
 /** A utility class for all things that don't fit into the other helpers */
 public class GeneralHelper {
@@ -79,7 +72,7 @@ public class GeneralHelper {
 	private static final AxisAlignedBB AABB = new AxisAlignedBB(BlockPos.ORIGIN);
 
 	static {
-		DataSerializers.registerSerializer(BYTE_ARRAY_DATA_SERIALIZER);
+		DataSerializers.registerSerializer(GeneralHelper.BYTE_ARRAY_DATA_SERIALIZER);
 	}
 
 	/** Returns the logical side from the given world */
@@ -89,7 +82,7 @@ public class GeneralHelper {
 
 	/** Returns the logical side from the given entity */
 	public static Side getSideFromEntity(Entity entity) {
-		return getSideFromWorld(entity.world);
+		return GeneralHelper.getSideFromWorld(entity.world);
 	}
 
 	/**
@@ -167,13 +160,13 @@ public class GeneralHelper {
 			return true;
 		}
 		AxisAlignedBB entityAABB = entity.getEntityBoundingBox();
-		AABB.minX = entityAABB.minX;
-		AABB.minY = entityAABB.minY;
-		AABB.minZ = entityAABB.minZ;
-		AABB.maxX = entityAABB.maxX;
-		AABB.maxY = AABB.minY + newHeight;
-		AABB.maxZ = entityAABB.maxZ;
-		return !entity.world.collidesWithAnyBlock(AABB);
+		GeneralHelper.AABB.minX = entityAABB.minX;
+		GeneralHelper.AABB.minY = entityAABB.minY;
+		GeneralHelper.AABB.minZ = entityAABB.minZ;
+		GeneralHelper.AABB.maxX = entityAABB.maxX;
+		GeneralHelper.AABB.maxY = GeneralHelper.AABB.minY + newHeight;
+		GeneralHelper.AABB.maxZ = entityAABB.maxZ;
+		return !entity.world.collidesWithAnyBlock(GeneralHelper.AABB);
 	}
 
 	/** Returns true if the given player is not under a block */
@@ -303,7 +296,7 @@ public class GeneralHelper {
 	}
 
 	public static boolean canBlockSeeSky(World world, BlockPos pos) {
-		for (MutableBlockPos mbp = new MutableBlockPos(pos); mbp.getY() < world.getHeight(); mbp.setY(mbp.getY() + 1))
+		for (BlockPos.MutableBlockPos mbp = new BlockPos.MutableBlockPos(pos); mbp.getY() < world.getHeight(); mbp.setY(mbp.getY() + 1))
 			if (world.getBlockState(mbp).getMaterial().isOpaque())
 				return false;
 		return true;
@@ -407,14 +400,14 @@ public class GeneralHelper {
 	 * Returns true when a is closer to numberToCheck than b, otherwise returns false.
 	 */
 	public static boolean isACloserThanB(double numberToCheck, double a, double b) {
-		return (Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b)) ? true : false;
+		return Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b);
 	}
 
 	/**
 	 * Returns true when a is closer to numberToCheck than b, otherwise returns false.
 	 */
 	public static boolean isACloserThanB(int numberToCheck, int a, int b) {
-		return (Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b)) ? true : false;
+		return Math.abs(numberToCheck - a) < Math.abs(numberToCheck - b);
 	}
 
 	/**

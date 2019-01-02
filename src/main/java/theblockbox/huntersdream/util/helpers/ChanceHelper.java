@@ -19,7 +19,7 @@ public class ChanceHelper {
 			throw new IllegalArgumentException("Percentage can't be over 100 / under 0");
 		}
 
-		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10F)));
+		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10.0F)));
 	}
 
 	public static boolean chanceOf(Random random, int percentage) {
@@ -27,22 +27,22 @@ public class ChanceHelper {
 			throw new IllegalArgumentException("Percentage can't be over 100 / under 0");
 		}
 
-		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10F)));
+		return ((random.nextInt(1000) + 1) <= ((int) (percentage * 10.0F)));
 	}
 
 	public static boolean chanceOf(EntityLivingBase entity, float percentage) {
-		return chanceOf(entity.getRNG(), percentage);
+		return ChanceHelper.chanceOf(entity.getRNG(), percentage);
 	}
 
 	public static boolean chanceOf(World world, float percentage) {
-		return chanceOf(world.rand, percentage);
+		return ChanceHelper.chanceOf(world.rand, percentage);
 	}
 
 	public static boolean chanceOf(EntityLivingBase entity, int percentage) {
-		return chanceOf(entity.getRNG(), percentage);
+		return ChanceHelper.chanceOf(entity.getRNG(), percentage);
 	}
 
 	public static boolean chanceOf(World world, int percentage) {
-		return chanceOf(world.rand, percentage);
+		return ChanceHelper.chanceOf(world.rand, percentage);
 	}
 }

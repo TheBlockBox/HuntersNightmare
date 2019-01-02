@@ -23,7 +23,7 @@ public enum Dimensions {
 
 	public static Dimensions getDimensionFromID(int id) {
 		Dimensions dimension = null;
-		for (Dimensions d : values()) {
+		for (Dimensions d : Dimensions.values()) {
 			if (d.id == id)
 				dimension = d;
 		}

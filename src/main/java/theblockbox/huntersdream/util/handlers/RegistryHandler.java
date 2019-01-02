@@ -98,7 +98,7 @@ public class RegistryHandler {
 		Skill.preInit();
 		GameRegistry.registerTileEntity(TileEntitySilverFurnace.class, GeneralHelper.newResLoc("furnace_silver"));
 		GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
-		directory = event.getModConfigurationDirectory();
+		RegistryHandler.directory = event.getModConfigurationDirectory();
 	}
 
 	public static void initCommon(FMLInitializationEvent event) {
@@ -117,6 +117,7 @@ public class RegistryHandler {
 	// Client
 
 	public static void preInitClient() {
+		KeyBindingInit.register();
 	}
 
 	public static void initClient() {
@@ -134,7 +135,7 @@ public class RegistryHandler {
 	}
 
 	public static void postInitServer() {
-		SilverFurnaceRecipe.setAndLoadFiles(directory);
+		SilverFurnaceRecipe.setAndLoadFiles(RegistryHandler.directory);
 	}
 
 	public static void onServerStart(FMLServerStartingEvent event) {

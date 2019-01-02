@@ -9,7 +9,7 @@ public class CommandHelper {
 			"command.huntersdream.invalid");
 
 	static {
-		COMMAND_INVALID.getStyle().setColor(TextFormatting.RED);
+        CommandHelper.COMMAND_INVALID.getStyle().setColor(TextFormatting.RED);
 	}
 
 	/**
@@ -17,6 +17,6 @@ public class CommandHelper {
 	 * invalid parameters
 	 */
 	public static void invalidCommand(ICommandSender sender, Exception e) {
-		sender.sendMessage(COMMAND_INVALID);
+		sender.sendMessage(CommandHelper.COMMAND_INVALID);
 	}
 }

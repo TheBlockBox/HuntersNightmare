@@ -13,7 +13,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.init.LootTableInit;
 import theblockbox.huntersdream.util.Reference;
@@ -22,7 +22,7 @@ import theblockbox.huntersdream.util.Reference;
 public class EventHandler {
 
 	@SubscribeEvent
-	public static void onPlayerJoin(PlayerLoggedInEvent event) {
+	public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
 		VampireEventHandler.onPlayerJoin(event);
 
 		// in its own thread so that this won't block the whole main thred

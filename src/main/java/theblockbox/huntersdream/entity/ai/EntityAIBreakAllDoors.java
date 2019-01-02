@@ -37,9 +37,7 @@ public class EntityAIBreakAllDoors extends EntityAIBreakDoor {
 	}
 
 	protected boolean superShouldExecute() {
-		if (!this.entity.collidedHorizontally) {
-			return false;
-		} else {
+		if (this.entity.collidedHorizontally) {
 			PathNavigateGround pathNavigateGround = (PathNavigateGround) this.entity.getNavigator();
 			Path path = pathNavigateGround.getPath();
 
@@ -64,6 +62,8 @@ public class EntityAIBreakAllDoors extends EntityAIBreakDoor {
 			} else {
 				return false;
 			}
+		} else {
+			return false;
 		}
 	}
 

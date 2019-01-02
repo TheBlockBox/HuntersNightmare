@@ -13,17 +13,20 @@ import theblockbox.huntersdream.util.Reference;
 public class ConfigHandler {
 
 	@Config.LangKey(Reference.CFG_LANG + "client")
-	public static Client client = new Client();
+	public static ConfigHandler.Client client = new ConfigHandler.Client();
 
 	@Config.LangKey(Reference.CFG_LANG + "server")
-	public static Server server = new Server();
+	public static ConfigHandler.Server server = new ConfigHandler.Server();
 
 	@Config.LangKey(Reference.CFG_LANG + "common")
-	public static Common common = new Common();
+	public static ConfigHandler.Common common = new ConfigHandler.Common();
 
 	public static class Client {
 		@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
 		public boolean customPlayerRender = true;
+
+		@Config.LangKey(Reference.CFG_LANG + "showActiveSkill")
+		public boolean showActiveSkill = true;
 	}
 
 	public static class Common {
@@ -36,7 +39,7 @@ public class ConfigHandler {
 
 	public static class Server {
 		@Config.LangKey(Reference.CFG_LANG + "ores")
-		public Ores ores = new Ores();
+		public ConfigHandler.Server.Ores ores = new ConfigHandler.Server.Ores();
 
 		@Config.LangKey(Reference.CFG_LANG + "generateCastle")
 		@Config.RequiresWorldRestart
@@ -76,7 +79,7 @@ public class ConfigHandler {
 	@Mod.EventBusSubscriber(modid = Reference.MODID)
 	public static class ConfigEventHandler {
 		@SubscribeEvent
-		public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
+		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 			if (event.getModID().equals(Reference.MODID)) {
 				ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
 				Main.getLogger().info("Hunter's Dream Config has been changed");

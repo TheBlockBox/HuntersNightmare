@@ -22,7 +22,7 @@ public class EntityChair extends Entity {
 		this.blockPosX = (int) x;
 		this.blockPosY = (int) y;
 		this.blockPosZ = (int) z;
-		setPosition(x + 0.5D, y + y0ffset, z + 0.5D);
+        this.setPosition(x + 0.5D, y + y0ffset, z + 0.5D);
 	}
 
 	public EntityChair(World world, double x, double y, double z, double y0ffset, int rotation, double rotationOffset) {
@@ -30,7 +30,7 @@ public class EntityChair extends Entity {
 		this.blockPosX = (int) x;
 		this.blockPosY = (int) y;
 		this.blockPosZ = (int) z;
-		setPostionConsideringRotation(x + 0.5D, y + y0ffset, z + 0.5D, rotation, rotationOffset);
+        this.setPostionConsideringRotation(x + 0.5D, y + y0ffset, z + 0.5D, rotation, rotationOffset);
 	}
 
 	public void setPostionConsideringRotation(double x, double y, double z, int rotation, double rotationOffset) {
@@ -48,7 +48,7 @@ public class EntityChair extends Entity {
 			x += rotationOffset;
 			break;
 		}
-		setPosition(x, y, z);
+        this.setPosition(x, y, z);
 	}
 
 	@Override
@@ -62,8 +62,8 @@ public class EntityChair extends Entity {
 			if (!this.isBeingRidden()
 					|| this.world.isAirBlock(new BlockPos(this.blockPosX, this.blockPosY, this.blockPosZ))) {
 				this.setDead();
-				this.world.updateComparatorOutputLevel(getPosition(),
-						this.world.getBlockState(getPosition()).getBlock());
+				this.world.updateComparatorOutputLevel(this.getPosition(),
+						this.world.getBlockState(this.getPosition()).getBlock());
 			}
 		}
 	}

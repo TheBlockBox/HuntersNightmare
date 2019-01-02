@@ -41,24 +41,24 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 	}
 
 	public static TransformationSet singletonSet(Transformation transformation) {
-		return new SingletonTransformationSet(transformation);
+		return new TransformationSet.SingletonTransformationSet(transformation);
 	}
 
 	@Override
 	public boolean add(@Nonnull Transformation transformation) {
 		int id = transformation.getTemporaryID();
-		if (!this.delegate.get(id)) {
+		if (this.delegate.get(id)) {
+			return false;
+		} else {
 			this.delegate.set(id);
 			return true;
-		} else {
-			return false;
 		}
 	}
 
 	@Override
 	public boolean remove(Object o) {
 		if (o instanceof Transformation) {
-			return remove((Transformation) o);
+			return this.remove((Transformation) o);
 		} else {
 			return false;
 		}
@@ -94,36 +94,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 
 	@Override
 	public Iterator<Transformation> iterator() {
-		return new Iterator<Transformation>() {
-			private int current = -1;
-			private int next = TransformationSet.this.delegate.getNextTrueIndex(0);
-
-			@Override
-			public boolean hasNext() {
-				return this.next != -1;
-			}
-
-			@Override
-			public Transformation next() {
-				// set current index
-				this.current = this.next;
-				// calculate next index
-				this.next = TransformationSet.this.delegate.getNextTrueIndex(this.current + 1);
-				// if current has no transformation, throw NoSuchElementException
-				if (this.current == -1) {
-					throw new NoSuchElementException();
-				} else {
-					// otherwise return current transformation
-					return Transformation.fromTemporaryID(this.current);
-				}
-			}
-
-			@Override
-			public void remove() {
-				if (!TransformationSet.this.remove(Transformation.fromTemporaryID(this.current)))
-					throw new IllegalStateException();
-			}
-		};
+		return new TransformationSetIterator();
 	}
 
 	@Override
@@ -154,7 +125,7 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 	private static class SingletonTransformationSet extends TransformationSet {
 		private final Transformation transformation;
 
-		public SingletonTransformationSet(Transformation transformation) {
+		private SingletonTransformationSet(Transformation transformation) {
 			super((BoolArray) null);
 			this.transformation = transformation;
 		}
@@ -200,8 +171,39 @@ public class TransformationSet extends AbstractSet<Transformation> implements Cl
 		}
 
 		@Override
-		public TransformationSet clone() {
-			return new SingletonTransformationSet(this.transformation);
+		public TransformationSet.SingletonTransformationSet clone() {
+			return new TransformationSet.SingletonTransformationSet(this.transformation);
+		}
+	}
+
+	private class TransformationSetIterator implements Iterator<Transformation> {
+		private int current = -1;
+		private int next = TransformationSet.this.delegate.getNextTrueIndex(0);
+
+		@Override
+		public boolean hasNext() {
+			return this.next != -1;
+		}
+
+		@Override
+		public Transformation next() {
+			// set current index
+			this.current = this.next;
+			// calculate next index
+			this.next = TransformationSet.this.delegate.getNextTrueIndex(this.current + 1);
+			// if current has no transformation, throw NoSuchElementException
+			if (this.current == -1) {
+				throw new NoSuchElementException();
+			} else {
+				// otherwise return current transformation
+				return Transformation.fromTemporaryID(this.current);
+			}
+		}
+
+		@Override
+		public void remove() {
+			if (!TransformationSet.this.remove(Transformation.fromTemporaryID(this.current)))
+				throw new IllegalStateException();
 		}
 	}
 }

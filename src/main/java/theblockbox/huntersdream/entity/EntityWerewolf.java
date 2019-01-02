@@ -43,7 +43,6 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.api.event.WerewolfTransformingEvent.WerewolfTransformingReason;
 import theblockbox.huntersdream.entity.ai.EntityAIBreakAllDoors;
 import theblockbox.huntersdream.entity.ai.EntityAIWerewolfAttack;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -62,7 +61,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	 * The speed of every werewolf (exactly two times faster than a normal player)
 	 */
 	public static final double SPEED = 0.5D;
-	public static final float ATTACK_DAMAGE = 8F;
+	public static final float ATTACK_DAMAGE = 8.0F;
 	public static final Transformation TRANSFORMATION = Transformation.WEREWOLF;
 	private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
 			.createKey(EntityWerewolf.class, DataSerializers.COMPOUND_TAG);
@@ -76,7 +75,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	public EntityWerewolf(World worldIn, int textureIndex, String entityName, @Nonnull NBTTagCompound extraData) {
 		super(worldIn);
-		if (entityName == null || CLASS_NAME.equals(entityName))
+		if (entityName == null || EntityWerewolf.CLASS_NAME.equals(entityName))
 			throw new IllegalArgumentException(
 					"Can't transform already transformed werewolf (tried to spawn werewolf with its untransformed entity being werewolf)\nExtra data: ");
 
@@ -112,10 +111,10 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	protected void entityInit() {
 		super.entityInit();
 		NBTTagCompound transformationData = new NBTTagCompound();
-		transformationData.setString("transformation", TRANSFORMATION.toString());
+		transformationData.setString("transformation", EntityWerewolf.TRANSFORMATION.toString());
 		transformationData.setBoolean("transformed", true);
-		this.dataManager.register(TRANSFORMATION_DATA, transformationData);
-		this.dataManager.register(TEXTURE_INDEX, 0);
+		this.dataManager.register(EntityWerewolf.TRANSFORMATION_DATA, transformationData);
+		this.dataManager.register(EntityWerewolf.TEXTURE_INDEX, 0);
 	}
 
 	@Override
@@ -123,7 +122,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 		super.initEntityAI();
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(1, new EntityAIBreakAllDoors(this));
-		this.tasks.addTask(2, new EntityAIWerewolfAttack(this, SPEED + 0.2D, false));
+		this.tasks.addTask(2, new EntityAIWerewolfAttack(this, EntityWerewolf.SPEED + 0.2D, false));
 
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
@@ -150,9 +149,9 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(EntityWerewolf.ATTACK_DAMAGE);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(SPEED);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(EntityWerewolf.SPEED);
 	}
 
 	@Override
@@ -186,11 +185,6 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 	}
 
 	@Override
-	public void setSneaking(boolean sneaking) {
-		super.setSneaking(sneaking);
-	}
-
-	@Override
 	public boolean isChild() {
 		return false;
 	}
@@ -202,7 +196,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 			if (!this.world.isRemote) {
 				if (!WerewolfHelper.isWerewolfTime(this.world)) {
 					if (!MinecraftForge.EVENT_BUS.post(
-							new WerewolfTransformingEvent(this, true, WerewolfTransformingReason.FULL_MOON_END))) {
+							new WerewolfTransformingEvent(this, true, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END))) {
 						EntityCreature e;
 						String entityName = this.getUntransformedEntityName();
 
@@ -210,28 +204,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 						// bracket)
 						if (!entityName.startsWith("player")) {
 
-							if (!entityName.startsWith("$bycap")) {
-								try {
-									@SuppressWarnings("unchecked")
-									Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
-											.forName(entityName);
-									Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
-											Transformation.class);
-									e = (EntityCreature) constructor.newInstance(this.world, this.getTextureIndex(),
-											this.getTransformation());
-								} catch (ClassNotFoundException ex) {
-									throw new RuntimeException(ex);
-								} catch (ClassCastException ex) {
-									throw new RuntimeException("Given class " + entityName + " is not an entity", ex);
-								} catch (NoSuchMethodException | InvocationTargetException | SecurityException
-										| IllegalAccessException ex) {
-									throw new RuntimeException("Class " + entityName
-											+ " does not have an accessible constructor with parameters World, int, Transformation",
-											ex);
-								} catch (InstantiationException ex) {
-									throw new RuntimeException("Can't instantiate class " + entityName, ex);
-								}
-							} else {
+							if (entityName.startsWith("$bycap")) {
 								String eName = entityName.substring(6);
 								try {
 									@SuppressWarnings("unchecked")
@@ -258,6 +231,27 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 										| InstantiationException | InvocationTargetException ex) {
 									throw new IllegalArgumentException(
 											"This entity does not have an accessible constructor and is therefore not registered");
+								}
+							} else {
+								try {
+									@SuppressWarnings("unchecked")
+									Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
+											.forName(entityName);
+									Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
+											Transformation.class);
+									e = (EntityCreature) constructor.newInstance(this.world, this.getTextureIndex(),
+											this.getTransformation());
+								} catch (ClassNotFoundException ex) {
+									throw new RuntimeException(ex);
+								} catch (ClassCastException ex) {
+									throw new RuntimeException("Given class " + entityName + " is not an entity", ex);
+								} catch (NoSuchMethodException | InvocationTargetException | SecurityException
+										| IllegalAccessException ex) {
+									throw new RuntimeException("Class " + entityName
+											+ " does not have an accessible constructor with parameters World, int, Transformation",
+											ex);
+								} catch (InstantiationException ex) {
+									throw new RuntimeException("Can't instantiate class " + entityName, ex);
 								}
 							}
 
@@ -287,7 +281,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	@Override
 	public Transformation getTransformation() {
-		return TRANSFORMATION;
+		return EntityWerewolf.TRANSFORMATION;
 	}
 
 	@Override
@@ -297,22 +291,22 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	@Override
 	public int getTextureIndex() {
-		return this.dataManager.get(TEXTURE_INDEX);
+		return this.dataManager.get(EntityWerewolf.TEXTURE_INDEX);
 	}
 
 	@Override
 	public void setTextureIndex(int index) {
-		this.dataManager.set(TEXTURE_INDEX, index);
+		this.dataManager.set(EntityWerewolf.TEXTURE_INDEX, index);
 	}
 
 	@Override
 	public NBTTagCompound getTransformationData() {
-		return this.dataManager.get(TRANSFORMATION_DATA);
+		return this.dataManager.get(EntityWerewolf.TRANSFORMATION_DATA);
 	}
 
 	@Override
 	public void setTransformationData(NBTTagCompound transformationData) {
-		this.dataManager.set(TRANSFORMATION_DATA, transformationData);
+		this.dataManager.set(EntityWerewolf.TRANSFORMATION_DATA, transformationData);
 	}
 
 	@Override

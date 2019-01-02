@@ -31,7 +31,7 @@ import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFuncti
  * ones subscribe to
  * {@link theblockbox.huntersdream.api.event.TransformationRegistryEvent} and
  * add your transformation. Create a new one with
- * {@link TransformationEntry#create()}.
+ * {@link Transformation.TransformationEntry#create()}.
  */
 public class Transformation {
 	// Transformation constants
@@ -57,7 +57,7 @@ public class Transformation {
 
 	private static Transformation[] transformations = null;
 
-	private final TransformationEntry entry;
+	private final Transformation.TransformationEntry entry;
 	private final ResourceLocation registryName;
 	/**
 	 * The id of this transformation for this game session. Gets set when
@@ -71,15 +71,15 @@ public class Transformation {
 	/**
 	 * Returns the transformation that has the same name. If no transformation has
 	 * that name, {@link Transformation#NONE} will be returned
-	 * 
+	 *
 	 * @param name The name of the resourcelocation (obtained through
 	 *             {@link ResourceLocation#toString()}, something like
 	 *             "huntersdream:werewolf"
 	 * @see #fromNameWithoutError(String)
 	 */
 	public static Transformation fromName(String name) {
-		Transformation transformation = fromNameWithoutError(name);
-		if (transformation == NONE) {
+		Transformation transformation = Transformation.fromNameWithoutError(name);
+		if (transformation == Transformation.NONE) {
 			Main.getLogger()
 					.error("The given string \"" + name
 							+ "\" does not have a corresponding transformation. Please report this\nStacktrace: "
@@ -91,40 +91,40 @@ public class Transformation {
 	/** Returns the number of registered transformations */
 	public static int getRegisteredTransformations() {
 		// if not initialized, return 5 (default transformations)
-		return (transformations != null) ? transformations.length : 5;
+		return (Transformation.transformations != null) ? Transformation.transformations.length : 5;
 	}
 
 	/**
 	 * Does exactly the same as {@link #fromName(String)} but without logging an
 	 * error
-	 * 
+	 *
 	 * @see #fromName(String)
 	 */
 	public static Transformation fromNameWithoutError(String name) {
-		for (Transformation transformation : transformations)
+		for (Transformation transformation : Transformation.transformations)
 			if (transformation.getRegistryName().toString().equals(name))
 				return transformation;
-		return NONE;
+		return Transformation.NONE;
 	}
 
 	/**
 	 * Does exactly the same as {@link #fromName(String)} except that it accepts a
 	 * {@link ResourceLocation}.
-	 * 
+	 *
 	 * @see #fromName(String)
 	 */
 	public static Transformation fromResourceLocation(ResourceLocation resourceLocation) {
-		return fromName(resourceLocation.toString());
+		return Transformation.fromName(resourceLocation.toString());
 	}
 
 	/**
 	 * Tries to get a transformation from its temporary id. For a version that works
 	 * without temporary ids over game restarts, use {@link #fromName(String)}.
-	 * 
+	 *
 	 * @see #fromName(String)
 	 */
 	public static Transformation fromTemporaryID(int temporaryID) throws ArrayIndexOutOfBoundsException {
-		return transformations[temporaryID];
+		return Transformation.transformations[temporaryID];
 	}
 
 	/**
@@ -136,12 +136,12 @@ public class Transformation {
 	public static Transformation cycle(Transformation transformation) {
 		transformation.validateIsTransformation();
 		int id = transformation.getTemporaryID();
-		return fromTemporaryID((getRegisteredTransformations() > id) ? id + 1 : 1);
+		return Transformation.fromTemporaryID((Transformation.getRegisteredTransformations() > id) ? id + 1 : 1);
 	}
 
 	/** Returns an array of all currently registered transformations */
 	public static Transformation[] getAllTransformations() {
-		return transformations.clone();
+		return Transformation.transformations.clone();
 	}
 
 	/**
@@ -151,18 +151,18 @@ public class Transformation {
 	public static void preInit() {
 		TransformationRegistryEvent event = new TransformationRegistryEvent();
 		MinecraftForge.EVENT_BUS.post(event);
-		transformations = event.getTransformations();
-		for (int i = 0; i < transformations.length; i++) {
-			transformations[i].temporaryID = i;
+        Transformation.transformations = event.getTransformations();
+		for (int i = 0; i < Transformation.transformations.length; i++) {
+            Transformation.transformations[i].temporaryID = i;
 		}
 	}
 
 	/**
 	 * A protected constructor for everyone who needs to extend this class.
-	 * 
-	 * @see TransformationEntry#create()
+	 *
+	 * @see Transformation.TransformationEntry#create()
 	 */
-	protected Transformation(TransformationEntry entry) {
+	protected Transformation(Transformation.TransformationEntry entry) {
 		this.entry = entry;
 		this.registryName = entry.registryName;
 		this.registryNameString = this.registryName.toString();
@@ -176,7 +176,7 @@ public class Transformation {
 	 */
 	public Transformation cycle() {
 		int newID = this.temporaryID + 1;
-		return fromTemporaryID((getRegisteredTransformations() > newID) ? newID : 1);
+		return Transformation.fromTemporaryID((Transformation.getRegisteredTransformations() > newID) ? newID : 1);
 	}
 
 	/** Returns true if this transformation has been registered */
@@ -204,7 +204,7 @@ public class Transformation {
 	 * it's not {@link Transformation#NONE})
 	 */
 	public boolean isTransformation() {
-		return this != NONE;
+		return this != Transformation.NONE;
 	}
 
 	/** Throws an exception if {@link #isTransformation()} returns false */
@@ -321,12 +321,17 @@ public class Transformation {
 	 * <br>
 	 * The transformation version always returns the temporary id
 	 * ({@link #getTemporaryID()})
-	 * 
+	 *
 	 * @see #getTemporaryID()
 	 */
 	@Override
 	public int hashCode() {
 		return this.getTemporaryID();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj == this;
 	}
 
 	/** Used to register new transformations. All set methods are optional. */
@@ -349,24 +354,24 @@ public class Transformation {
 		/**
 		 * Returns a new instance of type TransformationEntry from the given
 		 * ResourceLocation.
-		 * 
+		 *
 		 * @param registryName A ResourceLocation that should be used as the registry
 		 *                     name for the Transformation that is going to be created.
 		 */
-		public static TransformationEntry of(ResourceLocation registryName) {
-			return new TransformationEntry(registryName);
+		public static Transformation.TransformationEntry of(ResourceLocation registryName) {
+			return new Transformation.TransformationEntry(registryName);
 		}
 
 		/**
 		 * Returns a new instance of type TransformationEntry from the given
 		 * ResourceLocation. Exists for Hunter's Dream only!
 		 */
-		static TransformationEntry of(String name) {
-			return new TransformationEntry(GeneralHelper.newResLoc(name));
+		static Transformation.TransformationEntry of(String name) {
+			return new Transformation.TransformationEntry(GeneralHelper.newResLoc(name));
 		}
 
 		/** Sets this transformation to be supernatural */
-		public TransformationEntry setSupernatural(boolean supernatural) {
+		public Transformation.TransformationEntry setSupernatural(boolean supernatural) {
 			this.supernatural = supernatural;
 			return this;
 		}
@@ -375,7 +380,7 @@ public class Transformation {
 		 * Sets a {@link ToFloatObjFloatFunction} to calculate the damage an entity,
 		 * that has this transformation, deals
 		 */
-		public TransformationEntry setCalculateDamage(ToFloatObjFloatFunction<EntityLivingBase> calculateDamage) {
+		public Transformation.TransformationEntry setCalculateDamage(ToFloatObjFloatFunction<EntityLivingBase> calculateDamage) {
 			this.calculateDamage = calculateDamage;
 			return this;
 		}
@@ -384,7 +389,7 @@ public class Transformation {
 		 * Sets a {@link ToFloatObjFloatFunction} to calculate the damage an entity,
 		 * that has this transformation, gets
 		 */
-		public TransformationEntry setCalculateReducedDamage(
+		public Transformation.TransformationEntry setCalculateReducedDamage(
 				ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage) {
 			this.calculateReducedDamage = calculateReducedDamage;
 			return this;
@@ -393,12 +398,12 @@ public class Transformation {
 		/**
 		 * Sets the {@link ResourceLocation}s of the textures for this transformation.
 		 */
-		public TransformationEntry setTextures(ResourceLocation... textures) {
+		public Transformation.TransformationEntry setTextures(ResourceLocation... textures) {
 			this.textures = textures;
 			return this;
 		}
 
-		private TransformationEntry setTexturesHD(String... textures) {
+		private Transformation.TransformationEntry setTexturesHD(String... textures) {
 			ResourceLocation[] resourceLocations = new ResourceLocation[textures.length];
 			for (int i = 0; i < textures.length; i++) {
 				resourceLocations[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + textures[i] + ".png");
@@ -410,11 +415,11 @@ public class Transformation {
 		/**
 		 * Sets the given {@link Consumer} to the function that is called when an entity
 		 * is infected with this tranformation
-		 * 
+		 *
 		 * @param infect Gets called when an entity is infected with this tranformation.
 		 *               Is allowed to be null.
 		 */
-		public TransformationEntry setInfect(@Nullable Consumer<EntityLivingBase> infect) {
+		public Transformation.TransformationEntry setInfect(@Nullable Consumer<EntityLivingBase> infect) {
 			this.infect = infect;
 			return this;
 		}
@@ -423,7 +428,7 @@ public class Transformation {
 		 * Sets the getTextureIndex method to the given {@link ToIntFunction} that will
 		 * be called to determine the texture index of an entity.
 		 */
-		public TransformationEntry setGetTextureIndex(ToIntFunction<EntityLivingBase> getTextureIndex) {
+		public Transformation.TransformationEntry setGetTextureIndex(ToIntFunction<EntityLivingBase> getTextureIndex) {
 			this.getTextureIndex = getTextureIndex;
 			return this;
 		}

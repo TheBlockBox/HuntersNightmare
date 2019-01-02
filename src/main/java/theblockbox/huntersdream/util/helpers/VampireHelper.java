@@ -25,37 +25,37 @@ public class VampireHelper {
 	public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
 
 	public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
-		validateIsVampire(vampire);
+        VampireHelper.validateIsVampire(vampire);
 
 		if (drinkFrom.isEntityUndead()) {
 			vampire.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 60, 2));
 		}
 		if (vampire instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP) vampire;
-			IVampirePlayer vamp = getIVampire(player);
+			IVampirePlayer vamp = VampireHelper.getIVampire(player);
 			if (vamp.getBlood() < 20) {
 				vamp.incrementBlood();
 			}
 			PacketHandler.sendBloodMessage(player);
 		}
-		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1F);
+		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1.0F);
 	}
 
 	public static IVampirePlayer getIVampire(@Nonnull EntityPlayer player) {
 		Validate.notNull(player);
-		return player.getCapability(CAPABILITY_VAMPIRE, null);
+		return player.getCapability(VampireHelper.CAPABILITY_VAMPIRE, null);
 	}
 
 	public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {
-		validateIsVampire(vampire);
+        VampireHelper.validateIsVampire(vampire);
 		return initialDamage;
 	}
 
 	// TODO: Make better values
 	public static float calculateDamage(EntityLivingBase vampire, float initialDamage) {
-		validateIsVampire(vampire);
+        VampireHelper.validateIsVampire(vampire);
 		if (vampire.getHeldItemMainhand().isEmpty()) {
-			return 10F * initialDamage;
+			return 10.0F * initialDamage;
 		} else {
 			return initialDamage;
 		}
@@ -70,7 +70,7 @@ public class VampireHelper {
 	}
 
 	public static boolean shouldVampireBurn(EntityLivingBase vampire) {
-		validateIsVampire(vampire);
+        VampireHelper.validateIsVampire(vampire);
 		World world = vampire.world;
 		if (world.isRemote)
 			throw new WrongSideException("Can only test if vampire should burn on server side", world);

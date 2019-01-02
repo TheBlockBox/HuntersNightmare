@@ -15,16 +15,16 @@ public class OreDictionaryInit {
 		OreDictionary.registerOre("oreSilver", Item.getByNameOrId("huntersdream:ingot_silver"));
 		OreDictionary.registerOre("ingotSilver", Item.getByNameOrId("huntersdream:ingot_silver"));
 
-		registerOreWithoutDamage("helmetSilver", "huntersdream:helmet_silver");
-		registerOreWithoutDamage("chestplateSilver", "huntersdream:chestplate_silver");
-		registerOreWithoutDamage("leggingsSilver", "huntersdream:leggings_silver");
-		registerOreWithoutDamage("bootsSilver", "huntersdream:boots_silver");
+		OreDictionaryInit.registerOreWithoutDamage("helmetSilver", "huntersdream:helmet_silver");
+		OreDictionaryInit.registerOreWithoutDamage("chestplateSilver", "huntersdream:chestplate_silver");
+		OreDictionaryInit.registerOreWithoutDamage("leggingsSilver", "huntersdream:leggings_silver");
+		OreDictionaryInit.registerOreWithoutDamage("bootsSilver", "huntersdream:boots_silver");
 
-		registerOreWithoutDamage("axeSilver", "huntersdream:axe_silver");
-		registerOreWithoutDamage("pickaxeSilver", "huntersdream:pickaxe_silver");
-		registerOreWithoutDamage("hoeSilver", "huntersdream:hoe_silver");
-		registerOreWithoutDamage("swordSilver", "huntersdream:sword_silver");
-		registerOreWithoutDamage("shovelSilver", "huntersdream:shovel_silver");
+		OreDictionaryInit.registerOreWithoutDamage("axeSilver", "huntersdream:axe_silver");
+		OreDictionaryInit.registerOreWithoutDamage("pickaxeSilver", "huntersdream:pickaxe_silver");
+		OreDictionaryInit.registerOreWithoutDamage("hoeSilver", "huntersdream:hoe_silver");
+		OreDictionaryInit.registerOreWithoutDamage("swordSilver", "huntersdream:sword_silver");
+		OreDictionaryInit.registerOreWithoutDamage("shovelSilver", "huntersdream:shovel_silver");
 	}
 
 	private static void registerOreWithoutDamage(String name, String item) {

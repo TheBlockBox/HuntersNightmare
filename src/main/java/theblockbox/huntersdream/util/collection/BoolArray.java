@@ -17,7 +17,7 @@ public class BoolArray implements Cloneable {
     public static BoolArray of(int initialCapacity) {
         if (initialCapacity < 0)
             throw new NegativeArraySizeException(String.valueOf(initialCapacity));
-        return of(new long[(initialCapacity / 64) + 1]);
+        return BoolArray.of(new long[(initialCapacity / 64) + 1]);
     }
 
     public static BoolArray of(long[] backingLongs) {
@@ -29,11 +29,11 @@ public class BoolArray implements Cloneable {
             throw new NegativeArraySizeException(String.valueOf(initialCapacity));
         long[] longs = new long[(initialCapacity / 64) + 1];
         Arrays.fill(longs, Long.MAX_VALUE);
-        return of(longs);
+        return BoolArray.of(longs);
     }
 
     public static BoolArray of(boolean[] booleans) {
-        BoolArray array = of(booleans.length);
+        BoolArray array = BoolArray.of(booleans.length);
         for (int i = 0; i < booleans.length; i++)
             if (booleans[i])
                 array.set(i);
@@ -54,15 +54,15 @@ public class BoolArray implements Cloneable {
     }
 
     public static BoolArray and(BoolArray firstArray, BoolArray secondArray) {
-        return reduce(firstArray, secondArray, (l1, l2) -> l1 & l2);
+        return BoolArray.reduce(firstArray, secondArray, (l1, l2) -> l1 & l2);
     }
 
     public static BoolArray or(BoolArray firstArray, BoolArray secondArray) {
-        return reduce(firstArray, secondArray, (l1, l2) -> l1 | l2);
+        return BoolArray.reduce(firstArray, secondArray, (l1, l2) -> l1 | l2);
     }
 
     public static BoolArray xor(BoolArray firstArray, BoolArray secondArray) {
-        return reduce(firstArray, secondArray, (l1, l2) -> l1 ^ l2);
+        return BoolArray.reduce(firstArray, secondArray, (l1, l2) -> l1 ^ l2);
     }
 
     public boolean get(int index) throws ArrayIndexOutOfBoundsException {
@@ -84,7 +84,7 @@ public class BoolArray implements Cloneable {
     public boolean set(int index, boolean value) {
         int arrayIndex = index / 64;
         int boolIndex = index % 64;
-        boolean bool = (getAndWidenIfNeeded(arrayIndex) & (1L << boolIndex)) != 0;
+        boolean bool = (this.getAndWidenIfNeeded(arrayIndex) & (1L << boolIndex)) != 0;
         if (bool ^ value)
             this.backingLongs[arrayIndex] |= (1L << boolIndex);
         return bool;

@@ -9,8 +9,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
 	private String skill;
@@ -24,12 +22,12 @@ public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.skill = readString(buf);
+		this.skill = MessageBase.readString(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		writeString(buf, this.skill);
+        MessageBase.writeString(buf, this.skill);
 	}
 
 	@Override
@@ -38,23 +36,22 @@ public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
 	}
 
 	@Override
-	public MessageHandler<SkillUnlockMessage, ? extends IMessage> getMessageHandler() {
-		return new Handler();
+	public MessageBase.MessageHandler<SkillUnlockMessage, ? extends IMessage> getMessageHandler() {
+		return new SkillUnlockMessage.Handler();
 	}
 
-	public static class Handler extends MessageHandler<SkillUnlockMessage, IMessage> {
-		public Handler() {
-		}
+	public static class Handler extends MessageBase.MessageHandler<SkillUnlockMessage, IMessage> {
 
-		@Override
+        @Override
 		public IMessage onMessageReceived(SkillUnlockMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
-				addScheduledTask(ctx, () -> {
+                MessageBase.addScheduledTask(ctx, () -> {
 					EntityPlayerMP player = ctx.getServerHandler().player;
 					Skill skill = Skill.fromName(message.skill);
 					if(skill.unlockSkillForPlayer(player)){
 						player.sendMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
 								new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()));
+						PacketHandler.sendTransformationMessage(player);
 					} else {
 						Main.getLogger().error("The player " + player + " tried to unlock the skill " + message.skill
 								+ " but wasn't allowed to unlock it");

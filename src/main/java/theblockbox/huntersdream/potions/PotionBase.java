@@ -13,9 +13,9 @@ public abstract class PotionBase extends Potion {
 	public PotionBase(boolean isBadEffectIn, int liquidColorIn, int iconIndex, String name) {
 		super(isBadEffectIn, liquidColorIn);
 
-		setRegistryName(GeneralHelper.newResLoc(name));
-		setPotionName("effect." + Reference.MODID + "." + name);
-		setIconIndex(iconIndex % 6, MathHelper.floor(iconIndex / 6.0D));
+        this.setRegistryName(GeneralHelper.newResLoc(name));
+        this.setPotionName("effect." + Reference.MODID + "." + name);
+        this.setIconIndex(iconIndex % 6, MathHelper.floor(iconIndex / 6.0D));
 	}
 
 	@SideOnly(Side.CLIENT)

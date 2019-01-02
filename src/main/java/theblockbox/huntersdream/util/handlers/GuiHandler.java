@@ -32,9 +32,9 @@ public class GuiHandler implements IGuiHandler {
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		switch (id) {
 		case 0:
-			return new GuiSilverFurnace((ContainerSilverFurnace) getServerGuiElement(id, player, world, x, y, z));
+			return new GuiSilverFurnace((ContainerSilverFurnace) this.getServerGuiElement(id, player, world, x, y, z));
 		case 1:
-			return new GuiCampfire((ContainerCampfire) getServerGuiElement(id, player, world, x, y, z));
+			return new GuiCampfire((ContainerCampfire) this.getServerGuiElement(id, player, world, x, y, z));
 		default:
 			return null;
 		}

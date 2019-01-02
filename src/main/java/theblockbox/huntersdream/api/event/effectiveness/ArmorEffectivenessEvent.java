@@ -25,8 +25,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class ArmorEffectivenessEvent extends EffectivenessEvent {
 	private final ItemStack armor;
-	private float thorns = 0F;
-	private float removedDamage = 0F;
+	private float thorns = 0.0F;
+	private float removedDamage = 0.0F;
 	private int armorDamage = 0;
 
 	public ArmorEffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float initialDamage,

@@ -46,24 +46,24 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.transformation = readTransformation(buf);
+		this.transformation = MessageBase.readTransformation(buf);
 		this.player = buf.readInt();
 		this.textureIndex = buf.readInt();
-		this.skills = readArray(buf, Skill::fromName, Skill[]::new);
-		this.pages = readArray(buf, HuntersJournalPage::fromName, HuntersJournalPage[]::new);
-		this.transformationData = readTag(buf);
-		this.activeSkill = readString(buf);
+		this.skills = MessageBase.readArray(buf, Skill::fromName, Skill[]::new);
+		this.pages = MessageBase.readArray(buf, HuntersJournalPage::fromName, HuntersJournalPage[]::new);
+		this.transformationData = MessageBase.readTag(buf);
+		this.activeSkill = MessageBase.readString(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		writeTransformation(buf, this.transformation);
+		MessageBase.writeTransformation(buf, this.transformation);
 		buf.writeInt(this.player);
 		buf.writeInt(this.textureIndex);
-		writeArray(buf, this.skills, Skill::toString);
-		writeArray(buf, this.pages, HuntersJournalPage::toString);
-		writeTag(buf, this.transformationData);
-		writeString(buf, this.activeSkill);
+		MessageBase.writeArray(buf, this.skills, Skill::toString);
+		MessageBase.writeArray(buf, this.pages, HuntersJournalPage::toString);
+		MessageBase.writeTag(buf, this.transformationData);
+		MessageBase.writeString(buf, this.activeSkill);
 	}
 
 	@Override
@@ -72,19 +72,17 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
 	}
 
 	@Override
-	public MessageHandler<TransformationMessage, ? extends IMessage> getMessageHandler() {
-		return new Handler();
+	public MessageBase.MessageHandler<TransformationMessage, ? extends IMessage> getMessageHandler() {
+		return new TransformationMessage.Handler();
 	}
 
-	public static class Handler extends MessageHandler<TransformationMessage, IMessage> {
-		public Handler() {
-		}
+	public static class Handler extends MessageBase.MessageHandler<TransformationMessage, IMessage> {
 
-		@Override
-		public IMessage onMessageReceived(final TransformationMessage message, MessageContext ctx) {
+        @Override
+		public IMessage onMessageReceived(TransformationMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				addScheduledTask(ctx, () -> {
-					EntityPlayer player = getPlayerFromID(message.player);
+				MessageBase.addScheduledTask(ctx, () -> {
+					EntityPlayer player = MessageBase.getPlayerFromID(message.player);
 					ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 					cap.setTransformation(message.transformation);
 					cap.setTextureIndex(message.textureIndex);

@@ -38,41 +38,43 @@ public class Skill {
     private final TransformationSet forTransformations;
     private final ResourceLocation icon;
     private final int level;
-    private final ArrayList<Skill> childSkills = new ArrayList<>();
+    private final List<Skill> childSkills = new ArrayList<>();
+    private final boolean isAlwaysActive;
     private Skill parent = null;
     private Object iconSprite = null;
+    private int maxLevel = 0;
 
     private static final TransformationSet WEREWOLF_SET = TransformationSet.singletonSet(Transformation.WEREWOLF);
 
     // Hunter's Dream Skills
-    public static final Skill BITE_0 = new Skill(newResLoc("bite"), 40, WEREWOLF_SET);
-    public static final Skill BITE_1 = new Skill(80, BITE_0, 1);
-    public static final Skill BITE_2 = new Skill(120, BITE_0, 2);
+    public static final Skill SPEED_0 = new Skill(newResLoc("speed"), 40, Skill.WEREWOLF_SET, true);
+    public static final Skill SPEED_1 = new Skill(80, Skill.SPEED_0, 1);
+    public static final Skill SPEED_2 = new Skill(120, Skill.SPEED_0, 2);
 
-    public static final Skill SPEED_0 = new Skill(newResLoc("speed"), 40, WEREWOLF_SET);
-    public static final Skill SPEED_1 = new Skill(80, SPEED_0, 1);
-    public static final Skill SPEED_2 = new Skill(120, SPEED_0, 2);
+    public static final Skill JUMP_0 = new Skill(newResLoc("jump"), 40, Skill.WEREWOLF_SET, true);
+    public static final Skill JUMP_1 = new Skill(80, Skill.JUMP_0, 1);
+    public static final Skill JUMP_2 = new Skill(120, Skill.JUMP_0, 2);
 
-    public static final Skill JUMP_0 = new Skill(newResLoc("jump"), 40, WEREWOLF_SET);
-    public static final Skill JUMP_1 = new Skill(80, JUMP_0, 1);
-    public static final Skill JUMP_2 = new Skill(120, JUMP_0, 2);
+    public static final Skill UNARMED_0 = new Skill(newResLoc("unarmed"), 40, Skill.WEREWOLF_SET, true);
+    public static final Skill UNARMED_1 = new Skill(80, Skill.UNARMED_0, 1);
+    public static final Skill UNARMED_2 = new Skill(120, Skill.UNARMED_0, 2);
 
-    public static final Skill UNARMED_0 = new Skill(newResLoc("unarmed"), 40, WEREWOLF_SET);
-    public static final Skill UNARMED_1 = new Skill(80, UNARMED_0, 1);
-    public static final Skill UNARMED_2 = new Skill(120, UNARMED_0, 2);
+    public static final Skill ARMOR_0 = new Skill(newResLoc("natural_armor"), 40, Skill.WEREWOLF_SET, true);
+    public static final Skill ARMOR_1 = new Skill(80, Skill.ARMOR_0, 1);
+    public static final Skill ARMOR_2 = new Skill(120, Skill.ARMOR_0, 2);
 
-    public static final Skill ARMOR_0 = new Skill(newResLoc("natural_armor"), 40, WEREWOLF_SET);
-    public static final Skill ARMOR_1 = new Skill(80, ARMOR_0, 1);
-    public static final Skill ARMOR_2 = new Skill(120, ARMOR_0, 2);
+    public static final Skill BITE_0 = new Skill(newResLoc("bite"), 40, Skill.WEREWOLF_SET, false);
+    public static final Skill BITE_1 = new Skill(80, Skill.BITE_0, 1);
+    public static final Skill BITE_2 = new Skill(120, Skill.BITE_0, 2);
 
-    public static final Skill WILFUL_TRANSFORMATION = new Skill(newResLoc("wilful_transformation"), 200, WEREWOLF_SET);
+    public static final Skill WILFUL_TRANSFORMATION = new Skill(newResLoc("wilful_transformation"), 200, Skill.WEREWOLF_SET, false);
 
     /**
      * Protected constructor that has a level parameter. All other constructors call
      * this one.
      */
     protected Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-                    Collection<Transformation> forTransformations, ResourceLocation icon, int level) {
+                    Collection<Transformation> forTransformations, ResourceLocation icon, int level, boolean isAlwaysActive) {
         this.registryName = registryName;
         Preconditions.checkArgument(neededExperienceLevels >= 0,
                 "The argument neededExperienceLevels should be positive but had the value %s", neededExperienceLevels);
@@ -84,6 +86,7 @@ public class Skill {
         this.icon = icon;
         Preconditions.checkArgument(level >= 0, "The argument level should be positive but had the value %s", level);
         this.level = level;
+        this.isAlwaysActive = isAlwaysActive;
     }
 
     /**
@@ -111,8 +114,8 @@ public class Skill {
      *                                  negative.
      */
     public Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-                 TransformationSet forTransformations, ResourceLocation icon) throws IllegalArgumentException {
-        this(registryName, neededExperienceLevels, forTransformations, icon, 0);
+                 TransformationSet forTransformations, ResourceLocation icon, boolean isAlwaysActive) throws IllegalArgumentException {
+        this(registryName, neededExperienceLevels, forTransformations, icon, 0, isAlwaysActive);
     }
 
     /**
@@ -135,9 +138,9 @@ public class Skill {
      *                                  negative.
      */
     public Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-                 TransformationSet forTransformations) throws IllegalArgumentException {
-        this(registryName, neededExperienceLevels, forTransformations,
-                new ResourceLocation(registryName.getNamespace(), "gui/skills/" + registryName.getPath()));
+                 TransformationSet forTransformations, boolean isAlwaysActive) throws IllegalArgumentException {
+        this(registryName, neededExperienceLevels, forTransformations, new ResourceLocation(registryName.getNamespace(),
+                "gui/skills/" + registryName.getPath()), isAlwaysActive);
     }
 
     /**
@@ -163,12 +166,14 @@ public class Skill {
      */
     public Skill(@Nonnegative int neededExperienceLevels, Skill parent, @Nonnegative int level)
             throws IllegalArgumentException {
-        this(new ResourceLocation(parent.toString() + "_" + level), neededExperienceLevels, parent.forTransformations,
-                parent.getIcon(), level);
+        this(new ResourceLocation(parent + "_" + level), neededExperienceLevels, parent.forTransformations,
+                parent.getIcon(), level, parent.isAlwaysActive);
         Preconditions.checkArgument(level >= 1, "The argument level should be at least one but was %s", level);
         int parentLevel = parent.getLevel();
         Preconditions.checkArgument(parentLevel == 0, "The parent's level should be 0 but was %s", parentLevel);
         this.parent = parent;
+        if(this.parent.maxLevel < level)
+            this.parent.maxLevel = level;
         GeneralHelper.safeSet(parent.childSkills, level - 1, this);
     }
 
@@ -176,7 +181,7 @@ public class Skill {
      * Returns an unmodifiable collection of all skills.
      */
     public static Collection<Skill> getAllSkills() {
-        return skills == null ? Collections.emptySet() : Collections.unmodifiableCollection(skills.values());
+        return Skill.skills == null ? Collections.emptySet() : Collections.unmodifiableCollection(Skill.skills.values());
     }
 
     /**
@@ -188,7 +193,7 @@ public class Skill {
      */
     @Nullable
     public static Skill fromName(String name) {
-        return skills == null ? null : skills.get(name);
+        return Skill.skills == null ? null : Skill.skills.get(name);
     }
 
     /**
@@ -200,7 +205,7 @@ public class Skill {
      */
     @Nullable
     public static Skill fromRegistryName(ResourceLocation registryName) {
-        return fromName(registryName.toString());
+        return Skill.fromName(registryName.toString());
     }
 
     /**
@@ -210,7 +215,7 @@ public class Skill {
     public static void preInit() {
         SkillRegistryEvent event = new SkillRegistryEvent();
         MinecraftForge.EVENT_BUS.post(event);
-        skills = event.getSkills();
+        Skill.skills = event.getSkills();
     }
 
     /**
@@ -385,6 +390,26 @@ public class Skill {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Returns true if this Skill should always be active. (Meaning
+     * that you don't have to activate it in the Skill bar).
+     */
+    public boolean isAlwaysActive() {
+        return this.isAlwaysActive;
+    }
+
+    /**
+     * Returns the highest level this Skill can have.
+     * Can be called on parent and child Skills.
+     */
+    public int getMaximumLevel() {
+        if(this.isParentSkill()) {
+            return this.maxLevel;
+        } else {
+            return this.parent.getMaximumLevel();
         }
     }
 

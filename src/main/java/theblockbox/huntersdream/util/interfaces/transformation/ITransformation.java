@@ -25,11 +25,11 @@ public interface ITransformation {
 	 * index won't be chosen properly and method may even throw a
 	 * {@link WrongTransformationException}.
 	 */
-	default public void setTextureIndex(EntityLivingBase entity) {
+	public default void setTextureIndex(EntityLivingBase entity) {
 		this.setTextureIndex(this.getTransformation().getTextureIndexForEntity(entity));
 	}
 
-	default public boolean textureIndexInBounds() {
+	public default boolean textureIndexInBounds() {
 		int textureLength = this.getTransformation().getTextures().length;
 		// if the texture length is 0, the texture index won't be used and we can return
 		// true because nothing needs to be changed
@@ -61,7 +61,7 @@ public interface ITransformation {
 	 * @return Returns true if the transformation is changeable without accounting
 	 *         for infection
 	 */
-	default public boolean isTransformationChangeable() {
+	public default boolean isTransformationChangeable() {
 		return this.getTransformation().isTransformation() && (this.getTransformation() == Transformation.HUMAN
 				|| this.getTransformation() == Transformation.WEREWOLF);
 	}

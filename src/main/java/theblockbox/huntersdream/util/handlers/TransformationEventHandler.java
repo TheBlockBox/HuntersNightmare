@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.handlers;
 
 import java.util.Optional;
 
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.entity.Entity;
@@ -23,11 +24,9 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
+import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.effectiveness.ArmorEffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.EffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.EntityEffectivenessEvent;
@@ -51,8 +50,8 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 public class TransformationEventHandler {
 
 	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent event) {
-		if (event.phase == Phase.END) {
+	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
 			EntityPlayer player = event.player;
 			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 			boolean isTransformed = WerewolfHelper.isTransformed(player);
@@ -114,7 +113,7 @@ public class TransformationEventHandler {
 				if ((player.ticksExisted % 35 == 0) && isWerewolf && !isTransformed && isWerewolfTime
 						&& (WerewolfHelper.getTransformationStage((EntityPlayerMP) player) != 0)) {
 					if (player.getHealth() > 1) {
-						player.attackEntityFrom(WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE, 1F);
+						player.attackEntityFrom(WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE, 1.0F);
 						// TODO: Add sound here
 						// player.world.playSound(null, player.posX, player.posY, player.posZ,
 						// SoundInit.SOUND, SoundCategory.PLAYERS, 100, 1);
@@ -149,7 +148,7 @@ public class TransformationEventHandler {
 						event.setAmount(event.getAmount() + 2.5F);
 
 					if (transformationHurt.isTransformation()
-							&& addEffectiveAgainst(event, attacker, hurt, transformationHurt))
+							&& TransformationEventHandler.addEffectiveAgainst(event, attacker, hurt, transformationHurt))
 						return;
 				}
 			}
@@ -264,12 +263,12 @@ public class TransformationEventHandler {
 					if (ChanceHelper.chanceOf(creature, 1.5F)
 							&& (tc.get().getTransformation() == Transformation.HUMAN)) {
 						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
-								TransformationEventReason.SPAWN);
+								TransformationEvent.TransformationEventReason.SPAWN);
 					}
 				} else if (creature instanceof EntityVillager) {
 					if (ChanceHelper.chanceOf(creature, 5) && (tc.get().getTransformation() == Transformation.HUMAN)) {
 						TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
-								TransformationEventReason.SPAWN);
+								TransformationEvent.TransformationEventReason.SPAWN);
 					}
 				} else if (creature instanceof EntityWerewolf) {
 					ITransformation transformation = TransformationHelper.getITransformation(creature).get();
@@ -366,11 +365,7 @@ public class TransformationEventHandler {
 	public static void onItemEffectiveness(ItemEffectivenessEvent event) {
 		if ((event.getHurtTransformation() == Transformation.WEREWOLF)
 				&& GeneralHelper.itemStackHasOreDicts(event.getItemStack(), OreDictionaryInit.SILVER_NAMES)) {
-			event.setDamage(event.getDamage() * (WerewolfHelper.isTransformed(event.getEntityLiving()) ? 4F : 2F));
+			event.setDamage(event.getDamage() * (WerewolfHelper.isTransformed(event.getEntityLiving()) ? 4.0F : 2.0F));
 		}
 	}
-
-//	@SubscribeEvent
-//	public static void onEntityEffectiveness(EntityEffectivenessEvent event) {
-//	}
 }

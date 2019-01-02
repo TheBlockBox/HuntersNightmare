@@ -22,7 +22,7 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 public class ItemHuntersJournal extends Item {
 
 	public ItemHuntersJournal() {
-		setMaxStackSize(1);
+        this.setMaxStackSize(1);
 	}
 
 	@Override

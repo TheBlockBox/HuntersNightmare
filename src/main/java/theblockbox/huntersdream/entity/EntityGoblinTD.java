@@ -57,14 +57,14 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		super(worldIn);
 		transformation.validateIsTransformation();
 		this.setSize(0.5F, 1.4F);
-		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
-		this.dataManager.set(TEXTURE_INDEX, textureIndex);
+		this.dataManager.set(EntityGoblinTD.TRANSFORMATION_NAME, transformation.toString());
+		this.dataManager.set(EntityGoblinTD.TEXTURE_INDEX, textureIndex);
 		// set the texture index if the given one is invalid
 		if (!this.textureIndexInBounds())
 			this.setTextureIndex(this);
 
 		NBTTagCompound transformationData = new NBTTagCompound();
-		transformationData.setString("transformation", this.dataManager.get(TRANSFORMATION_NAME));
+		transformationData.setString("transformation", this.dataManager.get(EntityGoblinTD.TRANSFORMATION_NAME));
 		this.setTransformationData(transformationData);
 	}
 
@@ -76,13 +76,13 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		this.dataManager.register(TEXTURE_INDEX, 0);
-		this.dataManager.register(TRANSFORMATION_NAME, Transformation.HUMAN.toString());
-		this.dataManager.register(GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(this.rand, TEXTURES));
+		this.dataManager.register(EntityGoblinTD.TEXTURE_INDEX, 0);
+		this.dataManager.register(EntityGoblinTD.TRANSFORMATION_NAME, Transformation.HUMAN.toString());
+		this.dataManager.register(EntityGoblinTD.GOBLIN_TEXTURE_INDEX, ChanceHelper.randomByte(this.rand, EntityGoblinTD.TEXTURES));
 
 		NBTTagCompound transformationData = new NBTTagCompound();
 		transformationData.setString("transformation", this.getTransformation().toString());
-		this.dataManager.register(TRANSFORMATION_DATA, transformationData);
+		this.dataManager.register(EntityGoblinTD.TRANSFORMATION_DATA, transformationData);
 
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 	}
@@ -113,11 +113,6 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(DamageSource sound) {
-		return super.getHurtSound(sound);
-	}
-
-	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20);
@@ -131,11 +126,11 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 	}
 
 	public byte getTexture() {
-		return this.dataManager.get(GOBLIN_TEXTURE_INDEX);
+		return this.dataManager.get(EntityGoblinTD.GOBLIN_TEXTURE_INDEX);
 	}
 
 	public void setTexture(byte texture) {
-		this.dataManager.set(GOBLIN_TEXTURE_INDEX, texture);
+		this.dataManager.set(EntityGoblinTD.GOBLIN_TEXTURE_INDEX, texture);
 	}
 
 	@Override
@@ -145,7 +140,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public int getTextureIndex() {
-		int textureIndex = this.dataManager.get(TEXTURE_INDEX);
+		int textureIndex = this.dataManager.get(EntityGoblinTD.TEXTURE_INDEX);
 		int length = this.getTransformation().getTextures().length;
 
 		if (length > 0 && !(textureIndex >= 0 && textureIndex < length)) {
@@ -173,28 +168,28 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
 	@Override
 	public Transformation getTransformation() {
-		return Transformation.fromName(this.dataManager.get(TRANSFORMATION_NAME));
+		return Transformation.fromName(this.dataManager.get(EntityGoblinTD.TRANSFORMATION_NAME));
 	}
 
 	@Override
 	public void setTransformation(Transformation transformation) {
 		transformation.validateIsTransformation();
-		this.dataManager.set(TRANSFORMATION_NAME, transformation.toString());
+		this.dataManager.set(EntityGoblinTD.TRANSFORMATION_NAME, transformation.toString());
 	}
 
 	@Override
 	public void setTextureIndex(int index) {
-		this.dataManager.set(TEXTURE_INDEX, index);
+		this.dataManager.set(EntityGoblinTD.TEXTURE_INDEX, index);
 	}
 
 	@Override
 	public NBTTagCompound getTransformationData() {
-		return this.dataManager.get(TRANSFORMATION_DATA);
+		return this.dataManager.get(EntityGoblinTD.TRANSFORMATION_DATA);
 	}
 
 	@Override
 	public void setTransformationData(NBTTagCompound transformationData) {
-		this.dataManager.set(TRANSFORMATION_DATA, transformationData);
+		this.dataManager.set(EntityGoblinTD.TRANSFORMATION_DATA, transformationData);
 	}
 
 	@Override
@@ -286,7 +281,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		super.writeEntityToNBT(compound);
 		compound.setByte("goblinTextureIndex", this.getTexture());
 		compound.setInteger("transformedTextureIndex", this.getTextureIndex());
-		compound.setString("transformationName", this.dataManager.get(TRANSFORMATION_NAME));
+		compound.setString("transformationName", this.dataManager.get(EntityGoblinTD.TRANSFORMATION_NAME));
 		compound.setTag("transformationData", this.getTransformationData());
 	}
 
@@ -298,7 +293,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 		if (compound.hasKey("transformedTextureIndex"))
 			this.setTextureIndex(compound.getInteger("transformedTextureIndex"));
 		if (compound.hasKey("transformationName"))
-			this.dataManager.set(TRANSFORMATION_NAME, compound.getString("transformationName"));
+			this.dataManager.set(EntityGoblinTD.TRANSFORMATION_NAME, compound.getString("transformationName"));
 		if (compound.hasKey("transformationData"))
 			this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
 	}

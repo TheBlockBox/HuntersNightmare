@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 
@@ -17,8 +18,8 @@ public class ToolAxe extends ItemTool {
 			Blocks.LOG2, Blocks.CHEST, Blocks.PUMPKIN, Blocks.LIT_PUMPKIN, Blocks.MELON_BLOCK, Blocks.LADDER,
 			Blocks.WOODEN_BUTTON, Blocks.WOODEN_PRESSURE_PLATE);
 
-	public ToolAxe(ToolMaterial material) {
-		super(material, EFFECTIVE_ON);
+	public ToolAxe(Item.ToolMaterial material) {
+		super(material, ToolAxe.EFFECTIVE_ON);
 		this.setHarvestLevel("axe", material.getHarvestLevel());
 	}
 

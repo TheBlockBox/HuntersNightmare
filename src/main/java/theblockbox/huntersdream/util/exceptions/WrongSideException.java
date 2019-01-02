@@ -6,7 +6,7 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class WrongSideException extends RuntimeException {
 	public WrongSideException(String message, Side side) {
-		super("Wrong side: " + side.toString() + "\n" + message);
+		super("Wrong side: " + side + "\n" + message);
 	}
 
 	public WrongSideException(String message, World world) {

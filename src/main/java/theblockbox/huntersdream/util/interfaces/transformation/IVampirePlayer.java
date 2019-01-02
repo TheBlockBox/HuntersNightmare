@@ -5,7 +5,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
@@ -13,12 +12,12 @@ import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 /** For player vampires */
 @CapabilityInterface
 public interface IVampirePlayer {
-	default public Transformation getTransformation() {
+	public default Transformation getTransformation() {
 		return Transformation.VAMPIRE;
 	}
 
 	/** Returns a vampires current blood. One blood is half a blood drop */
-	default public int getBlood() {
+	public default int getBlood() {
 		return MathHelper.ceil(this.getBloodDouble());
 	}
 
@@ -26,11 +25,11 @@ public interface IVampirePlayer {
 
 	public void setBlood(double blood);
 
-	default public void incrementBlood() {
+	public default void incrementBlood() {
 		this.setBlood(this.getBloodDouble() + 1.0D);
 	}
 
-	default public void decrementBlood() {
+	public default void decrementBlood() {
 		this.setBlood(this.getBloodDouble() - 1.0D);
 	}
 
@@ -63,13 +62,13 @@ public interface IVampirePlayer {
 		}
 	}
 
-	public static class VampireStorage implements IStorage<IVampirePlayer> {
+	public static class VampireStorage implements Capability.IStorage<IVampirePlayer> {
 		public static final String BLOOD = "blood";
 
 		@Override
 		public NBTBase writeNBT(Capability<IVampirePlayer> capability, IVampirePlayer instance, EnumFacing side) {
 			NBTTagCompound compound = new NBTTagCompound();
-			compound.setDouble(BLOOD, instance.getBlood());
+			compound.setDouble(IVampirePlayer.VampireStorage.BLOOD, instance.getBlood());
 			return compound;
 		}
 
@@ -78,7 +77,7 @@ public interface IVampirePlayer {
 				NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound compound = (NBTTagCompound) nbt;
-				instance.setBlood(compound.getDouble(BLOOD));
+				instance.setBlood(compound.getDouble(IVampirePlayer.VampireStorage.BLOOD));
 			}
 		}
 	}

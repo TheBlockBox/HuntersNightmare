@@ -32,7 +32,7 @@ public class CommandMoonphase extends CommandBase {
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
 			BlockPos targetPos) {
-		ArrayList<String> toReturn = new ArrayList<>();
+		List<String> toReturn = new ArrayList<>();
 		if (args.length == 1) {
 			toReturn.add("get");
 			toReturn.add("add");
@@ -49,7 +49,7 @@ public class CommandMoonphase extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
 		if (args.length >= 1) {
-			if (args[0].equals("get")) {
+			if ("get".equals(args[0])) {
 				try {
 					// when there's a world parameter
 					if (args.length >= 2) {
@@ -62,7 +62,7 @@ public class CommandMoonphase extends CommandBase {
 				} catch (Exception e) {
 					CommandHelper.invalidCommand(sender, e);
 				}
-			} else if (args[0].equals("add")) {
+			} else if ("add".equals(args[0])) {
 				try {
 					int moonphasesToSkip = 1;
 					World world = sender.getEntityWorld();
@@ -81,7 +81,7 @@ public class CommandMoonphase extends CommandBase {
 				}
 			}
 		} else {
-			CommandHelper.invalidCommand(sender, AIOOBE);
+			CommandHelper.invalidCommand(sender, CommandMoonphase.AIOOBE);
 		}
 	}
 }

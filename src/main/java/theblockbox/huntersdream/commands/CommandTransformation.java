@@ -11,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.event.TransformationEvent.TransformationEventReason;
+import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -39,9 +39,9 @@ public class CommandTransformation extends CommandBase {
 		if (args.length == 1) {
 			List<String> toReturn = Stream.of(Transformation.getAllTransformations()).map(Transformation::toString).collect(Collectors.toList());
 			toReturn.add("get");
-			return getListOfStringsMatchingLastWord(args, toReturn);
+			return CommandBase.getListOfStringsMatchingLastWord(args, toReturn);
 		} else {
-			return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
+			return CommandBase.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 		}
 	}
 
@@ -54,14 +54,14 @@ public class CommandTransformation extends CommandBase {
 			} else {
 				player = (EntityPlayerMP) sender;
 			}
-			if (args[0].equals("get")) {
+			if ("get".equals(args[0])) {
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationGet",
 						player.getName(), TransformationHelper.getTransformation(player).toString()));
 			} else {
 				String transformation = args[0];
 				Transformation t = Transformation
 						.fromNameWithoutError(GeneralHelper.newResLoc(transformation).toString());
-				TransformationHelper.changeTransformation(player, t, TransformationEventReason.COMMAND);
+				TransformationHelper.changeTransformation(player, t, TransformationEvent.TransformationEventReason.COMMAND);
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.transformation.transformationSet",
 						player.getName(), t.toString()));
 			}

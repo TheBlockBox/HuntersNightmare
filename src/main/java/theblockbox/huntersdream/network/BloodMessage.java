@@ -37,18 +37,16 @@ public class BloodMessage extends MessageBase<BloodMessage> {
 	}
 
 	@Override
-	public MessageHandler<BloodMessage, ? extends IMessage> getMessageHandler() {
-		return new Handler();
+	public MessageBase.MessageHandler<BloodMessage, ? extends IMessage> getMessageHandler() {
+		return new BloodMessage.Handler();
 	}
 
-	public static class Handler extends MessageHandler<BloodMessage, IMessage> {
-		public Handler() {
-		}
+	public static class Handler extends MessageBase.MessageHandler<BloodMessage, IMessage> {
 
-		@Override
+        @Override
 		public IMessage onMessageReceived(BloodMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				addScheduledTask(ctx, () -> VampireHelper.getIVampire(getPlayerFromID(message.player)).setBlood(message.blood));
+				MessageBase.addScheduledTask(ctx, () -> VampireHelper.getIVampire(MessageBase.getPlayerFromID(message.player)).setBlood(message.blood));
 			}
 			return null;
 		}

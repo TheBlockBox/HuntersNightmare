@@ -31,9 +31,9 @@ public class BlockSilverFurnace extends BlockContainer {
 		super(Material.ROCK);
 		this.setHardness(3.5F);
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
-		setHarvestLevel("pickaxe", 2);
+        this.setHarvestLevel("pickaxe", 2);
 		this.setDefaultState(
-				this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(BURNING, false));
+				this.getDefaultState().withProperty(BlockSilverFurnace.FACING, EnumFacing.NORTH).withProperty(BlockSilverFurnace.BURNING, false));
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class BlockSilverFurnace extends BlockContainer {
 
 	@Override
 	public int getLightValue(IBlockState state) {
-		return state.getValue(BURNING) ? 13 : 0;
+		return state.getValue(BlockSilverFurnace.BURNING) ? 13 : 0;
 	}
 
 	@Override
@@ -54,23 +54,23 @@ public class BlockSilverFurnace extends BlockContainer {
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
 			float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+		return this.getDefaultState().withProperty(BlockSilverFurnace.FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING, BURNING);
+		return new BlockStateContainer(this, BlockSilverFurnace.FACING, BlockSilverFurnace.BURNING);
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 0b011))
-				.withProperty(BURNING, (meta & 0b100) != 0);
+		return this.getDefaultState().withProperty(BlockSilverFurnace.FACING, EnumFacing.byHorizontalIndex(meta & 0b011))
+				.withProperty(BlockSilverFurnace.BURNING, (meta & 0b100) != 0);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getHorizontalIndex() | (state.getValue(BURNING) ? 0b100 : 0b000);
+		return state.getValue(BlockSilverFurnace.FACING).getHorizontalIndex() | (state.getValue(BlockSilverFurnace.BURNING) ? 0b100 : 0b000);
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class BlockSilverFurnace extends BlockContainer {
 
 	@Override
 	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random random) {
-		if (stateIn.getValue(BURNING)) {
+		if (stateIn.getValue(BlockSilverFurnace.BURNING)) {
 			Blocks.LIT_FURNACE.randomDisplayTick(stateIn, worldIn, pos, random);
 		}
 	}
