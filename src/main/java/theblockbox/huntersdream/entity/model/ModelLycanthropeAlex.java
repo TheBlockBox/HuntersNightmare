@@ -4,7 +4,9 @@ import net.minecraft.client.model.ModelRenderer;
 
 /**
  * LycanthropeAlex - VampireRedEye Created using Tabula 7.0.0
+ * @deprecated Has been replaced with {@link ModelWerewolfAlex}
  */
+@Deprecated
 public class ModelLycanthropeAlex extends ModelLycanthrope {
 	public ModelRenderer mane;
 	public ModelRenderer furbodyb;

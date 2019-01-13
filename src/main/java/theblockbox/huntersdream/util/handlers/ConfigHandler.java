@@ -41,13 +41,21 @@ public class ConfigHandler {
 		@Config.LangKey(Reference.CFG_LANG + "ores")
 		public ConfigHandler.Server.Ores ores = new ConfigHandler.Server.Ores();
 
-		@Config.LangKey(Reference.CFG_LANG + "generateCastle")
+		@Config.LangKey(Reference.CFG_LANG + "generateVillagerCastle")
 		@Config.RequiresWorldRestart
-		public boolean generateCastle = true;
+		public boolean generateVillagerCastle = true;
 
 		@Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
 		@Config.RequiresWorldRestart
 		public boolean generateHuntersCabin = true;
+
+		@Config.LangKey(Reference.CFG_LANG + "generateHuntersCamp")
+		@Config.RequiresWorldRestart
+		public boolean generateHuntersCamp = true;
+
+		@Config.LangKey(Reference.CFG_LANG + "generateWerewolfCabin")
+		@Config.RequiresWorldRestart
+		public boolean generateWerewolfCabin = true;
 
 		public static class Ores {
 			@Config.LangKey(Reference.CFG_LANG + "veinSize")

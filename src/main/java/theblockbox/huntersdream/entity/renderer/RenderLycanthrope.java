@@ -10,24 +10,18 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeAlex;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeAlexCrouched;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeSteve;
-import theblockbox.huntersdream.entity.model.ModelLycanthropeSteveCrouched;
+import theblockbox.huntersdream.entity.model.*;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 public abstract class RenderLycanthrope<T extends EntityLivingBase> extends RenderLivingBase<T> {
-	protected ModelLycanthropeAlex modelAlex = new ModelLycanthropeAlex();
-	protected ModelLycanthropeAlexCrouched modelAlexCrouched = new ModelLycanthropeAlexCrouched();
-	protected ModelLycanthropeSteve modelSteve;
-	protected ModelLycanthropeSteveCrouched modelSteveCrouched = new ModelLycanthropeSteveCrouched();
+	protected ModelWerewolfAlex modelAlex = new ModelWerewolfAlex();
+	protected ModelWerewolfSteve modelSteve;
 
 	public RenderLycanthrope(RenderManager manager) {
-		super(manager, new ModelLycanthropeSteve(), 0.5F);
-		// assign this so the model that the steve model is always the same
-		this.modelSteve = (ModelLycanthropeSteve) this.mainModel;
+		super(manager, new ModelWerewolfSteve(), 0.5F);
+		// assign this so that the steve model is always the same
+		this.modelSteve = (ModelWerewolfSteve) this.mainModel;
 	}
 
 	@Override
@@ -40,9 +34,7 @@ public abstract class RenderLycanthrope<T extends EntityLivingBase> extends Rend
 	@Override
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		// set correct model
-		this.mainModel = WerewolfHelper.shouldUseSneakingModel(entity)
-				? (RenderLycanthrope.isAlex(entity) ? this.modelAlexCrouched : this.modelSteveCrouched)
-				: (RenderLycanthrope.isAlex(entity) ? this.modelAlex : this.modelSteve);
+		this.mainModel = RenderLycanthrope.isAlex(entity) ? this.modelAlex : this.modelSteve;
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 

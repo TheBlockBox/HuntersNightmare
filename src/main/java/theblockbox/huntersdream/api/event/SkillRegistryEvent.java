@@ -1,32 +1,16 @@
 package theblockbox.huntersdream.api.event;
 
-import static theblockbox.huntersdream.api.Skill.ARMOR_0;
-import static theblockbox.huntersdream.api.Skill.ARMOR_1;
-import static theblockbox.huntersdream.api.Skill.ARMOR_2;
-import static theblockbox.huntersdream.api.Skill.BITE_0;
-import static theblockbox.huntersdream.api.Skill.BITE_1;
-import static theblockbox.huntersdream.api.Skill.BITE_2;
-import static theblockbox.huntersdream.api.Skill.JUMP_0;
-import static theblockbox.huntersdream.api.Skill.JUMP_1;
-import static theblockbox.huntersdream.api.Skill.JUMP_2;
-import static theblockbox.huntersdream.api.Skill.SPEED_0;
-import static theblockbox.huntersdream.api.Skill.SPEED_1;
-import static theblockbox.huntersdream.api.Skill.SPEED_2;
-import static theblockbox.huntersdream.api.Skill.UNARMED_0;
-import static theblockbox.huntersdream.api.Skill.UNARMED_1;
-import static theblockbox.huntersdream.api.Skill.UNARMED_2;
-import static theblockbox.huntersdream.api.Skill.WILFUL_TRANSFORMATION;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
+import theblockbox.huntersdream.api.Skill;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.Validate;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import theblockbox.huntersdream.api.Skill;
+import static theblockbox.huntersdream.init.SkillInit.*;
 
 /**
  * SkillRegistryEvent is fired when the skills are being registered. <br>

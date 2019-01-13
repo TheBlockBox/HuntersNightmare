@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import theblockbox.huntersdream.api.ParentSkill;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.ClientHelper;
@@ -21,7 +22,6 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-// TODO: Make that there isn't a new instance every tick
 public class GuiSkillTab extends GuiScreen {
 	public static final int TEXTURE_WIDTH = 256;
 	public static final int TEXTURE_HEIGHT = 190;
@@ -70,14 +70,15 @@ public class GuiSkillTab extends GuiScreen {
 		double radius = halfRectSize + GuiSkillTab.RECT_CONNECTION_LENGTH;
 		double angle = 0;
 		double step = (Math.PI * 2) / skills.size();
+		int xOffset = this.rectMiddleX - 8;
+		int yOffset = this.rectMiddleY - 8;
 
 		// create buttons
 		int buttonId = 0;
-		for(Skill skill : skills) {
+		for(Skill s : skills) {
+			ParentSkill skill = (ParentSkill) s;
 			double cos = Math.cos(angle);
 			double sin = Math.sin(angle);
-			int xOffset = this.rectMiddleX - 8;
-			int yOffset = this.rectMiddleY - 8;
 
 			// create parent button
 			int x = (int) (xOffset + radius * cos);

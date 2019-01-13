@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.world.gen.village.handler;
+package theblockbox.huntersdream.world.gen.village;
 
 import java.util.Random;
 

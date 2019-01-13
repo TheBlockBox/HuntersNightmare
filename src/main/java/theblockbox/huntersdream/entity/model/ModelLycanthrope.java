@@ -5,7 +5,10 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
-// TODO: Make this extend ModelBiped
+/**
+ * @deprecated Has been replaced with {@link ModelWerewolf}
+ */
+@Deprecated
 public abstract class ModelLycanthrope extends ModelBase {
 	public ModelRenderer body;
 	public ModelRenderer head;

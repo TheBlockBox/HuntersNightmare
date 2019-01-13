@@ -2,13 +2,11 @@ package theblockbox.huntersdream.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.blocks.*;
-import theblockbox.huntersdream.items.ItemBlockWithMaxStackSize;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -39,40 +37,31 @@ public class BlockInit {
     public static final Block TENT = null;
 
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
-        BlockInit.registerBlock(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC).setHardness(5.0F),
-                "block_silver", event);
-        BlockInit.registerBlock(
+        BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)
+                .setHardness(5.0F), "block_silver", event);
+        BlockInit.registerBlockWithItem(
                 new BlockOre(Dimensions.OVERWORLD, ConfigHandler.server.ores.silverMinY,
                         ConfigHandler.server.ores.silverMaxY, ConfigHandler.server.ores.silverChance, Blocks.STONE),
                 "overworld_ore_silver", event);
-        BlockInit.registerBlock(new BlockWolfsbane(), "plant_wolfsbane", event);
-
-        BlockInit.registerBlock(new BlockSilverFurnace(), "furnace_silver", event);
-        BlockInit.registerBlock(new BlockCampfire(), "campfire", CreativeTabInit.HUNTERSDREAM_MISC, 1, event);
-        BlockInit.registerBlockWithoutItem(new BlockTent(), "tile_tent", event);
+        BlockInit.registerBlockWithItem(new BlockWolfsbane(), "plant_wolfsbane", event);
+        BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "furnace_silver", event);
+        BlockInit.registerBlockWithItem(new BlockCampfire(), "campfire", 1, event);
+        BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
     }
-
-    // TODO: Organize methods?
 
     private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {
-        BlockInit.registerBlock(block, name,
-                block.getCreativeTab() == null ? CreativeTabInit.HUNTERSDREAM_MISC : block.getCreativeTab(), event);
+        event.getRegistry().register(block.setTranslationKey(Reference.MODID + "." + name)
+                .setRegistryName(GeneralHelper.newResLoc(name)));
     }
 
-    private static void registerBlock(Block block, String name, CreativeTabs tab, RegistryEvent.Register<Block> event) {
-        BlockInit.registerBlockWithoutItem(block.setCreativeTab(tab), name, event);
+    private static void registerBlockWithItem(Block block, String name, RegistryEvent.Register<Block> event) {
+        BlockInit.registerBlock(block, name, event);
         ItemInit.ITEMS.add(new ItemBlock(block).setRegistryName(GeneralHelper.newResLoc(name)));
     }
 
-    private static void registerBlock(Block block, String name, CreativeTabs tab, int maxStackSize,
-                                      RegistryEvent.Register<Block> event) {
-       BlockInit.registerBlockWithoutItem(block.setCreativeTab(tab), name, event);
-        ItemInit.ITEMS
-                .add(new ItemBlockWithMaxStackSize(block, maxStackSize).setRegistryName(GeneralHelper.newResLoc(name)));
-    }
-
-    private static void registerBlockWithoutItem(Block block, String name, RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(block.setTranslationKey(Reference.MODID + "." + name)
-                .setRegistryName(GeneralHelper.newResLoc(name)));
+    private static void registerBlockWithItem(Block block, String name, int maxStackSize,
+                                              RegistryEvent.Register<Block> event) {
+        BlockInit.registerBlock(block, name, event);
+        ItemInit.ITEMS.add(new ItemBlock(block).setMaxStackSize(maxStackSize).setRegistryName(GeneralHelper.newResLoc(name)));
     }
 }

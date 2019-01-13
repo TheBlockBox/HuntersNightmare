@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import theblockbox.huntersdream.api.ParentSkill;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.CapabilitiesInit;
@@ -51,7 +52,7 @@ public interface ITransformationPlayer extends ITransformation {
 	public void setActiveSkill(@Nullable Skill skill);
 
 	/**
-	 * Returns an unmodifiable set of all the skills the player this capability
+	 * Returns a mutable set of all the skills the player this capability
 	 * belongs to has.
 	 */
 	public Set<Skill> getSkills();
@@ -66,20 +67,14 @@ public interface ITransformationPlayer extends ITransformation {
 	/**
 	 * Adds a skill. Returns true if the skill was added and false if the skill has
 	 * already been added.
-	 * 
-	 * @throws IllegalArgumentException When the skill requires skills that the
-	 *                                  player doesn't have.
 	 */
-	public boolean addSkill(Skill skill) throws IllegalArgumentException;
+	public boolean addSkill(Skill skill);
 
 	/**
 	 * Removes the given skill. Returns true if the skill was removed, false if it
 	 * wasn't because the player didn't have it.
-	 * 
-	 * @throws IllegalArgumentException When other skills require the skill that
-	 *                                  should be removed. (For preventing bugs.)
 	 */
-	public boolean removeSkill(Skill skill) throws IllegalArgumentException;
+	public boolean removeSkill(Skill skill);
 
 	/**
 	 * Returns true if the player this capability belongs to has the given skill.
@@ -91,17 +86,16 @@ public interface ITransformationPlayer extends ITransformation {
 	 * created in the implementation if the set is the same as
 	 * {@link Collections#EMPTY_SET}.)
 	 */
-	default void removeAllSkills() {
+	public default void removeAllSkills() {
 		this.setSkills(Collections.emptySet());
 	}
 
 	/**
 	 * Returns the level of the given skill the player has.
 	 * If the player doesn't have the skill, -1 is returned.
-	 * The passed skill should always be a parent skill.
 	 */
 	// TODO: Other way?
-	public default int getSkillLevel(Skill skill) {
+	public default int getSkillLevel(ParentSkill skill) {
 		Stream.Builder<Skill> builder = Stream.builder();
 		for(Skill s : skill.getChildSkills())
 			builder.add(s);
@@ -161,7 +155,7 @@ public interface ITransformationPlayer extends ITransformation {
 
 		@Override
 		public Set<Skill> getSkills() {
-			return Collections.unmodifiableSet(this.skills);
+			return new HashSet<>(this.skills);
 		}
 
 		@Override
@@ -169,16 +163,13 @@ public interface ITransformationPlayer extends ITransformation {
 			this.skills = new HashSet<>(skills);
 		}
 
-		// TODO: Add something to prevent skills that can't be added from being added.
 		@Override
-		public boolean addSkill(Skill skill) throws IllegalArgumentException {
+		public boolean addSkill(Skill skill)  {
 			return this.skills.add(Objects.requireNonNull(skill, "Cannot add null skill"));
 		}
 
-		// TODO: Add something to prevent skills that can't be removed because other
-		// skills require them from being removed.
 		@Override
-		public boolean removeSkill(Skill skill) throws IllegalArgumentException {
+		public boolean removeSkill(Skill skill) {
 			return this.skills.remove(skill);
 		}
 

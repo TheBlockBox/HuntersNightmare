@@ -1,10 +1,6 @@
 package theblockbox.huntersdream.network;
 
-import java.util.Objects;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,6 +15,8 @@ import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.Set;
 
 public class TransformationMessage extends MessageBase<TransformationMessage> {
 	private Transformation transformation;

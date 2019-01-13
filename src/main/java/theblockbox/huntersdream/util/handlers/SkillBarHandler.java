@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.handlers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +22,7 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*;
@@ -31,12 +33,14 @@ public class SkillBarHandler {
     /**
      * How much pixels the hotbar should be pushed up
      */
-    public static final int HOTBAR_PUSH_HEIGHT = 30;
+    public static final int HOTBAR_PUSH_HEIGHT = 26;
     /**
      * The z that is used to draw the skill bar
      */
     public static final float SKILL_BAR_Z_LEVEL = -90.0F;
+    public static final ResourceLocation CROSS = GeneralHelper.newResLoc("gui/cross");
     private static final Skill[] SKILL_BAR = new Skill[9];
+    static TextureAtlasSprite crossSprite = null;
     private static int currentSkill = 0;
     private static float skillBarShowStage = 0.0F;
     private static boolean isBarGoingUp = false;
@@ -48,7 +52,7 @@ public class SkillBarHandler {
         }
         if (SkillBarHandler.isSkillBarShown()) {
             Minecraft mc = Minecraft.getMinecraft();
-            for (int i = 0; i < 9; ++i) {
+            for (int i = 0; i < SkillBarHandler.SKILL_BAR.length; ++i) {
                 if (mc.gameSettings.keyBindsHotbar[i].isPressed()) {
                     SkillBarHandler.currentSkill = i;
                     break;
@@ -62,10 +66,10 @@ public class SkillBarHandler {
         if (SkillBarHandler.isSkillBarShown()) {
             int dWheel = event.getDwheel();
             int newSkill = SkillBarHandler.currentSkill - MathHelper.clamp(dWheel, -1, 1);
-            if (newSkill > 8) {
+            if (newSkill > SkillBarHandler.SKILL_BAR.length) {
                 newSkill = 0;
             } else if (newSkill < 0) {
-                newSkill = 8;
+                newSkill = SkillBarHandler.SKILL_BAR.length;
             }
 
             if (newSkill != SkillBarHandler.currentSkill) {
@@ -74,9 +78,10 @@ public class SkillBarHandler {
             }
 
             if (event.getButton() == 1) {
-                Skill skill = SkillBarHandler.SKILL_BAR[SkillBarHandler.currentSkill];
+                Skill skill = SkillBarHandler.getCurrentSkill();
                 SkillBarHandler.hideSkillBar();
                 PacketHandler.sendActivateSkillMessage(Minecraft.getMinecraft().world, skill);
+                event.setCanceled(true);
             }
         }
     }
@@ -94,20 +99,24 @@ public class SkillBarHandler {
             // draw only when the type is hotbar to prevent texture issues and drawing although it's already been drawn
             if (event.getType() == HOTBAR) {
                 // draw skill bar
-                int scaledHeight = event.getResolution().getScaledHeight() + SkillBarHandler.HOTBAR_PUSH_HEIGHT - 4;
-                GuiIngame guiIng = mc.ingameGUI;
+                int scaledHeight = event.getResolution().getScaledHeight() + 7;
 
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 mc.getTextureManager().bindTexture(SkillBarHandler.WIDGETS);
                 int halfScaledWidth = event.getResolution().getScaledWidth() / 2;
 
                 // draw skill bar and highlight chosen skill
-                ClientHelper.drawTexturedModalRect(halfScaledWidth - 91, scaledHeight - 22, 0, 0, 182, 22, SkillBarHandler.SKILL_BAR_Z_LEVEL);
-                ClientHelper.drawTexturedModalRect(halfScaledWidth - 92 + SkillBarHandler.currentSkill * 20, scaledHeight - 23, 0, 22, 24, 22, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+                ClientHelper.drawTexturedModalRect(halfScaledWidth - 91, scaledHeight - 3, 0, 0, 182, 22, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+                ClientHelper.drawTexturedModalRect(halfScaledWidth - 92 + SkillBarHandler.currentSkill * 20, scaledHeight - 4, 0, 22, 24, 23, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+
+                // draw cross
+                mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                if(SkillBarHandler.crossSprite != null) {
+                    ClientHelper.drawTexturedModalRect(halfScaledWidth + 92, scaledHeight, SkillBarHandler.crossSprite, 16, 16, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+                }
 
                 // draw the skills
-                mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                int y = scaledHeight - 19;
+                GuiIngame guiIng = mc.ingameGUI;
                 for (int i = 0; i < SkillBarHandler.SKILL_BAR.length; i++) {
                     int x = halfScaledWidth - 88 + 20 * i;
                     Skill skill = SkillBarHandler.SKILL_BAR[i];
@@ -116,7 +125,7 @@ public class SkillBarHandler {
                         // only be null skills left
                         break;
                     } else {
-                        guiIng.drawTexturedModalRect(x, y, skill.getIconAsSprite(), 16, 16);
+                        guiIng.drawTexturedModalRect(x, scaledHeight, skill.getIconAsSprite(), 16, 16);
                     }
                 }
                 mc.getTextureManager().bindTexture(SkillBarHandler.WIDGETS);
@@ -148,9 +157,10 @@ public class SkillBarHandler {
             Minecraft mc = Minecraft.getMinecraft();
             mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             Optional<Skill> activeSkill = TransformationHelper.getITransformationPlayer(mc.player).getActiveSkill();
-            // TODO: Change position and size?
-            // TODO: Make config option for position and size?
-            activeSkill.ifPresent(s -> mc.ingameGUI.drawTexturedModalRect(0, 0, s.getIconAsSprite(), 32, 32));
+            activeSkill.ifPresent(s -> mc.ingameGUI.drawTexturedModalRect(
+                    event.getResolution().getScaledWidth() / 2 - 112,
+                    event.getResolution().getScaledHeight() - 20,
+                    s.getIconAsSprite(), 18, 18));
         }
     }
 
@@ -169,14 +179,12 @@ public class SkillBarHandler {
         if (!SkillBarHandler.isSkillBarShown()) {
             SkillBarHandler.skillBarShowStage = -0.01F;
             SkillBarHandler.isBarGoingUp = true;
-            SkillBarHandler.currentSkill = 0;
-            // TODO: Make normal hotbar possibly not show current item?
             ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(Minecraft.getMinecraft().player);
 
             // add skills
             int index = 0;
             for (Skill skill : tp.getSkills()) {
-                if (!skill.isAlwaysActive() && (tp.getSkillLevel(skill.getParent().orElse(skill)) == skill.getLevel())) {
+                if (!skill.isAlwaysActive() && (tp.getSkillLevel(skill.getGroupParent()) == skill.getLevel())) {
                     SkillBarHandler.SKILL_BAR[index++] = skill;
                 }
             }
@@ -193,5 +201,11 @@ public class SkillBarHandler {
 
     public static boolean isSkillBarShown() {
         return SkillBarHandler.skillBarShowStage < 0.0F;
+    }
+
+    @Nullable
+    public static Skill getCurrentSkill() {
+        return (SkillBarHandler.currentSkill == SkillBarHandler.SKILL_BAR.length) ? null
+                :SkillBarHandler.SKILL_BAR[SkillBarHandler.currentSkill];
     }
 }

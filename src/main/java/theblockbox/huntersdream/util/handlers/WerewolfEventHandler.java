@@ -47,6 +47,7 @@ import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.ItemInit;
+import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
@@ -70,10 +71,20 @@ public class WerewolfEventHandler {
 
 			if (transformationAttacker.isPresent() && WerewolfHelper.isTransformed(attacker)) {
 				if (attacker instanceof EntityPlayer) {
-					// TODO: Set last attack to bite for player if they have unlocked a certain
-					// skill
-//					if (condition)
-//						WerewolfHelper.setLastAttackBite(player, ChanceHelper.chanceOf(player, percentage));
+					// TODO: Cooldown
+					EntityPlayer player = (EntityPlayer) attacker;
+					int biteLevel = TransformationHelper.getITransformationPlayer(player).getSkillLevel(SkillInit.BITE_0);
+					if (biteLevel != -1) {
+						WerewolfHelper.setLastAttackBite(attacker, ChanceHelper.chanceOf(attacker, 25));
+						if(biteLevel > 1) {
+							// TODO: Ingore armor
+							event.setAmount(event.getAmount() + 5.0F);
+							if((biteLevel == 2) && ChanceHelper.chanceOf(attacker, 25)
+									&& attacked.isEntityUndead()) {
+								attacked.addPotionEffect(new PotionEffect(MobEffects.WITHER, 100));
+							}
+						}
+					}
 				}
 
 				// handle werewolf infection

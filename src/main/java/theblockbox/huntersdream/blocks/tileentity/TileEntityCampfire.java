@@ -147,9 +147,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (capability == CapabilitiesInit.CAPABILITY_ITEM_HANDLER)
-			return true;
-		return super.hasCapability(capability, facing);
+		return (capability == CapabilitiesInit.CAPABILITY_ITEM_HANDLER) || super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")

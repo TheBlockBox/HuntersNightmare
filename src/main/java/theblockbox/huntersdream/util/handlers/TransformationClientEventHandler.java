@@ -1,8 +1,5 @@
 package theblockbox.huntersdream.util.handlers;
 
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -17,11 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,6 +25,7 @@ import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonClickable;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.gui.GuiSkillTab;
+import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
@@ -39,6 +33,9 @@ import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles events which are important for transforming
@@ -108,10 +105,11 @@ public class TransformationClientEventHandler {
 			GuiContainer gui = (GuiContainer) event.getGui();
 			int x = gui.getGuiLeft() + 2;
 			int y = gui.getGuiTop() - 18;
-
+			// TODO: Create less instances?
 			buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, new GuiSkillTab(),
 					TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIconAsSprite()));
-			buttonList.add(new GuiButtonClickable(buttonList.size(), x + 19, y, Skill.BITE_0.getIconAsSprite()){
+			// TODO: Different skill icon?
+			buttonList.add(new GuiButtonClickable(buttonList.size(), x + 19, y, SkillInit.BITE_0.getIconAsSprite()){
 				@Override
 				public void onClicked(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 					mc.displayGuiScreen(null);
@@ -130,9 +128,14 @@ public class TransformationClientEventHandler {
 				transformation.setIconSprite(map.registerSprite(transformation.getIcon()));
 			}
 		}
-		for (Skill skill : Skill.getAllSkills()) {
-			skill.setIconSprite(map.registerSprite(skill.getIcon()));
+
+		for(Skill skill : Skill.getAllSkills()) {
+			if(skill.isParentSkill()) {
+				skill.setIconSprite(map.registerSprite(skill.getIcon()));
+			}
 		}
+
+		SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
 	}
 
 	@SubscribeEvent

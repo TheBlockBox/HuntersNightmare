@@ -1,8 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
 // using static import for CLIENT and SERVER enum constants
-import static net.minecraftforge.fml.relauncher.Side.CLIENT;
-import static net.minecraftforge.fml.relauncher.Side.SERVER;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
@@ -23,14 +21,15 @@ import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
+import static net.minecraftforge.fml.relauncher.Side.CLIENT;
+import static net.minecraftforge.fml.relauncher.Side.SERVER;
+
 public class PacketHandler {
 	private static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.MODID);
 	public static int networkID = 0;
 
 	public static void register() {
 		PacketHandler.registerMessage(TransformationMessage.Handler.class, TransformationMessage.class);
-		PacketHandler.INSTANCE.registerMessage(TransformationTextureIndexMessage.Handler.class,
-				TransformationTextureIndexMessage.class, PacketHandler.networkID++, SERVER);
 		PacketHandler.registerMessage(BloodMessage.Handler.class, BloodMessage.class);
 		PacketHandler.INSTANCE.registerMessage(SkillUnlockMessage.Handler.class, SkillUnlockMessage.class,
 				PacketHandler.networkID++, SERVER);
@@ -77,13 +76,6 @@ public class PacketHandler {
 			applyOn.foodStats = VampireFoodStats.INSTANCE;
 		PacketHandler.afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
 				() -> PacketHandler.INSTANCE.sendTo(message, sendTo));
-	}
-
-	public static void sendTextureIndexMessage(World forSideCheck) {
-		TransformationTextureIndexMessage message = new TransformationTextureIndexMessage(
-				TransformationHelper.getITransformationPlayer(Main.proxy.getPlayer()).getTextureIndex());
-		PacketHandler.afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
-				() -> PacketHandler.INSTANCE.sendToServer(message));
 	}
 
 	public static void sendSkillUnlockMessage(World forSideCheck, Skill skillToUnlock) {

@@ -25,7 +25,7 @@ hs_err_pid*
 # IntelliJ files
 .idea
 *.iml
-out
+out/production
 
 # Eclipse files
 .classpath
@@ -35,7 +35,6 @@ out
 /.metadata/
 
 # Forge files
-bin
 build
 *.launch
 run

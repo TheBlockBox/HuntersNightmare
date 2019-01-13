@@ -1,180 +1,48 @@
 package theblockbox.huntersdream.api;
 
-import static theblockbox.huntersdream.util.helpers.GeneralHelper.newResLoc;
-
-import java.util.*;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Lists;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import org.apache.commons.lang3.Validate;
-
-import com.google.common.base.Preconditions;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.event.SkillRegistryEvent;
-import theblockbox.huntersdream.util.collection.TransformationSet;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * Represents a skill (like speed, jump etc.) for one or more transformations
- * that can be unlocked by players.
+ * that can be unlocked by players. This class is only extended by the classes
+ * {@link ChildSkill} and {@link ParentSkill}.
+ * @see ChildSkill
+ * @see ParentSkill
  */
-public class Skill {
+public abstract class Skill {
     private static Map<String, Skill> skills = null;
     private final ResourceLocation registryName;
+    private final int skillLevel;
     private final int neededExperienceLevels;
-    private final TransformationSet forTransformations;
-    private final ResourceLocation icon;
-    private final int level;
-    private final List<Skill> childSkills = new ArrayList<>();
-    private final boolean isAlwaysActive;
-    private Skill parent = null;
-    private Object iconSprite = null;
-    private int maxLevel = 0;
 
-    private static final TransformationSet WEREWOLF_SET = TransformationSet.singletonSet(Transformation.WEREWOLF);
-
-    // Hunter's Dream Skills
-    public static final Skill SPEED_0 = new Skill(newResLoc("speed"), 40, Skill.WEREWOLF_SET, true);
-    public static final Skill SPEED_1 = new Skill(80, Skill.SPEED_0, 1);
-    public static final Skill SPEED_2 = new Skill(120, Skill.SPEED_0, 2);
-
-    public static final Skill JUMP_0 = new Skill(newResLoc("jump"), 40, Skill.WEREWOLF_SET, true);
-    public static final Skill JUMP_1 = new Skill(80, Skill.JUMP_0, 1);
-    public static final Skill JUMP_2 = new Skill(120, Skill.JUMP_0, 2);
-
-    public static final Skill UNARMED_0 = new Skill(newResLoc("unarmed"), 40, Skill.WEREWOLF_SET, true);
-    public static final Skill UNARMED_1 = new Skill(80, Skill.UNARMED_0, 1);
-    public static final Skill UNARMED_2 = new Skill(120, Skill.UNARMED_0, 2);
-
-    public static final Skill ARMOR_0 = new Skill(newResLoc("natural_armor"), 40, Skill.WEREWOLF_SET, true);
-    public static final Skill ARMOR_1 = new Skill(80, Skill.ARMOR_0, 1);
-    public static final Skill ARMOR_2 = new Skill(120, Skill.ARMOR_0, 2);
-
-    public static final Skill BITE_0 = new Skill(newResLoc("bite"), 40, Skill.WEREWOLF_SET, false);
-    public static final Skill BITE_1 = new Skill(80, Skill.BITE_0, 1);
-    public static final Skill BITE_2 = new Skill(120, Skill.BITE_0, 2);
-
-    public static final Skill WILFUL_TRANSFORMATION = new Skill(newResLoc("wilful_transformation"), 200, Skill.WEREWOLF_SET, false);
-
-    /**
-     * Protected constructor that has a level parameter. All other constructors call
-     * this one.
-     */
-    protected Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-                    Collection<Transformation> forTransformations, ResourceLocation icon, int level, boolean isAlwaysActive) {
+    // protected constructor so that only ParentSkill and ChildSkill can extend this class
+    Skill(ResourceLocation registryName, int level, int neededExperienceLevels) {
         this.registryName = registryName;
-        Preconditions.checkArgument(neededExperienceLevels >= 0,
-                "The argument neededExperienceLevels should be positive but had the value %s", neededExperienceLevels);
+        this.skillLevel = level;
         this.neededExperienceLevels = neededExperienceLevels;
-        String registryNameString = registryName.toString();
-        Validate.isTrue(!forTransformations.isEmpty(), "The skill \"" + registryNameString
-                + "\" should have at least one Transformation in the TransformationSet");
-        this.forTransformations = new TransformationSet(forTransformations);
-        this.icon = icon;
-        Preconditions.checkArgument(level >= 0, "The argument level should be positive but had the value %s", level);
-        this.level = level;
-        this.isAlwaysActive = isAlwaysActive;
-    }
-
-    /**
-     * Creates a new Skill instance with the given arguments.
-     *
-     * @param registryName           A unique {@link ResourceLocation} for this
-     *                               skill.
-     * @param neededExperienceLevels The levels that are removed from the player
-     *                               when the skill is unlocked. Is not allowed to
-     *                               be negative.
-     * @param forTransformations     A {@link TransformationSet} that contains all
-     *                               Transformations that should be able to unlock
-     *                               this skill. Mustn't be null or empty.
-     * @param icon                   The icon that should be shown in the skill tab
-     *                               for this Skill. You don't have to add textures/
-     *                               and .png as they're automatically being added
-     *                               (so if the resource location is
-     *                               {@code huntersdream:gui/skills/jump} it'll
-     *                               automatically be converted to
-     *                               {@code huntersdream:textures/gui/skills/jump.png}.
-     * @throws IllegalArgumentException If the forTransformations argument is null
-     *                                  or empty, a Skill with the same registry
-     *                                  name already exists or the
-     *                                  neededExperienceLevels parameter is
-     *                                  negative.
-     */
-    public Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-                 TransformationSet forTransformations, ResourceLocation icon, boolean isAlwaysActive) throws IllegalArgumentException {
-        this(registryName, neededExperienceLevels, forTransformations, icon, 0, isAlwaysActive);
-    }
-
-    /**
-     * Creates a new Skill instance with the given arguments, the icon resource
-     * location will be generated automatically in the format
-     * {@code modid:textures/gui/skills/skill_name.png}
-     *
-     * @param registryName           A unique {@link ResourceLocation} for this
-     *                               skill.
-     * @param neededExperienceLevels The levels that are removed from the player
-     *                               when the skill is unlocked. Is not allowed to
-     *                               be negative.
-     * @param forTransformations     A {@link TransformationSet} that contains all
-     *                               Transformations that should be able to unlock
-     *                               this skill. Mustn't be null or empty.
-     * @throws IllegalArgumentException If the forTransformations argument is null
-     *                                  or empty, a Skill with the same registry
-     *                                  name already exists or the
-     *                                  neededExperienceLevels parameter is
-     *                                  negative.
-     */
-    public Skill(ResourceLocation registryName, @Nonnegative int neededExperienceLevels,
-                 TransformationSet forTransformations, boolean isAlwaysActive) throws IllegalArgumentException {
-        this(registryName, neededExperienceLevels, forTransformations, new ResourceLocation(registryName.getNamespace(),
-                "gui/skills/" + registryName.getPath()), isAlwaysActive);
-    }
-
-    /**
-     * Creates a new Skill from a parent Skill.
-     *
-     * @param neededExperienceLevels The levels that are removed from the player
-     *                               when the skill is unlocked. Is not allowed to
-     *                               be negative.
-     * @param parent                 The parent for this skill from which the
-     *                               registry name (an underscore and the level are
-     *                               added so that there aren't two skills with the
-     *                               same registry name that would crash the game),
-     *                               the icon and the transformations are inherited.
-     * @param level                  The level for this Skill. Is not allowed to be
-     *                               less than 1.
-     * @throws IllegalArgumentException If the forTransformations argument is null
-     *                                  or empty, a Skill with the same registry
-     *                                  name already exists, the
-     *                                  neededExperienceLevels parameter is
-     *                                  negative, the level parameter is less than
-     *                                  one or the parent skill isn't allowed to
-     *                                  have child Skills.
-     */
-    public Skill(@Nonnegative int neededExperienceLevels, Skill parent, @Nonnegative int level)
-            throws IllegalArgumentException {
-        this(new ResourceLocation(parent + "_" + level), neededExperienceLevels, parent.forTransformations,
-                parent.getIcon(), level, parent.isAlwaysActive);
-        Preconditions.checkArgument(level >= 1, "The argument level should be at least one but was %s", level);
-        int parentLevel = parent.getLevel();
-        Preconditions.checkArgument(parentLevel == 0, "The parent's level should be 0 but was %s", parentLevel);
-        this.parent = parent;
-        if(this.parent.maxLevel < level)
-            this.parent.maxLevel = level;
-        GeneralHelper.safeSet(parent.childSkills, level - 1, this);
+        if (!((this instanceof ParentSkill) || (this instanceof ChildSkill))) {
+            throw new IllegalStateException("The skill " + this +
+                    " is neither an instance of ParentSkill, nor an instance of ChildSkill");
+        }
+        if (level < 0) {
+            throw new IllegalArgumentException("The level of the skill " + this +
+                    " isn't allowed to be less than 0 but is " + level);
+        } else if ((level == 0) && (this instanceof ChildSkill)) {
+            throw new IllegalArgumentException("The level of the child skill " + this +
+                    " isn't allowed to be less than 1 but is " + level);
+        }
     }
 
     /**
@@ -185,7 +53,7 @@ public class Skill {
     }
 
     /**
-     * Tries to get a Skill with the given string. Returns null if no Skill was
+     * Tries to get a skill with the given string. Returns null if no skill was
      * found.
      *
      * @see #fromRegistryName(ResourceLocation)
@@ -219,252 +87,190 @@ public class Skill {
     }
 
     /**
-     * Returns the icon this Skill should have in the skill tab. Currently only used
-     * for getting the {@link TextureAtlasSprite} from it.
+     * Returns this skill's registry name (gotten from
+     * {@link #getRegistryName()}) in its string
+     * representation.
      */
-    public ResourceLocation getIcon() {
-        return this.icon;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIconAsSprite() {
-        return (TextureAtlasSprite) this.iconSprite;
+    @Override
+    public final String toString() {
+        return this.registryName.toString();
     }
 
     /**
-     * Sets the icon sprite for this Skill. Should only be used internally and on
-     * the client side. Don't call this outside of Hunter's Dream!
+     * Returns a unique {@link ResourceLocation} that
+     * is used to identify this skill.
      */
-    @SideOnly(Side.CLIENT)
-    public void setIconSprite(@Nonnull TextureAtlasSprite sprite) {
-        if (sprite == null)
-            throw new NullPointerException("The icon sprite is not allowed to be null");
-        this.iconSprite = sprite;
-    }
-
-    /**
-     * Returns the parent Skill of this Skill in an Optional. The parent Skill's
-     * level should always be 0. If this Skill doesn't have a parent Skill, an empty
-     * Optional is returned.
-     */
-    public Optional<Skill> getParent() {
-        return Optional.ofNullable(this.parent);
-    }
-
-    /**
-     * Returns true if the given Skill is this Skill's parent and therefore this
-     * Skill is "the same" but with a different level.
-     */
-    public boolean isLevelOf(Skill skill) {
-        Optional<Skill> optional = this.getParent();
-        return optional.isPresent() && (optional.get() == skill);
-    }
-
-    /**
-     * Returns the transformations that can unlock this Skill as a set.
-     *
-     * @see #getTransformationsAsArray()
-     * @see #isForTransformation(Transformation)
-     */
-    public Set<Transformation> getTransformations() {
-        return Collections.unmodifiableSet(this.forTransformations);
-    }
-
-    /**
-     * Returns the transformations that can unlock this Skill as an array.
-     *
-     * @see #getTransformations()
-     * @see #isForTransformation(Transformation)
-     */
-    public Transformation[] getTransformationsAsArray() {
-        return this.forTransformations.toArray();
-    }
-
-    /**
-     * Returns the xp levels that will be removed from the player when this Skill is
-     * unlocked.
-     */
-    public int getNeededExperienceLevels() {
-        return this.neededExperienceLevels;
-    }
-
-    /**
-     * Returns the level this skill has. Should never be negative. Default and
-     * minimum value is 0.
-     */
-    public int getLevel() {
-        return this.level;
-    }
-
-    /**
-     * Returns true if this Skill is a parent Skill, meaning that it doesn't have a
-     * parent.
-     */
-    public boolean isParentSkill() {
-        return this.parent == null;
-    }
-
-    /**
-     * Returns an unmodifiable list of all Skills whose parent is this Skill.
-     * Every Skill's index is the same as its level - 1 in that list, so if
-     * you searched for a child Skill with a level of 10, you'd access the
-     * list at index 9.
-     */
-    public List<Skill> getChildSkills() {
-        return Collections.unmodifiableList(this.childSkills);
-    }
-
-    /**
-     * Returns the amount of child Skills this Skill has. Should be prefered over a {@link Collection#size()}
-     * call on {@link #getChildSkills()} as in this method, no new list is allocated.
-     */
-    public int getAmountOfChildSkills() {
-        return this.childSkills.size();
-    }
-
-    /**
-     * Returns a modifiable list of all Skills this Skill requires in order to be
-     * unlocked.<br>
-     * Note: Parent Skills (with or without children) don't have required Skills. If
-     * this is called on a child Skill, the list will always contain the parent Skill
-     * and all child Skills of the parent Skill that have a level that is less than
-     * that of the child Skill the method was called on.
-     */
-    public List<Skill> getRequiredSkills() {
-        if (this.parent == null) {
-            return Collections.emptyList();
-        } else {
-            List<Skill> toReturn  = Lists.newArrayListWithExpectedSize(this.getLevel() + 1);
-            toReturn.add(this.parent);
-            toReturn.addAll(this.parent.childSkills.subList(0, this.getLevel() - 1));
-            return toReturn;
-        }
-    }
-
-    /**
-     * Returns true if the given transformation can unlock this Skill.
-     *
-     * @see #getTransformations()
-     * @see #getTransformationsAsArray()
-     */
-    public boolean isForTransformation(Transformation transformation) {
-        return this.forTransformations.contains(transformation);
-    }
-
-    /**
-     * Returns the Skill's registry name that is used to save and load it with
-     * {@link #fromRegistryName(ResourceLocation)}.
-     *
-     * @see #fromRegistryName(ResourceLocation)
-     */
-    public ResourceLocation getRegistryName() {
+    public final ResourceLocation getRegistryName() {
         return this.registryName;
     }
 
     /**
-     * Returns the translation key for this Skill's name. The key is in the
-     * format modid.skill.name where modid is the modid gotten from
-     * {@link #getRegistryName()} and skill is the name space, also gotten from
-     * {@link #getRegistryName()}.
-     *
-     * @see #getTranslationKeyDescription()
+     * Returns the experience levels that are
+     * required to unlock this skill.
      */
-    public String getTranslationKeyName() {
-        ResourceLocation name = this.getRegistryName();
-        return name.getNamespace() + "." + name.getPath() + ".name";
+    public final int getNeededExperienceLevels() {
+        return this.neededExperienceLevels;
     }
 
     /**
-     * Returns true if the given player can unlock this Skill. Returns false if the player can't unlock the skill or
-     * has already unlocked it.
+     * Returns this skill's level. For parent
+     * skills, this always returns 0.
      */
-    public boolean canPlayerUnlockSkill(EntityPlayer player) {
-        ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(player);
-        if(player.experienceLevel >= this.getNeededExperienceLevels()
-                && this.forTransformations.contains(tp.getTransformation()) && !tp.hasSkill(this)) {
-            for(Skill s : this.getRequiredSkills()) {
-                if(!tp.hasSkill(s)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+    public final int getLevel() {
+        return this.skillLevel;
     }
 
     /**
-     * Returns true if this Skill should always be active. (Meaning
-     * that you don't have to activate it in the Skill bar).
+     * Returns true if this skill is a parent skill.
+     * (Doesn't necessarily need to have children.)
      */
-    public boolean isAlwaysActive() {
-        return this.isAlwaysActive;
+    public final boolean isParentSkill() {
+        return this instanceof ParentSkill;
     }
 
     /**
-     * Returns the highest level this Skill can have.
-     * Can be called on parent and child Skills.
+     * Returns an empty optional if this skill is a {@link ParentSkill}
+     * or an optional with this skill in it if this skill is an instance
+     * of {@link ChildSkill}.
      */
-    public int getMaximumLevel() {
-        if(this.isParentSkill()) {
-            return this.maxLevel;
-        } else {
-            return this.parent.getMaximumLevel();
-        }
+    public final Optional<ChildSkill> getAsChildSkill() {
+        return (this instanceof ChildSkill) ? Optional.of((ChildSkill) this) : Optional.empty();
     }
 
     /**
-     * Tries to unlock this Skill for the given player. If the player unlocked the Skill with this method, true will be
-     * returned. If nothing changed because the player couldn't unlock the given Skill, false will be returned.
-     * @throws  IllegalStateException If this Skill has already been unlocked
+     * Returns an empty optional if this skill is a {@link ChildSkill}
+     * or an optional with this skill in it if this skill is an instance
+     * of {@link ParentSkill}.
      */
-    public boolean unlockSkillForPlayer(EntityPlayerMP player) throws  IllegalStateException {
-        ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(player);
-        if(tp.hasSkill(this))
-            throw new IllegalStateException("The player " + player + " has already unlocked the skill " + this +
-                    " and therefore can't unlock it again.");
+    public final Optional<ParentSkill> getAsParentSkill() {
+        return (this instanceof ParentSkill) ? Optional.of((ParentSkill) this) : Optional.empty();
+    }
 
-        int requiredXPLevels = this.getNeededExperienceLevels();
-        if(player.experienceLevel >= requiredXPLevels && this.forTransformations.contains(tp.getTransformation())) {
-            for(Skill s : this.getRequiredSkills()) {
-                if(!tp.hasSkill(s)) {
-                    return false;
-                }
-            }
-            // if player can unlock skill,
-            // remove xp
-            player.addExperienceLevel(-requiredXPLevels);
-            // add skill
-            tp.addSkill(this);
-            // sync with client
+    /**
+     * Tries to unlock this skill for the given player.
+     * Returns true, removes experience levels and adds
+     * the skill if this methods succeeds, returns
+     * false if it fails.
+     */
+    public boolean unlockSkillForPlayer(EntityPlayerMP player) {
+        if (this.canPlayerUnlockSkill(player)) {
+            player.addExperienceLevel(-this.getNeededExperienceLevels());
+            TransformationHelper.getITransformationPlayer(player).addSkill(this);
             PacketHandler.sendTransformationMessage(player);
-            // and return true
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
-     * Returns the translation key for this Skill's description. The key is in
-     * the format modid.skill.description where modid is the modid gotten from
-     * {@link #getRegistryName()} and skill is the name space, also gotten from
-     * {@link #getRegistryName()}.
-     *
-     * @see #getTranslationKeyName()
+     * Returns true if the given transformation can unlock
+     * this skill.
      */
-    public String getTranslationKeyDescription(){
-        ResourceLocation name = this.getRegistryName();
-        return name.getNamespace() + "." + name.getPath() + ".description";
-    }
+    public abstract boolean isForTransformation(Transformation transformation);
 
     /**
-     * Returns a String representation of the Skill's registry name.
+     * Returns a set of all {@link Transformation}s that can
+     * have this skill.
      *
-     * @see #getRegistryName()
+     * @see #getTransformationsAsArray()
      */
-    @Override
-    public String toString() {
-        return this.registryName.toString();
-    }
+    public abstract Set<Transformation> getTransformations();
+
+    /**
+     * Does the same as {@link #getTransformations()}, except
+     * that it returns an array instead of a set.
+     *
+     * @see #getTransformations()
+     */
+    public abstract Transformation[] getTransformationsAsArray();
+
+    /**
+     * Returns true if this skill is always active, meaning
+     * that it works passively and that you therefore don't
+     * have to activate it in the skill bar.
+     */
+    public abstract boolean isAlwaysActive();
+
+    /**
+     * Returns true if the given player can unlock this skill.
+     */
+    public abstract boolean canPlayerUnlockSkill(EntityPlayer player);
+
+    /**
+     * Returns the {@link ParentSkill} of this skill's group.
+     * If this skill is a ParentSkill, this skill is returned.
+     * If this skill is a ChildSkill, this skill's parent is returned.
+     */
+    public abstract ParentSkill getGroupParent();
+
+    /**
+     * Allocates a new modifiable list with all skills
+     * that are required to unlock this skill. For parent
+     * skills, this will simply return a new empty list,
+     * for child skills, this will return this skill's
+     * parent skill and all skills in this skill's skill
+     * group with a level lower than this skill's level.
+     */
+    public abstract List<Skill> getRequiredSkills();
+
+    /**
+     * Returns the level of the skill with the
+     * highest level in this skill's skill group.
+     */
+    public abstract int getMaximumLevel();
+
+    /**
+     * Returns a string that is used for translating
+     * this skill's name.
+     */
+    public abstract String getTranslationKeyName();
+
+    /**
+     * Returns a string that is used for translating
+     * this skill's description in the skill tab.
+     */
+    public abstract String getTranslationKeyDescription();
+
+    /**
+     * Returns a skill belonging to this skill's group
+     * with the given level. Returns null if there's no
+     * skill with the given level in this skill's group.
+     */
+    public abstract Skill getSkillWithLevel(int level);
+
+    /**
+     * Returns true if this skill belongs to the group of the
+     * given {@link ParentSkill}.
+     */
+    public abstract boolean isLevelOf(ParentSkill parentSkill);
+
+    /**
+     * Returns the icon for this skill as a {@link ResourceLocation}.
+     * The ResourceLocation is in the same format that is used
+     * for stitching textures to the atlas. So if a ResourceLocation
+     * {@code huntersdream:gui/skills/bite} would be returned, it would
+     * actually point to {@code huntersdream:textures/gui/skills/bite.png}
+     */
+    public abstract ResourceLocation getIcon();
+
+    /**
+     * Returns the {@link TextureAtlasSprite} that was loaded from
+     * the {@link ResourceLocation} returned by {@link #getIcon()}.
+     * <br>
+     * Only available on the client.
+     */
+    @SideOnly(Side.CLIENT)
+    public abstract TextureAtlasSprite getIconAsSprite();
+
+    /**
+     * Sets the {@link TextureAtlasSprite} that will be returned when
+     * calling {@link #getIconAsSprite()}.
+     * <br>
+     * Only available on the client.
+     * <br>
+     * This method is internal, so it could change, could be
+     * completely removed or could even throw exceptions!
+     */
+    @SideOnly(Side.CLIENT)
+    public abstract void setIconSprite(TextureAtlasSprite sprite);
 }

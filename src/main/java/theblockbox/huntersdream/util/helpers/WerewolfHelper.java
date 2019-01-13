@@ -1,11 +1,5 @@
 package theblockbox.huntersdream.util.helpers;
 
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.Validate;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,13 +15,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import theblockbox.huntersdream.api.Skill;
+import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.init.PotionInit;
+import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
@@ -36,6 +31,9 @@ import theblockbox.huntersdream.util.handlers.TransformationEventHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+
+import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class WerewolfHelper {
 	public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
@@ -66,7 +64,7 @@ public class WerewolfHelper {
 			if (transformed) {
 				// default: 6 lvl 0: 7 lvl 1: 8 lvl 2: 9
 				if (entity.getHeldItemMainhand().isEmpty()) {
-					return TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(Skill.UNARMED_0) + 7.0F;
+					return TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(SkillInit.UNARMED_0) + 7.0F;
 				} else {
 					return initialDamage;
 				}
@@ -95,7 +93,7 @@ public class WerewolfHelper {
 		if (WerewolfHelper.isTransformed(entity)) {
 			if (entity instanceof EntityPlayer) {
 				// default: 1.28 lvl 0: 1.72 lvl 1: 2.17 lvl 2: 4.35
-				int level = TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(Skill.ARMOR_0);
+				int level = TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(SkillInit.ARMOR_0);
 				float damageReduction = 1.28F;
 				switch (level) {
 					case 0:
@@ -209,7 +207,6 @@ public class WerewolfHelper {
 			if (MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(player, !transformed, reason))) {
 				return false;
 			} else {
-				// TODO: Send packet
 				WerewolfHelper.setTransformed(player, transformed);
 				PacketHandler.sendTransformationMessage(player);
 				return true;
@@ -326,8 +323,8 @@ public class WerewolfHelper {
 		int duration = 101;
 		ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(werewolf);
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 401, 0, false, false));
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, tp.getSkillLevel(Skill.SPEED_0) + 1, false, false));
-		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, tp.getSkillLevel(Skill.JUMP_0) + 1, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, tp.getSkillLevel(SkillInit.SPEED_0) + 1, false, false));
+		werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, tp.getSkillLevel(SkillInit.JUMP_0) + 1, false, false));
 		werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
 	}
 
@@ -371,6 +368,7 @@ public class WerewolfHelper {
 		return WerewolfHelper.shouldUseSneakingModel(werewolf) ? 1.85F : 2.1F;
 	}
 
+	// TODO: Change this?
 	public static boolean shouldUseSneakingModel(Entity werewolf) {
 		// if player was sneaking before, don't use sneaking model
 		return werewolf.isSneaking() || !GeneralHelper.canEntityExpandHeight(werewolf, WerewolfHelper.WEREWOLF_HEIGHT);

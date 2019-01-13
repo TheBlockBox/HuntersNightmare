@@ -1,14 +1,7 @@
 package theblockbox.huntersdream.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,6 +13,11 @@ import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.helpers.CommandHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class CommandSkill extends CommandBase {
 	public static final Joiner SKILL_JOINER = Joiner.on(", ").skipNulls();
@@ -58,20 +56,15 @@ public class CommandSkill extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
 		try {
-			EntityPlayerMP player;
-			if (args.length >= 2) {
-				player = (EntityPlayerMP) sender.getEntityWorld().getPlayerEntityByName(args[1]);
-			} else {
-				player = (EntityPlayerMP) sender;
-			}
-
+			EntityPlayerMP player = (EntityPlayerMP)
+					(args.length >= 2 ? sender.getEntityWorld().getPlayerEntityByName(args[1]) : sender);
 			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 
 			Skill skill = ("clear".equals(args[0]) || "list".equals(args[0])) ? null
 					: Preconditions.checkNotNull(Skill.fromName(args[2]));
 			switch (args[0]) {
 			case "clear":
-				cap.setSkills(Collections.emptySet());
+				cap.removeAllSkills();
 				sender.sendMessage(new TextComponentTranslation("command.huntersdream.skill.clear", player.getName()));
 				break;
 			case "list":
