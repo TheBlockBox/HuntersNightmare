@@ -29,10 +29,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.init.ItemInit;
 
 public class BlockTent extends BlockHorizontal {
-	
+
     public static final PropertyEnum<BlockTent.EnumPartType> PART = PropertyEnum.create("part", BlockTent.EnumPartType.class);
     public static final PropertyBool OCCUPIED = PropertyBool.create("occupied");
     protected static final AxisAlignedBB TENT_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.9D, 1.0D);
@@ -41,6 +42,7 @@ public class BlockTent extends BlockHorizontal {
 		super(Material.WOOD);
 		this.setHardness(1.0f);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(BlockTent.PART, BlockTent.EnumPartType.FOOT).withProperty(BlockTent.OCCUPIED, Boolean.FALSE));
+		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 	}
 
 	@Override
@@ -254,56 +256,56 @@ public class BlockTent extends BlockHorizontal {
 
 		if (state.getValue(BlockTent.PART) == BlockTent.EnumPartType.HEAD) {
 			i |= 8;
-			
+
 			if (state.getValue(BlockTent.OCCUPIED)) {
 				i |= 4;
 			}
 		}
-		
+
 		return i;
 	}
-	
+
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
-	
+
 	@Override
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		return new ItemStack(ItemInit.TENT);
 	}
-	
+
 	@Override
 	protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, BlockHorizontal.FACING, BlockTent.PART, BlockTent.OCCUPIED);
     }
-	
+
 	@Override
 	public boolean isBed(IBlockState state, IBlockAccess world, BlockPos pos, Entity player) {
 		return true;
 	}
-	
+
 	public enum EnumPartType implements IStringSerializable {
-		
+
 		HEAD("head"),
 		FOOT("foot");
-		
+
 		private final String name;
-		
+
 		EnumPartType(String name) {
 			this.name = name;
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.name;
 		}
-		
+
 		@Override
 		public String getName() {
 			return this.name;
 		}
-		
+
 	}
-	
+
 }

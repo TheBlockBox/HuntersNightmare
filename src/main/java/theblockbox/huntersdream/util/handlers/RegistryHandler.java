@@ -1,13 +1,16 @@
 package theblockbox.huntersdream.util.handlers;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,6 +21,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
@@ -63,6 +67,15 @@ public class RegistryHandler {
     }
 
     @SubscribeEvent
+    public static void onIRecipeRegister(RegistryEvent.Register<IRecipe> event) {
+        ResourceLocation registryName = GeneralHelper.newResLoc("aconite_potion");
+        event.getRegistry().register(new ShapelessOreRecipe(registryName,
+                PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
+                BlockInit.ACONITE_FLOWER, Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
+                .setRegistryName(registryName));
+    }
+
+    @SubscribeEvent
     public static void onPotionRegister(RegistryEvent.Register<Potion> event) {
         PotionInit.registerPotions(event);
     }
@@ -98,7 +111,6 @@ public class RegistryHandler {
     public static void initCommon(FMLInitializationEvent event) {
         PacketHandler.register();
         GameRegistry.addSmelting(BlockInit.ORE_SILVER, new ItemStack(ItemInit.INGOT_SILVER), 0.9F);
-        MinecraftForge.addGrassSeed(new ItemStack(BlockInit.WOLFSBANE), 5);
         LootTableInit.register();
         StructureInit.register();
         OreDictionaryInit.registerOres();

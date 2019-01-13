@@ -30,8 +30,8 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:overworld_ore_silver")
     public static final Block ORE_SILVER = null;
 
-    @GameRegistry.ObjectHolder("huntersdream:plant_wolfsbane")
-    public static final Block WOLFSBANE = null;
+    @GameRegistry.ObjectHolder("huntersdream:aconite_flower")
+    public static final Block ACONITE_FLOWER = null;
 
     @GameRegistry.ObjectHolder("huntersdream:tile_tent")
     public static final Block TENT = null;
@@ -43,7 +43,7 @@ public class BlockInit {
                 new BlockOre(Dimensions.OVERWORLD, ConfigHandler.server.ores.silverMinY,
                         ConfigHandler.server.ores.silverMaxY, ConfigHandler.server.ores.silverChance, Blocks.STONE),
                 "overworld_ore_silver", event);
-        BlockInit.registerBlockWithItem(new BlockWolfsbane(), "plant_wolfsbane", event);
+        BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "aconite_flower", event);
         BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "furnace_silver", event);
         BlockInit.registerBlockWithItem(new BlockCampfire(), "campfire", 1, event);
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);

@@ -120,14 +120,14 @@ public class WerewolfHelper {
 	/** Returns true if the werewolf can transform */
 	public static boolean canWerewolfTransform(EntityLivingBase werewolf) {
 		WerewolfHelper.validateIsWerewolf(werewolf);
-		return !werewolf.isPotionActive(PotionInit.POTION_WOLFSBANE);
+		return true;
 	}
 
 	/** Infects the given entity with lycanthropy */
 	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
 				&& TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, entityToBeInfected)
-				&& !entityToBeInfected.isPotionActive(PotionInit.POTION_WOLFSBANE)) {
+				&& !entityToBeInfected.isPotionActive(PotionInit.POTION_ACONITE)) {
 			if (entityToBeInfected instanceof EntityPlayer) {
 				entityToBeInfected.sendMessage(
 						new TextComponentTranslation("transformations." + Reference.MODID + ".infected.werewolf"));

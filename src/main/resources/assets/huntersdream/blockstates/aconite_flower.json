@@ -1,0 +1,11 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "normal": [{
+            "model": "cross",
+            "textures": {
+                "cross": "huntersdream:blocks/aconite_flower"
+            }
+        }]
+    }
+}
