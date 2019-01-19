@@ -1,0 +1,9 @@
+{
+    "variants": 
+    {
+        "facing=east": { "model": "huntersdream:throne", "y": 90 },
+        "facing=south": { "model": "huntersdream:throne", "y": 180 },
+        "facing=west": { "model": "huntersdream:throne", "y": 270 },
+        "facing=north": { "model": "huntersdream:throne", "y": 0 }
+    }
+}

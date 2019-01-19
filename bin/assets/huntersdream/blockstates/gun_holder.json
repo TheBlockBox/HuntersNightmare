@@ -1,0 +1,9 @@
+{
+    "variants": 
+    {
+        "facing=east": { "model": "huntersdream:gun_holder", "y": 90 },
+        "facing=south": { "model": "huntersdream:gun_holder", "y": 180 },
+        "facing=west": { "model": "huntersdream:gun_holder", "y": 270 },
+        "facing=north": { "model": "huntersdream:gun_holder", "y": 0 }
+    }
+}

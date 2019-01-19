@@ -1,0 +1,64 @@
+{
+    "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+    "textures": {
+        "0": "minecraft:blocks/planks_big_oak",
+        "1": "minecraft:blocks/wool_colored_white",
+        "particle": "minecraft:blocks/planks_big_oak"
+    },
+    "elements": [
+        {
+            "name": "pole1",
+            "from": [ 7.0, 0.0, 14.0 ], 
+            "to": [ 9.0, 25.0, 16.0 ], 
+            "faces": {
+                "north": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "east": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "south": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "west": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "up": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+                "down": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 2.0 ] }
+            }
+        },
+        {
+            "name": "pole2",
+            "from": [ 7.0, 0.0, -16.0 ], 
+            "to": [ 9.0, 25.0, -14.0 ], 
+            "faces": {
+                "north": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "east": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "south": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "west": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 25.0 ] },
+                "up": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 2.0 ] },
+                "down": { "texture": "#0", "uv": [ 0.0, 0.0, 2.0, 2.0 ] }
+            }
+        },
+        {
+            "name": "tentroof1",
+            "from": [ -13.0, 19.0, -16.0 ], 
+            "to": [ 19.0, 20.0, 18.0 ], 
+            "rotation": { "origin": [ 8.0, 8.0, 8.0 ], "axis": "z", "angle": 45.0 },
+            "faces": {
+                "north": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 1.0 ] },
+                "east": { "texture": "#1", "uv": [ 0.0, 0.0, 36.0, 1.0 ] },
+                "south": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 1.0 ] },
+                "west": { "texture": "#1", "uv": [ 0.0, 0.0, 36.0, 1.0 ] },
+                "up": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 36.0 ] },
+                "down": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 36.0 ] }
+            }
+        },
+        {
+            "name": "tentroof2",
+            "from": [ -3.0, 19.0, -16.0 ], 
+            "to": [ 29.0, 20.0, 18.0 ], 
+            "rotation": { "origin": [ 8.0, 8.0, 8.0 ], "axis": "z", "angle": -45.0 },
+            "faces": {
+                "north": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 1.0 ] },
+                "east": { "texture": "#1", "uv": [ 0.0, 0.0, 36.0, 1.0 ] },
+                "south": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 1.0 ] },
+                "west": { "texture": "#1", "uv": [ 0.0, 0.0, 36.0, 1.0 ] },
+                "up": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 36.0 ] },
+                "down": { "texture": "#1", "uv": [ 0.0, 0.0, 32.0, 36.0 ] }
+            }
+        }
+    ]
+}

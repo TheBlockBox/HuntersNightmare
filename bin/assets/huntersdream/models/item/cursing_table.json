@@ -1,0 +1,8 @@
+{
+    "parent": "huntersdream:block/cursing_table",
+    "display": {
+    	"firstperson_righthand": {
+    		"scale" : [0.4, 0.4, 0.4]
+    	}
+    }
+}

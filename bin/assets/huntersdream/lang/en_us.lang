@@ -1,0 +1,144 @@
+# Language: English
+# Region: USA
+# Translated by: 
+
+# Armor
+item.huntersdream.helmet_silver.name=Silver Helmet
+item.huntersdream.chestplate_silver.name=Silver Chestplate
+item.huntersdream.leggings_silver.name=Silver Leggings
+item.huntersdream.boots_silver.name=Silver Boots
+
+# Weapons and Tools
+item.huntersdream.sword_silver.name=Silver Sword
+item.huntersdream.pickaxe_silver.name=Silver Pickaxe
+item.huntersdream.shovel_silver.name=Silver Shovel
+item.huntersdream.hoe_silver.name=Silver Hoe
+item.huntersdream.axe_silver.name=Silver Axe
+
+# Other items
+item.huntersdream.ingot_silver.name=Silver Ingot
+item.huntersdream.wolfsbane.name=Wolfsbane
+item.huntersdream.hunters_journal.name=Hunter's Journal
+item.huntersdream.hunters_journal_page.name=Hunter's Note
+
+# Potions
+effect.huntersdream.fear=Fear
+effect.huntersdream.wolfsbane=Wolfsbane
+potion.effect.wolfsbane=Wolfsbane Potion
+splash_potion.effect.wolfsbane=Wolfsbane Splash Potion
+lingering_potion.effect.wolfsbane=Wolfsbane Lingering Potion
+tipped_arrow.effect.wolfsbane=Wolfsbane Arrow
+
+# Blocks
+tile.huntersdream.block_silver.name=Silver Block
+tile.huntersdream.overworld_ore_silver.name=Silver Ore
+tile.huntersdream.werewolf_enchanting_stone.name=Werewolf Enchanting Stone
+tile.huntersdream.chair.name=Chair
+tile.huntersdream.plant_wolfsbane.name=Wolfsbane Seed
+tile.huntersdream.advanced_crafting_table.name=Advanced Crafting Table
+tile.huntersdream.blessing_table.name=Blessing Table
+tile.huntersdream.nature_table.name=Nature Table
+tile.huntersdream.cursing_table.name=Cursing Table
+tile.huntersdream.summoning_table.name=Summoning Table
+tile.huntersdream.table.name=Table
+tile.huntersdream.vampire_altar.name=Vampire Altar
+tile.huntersdream.crate.name=Crate
+tile.huntersdream.throne.name=Throne
+tile.huntersdream.shelf.name=Shelf
+tile.huntersdream.plate.name=Plate
+tile.huntersdream.candle.name=Candle
+tile.huntersdream.witch_cauldron.name=Witch Cauldron
+tile.huntersdream.tent.name=Tent
+tile.huntersdream.coffin.name=Coffin
+tile.huntersdream.campfire.name=Campfire
+tile.huntersdream.gun_holder.name=Gunholder
+tile.huntersdream.lantern.name=Lantern
+tile.huntersdream.plack.name=Plack
+
+# Entities
+entity.goblintd.name=Goblin
+entity.werewolf.name=Werewolf
+
+# Creative Tabs
+itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools
+itemGroup.huntersdream.misc=Hunter's Dream Miscellaneous
+itemGroup.huntersdream.furniture=Hunter's Dream Furniture
+
+# Commands
+command.huntersdream.invalid=Invalid arguments
+command.huntersdream.transformationXP.usage=hdtransformationlevel <set|add|remove> <value> <player>
+command.huntersdream.transformationXP.set=%s's transformation xp was set to %s
+command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
+command.huntersdream.moonphase.getCurrent=Current moonphase is %s
+command.huntersdream.moonphase.getSet=Moonphase is now %s
+command.huntersdream.transformation.usage=hdtransformation <transformation|get> <player>
+command.huntersdream.transformation.transformationSet=%s is now a %s
+command.huntersdream.transformation.transformationGet=%s's transformation is %s
+command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
+command.huntersdream.transformationtexture.get=%s's texture index is %s
+command.huntersdream.transformationtexture.set=%s's texture was set to %s
+command.huntersdream.ritual.usage=hdritual <clear|add|remove> <player> <ritual>
+command.huntersdream.ritual.add=The ritual %s has been added to %s
+command.huntersdream.ritual.remove=The ritual %s has been removed from %s
+command.huntersdream.ritual.clear=%s's rituals have been cleared
+
+# Chat messages
+transformations.huntersdream.onLevelUp=You feel that you're getting stronger... You're now level %s
+transformations.huntersdream.infected.werewolf=You've been bitten but the wound is ... healing?
+# FP = First Person, TP = Third Person, picked = by yourself, touch = someone touched you
+transformations.huntersdream:werewolf.fp.picked=You touch %s! Your skin burns as you hold it. Hope nobody saw that!
+transformations.huntersdream:werewolf.fp.touched=You've been touched with %s and it burns your skin
+transformations.huntersdream:werewolf.tp.picked=You notice something off about %s when they picked up %s. Could they be?
+transformations.huntersdream:werewolf.tp.touched=You touch %s with %s and you notice they're in pain. Could they be?
+transformations.huntersdream:werewolf.transformingInto.1=You feel weird and nauseous
+transformations.huntersdream:werewolf.transformingInto.2=You bend over in pain, your lungs and kidneys have failed
+transformations.huntersdream:werewolf.transformingInto.3=Your internal organs have stopped working and started to repair differently
+transformations.huntersdream:werewolf.transformingInto.4=You go blind, your eyesight is changing. Still screaming in pain... This won't let you die
+transformations.huntersdream:werewolf.transformingInto.5=Your body is now having dramatic changes, bones and muscle tissue breaking and reforming, your eyesight is back but different. Your mind can only think about killing
+transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf within is now free...
+transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
+huntersdream.werewolf_enchanting_stone.onClick.notWerewolf=You feel a beastly aura.. but it does not relate to your own
+huntersdream.werewolf_enchanting_stone.onClick.werewolf=You feel a beastly aura.. it strengthens your own
+huntersdream.versionNotSupported=Hunter's Dream no longer supports the minecraft version %s. Please don't complain about any bugs or crashes and update to a newer minecraft version.
+item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
+item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
+item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
+
+# Config
+huntersdream.config.title=Hunter's Dream Config
+huntersdream.config.customPlayerRender=Custom Player Render
+huntersdream.config.renderXPBar=Render transformation xp bar
+huntersdream.config.xpBarLeft=Render transformation xp bar on the left hand side
+huntersdream.config.xpBarTop=Render transformation xp bar on the top
+huntersdream.config.showPacketMessages=Show Packet Messages
+huntersdream.config.veinSize=Veins of ore per chunk
+huntersdream.config.generateSilverOre=Generate Silver Ore
+huntersdream.config.silverMinY=Minimum height of silver
+huntersdream.config.silverMaxY=Maximum height of silver
+huntersdream.config.silverChance=Average silver ores per vein
+huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
+
+# Transformations
+huntersdream:human=Human
+huntersdream:werewolf=Werewolf
+huntersdream:vampire=Vampire
+huntersdream:witch=Witch
+huntersdream:clockworkandroid=Clockworkandroid
+huntersdream:hybrid=Hybrid
+huntersdream:hunter=Hunter
+
+# Sounds (Subtitles)
+huntersdream.transformation.heartbeat=Heartbeat of a werewolf
+huntersdream.transformation.werewolf.howling=Howling werewolf
+
+# Other stuff
+# the word you'd use in a list (like Werewolf, Vampire and Hybrid)
+huntersdream.and=and
+huntersdream.effectiveAgainst.tooltip=Effective against %s
+huntersdream.armorEffectiveAgainst.tooltip=Armor effective against %s
+# The character you'd use to split decimal values (in 11.56 the character is .)
+huntersdream.decimalpoint=.
+# The character you'd use in a list (like Werewolf, Vampire and Hybrid)
+huntersdream.comma=,
+# Undead like used in the sentence "Effective against Werewolf and Undead"
+huntersdream.undead=Undead

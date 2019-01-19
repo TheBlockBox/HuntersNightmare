@@ -1,0 +1,43 @@
+{
+    "type": "minecraft:crafting_shaped",
+    
+    "pattern":
+    [
+        "SQS",
+        "GEQ",
+        "SQS"
+    ],
+    
+    "key":
+    {
+        "S":
+        {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        },
+        
+        "E":
+        {
+            "type": "forge:ore_dict",
+            "ore": "gemEmerald"
+        },
+        
+        "G":
+        {
+            "type": "forge:ore_dict",
+            "ore": "glowstone"
+        },
+        
+        "Q":
+        {
+        	"type": "forge:ore_dict",
+        	"ore": "blockQuartz"
+        }
+    },
+    
+    "result":
+    {
+        "item": "huntersdream:werewolf_enchanting_stone",
+        "count": 1
+    }
+}

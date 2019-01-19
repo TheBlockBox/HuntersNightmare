@@ -1,0 +1,12 @@
+{
+	"forge_marker": 1,
+    "variants": {
+    	"age": {
+    		"0": {"model": "huntersdream:plant_wolfsbane_0"},
+    		"1": {"model": "huntersdream:plant_wolfsbane_1"},
+    		"2": {"model": "huntersdream:plant_wolfsbane_2"},
+    		"3": {"model": "huntersdream:plant_wolfsbane_3"},
+    		"4": {"model": "huntersdream:plant_wolfsbane_4"}
+    	}
+    }
+}

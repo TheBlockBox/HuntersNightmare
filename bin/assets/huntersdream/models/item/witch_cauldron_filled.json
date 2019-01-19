@@ -1,0 +1,8 @@
+{
+    "parent": "huntersdream:block/witch_cauldron_filled",
+    "display": {
+    	"firstperson_righthand": {
+    		"scale" : [0.4, 0.4, 0.4]
+    	}
+    }
+}
