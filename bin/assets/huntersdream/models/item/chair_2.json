@@ -1,8 +1,0 @@
-{
-    "parent": "huntersdream:block/chair_2",
-    "display": {
-    	"firstperson_righthand": {
-    		"scale" : [0.4, 0.4, 0.4]
-    	}
-    }
-}

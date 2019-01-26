@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:witch_cauldron_filled", "y": 90 },
-        "facing=south": { "model": "huntersdream:witch_cauldron_filled", "y": 180 },
-        "facing=west": { "model": "huntersdream:witch_cauldron_filled", "y": 270 },
-        "facing=north": { "model": "huntersdream:witch_cauldron_filled", "y": 0 }
-    }
-}

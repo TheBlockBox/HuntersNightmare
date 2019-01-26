@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:werewolf_enchanting_stone" },
-        "facing=south": { "model": "huntersdream:werewolf_enchanting_stone", "y": 90 },
-        "facing=west": { "model": "huntersdream:werewolf_enchanting_stone", "y": 180 },
-        "facing=north": { "model": "huntersdream:werewolf_enchanting_stone", "y": 270}
-    }
-}

@@ -1,9 +1,0 @@
-{
-    "variants": 
-    {
-        "facing=east": { "model": "huntersdream:campfire", "y": 90 },
-        "facing=south": { "model": "huntersdream:campfire", "y": 180 },
-        "facing=west": { "model": "huntersdream:campfire", "y": 270 },
-        "facing=north": { "model": "huntersdream:campfire", "y": 0 }
-    }
-}
