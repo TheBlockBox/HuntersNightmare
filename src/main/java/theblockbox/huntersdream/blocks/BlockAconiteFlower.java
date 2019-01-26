@@ -1,8 +1,8 @@
 package theblockbox.huntersdream.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -49,20 +49,7 @@ public class BlockAconiteFlower extends BlockFlower {
     protected BlockStateContainer createBlockState() {
         // literally created all of this just to be able
         // to extend BlockFlower
-        return new BlockStateContainer(this) {
-            private int baseStateCall = 0;
-
-            @Override
-            public IBlockState getBaseState() {
-                IBlockState state = super.getBaseState();
-                return (this.baseStateCall++ == 1) ? new BlockStateWrapper(state) {
-                    @Override
-                    public <T extends Comparable<T>, V extends T> IBlockState withProperty(IProperty<T> property, V value) {
-                        return this;
-                    }
-                } : state;
-            }
-        };
+        return new CustomBlockStateContainer(this);
     }
 
     @Override
@@ -83,5 +70,24 @@ public class BlockAconiteFlower extends BlockFlower {
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         items.add(new ItemStack(this));
+    }
+
+    private static class CustomBlockStateContainer extends BlockStateContainer {
+        private int baseStateCall = 0;
+
+        public CustomBlockStateContainer(Block block) {
+            super(block);
+        }
+
+        @Override
+        public IBlockState getBaseState() {
+            IBlockState state = super.getBaseState();
+            return (this.baseStateCall++ == 1) ? new BlockStateWrapper(state) {
+                @Override
+                public <T extends Comparable<T>, V extends T> IBlockState withProperty(IProperty<T> property, V value) {
+                    return this;
+                }
+            } : state;
+        }
     }
 }
