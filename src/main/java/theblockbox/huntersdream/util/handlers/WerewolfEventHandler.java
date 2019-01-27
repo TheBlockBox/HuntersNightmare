@@ -19,6 +19,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -45,10 +46,7 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.ItemInit;
-import theblockbox.huntersdream.init.SkillInit;
-import theblockbox.huntersdream.init.SoundInit;
+import theblockbox.huntersdream.init.*;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.helpers.ChanceHelper;
@@ -285,60 +283,25 @@ public class WerewolfEventHandler {
 		}
 	}
 
-// TODO: If not needed anymore, remove
-// damage player and handle chat messages when player picks up item that is
-// effective against them
-//	@SubscribeEvent
-//	public static void onItemPickup(ItemPickupEvent event) {
-//		EntityItem originalEntity = event.getOriginalEntity();
-//		if (!originalEntity.world.isRemote) {
-//			String throwerName = originalEntity.getThrower();
-//			EntityPlayer player = event.player;
-//			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
-//			Item item = event.getStack().getItem();
-//			if (EffectivenessHelper.effectiveAgainstTransformation(cap.getTransformation(), event.getStack())) {
-//				// now it is ensured that the item is effective against the player
-//				String msg = "transformations." + cap.getTransformation().toString() + ".";
-//
-//				EntityPlayer thrower;
-//				if ((throwerName != null) && !(throwerName.equals("null")) && !(throwerName.equals(player.getName()))) {
-//					thrower = originalEntity.world.getPlayerEntityByName(throwerName);
-//					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.touched", player, item);
-//					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.touched", player, item);
-//				} else {
-//					WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) player, msg + "fp.picked", player, item);
-//					thrower = GeneralHelper.getNearestPlayer(player.world, player, 5);
-//					if (thrower != null) {
-//						WerewolfHelper.sendItemPickupMessage((EntityPlayerMP) thrower, msg + "tp.picked", player, item);
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	// handle werewolves clicked with wolfsbane
 	@SubscribeEvent
-	public static void onRightClick(PlayerInteractEvent.EntityInteractSpecific event) {
+	public static void onRightClick(PlayerInteractEvent.EntityInteract event) {
 		World world = event.getWorld();
 		if (event.getTarget() instanceof EntityLivingBase) {
 			EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
 			ItemStack stack = event.getItemStack();
-			// TODO: Use something different than the wolfsbane flower?
 			if ((TransformationHelper.getTransformation(interactedWith) == Transformation.WEREWOLF)
-					&& !WerewolfHelper.isTransformed(interactedWith)
-					&& (stack.getItem() == ItemInit.WOLFSBANE_FLOWER)) {
-				if (!world.isRemote) {
-					// TODO: How long should the effect last?
-					world.playSound(null, interactedWith.posX, interactedWith.posY, interactedWith.posZ,
-							SoundInit.WEREWOLF_HOWLING, interactedWith.getSoundCategory(), 100, 1);
-					interactedWith.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 300));
-					interactedWith.addPotionEffect(new PotionEffect(MobEffects.POISON, 300));
-					interactedWith.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 300, 2));
-					stack.shrink(1);
-				}
-				// we don't want to open any gui, so we say that this interaction was a success
-				event.setCancellationResult(EnumActionResult.SUCCESS);
+					&& (stack.getItem() == Item.getItemFromBlock(BlockInit.ACONITE_FLOWER))) {
+				// we don't want to open any gui, so we say that this
+				// interaction was a success and cancel the event
 				event.setCanceled(true);
+				event.setCancellationResult(EnumActionResult.SUCCESS);
+				if (!world.isRemote) {
+					WerewolfHelper.applyAconiteEffects(interactedWith);
+					if(!event.getEntityPlayer().isCreative()) {
+						stack.shrink(1);
+					}
+				}
 			}
 		}
 	}

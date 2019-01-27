@@ -17,7 +17,6 @@ item.huntersdream.axe_silver.name=Silver Axe
 
 # Other items
 item.huntersdream.ingot_silver.name=Silver Ingot
-item.huntersdream.wolfsbane.name=Wolfsbane
 item.huntersdream.hunters_journal.name=Hunter's Journal
 item.huntersdream.hunters_journal_page.name=Hunter's Note
 item.huntersdream.bestiary.name=Bestiary
@@ -25,22 +24,21 @@ item.huntersdream.tent.name=Tent
 
 # Potions
 effect.huntersdream.fear=Fear
-effect.huntersdream.wolfsbane=Wolfsbane
+effect.huntersdream.aconite=Aconite
 effect.huntersdream.sunscreen=Sunscreen
-potion.effect.wolfsbane=Wolfsbane Potion
-splash_potion.effect.wolfsbane=Wolfsbane Splash Potion
-lingering_potion.effect.wolfsbane=Wolfsbane Lingering Potion
-tipped_arrow.effect.wolfsbane=Wolfsbane Arrow
+potion.effect.aconite=Aconite Potion
+splash_potion.effect.aconite=Aconite Splash Potion
+lingering_potion.effect.aconite=Aconite Lingering Potion
+tipped_arrow.effect.aconite=Aconite Arrow
 
 # Blocks
 tile.huntersdream.block_silver.name=Silver Block
 tile.huntersdream.overworld_ore_silver.name=Silver Ore
-tile.huntersdream.plant_wolfsbane.name=Wolfsbane Seed
 tile.huntersdream.tent.name=Tent
 tile.huntersdream.campfire.name=Campfire
 tile.huntersdream.furnace_silver.name=Silver Furnace
 tile.huntersdream.tile_tent.name=Tent
-tile.huntersdream.aconite_flower.name=Aconite
+tile.huntersdream.aconite_flower.name=Aconite Flower
 
 # Entities
 entity.goblintd.name=Goblin

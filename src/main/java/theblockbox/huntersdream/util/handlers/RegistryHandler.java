@@ -11,6 +11,7 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -106,6 +107,7 @@ public class RegistryHandler {
         GameRegistry.registerTileEntity(TileEntitySilverFurnace.class, GeneralHelper.newResLoc("furnace_silver"));
         GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
         RegistryHandler.directory = event.getModConfigurationDirectory();
+        MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
     }
 
     public static void initCommon(FMLInitializationEvent event) {

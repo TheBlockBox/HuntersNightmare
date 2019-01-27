@@ -15,7 +15,7 @@ public class PotionInit {
     public static final Potion POTION_ACONITE = new PotionAconite();
     public static final Potion POTION_SUNSCREEN = new PotionSunscreen();
 
-    public static final PotionType ACONITE = new PotionType("aconite", new PotionEffect(PotionInit.POTION_ACONITE, 12000))
+    public static final PotionType ACONITE = new PotionType("aconite", new PotionEffect(PotionInit.POTION_ACONITE, 6000))
             .setRegistryName(GeneralHelper.newResLoc("aconite"));
 
     public static void registerPotions(RegistryEvent.Register<Potion> event) {
@@ -23,6 +23,6 @@ public class PotionInit {
     }
 
     public static void registerPotionTypes(RegistryEvent.Register<PotionType> event) {
-        event.getRegistry().registerAll(PotionInit.ACONITE);
+        event.getRegistry().register(PotionInit.ACONITE);
     }
 }

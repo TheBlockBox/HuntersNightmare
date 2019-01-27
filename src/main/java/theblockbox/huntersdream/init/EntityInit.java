@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -35,7 +36,8 @@ public class EntityInit {
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES)
                         .spawn(EnumCreatureType.CREATURE, 2, 5, 5,
                                 StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
-                                        .filter(GeneralHelper::isForest).collect(Collectors.toSet())).build());
+                                        .filter(b -> BiomeDictionary.hasType(b, BiomeDictionary.Type.FOREST))
+                                        .collect(Collectors.toSet())).build());
     }
 
     public static void registerEntityRenders() {

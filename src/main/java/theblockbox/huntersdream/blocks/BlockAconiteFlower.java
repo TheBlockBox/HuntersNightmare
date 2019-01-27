@@ -8,16 +8,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.util.BlockStateWrapper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 public class BlockAconiteFlower extends BlockFlower {
     public BlockAconiteFlower() {
@@ -26,12 +23,9 @@ public class BlockAconiteFlower extends BlockFlower {
 
     @Override
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-        if (entityIn instanceof EntityLivingBase) {
-            EntityLivingBase living = (EntityLivingBase) entityIn;
-            if (TransformationHelper.getTransformation(living) == Transformation.WEREWOLF) {
-                living.addPotionEffect(new PotionEffect(MobEffects.POISON, 200));
-                living.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200));
-            }
+        super.onEntityCollision(worldIn, pos, state, entityIn);
+        if(!worldIn.isRemote && entityIn instanceof EntityLivingBase) {
+            WerewolfHelper.applyAconiteEffects((EntityLivingBase) entityIn);
         }
     }
 
@@ -49,7 +43,7 @@ public class BlockAconiteFlower extends BlockFlower {
     protected BlockStateContainer createBlockState() {
         // literally created all of this just to be able
         // to extend BlockFlower
-        return new CustomBlockStateContainer(this);
+        return new BlockAconiteFlower.CustomBlockStateContainer(this);
     }
 
     @Override
@@ -75,7 +69,7 @@ public class BlockAconiteFlower extends BlockFlower {
     private static class CustomBlockStateContainer extends BlockStateContainer {
         private int baseStateCall = 0;
 
-        public CustomBlockStateContainer(Block block) {
+        private CustomBlockStateContainer(Block block) {
             super(block);
         }
 

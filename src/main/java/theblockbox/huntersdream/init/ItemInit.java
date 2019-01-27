@@ -7,10 +7,7 @@ import net.minecraft.item.*;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import theblockbox.huntersdream.items.ItemBestiary;
-import theblockbox.huntersdream.items.ItemHuntersJournal;
-import theblockbox.huntersdream.items.ItemHuntersJournalPage;
-import theblockbox.huntersdream.items.ItemTent;
+import theblockbox.huntersdream.items.*;
 import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
@@ -27,9 +24,6 @@ public class ItemInit {
 
     @GameRegistry.ObjectHolder("huntersdream:sword_silver")
     public static final Item SWORD_SILVER = null;
-
-    @GameRegistry.ObjectHolder("huntersdream:wolfsbane")
-    public static final Item WOLFSBANE_FLOWER = null;
 
     @GameRegistry.ObjectHolder("huntersdream:hunters_journal")
     public static final Item HUNTERS_JOURNAL = null;

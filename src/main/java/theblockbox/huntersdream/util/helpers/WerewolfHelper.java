@@ -21,8 +21,8 @@ import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.PotionInit;
 import theblockbox.huntersdream.init.SkillInit;
+import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
@@ -126,8 +126,7 @@ public class WerewolfHelper {
 	/** Infects the given entity with lycanthropy */
 	public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
 		if (TransformationHelper.canChangeTransformation(entityToBeInfected)
-				&& TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, entityToBeInfected)
-				&& !entityToBeInfected.isPotionActive(PotionInit.POTION_ACONITE)) {
+				&& TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, entityToBeInfected)) {
 			if (entityToBeInfected instanceof EntityPlayer) {
 				entityToBeInfected.sendMessage(
 						new TextComponentTranslation("transformations." + Reference.MODID + ".infected.werewolf"));
@@ -399,5 +398,22 @@ public class WerewolfHelper {
 				return werewolf.getRNG().nextBoolean() ? 0 : 1;
 		}
 		return 0;
+	}
+
+	/**
+	 * If the given entity is a werewolf, all the aconite effects will be
+	 * applied and a howl sound will be played
+	 */
+	public static boolean applyAconiteEffects(EntityLivingBase entity) {
+		if(TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF) {
+			entity.world.playSound(null, entity.posX, entity.posY, entity.posZ,
+					SoundInit.WEREWOLF_HOWLING, entity.getSoundCategory(), 100, 1);
+			entity.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200));
+			entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 200));
+			entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 200, 2));
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

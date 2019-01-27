@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.util.helpers;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,8 +19,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeForest;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
@@ -457,14 +455,6 @@ public class GeneralHelper {
     }
 
     /**
-     * Returns true if the given biome is a forest.
-     */
-    public static boolean isForest(Biome biome) {
-        // TODO: Better check that also works for modded?
-        return biome instanceof BiomeForest;
-    }
-
-    /**
      * Returns the y level where a structure at the given coordinates could spawn.
      * Returns -1 if there's no optimal spawn.
      */
@@ -472,13 +462,13 @@ public class GeneralHelper {
         int maxX = pos.getX() + structureSize.getX();
         int maxZ = pos.getZ() + structureSize.getZ();
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos(pos);
-        Block topBlock = world.getBiome(pos).topBlock.getBlock();
+        IBlockState topBlock = world.getBiome(pos).topBlock;
 
         for (int y = pos.getY(); y > 5; y--) {
             for (int x = pos.getX(); x <= maxX; x++) {
                 for (int z = pos.getZ(); z <= maxZ; z++) {
                     // TODO: Compare states instead of blocks?
-                    if (world.getBlockState(blockPos.setPos(x, y, z)).getBlock() == topBlock) {
+                    if (world.getBlockState(blockPos.setPos(x, y, z)) == topBlock) {
                         return y + 1;
                     }
                 }

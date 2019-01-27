@@ -19,7 +19,6 @@ public class BlockOre extends Block {
 	public BlockOre(int dimensionID, int minHeight, int maxHeight, int chance, Block spawnOn) {
 		super(Material.ROCK);
 		this.setHardness(3.0F);
-		this.setResistance(5.0F);
 		this.dimension = dimensionID;
 		this.chance = chance;
 		this.minHeight = minHeight;
