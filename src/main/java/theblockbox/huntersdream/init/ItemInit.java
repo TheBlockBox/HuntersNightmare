@@ -49,6 +49,7 @@ public class ItemInit {
         ItemInit.registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerToolSet("silver", ItemInit.TOOL_SILVER, event);
         ItemInit.registerArmorSet("silver", ItemInit.ARMOR_SILVER, event);
+        ItemInit.registerItem(new ItemHerbalAconiteWater(), "herbal_aconite_water", event);
     }
 
     private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {

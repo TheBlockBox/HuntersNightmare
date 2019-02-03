@@ -25,6 +25,9 @@ public class OreDictionaryInit {
 		OreDictionaryInit.registerOreWithoutDamage("hoeSilver", "huntersdream:hoe_silver");
 		OreDictionaryInit.registerOreWithoutDamage("swordSilver", "huntersdream:sword_silver");
 		OreDictionaryInit.registerOreWithoutDamage("shovelSilver", "huntersdream:shovel_silver");
+
+		OreDictionary.registerOre("aconite", BlockInit.ACONITE_FLOWER);
+		OreDictionary.registerOre("wolfsbane", BlockInit.ACONITE_FLOWER);
 	}
 
 	private static void registerOreWithoutDamage(String name, String item) {

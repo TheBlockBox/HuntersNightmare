@@ -10,6 +10,7 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Skill;
@@ -72,7 +74,11 @@ public class RegistryHandler {
         ResourceLocation registryName = GeneralHelper.newResLoc("aconite_potion");
         event.getRegistry().register(new ShapelessOreRecipe(registryName,
                 PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
-                BlockInit.ACONITE_FLOWER, Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
+                new OreIngredient("aconite"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
+                .setRegistryName(registryName));
+        event.getRegistry().register(new ShapelessOreRecipe(registryName,
+                PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
+                new OreIngredient("wolfsbane"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
                 .setRegistryName(registryName));
     }
 
@@ -120,6 +126,9 @@ public class RegistryHandler {
         // TODO: Better weights?
         GameRegistry.registerWorldGenerator(new WorldGenWerewolfCabin(), 1);
         GameRegistry.registerWorldGenerator(new WorldGenHuntersCamp(), 1);
+        for(Biome biome : Biome.REGISTRY) {
+            biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
+        }
     }
 
     public static void postInitCommon(FMLPostInitializationEvent event) {

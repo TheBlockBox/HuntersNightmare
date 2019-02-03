@@ -21,6 +21,7 @@ item.huntersdream.hunters_journal.name=Hunter's Journal
 item.huntersdream.hunters_journal_page.name=Hunter's Note
 item.huntersdream.bestiary.name=Bestiary
 item.huntersdream.tent.name=Tent
+item.huntersdream.herbal_aconite_water.name=Herbal Aconite Water
 
 # Potions
 effect.huntersdream.fear=Fear
@@ -39,6 +40,7 @@ tile.huntersdream.campfire.name=Campfire
 tile.huntersdream.furnace_silver.name=Silver Furnace
 tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.aconite_flower.name=Aconite Flower
+tile.huntersdream.aconite_garland.name=Aconite Garland
 
 # Entities
 entity.goblintd.name=Goblin

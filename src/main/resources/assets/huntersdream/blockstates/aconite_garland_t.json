@@ -1,0 +1,13 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "huntersdream:aconite_garland",
+        "textures": { "up": "huntersdream:blocks/aconite_garland" }
+    },
+    "variants": {
+        "north": { "true": { "textures": { "north": "huntersdream:blocks/aconite_garland" } }, "false": { } },
+        "south": { "true": { "textures": { "south": "huntersdream:blocks/aconite_garland" } }, "false": { } },
+        "west": { "true": { "textures": { "west": "huntersdream:blocks/aconite_garland" } }, "false": { } },
+        "east": { "true": { "textures": { "east": "huntersdream:blocks/aconite_garland" } }, "false": { } }
+    }
+}

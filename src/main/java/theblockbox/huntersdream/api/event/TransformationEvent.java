@@ -64,6 +64,14 @@ public class TransformationEvent extends LivingEvent {
 		/** When a command is executed */
 		COMMAND,
 		/** When the bestiary item is clicked in creative mode */
-		BESTIARY
+		BESTIARY,
+		/**
+		 * When an aconite potion is used to cure a werewolf
+		 */
+		ACONITE,
+		/**
+		 * Other cause that doesn't fit into one of these categories
+		 */
+		OTHER
 	}
 }
