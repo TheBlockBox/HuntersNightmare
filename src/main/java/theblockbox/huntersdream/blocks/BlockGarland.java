@@ -1,12 +1,17 @@
 package theblockbox.huntersdream.blocks;
 
+import it.unimi.dsi.fastutil.objects.AbstractObject2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -26,18 +31,20 @@ import java.util.Arrays;
 import java.util.Random;
 
 // TODO: test if #withRotation actually works
+// TODO: Make everything cleaner
+// TODO: Make better hitbox
 public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
-    private static final PropertyBool NORTH = PropertyBool.create("north");
-    private static final PropertyBool SOUTH = PropertyBool.create("south");
-    private static final PropertyBool WEST = PropertyBool.create("west");
-    private static final PropertyBool EAST = PropertyBool.create("east");
-    private static final PropertyBool[] PROPERTIES = {BlockGarland.NORTH, BlockGarland.SOUTH, BlockGarland.WEST, BlockGarland.EAST};
-    private static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0D, 0.05D, 0.0D, 1.0D, 0.05D, 1.0D);
-    private static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0D, 0.95D, 0.0D, 1.0D, 0.95D, 1.0D);
-    private static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.05D, 1.0D, 1.0D, 0.05D);
-    private static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.95D, 1.0D, 1.0D, 0.95D);
-    private static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.05D, 0.0D, 0.0D, 0.05D, 1.0D, 1.0D);
-    private static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.95D, 0.0D, 0.0D, 0.95D, 1.0D, 1.0D);
+    public static final PropertyBool NORTH = PropertyBool.create("north");
+    public static final PropertyBool SOUTH = PropertyBool.create("south");
+    public static final PropertyBool WEST = PropertyBool.create("west");
+    public static final PropertyBool EAST = PropertyBool.create("east");
+    public static final PropertyBool[] PROPERTIES = {BlockGarland.NORTH, BlockGarland.SOUTH, BlockGarland.WEST, BlockGarland.EAST};
+    public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0D, 0.05D, 0.0D, 1.0D, 0.05D, 1.0D);
+    public static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0D, 0.95D, 0.0D, 1.0D, 0.95D, 1.0D);
+    public static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.05D, 1.0D, 1.0D, 0.05D);
+    public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.95D, 1.0D, 1.0D, 0.95D);
+    public static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.05D, 0.0D, 0.0D, 0.05D, 1.0D, 1.0D);
+    public static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.95D, 0.0D, 0.0D, 0.95D, 1.0D, 1.0D);
 
     private final boolean hasTopBlock;
     private final boolean hasBottomBlock;
@@ -55,8 +62,9 @@ public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
     }
 
     public BlockGarland(boolean hasTopBlock, boolean hasBottomBlock) {
-        // TODO: Better material?
+        // TODO: Better material and soundtype?
         super(Material.PLANTS);
+        this.setSoundType(SoundType.PLANT);
         IBlockState defaultState = this.getDefaultState();
         for (PropertyBool property : BlockGarland.PROPERTIES) {
             defaultState = defaultState.withProperty(property, false);
@@ -64,6 +72,16 @@ public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
         this.setDefaultState(defaultState);
         this.hasTopBlock = hasTopBlock;
         this.hasBottomBlock = hasBottomBlock;
+    }
+
+    @Nullable
+    public static EnumFacing getFacingFromProperty(PropertyBool property) {
+        for (int i = 0; i < BlockGarland.PROPERTIES.length; i++) {
+            if (BlockGarland.PROPERTIES[i] == property) {
+                return EnumFacing.byIndex(i + 2);
+            }
+        }
+        return null;
     }
 
     public abstract T getWithProperties(boolean hasTop, boolean hasBottom);
@@ -82,26 +100,78 @@ public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
         return this.getWithProperties(hasTop, hasBottom).getStateFromMeta(toCopy.getBlock().getMetaFromState(toCopy));
     }
 
-    public IBlockState checkSides(IBlockAccess blockAccess, BlockPos pos) {
-        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(pos);
-        IBlockState state = blockAccess.getBlockState(pos);
+    /**
+     * Returns a pair of an {@link IBlockState} and an int. <br>
+     * The {@link IBlockState} represents the new block state,
+     * the int represents the amount of removed garlands.
+     * (Should be used to calculate the drops.)
+     */
+    public Object2IntMap.Entry<IBlockState> checkSides(IBlockAccess blockAccess, BlockPos posIn) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(posIn);
+        IBlockState state = blockAccess.getBlockState(posIn);
         BlockGarland<?> block = (BlockGarland<?>) state.getBlock();
-        int initialY = mutablePos.getY();
 
         BlockGarland<?> blockToReturn = this.getWithProperties(false, false);
+        int removedGarlands = 0;
         // TODO: Finish
 
-        if(block.hasTopBlock()) {
-            mutablePos.setY(initialY - 1);
-
-            mutablePos.setY(initialY);
+        if (block.hasTopBlock()) {
+            if (this.isAllowedNeighbor(blockAccess, pos.move(EnumFacing.UP), EnumFacing.DOWN))
+                blockToReturn = this.getWithProperties(true, false);
+            else
+                removedGarlands++;
+            pos.move(EnumFacing.DOWN);
         }
-        if(block.hasBottomBlock()) {
-            mutablePos.setY(initialY + 1);
 
-            mutablePos.setY(initialY);
+        if (block.hasBottomBlock()) {
+            if (this.isAllowedNeighbor(blockAccess, pos.move(EnumFacing.DOWN), EnumFacing.UP))
+                blockToReturn = this.getWithProperties(blockToReturn.hasTopBlock(), true);
+            else
+                removedGarlands++;
+            pos.move(EnumFacing.UP);
         }
-        return null;
+
+        IBlockState stateToReturn = blockToReturn.getDefaultState();
+        for (PropertyBool property : BlockGarland.PROPERTIES) {
+            if (state.getValue(property)) {
+                EnumFacing facing = BlockGarland.getFacingFromProperty(property);
+                if (facing != null) {
+                    EnumFacing opposite = facing.getOpposite();
+                    if (this.isAllowedNeighbor(blockAccess, pos.move(facing), opposite)) {
+                        stateToReturn = stateToReturn.withProperty(property, true);
+                    } else {
+                        // TODO: Needed? (Doesn't the default state only have properties with false?)
+                        stateToReturn = stateToReturn.withProperty(property, false);
+                        removedGarlands++;
+                    }
+                    pos.move(opposite);
+                }
+            }
+        }
+        return new AbstractObject2IntMap.BasicEntry<>(stateToReturn, removedGarlands);
+    }
+
+    public boolean isAllowedState(IBlockState state) {
+        if (state.getBlock() instanceof BlockGarland) {
+            BlockGarland<?> block = (BlockGarland<?>) state.getBlock();
+            if (this.isTheSameAs(block)) {
+                if (block.hasTopBlock() || block.hasBottomBlock()) {
+                    return true;
+                } else {
+                    for (PropertyBool property : BlockGarland.PROPERTIES) {
+                        if (state.getValue(property)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        throw new IllegalArgumentException("The block of the passed blockstate (" + state + ") is not the same as " + this);
+    }
+
+    public boolean isAllowedNeighbor(IBlockAccess blockAccess, BlockPos pos, EnumFacing facing) {
+        return blockAccess.getBlockState(pos).getBlockFaceShape(blockAccess, pos, facing) == BlockFaceShape.SOLID;
     }
 
     @Override
@@ -112,6 +182,20 @@ public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
         return Item.getItemFromBlock(this.getWithProperties(false, false));
+    }
+
+    @Override
+    public int quantityDropped(IBlockState state, int fortune, Random random) {
+        int toReturn = 0;
+        for (PropertyBool property : BlockGarland.PROPERTIES)
+            if (state.getValue(property))
+                toReturn++;
+        BlockGarland<?> block = (BlockGarland<?>) state.getBlock();
+        if (block.hasTopBlock())
+            toReturn++;
+        if (block.hasBottomBlock())
+            toReturn++;
+        return toReturn;
     }
 
     @Override
@@ -232,29 +316,27 @@ public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
 
     @Override
     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-        // TODO: Fix
-        if (super.canPlaceBlockOnSide(worldIn, pos, side)) {
-            return true;
-        } else {
-            IBlockState state = worldIn.getBlockState(pos);
-            Block block = state.getBlock();
-            if ((block instanceof BlockGarland) && this.isTheSameAs((BlockGarland<?>) block)) {
-                BlockGarland<?> blockGarland = (BlockGarland<?>) block;
-                EnumFacing oppositeSide = side.getOpposite();
-                BlockPos offsetPos = pos.offset(oppositeSide);
-                if (worldIn.getBlockState(offsetPos).getBlockFaceShape(worldIn, offsetPos, side) == BlockFaceShape.SOLID) {
-                    switch (oppositeSide) {
-                        case DOWN:
-                            return !blockGarland.hasBottomBlock();
-                        case UP:
-                            return !blockGarland.hasTopBlock();
-                        default:
-                            return !state.getValue(BlockGarland.PROPERTIES[oppositeSide.getIndex() - 2]);
+        if (this.isAllowedNeighbor(worldIn, pos.offset(side.getOpposite()), side)) {
+            if (super.canPlaceBlockOnSide(worldIn, pos, side)) {
+                return true;
+            } else {
+                IBlockState state = worldIn.getBlockState(pos);
+                if (state.getBlock() instanceof BlockGarland) {
+                    BlockGarland<?> block = (BlockGarland<?>) state.getBlock();
+                    if (this.isTheSameAs(block)) {
+                        switch (side) {
+                            case DOWN:
+                                return !block.hasTopBlock();
+                            case UP:
+                                return !block.hasBottomBlock();
+                            default:
+                                return !state.getValue(BlockGarland.PROPERTIES[side.getOpposite().getIndex() - 2]);
+                        }
                     }
                 }
             }
@@ -264,7 +346,15 @@ public abstract class BlockGarland<T extends BlockGarland<T>> extends Block {
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        // TODO: Finish
+        if (!worldIn.isRemote) {
+            Object2IntMap.Entry<IBlockState> returned = this.checkSides(worldIn, pos);
+            IBlockState returnedState = returned.getKey();
+            if (returned.getIntValue() > 0)
+                InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY() - 0.5D, pos.getZ(),
+                        new ItemStack(this.getWithProperties(false, false), returned.getIntValue()));
+            if (returnedState != state)
+                worldIn.setBlockState(pos, this.isAllowedState(returnedState) ? returnedState : Blocks.AIR.getDefaultState());
+        }
     }
 
     @Override

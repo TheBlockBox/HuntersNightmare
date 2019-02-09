@@ -24,8 +24,8 @@ public class BlockAconiteFlower extends BlockFlower {
     @Override
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         super.onEntityCollision(worldIn, pos, state, entityIn);
-        if(!worldIn.isRemote && entityIn instanceof EntityLivingBase) {
-            WerewolfHelper.applyAconiteEffects((EntityLivingBase) entityIn);
+        if (!worldIn.isRemote && entityIn instanceof EntityLivingBase) {
+            WerewolfHelper.applyAconiteEffects((EntityLivingBase) entityIn, false);
         }
     }
 

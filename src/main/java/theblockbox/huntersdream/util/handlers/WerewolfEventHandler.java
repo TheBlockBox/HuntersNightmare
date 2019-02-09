@@ -297,7 +297,7 @@ public class WerewolfEventHandler {
 				event.setCanceled(true);
 				event.setCancellationResult(EnumActionResult.SUCCESS);
 				if (!world.isRemote) {
-					WerewolfHelper.applyAconiteEffects(interactedWith);
+					WerewolfHelper.applyAconiteEffects(interactedWith, true);
 					if(!event.getEntityPlayer().isCreative()) {
 						stack.shrink(1);
 					}

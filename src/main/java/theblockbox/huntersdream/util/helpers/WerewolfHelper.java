@@ -413,10 +413,12 @@ public class WerewolfHelper {
      * If the given entity is a werewolf, all the aconite effects will be
      * applied and a howl sound will be played
      */
-    public static boolean applyAconiteEffects(EntityLivingBase entity) {
+    public static boolean applyAconiteEffects(EntityLivingBase entity, boolean playSound) {
         if (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF) {
-            entity.world.playSound(null, entity.posX, entity.posY, entity.posZ,
-                    SoundInit.WEREWOLF_HOWLING, entity.getSoundCategory(), 100, 1);
+            if (playSound) {
+                entity.world.playSound(null, entity.posX, entity.posY, entity.posZ,
+                        SoundInit.WEREWOLF_HOWLING, entity.getSoundCategory(), 100, 1);
+            }
             entity.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200));
             entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 200));
             entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 200, 2));
