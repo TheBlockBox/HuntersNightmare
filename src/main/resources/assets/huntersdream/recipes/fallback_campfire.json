@@ -1,17 +1,17 @@
 {
     "type": "minecraft:crafting_shaped",
-    
+
     "pattern": [
-    	" S ",
-    	"PLP"
+        " S ",
+        "PLP"
     ],
-    
+
     "key": {
         "S":  {
             "type": "forge:ore_dict",
             "ore": "stickWood"
         },
-        
+
         "P": {
             "type": "forge:ore_dict",
             "ore": "plankWood"
@@ -21,9 +21,8 @@
             "ore": "logWood"
         }
     },
-    
+
     "result": {
-        "item": "huntersdream:campfire",
-        "count": 1
+        "item": "huntersdream:campfire_oak"
     }
 }

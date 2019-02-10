@@ -1,0 +1,22 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "huntersdream:campfire",
+        "textures": {
+            "2": "blocks/log_birch",
+            "3": "blocks/log_birch_top",
+            "particle": "blocks/log_birch"
+        }
+    },
+    "variants": {
+        "burning": {
+            "true": {},
+            "false": {
+                "textures": {
+                    "0": "huntersdream:nothing",
+                    "1": "huntersdream:nothing"
+                }
+            }
+        }
+    }
+}

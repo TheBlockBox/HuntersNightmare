@@ -3,6 +3,8 @@ package theblockbox.huntersdream.blocks;
 import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -26,13 +28,25 @@ import theblockbox.huntersdream.init.CreativeTabInit;
 public class BlockCampfire extends BlockContainer {
 	public static final PropertyBool BURNING = PropertyBool.create("burning");
 	public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 3 / 8.0D, 1);
+	private final BlockPlanks.EnumType plankType;
 
-	public BlockCampfire() {
+	public BlockCampfire(BlockPlanks.EnumType plankType) {
 		super(Material.WOOD);
+		this.plankType = plankType;
 		this.setHardness(2.0F);
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
 		this.setHarvestLevel("axe", 0);
 		this.setDefaultState(this.getDefaultState().withProperty(BlockCampfire.BURNING, false));
+	}
+
+	public BlockPlanks.EnumType getPlankType() {
+		return this.plankType;
+	}
+
+	@Override
+	public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+		// TODO: Remove if unnecessary
+		return this.getPlankType().getMapColor();
 	}
 
 	@Override
@@ -120,5 +134,10 @@ public class BlockCampfire extends BlockContainer {
 		if (stateIn.getValue(BlockCampfire.BURNING)) {
 			Blocks.FIRE.randomDisplayTick(stateIn, worldIn, pos, random);
 		}
+	}
+
+	@Override
+	public boolean isBurning(IBlockAccess world, BlockPos pos) {
+		return world.getBlockState(pos).getValue(BlockCampfire.BURNING);
 	}
 }

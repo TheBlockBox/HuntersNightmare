@@ -1,12 +1,12 @@
 package theblockbox.huntersdream.gui;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import theblockbox.huntersdream.container.ContainerCampfire;
-import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiCampfire extends GuiContainer {
@@ -14,9 +14,11 @@ public class GuiCampfire extends GuiContainer {
 	public static final int HEIGHT = 166;
 	public static final ResourceLocation IMAGE = GeneralHelper.newResLoc("textures/gui/campfire.png");
 	private final ContainerCampfire container;
+	private final String translationKey;
 
-	public GuiCampfire(ContainerCampfire inventorySlotsIn) {
+	public GuiCampfire(ContainerCampfire inventorySlotsIn, Block block) {
 		super(inventorySlotsIn);
+		this.translationKey = block.getTranslationKey() + ".name";
 		this.xSize = GuiCampfire.WIDTH;
 		this.ySize = GuiCampfire.HEIGHT;
 		this.container = inventorySlotsIn;
@@ -48,7 +50,7 @@ public class GuiCampfire extends GuiContainer {
 		}
 
 		GeneralHelper.drawCenteredString(this.fontRenderer,
-				I18n.format(BlockInit.CAMPFIRE.getTranslationKey() + ".name"), 0, this.xSize, 5, 4210752);
+				I18n.format(this.translationKey), 0, this.xSize, 5, 4210752);
 		this.fontRenderer.drawString(this.container.getPlayerInventory().getDisplayName().getUnformattedText(), 8,
 				this.ySize - 96 + 4, 4210752);
 	}

@@ -34,7 +34,8 @@ public class GuiHandler implements IGuiHandler {
 		case 0:
 			return new GuiSilverFurnace((ContainerSilverFurnace) this.getServerGuiElement(id, player, world, x, y, z));
 		case 1:
-			return new GuiCampfire((ContainerCampfire) this.getServerGuiElement(id, player, world, x, y, z));
+			return new GuiCampfire((ContainerCampfire) this.getServerGuiElement(id, player, world, x, y, z),
+					world.getBlockState(new BlockPos(x, y, z)).getBlock());
 		default:
 			return null;
 		}

@@ -16,7 +16,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import theblockbox.huntersdream.blocks.BlockCampfire;
-import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.SideItemHandler;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
@@ -142,7 +141,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
 	@Override
 	public boolean shouldRefresh(World worldIn, BlockPos blockPos, IBlockState oldState, IBlockState newState) {
-		return newState.getBlock() != BlockInit.CAMPFIRE;
+		return !(newState.getBlock() instanceof BlockCampfire);
 	}
 
 	@Override

@@ -1,9 +1,0 @@
-{
-	"forge_marker": 1,
-	"variants": {
-		"burning": {
-			"true": { "model": "huntersdream:campfire_lit" },
-			"false": { "model": "huntersdream:campfire" }
-		}
-	}
-}

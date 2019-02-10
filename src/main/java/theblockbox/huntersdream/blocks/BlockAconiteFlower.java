@@ -79,7 +79,7 @@ public class BlockAconiteFlower extends BlockFlower {
             return (this.baseStateCall++ == 1) ? new BlockStateWrapper(state) {
                 @Override
                 public <T extends Comparable<T>, V extends T> IBlockState withProperty(IProperty<T> property, V value) {
-                    return this;
+                    return state;
                 }
             } : state;
         }

@@ -1,0 +1,7 @@
+{
+    "parent": "huntersdream:block/campfire",
+    "textures": {
+        "2": "blocks/log_jungle",
+        "3": "blocks/log_jungle_top"
+    }
+}

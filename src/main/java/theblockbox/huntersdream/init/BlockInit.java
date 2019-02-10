@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
@@ -23,9 +24,6 @@ public class BlockInit {
 
     @GameRegistry.ObjectHolder("huntersdream:furnace_silver")
     public static final Block FURNACE_SILVER = null;
-
-    @GameRegistry.ObjectHolder("huntersdream:campfire")
-    public static final Block CAMPFIRE = null;
 
     @GameRegistry.ObjectHolder("huntersdream:overworld_ore_silver")
     public static final Block ORE_SILVER = null;
@@ -57,7 +55,9 @@ public class BlockInit {
                 "overworld_ore_silver", event);
         BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "aconite_flower", event);
         BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "furnace_silver", event);
-        BlockInit.registerBlockWithItem(new BlockCampfire(), "campfire", 1, event);
+        for(BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
+            BlockInit.registerBlockWithItem(new BlockCampfire(type), "campfire_" + type.getName(), 1, event);
+        }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
         BlockInit.registerBlockWithItem(new BlockAconiteGarland(false, false), "aconite_garland", event);
         BlockInit.registerBlock(new BlockAconiteGarland(true, false), "aconite_garland_t", event);
