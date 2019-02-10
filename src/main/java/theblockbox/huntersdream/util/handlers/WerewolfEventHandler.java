@@ -107,7 +107,7 @@ public class WerewolfEventHandler {
 				ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
 				if (WerewolfHelper.isWerewolfTime(player.world) && !WerewolfHelper.isTransformed(player)
 						&& (cap.getTransformation() == Transformation.WEREWOLF)
-						&& WerewolfHelper.getTransformationStage((EntityPlayerMP) player) > 0) {
+						&& WerewolfHelper.getTransformationStage(player) > 0) {
 					// cancel event if damage source isn't magic (including poison) or event can
 					// kill player
 					event.setCanceled((event.getSource() != WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE)
@@ -231,10 +231,19 @@ public class WerewolfEventHandler {
 
 	/** Called when infection stage changes */
 	private static void onStageChanged(EntityPlayerMP player, int nextStage) {
-
 		WerewolfHelper.setTransformationStage(player, nextStage);
+		int transformationStage = WerewolfHelper.getTransformationStage(player);
 
-		switch (WerewolfHelper.getTransformationStage(player)) {
+		// send chat messages
+		if (transformationStage != 0) {
+			ITextComponent message = new TextComponentTranslation(
+					"transformations.huntersdream:werewolf.transformingInto."
+							+ WerewolfHelper.getTransformationStage(player));
+			message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
+			player.sendMessage(message);
+		}
+
+		switch (transformationStage) {
 		case 1:
 			player.world.playSound(null, player.posX, player.posY, player.posZ, SoundInit.HEART_BEAT,
 					SoundCategory.PLAYERS, 100, 1);
@@ -267,13 +276,8 @@ public class WerewolfEventHandler {
 			throw new UnexpectedBehaviorException(
 					"Stage " + WerewolfHelper.getTransformationStage(player) + " is not a valid stage");
 		}
-		if (WerewolfHelper.getTransformationStage(player) != 0) {
-			ITextComponent message = new TextComponentTranslation(
-					"transformations.huntersdream:werewolf.transformingInto."
-							+ WerewolfHelper.getTransformationStage(player));
-			message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
-			player.sendMessage(message);
-		}
+		// sync transformation extra data with player (for transformation overlays)
+		PacketHandler.sendTransformationMessageToPlayer(player, player);
 	}
 
 	@SubscribeEvent

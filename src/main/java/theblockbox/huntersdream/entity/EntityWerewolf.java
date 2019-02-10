@@ -85,7 +85,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 		this.untransformedEntityName = entityName;
 		this.usesAlexSkin = this.rand.nextBoolean();
-		this.setSize(0.6F, WerewolfHelper.getWerewolfHeight(this));
+		this.setSize(0.6F, 1.85F);
 		this.setExtraData(extraData);
 		Validate.notNull(extraData, "Can't spawn werewolf with null extra data");
 	}
@@ -181,7 +181,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 	@Override
 	public float getEyeHeight() {
-		return WerewolfHelper.getWerewolfEyeHeight(this);
+		return 1.62F;
 	}
 
 	@Override
@@ -268,12 +268,6 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
 						this.world.removeEntity(this);
 					}
-				}
-
-				// set size
-				float newHeight = WerewolfHelper.getWerewolfHeight(this);
-				if (this.height != newHeight) {
-					this.setSize(0.6F, newHeight);
 				}
 			}
 		}

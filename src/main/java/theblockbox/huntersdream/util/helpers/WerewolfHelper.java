@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.util.helpers;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,7 +8,9 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -35,12 +36,12 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.Random;
 
 public class WerewolfHelper {
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
     public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource(
             "huntersdream:werewolfTransformationDamage");
-    public static final float WEREWOLF_HEIGHT = 2.4F;
 
     /**
      * Returns true when a werewolf can transform in this world
@@ -265,7 +266,7 @@ public class WerewolfHelper {
         return event.getExtraData();
     }
 
-    public static int getTransformationStage(EntityPlayerMP player) {
+    public static int getTransformationStage(EntityPlayer player) {
         WerewolfHelper.validateIsWerewolf(player);
         return TransformationHelper.getTransformationData(player).getInteger("transformationStage");
     }
@@ -367,21 +368,6 @@ public class WerewolfHelper {
         }
     }
 
-    public static float getWerewolfHeight(Entity werewolf) {
-        // TODO: Change eye height if it's possible to change it when sneaking
-        return WerewolfHelper.shouldUseSneakingModel(werewolf) ? 2.0F : WerewolfHelper.WEREWOLF_HEIGHT;
-    }
-
-    public static float getWerewolfEyeHeight(Entity werewolf) {
-        return WerewolfHelper.shouldUseSneakingModel(werewolf) ? 1.85F : 2.1F;
-    }
-
-    // TODO: Change this?
-    public static boolean shouldUseSneakingModel(Entity werewolf) {
-        // if player was sneaking before, don't use sneaking model
-        return werewolf.isSneaking() || !GeneralHelper.canEntityExpandHeight(werewolf, WerewolfHelper.WEREWOLF_HEIGHT);
-    }
-
     public static void validateIsWerewolf(EntityLivingBase entity) {
         TransformationHelper.getTransformation(entity).validateEquals(Transformation.WEREWOLF);
     }
@@ -440,6 +426,18 @@ public class WerewolfHelper {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static void spawnTransformationParticles(EntityPlayer player) {
+        int transformationStage = WerewolfHelper.getTransformationStage(player);
+        if ((transformationStage == 4) || (transformationStage == 5)) {
+            Random random = player.getRNG();
+            player.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE,
+                    player.posX + MathHelper.nextDouble(random, -0.5D, 0.5D),
+                    player.posY + MathHelper.nextDouble(random, 0.0D, 1.9D),
+                    player.posZ + 0.1D + MathHelper.nextDouble(random, -0.5D, 0.5D),
+                    0.0D, 0.0D, 0.0D);
         }
     }
 }

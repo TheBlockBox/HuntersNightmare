@@ -244,18 +244,6 @@ public class TransformationHelper {
 		return MinecraftForge.EVENT_BUS.post(new IsLivingInfectedEvent(entity));
 	}
 
-	public static void changePlayerSize(EntityPlayer player) {
-		if (WerewolfHelper.isTransformed(player)) {
-			// we have to use 0.6 because otherwise the players move without doing anything
-			GeneralHelper.changePlayerSize(player, 0.6F, WerewolfHelper.getWerewolfHeight(player));
-			// TODO: Find a way to make eye height work correctly? (doesn't work correctly
-			// if player is sneaking)
-			player.eyeHeight = WerewolfHelper.getWerewolfEyeHeight(player);
-		} else {
-			player.eyeHeight = player.getDefaultEyeHeight();
-		}
-	}
-
 	public static NBTTagCompound getTransformationData(EntityLivingBase entity) {
 		Transformation transformation = TransformationHelper.getTransformation(entity);
 		transformation.validateIsTransformation();

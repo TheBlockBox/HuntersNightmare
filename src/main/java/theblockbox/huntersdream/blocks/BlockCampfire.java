@@ -131,6 +131,7 @@ public class BlockCampfire extends BlockContainer {
 
 	@Override
 	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random random) {
+		// TODO: Does #isBurning also have its own particles? If so, remove this method
 		if (stateIn.getValue(BlockCampfire.BURNING)) {
 			Blocks.FIRE.randomDisplayTick(stateIn, worldIn, pos, random);
 		}
