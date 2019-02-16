@@ -7,16 +7,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
-import theblockbox.huntersdream.api.Transformation;
 
 /**
  * Provides utilities for client-side only things like localization and rendering
  */
+// TODO: When porting to 1.13, change all GL11 calls to the version vanilla uses
 public class ClientHelper {
     public static final int GL_LINES = GL11.GL_LINES;
-    private static boolean isHypersensitiveVisionActive = false;
 
     /**
      * Draws a rectangle onto the screen between the given coordinates (from x, y to secondX, secondY).
@@ -140,18 +138,5 @@ public class ClientHelper {
         bufferbuilder.pos(x, y, zLevel).tex(textureSprite.getMinU(), textureSprite.getMinV()).endVertex();
 
         tessellator.draw();
-    }
-
-    // TODO: Finish
-    public static void drawHypersensitiveVision(EntityPlayer player, Transformation transformation) {
-        boolean flag = (transformation == Transformation.WEREWOLF) && (WerewolfHelper.getTransformationStage(player) == 5);
-        if (ClientHelper.isHypersensitiveVisionActive && !flag) {
-            // TODO: Properly remove color here
-            GlStateManager.resetColor();
-            ClientHelper.isHypersensitiveVisionActive = false;
-        } else if (flag) {
-            GlStateManager.color(1.0F, 0.85F, 0.0F, 0.2F);
-            ClientHelper.isHypersensitiveVisionActive = true;
-        }
     }
 }

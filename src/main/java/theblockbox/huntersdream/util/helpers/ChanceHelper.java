@@ -6,7 +6,6 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-// TODO: Test if the float chance methods work correctly
 public class ChanceHelper {
     /**
      * Returns a random byte. If the given bound is 0, 0 is returned. If the given

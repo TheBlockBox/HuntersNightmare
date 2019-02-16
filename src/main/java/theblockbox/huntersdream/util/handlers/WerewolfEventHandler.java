@@ -313,12 +313,14 @@ public class WerewolfEventHandler {
 	@SubscribeEvent
 	public static void onPlayerSleep(PlayerSleepInBedEvent event) {
 		EntityPlayer player = event.getEntityPlayer();
-		if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
+		if ((TransformationHelper.getTransformation(player) == Transformation.WEREWOLF)
+				&& WerewolfHelper.isTransformed(player)) {
 			// TODO: set to EntityPlayer.SleepResult#NOT_POSSIBLE_NOW ?
 			event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
-			if (!player.world.isRemote)
+			if (!player.world.isRemote) {
 				player.sendStatusMessage(new TextComponentTranslation(Reference.MODID + ".werewolfNotAllowedToSleep"),
 						true);
+			}
 		}
 	}
 

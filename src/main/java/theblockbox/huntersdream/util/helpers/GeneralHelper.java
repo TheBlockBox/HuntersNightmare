@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.helpers;
 
+import com.google.common.base.CaseFormat;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
@@ -14,16 +15,19 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -475,5 +479,20 @@ public class GeneralHelper {
             }
         }
         return -1;
+    }
+
+    public static EnumParticleTypes addParticle(ResourceLocation registryName, boolean shouldIgnoreRange) {
+        String name = registryName.toString();
+        EnumParticleTypes particle = EnumHelper.addEnum(EnumParticleTypes.class, CaseFormat.LOWER_UNDERSCORE
+                        .to(CaseFormat.UPPER_UNDERSCORE, name), new Class[]{String.class, int.class, boolean.class},
+                name, EnumParticleTypes.values().length, false);
+        if (particle == null) {
+            throw new UnexpectedBehaviorException("Couldn't register particle ");
+        } else {
+            // using AT to access private EnumParticleTypes#PARTICLES and EnumParticleTypes#BY_NAME
+            EnumParticleTypes.PARTICLES.put(particle.getParticleID(), particle);
+            EnumParticleTypes.BY_NAME.put(particle.getParticleName(), particle);
+            return particle;
+        }
     }
 }

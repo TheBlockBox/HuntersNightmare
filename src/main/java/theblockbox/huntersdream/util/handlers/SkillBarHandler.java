@@ -153,7 +153,7 @@ public class SkillBarHandler {
      * Called from {@link TransformationClientEventHandler#onGameOverlayRenderPre(RenderGameOverlayEvent.Pre)}
      */
     public static void onGameOverlayRenderPre(RenderGameOverlayEvent.Pre event) {
-        if (ConfigHandler.client.showActiveSkill && (event.getType() == HOTBAR)) {
+        if (ConfigHandler.client.showActiveSkill) {
             Minecraft mc = Minecraft.getMinecraft();
             mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             Optional<Skill> activeSkill = TransformationHelper.getITransformationPlayer(mc.player).getActiveSkill();

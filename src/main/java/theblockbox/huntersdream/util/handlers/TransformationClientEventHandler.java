@@ -25,14 +25,17 @@ import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonClickable;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.gui.GuiSkillTab;
+import theblockbox.huntersdream.init.GeneralInit;
 import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.WerewolfTransformationOverlay;
 import theblockbox.huntersdream.util.helpers.*;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * Handles events which are important for transforming
@@ -125,13 +128,16 @@ public class TransformationClientEventHandler {
                 transformation.setIconSprite(map.registerSprite(transformation.getIcon()));
             }
         }
-
         for (Skill skill : Skill.getAllSkills()) {
             if (skill.isParentSkill()) {
                 skill.setIconSprite(map.registerSprite(skill.getIcon()));
             }
         }
-
+        WerewolfTransformationOverlay.OVERLAYS.forEach(queue -> {
+            if (queue != null) {
+                queue.forEach(overlay -> overlay.sprite = map.registerSprite(overlay.getPath()));
+            }
+        });
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
     }
 
@@ -144,12 +150,11 @@ public class TransformationClientEventHandler {
             TransformationClientEventHandler.onHungerBarRendered(event, player, mc);
         } else if (type == RenderGameOverlayEvent.ElementType.HEALTH) {
             // render werewolf hearts
-            if (WerewolfHelper.isTransformed(player)
-                    || ((TransformationHelper.getTransformation(player) == Transformation.WEREWOLF)
-                    && (WerewolfHelper.getTransformationStage(player) >= 5))) {
+            if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF
+                    && ((WerewolfHelper.getTransformationStage(player) >= 5) || WerewolfHelper.isTransformed(player))) {
                 mc.getTextureManager().bindTexture(TransformationClientEventHandler.WEREWOLF_HEALTH);
             }
-        } else {
+        } else if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
             SkillBarHandler.onGameOverlayRenderPre(event);
         }
     }
@@ -158,9 +163,50 @@ public class TransformationClientEventHandler {
     public static void onGameOverlayRenderPost(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getMinecraft();
         RenderGameOverlayEvent.ElementType type = event.getType();
-        if (type == RenderGameOverlayEvent.ElementType.HEALTH && WerewolfHelper.isTransformed(mc.player)) {
-            // binding icon texture so that food bar still gets shown
-            mc.getTextureManager().bindTexture(Gui.ICONS);
+        EntityPlayer player = mc.player;
+        if (type == RenderGameOverlayEvent.ElementType.HEALTH) {
+            if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF
+                    && ((WerewolfHelper.getTransformationStage(player) >= 5) || WerewolfHelper.isTransformed(player))) {
+                // binding icon texture so that food bar still gets shown
+                mc.getTextureManager().bindTexture(Gui.ICONS);
+            }
+        } else if (type == RenderGameOverlayEvent.ElementType.ALL) {
+            int width = event.getResolution().getScaledWidth();
+            int height = event.getResolution().getScaledHeight();
+            // draw overlays
+            if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
+                int transformationStage = WerewolfHelper.getTransformationStage(player);
+                if (transformationStage != 0) {
+                    mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                    GlStateManager.enableAlpha();
+                    GlStateManager.enableBlend();
+                    Queue<WerewolfTransformationOverlay> queue =
+                            GeneralHelper.safeGet(WerewolfTransformationOverlay.OVERLAYS, transformationStage);
+                    if (queue != null) {
+                        for (WerewolfTransformationOverlay overlay : queue) {
+                            int overlayWidth = overlay.getWidth();
+                            int overlayHeight = overlay.getHeight();
+                            GlStateManager.pushMatrix();
+                            GlStateManager.scale(width / (double) overlayWidth, height / (double) overlayHeight, 1.0D);
+                            mc.ingameGUI.drawTexturedModalRect(0, 0, overlay.sprite, overlayWidth, overlayHeight);
+                            GlStateManager.popMatrix();
+                        }
+                    }
+                    // draw heart beat for transformed werewolves
+                } else if (WerewolfHelper.isTransformed(player)) {
+                    int overlayWidth = GeneralInit.BLOODSHOT_HEARTBEAT.getWidth();
+                    int overlayHeight = GeneralInit.BLOODSHOT_HEARTBEAT.getHeight();
+                    mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.enableAlpha();
+                    GlStateManager.enableBlend();
+                    GlStateManager.scale(width / (double) overlayWidth, height / (double) overlayHeight, 1.0D);
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 0.25F);
+                    mc.ingameGUI.drawTexturedModalRect(0, 0, GeneralInit.BLOODSHOT_HEARTBEAT.sprite,
+                            overlayWidth, overlayHeight);
+                    GlStateManager.popMatrix();
+                }
+            }
         }
     }
 
@@ -184,7 +230,7 @@ public class TransformationClientEventHandler {
                     int x = left - i * 8 - 9;
                     int y = top - 3;
                     int icon = 16;
-                    byte background = 0;
+                    int background = 0;
 
                     if (player.isPotionActive(MobEffects.HUNGER)) {
                         icon += 36;
@@ -209,7 +255,6 @@ public class TransformationClientEventHandler {
             // post new post event so gui rendering from other mods doesn't get canceled
             MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(event, event.getType()));
         }
-        ClientHelper.drawHypersensitiveVision(player, transformation);
     }
 
     public static class RenderLycanthropeArm extends RenderPlayer {

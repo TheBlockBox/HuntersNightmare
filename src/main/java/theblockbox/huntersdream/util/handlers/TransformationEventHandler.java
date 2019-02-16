@@ -51,6 +51,7 @@ public class TransformationEventHandler {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
+
             EntityPlayer player = event.player;
             ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(player);
             boolean isWerewolf = cap.getTransformation() == Transformation.WEREWOLF;

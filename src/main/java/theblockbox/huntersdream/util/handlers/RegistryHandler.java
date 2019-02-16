@@ -114,6 +114,7 @@ public class RegistryHandler {
         GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
         RegistryHandler.directory = event.getModConfigurationDirectory();
         MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
+        GeneralInit.preInit();
     }
 
     public static void initCommon(FMLInitializationEvent event) {
@@ -126,7 +127,7 @@ public class RegistryHandler {
         // TODO: Better weights?
         GameRegistry.registerWorldGenerator(new WorldGenWerewolfCabin(), 1);
         GameRegistry.registerWorldGenerator(new WorldGenHuntersCamp(), 1);
-        for(Biome biome : Biome.REGISTRY) {
+        for (Biome biome : Biome.REGISTRY) {
             biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
         }
     }
