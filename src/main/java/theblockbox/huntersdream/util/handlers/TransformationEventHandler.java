@@ -64,16 +64,10 @@ public class TransformationEventHandler {
                     }
                 }
             }
-            if (player.world.isRemote) {
-                // transformation particles
-                if (isWerewolf && !isTransformed) {
-                    WerewolfHelper.spawnTransformationParticles(player);
-                }
-            } else {
+            if (!player.world.isRemote) {
                 boolean isWerewolfTime = WerewolfHelper.isWerewolfTime(player.world);
 
                 if (player.ticksExisted % 20 == 0) {
-
                     EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
                     if (isWerewolf) {

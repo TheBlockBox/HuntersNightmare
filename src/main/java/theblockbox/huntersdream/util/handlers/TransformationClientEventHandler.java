@@ -26,6 +26,7 @@ import theblockbox.huntersdream.gui.GuiButtonClickable;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.init.GeneralInit;
+import theblockbox.huntersdream.init.ParticleInit;
 import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.WerewolfTransformationOverlay;
@@ -33,9 +34,9 @@ import theblockbox.huntersdream.util.helpers.*;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * Handles events which are important for transforming
@@ -133,12 +134,15 @@ public class TransformationClientEventHandler {
                 skill.setIconSprite(map.registerSprite(skill.getIcon()));
             }
         }
-        WerewolfTransformationOverlay.OVERLAYS.forEach(queue -> {
-            if (queue != null) {
-                queue.forEach(overlay -> overlay.sprite = map.registerSprite(overlay.getPath()));
+        for (int i = 1; i <= WerewolfHelper.getAmountOfTransformationStages(); i++) {
+            Collection<WerewolfTransformationOverlay> collection = WerewolfTransformationOverlay.getOverlaysForTransformationStage(i);
+            if(collection != null) {
+                collection.forEach(overlay -> overlay.sprite = map.registerSprite(overlay.getPath()));
             }
-        });
+        }
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
+        ParticleInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
+                + ParticleInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
     }
 
     @SubscribeEvent
@@ -180,10 +184,10 @@ public class TransformationClientEventHandler {
                     mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     GlStateManager.enableAlpha();
                     GlStateManager.enableBlend();
-                    Queue<WerewolfTransformationOverlay> queue =
-                            GeneralHelper.safeGet(WerewolfTransformationOverlay.OVERLAYS, transformationStage);
-                    if (queue != null) {
-                        for (WerewolfTransformationOverlay overlay : queue) {
+                    Collection<WerewolfTransformationOverlay> collection = WerewolfTransformationOverlay
+                            .getOverlaysForTransformationStage(transformationStage);
+                    if (collection != null) {
+                        for (WerewolfTransformationOverlay overlay : collection) {
                             int overlayWidth = overlay.getWidth();
                             int overlayHeight = overlay.getHeight();
                             GlStateManager.pushMatrix();

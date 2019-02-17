@@ -142,6 +142,7 @@ public class RegistryHandler {
     }
 
     public static void initClient() {
+        ParticleInit.registerParticles();
     }
 
     public static void postInitClient() {

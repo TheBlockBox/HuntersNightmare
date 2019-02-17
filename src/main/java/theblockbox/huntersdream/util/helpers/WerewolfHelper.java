@@ -8,9 +8,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -36,7 +34,6 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
-import java.util.Random;
 
 public class WerewolfHelper {
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
@@ -429,15 +426,11 @@ public class WerewolfHelper {
         }
     }
 
-    public static void spawnTransformationParticles(EntityPlayer player) {
-        int transformationStage = WerewolfHelper.getTransformationStage(player);
-        if ((transformationStage == 4) || (transformationStage == 5)) {
-            Random random = player.getRNG();
-            player.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE,
-                    player.posX + MathHelper.nextDouble(random, -0.5D, 0.5D),
-                    player.posY + MathHelper.nextDouble(random, 0.0D, 1.9D),
-                    player.posZ + 0.1D + MathHelper.nextDouble(random, -0.5D, 0.5D),
-                    0.0D, 0.0D, 0.0D);
-        }
+    /**
+     * Returns how many stages there are until a werewolf
+     * player has transformed into a werewolf.
+     */
+    public static int getAmountOfTransformationStages() {
+        return 6;
     }
 }
