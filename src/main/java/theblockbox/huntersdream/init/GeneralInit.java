@@ -8,7 +8,7 @@ package theblockbox.huntersdream.init;
  */
 public class GeneralInit {
     public static final WerewolfTransformationOverlay BLOODSHOT_HEARTBEAT = new WerewolfTransformationOverlay(
-            GeneralHelper.newResLoc("gui/werewolf_transformation/bloodshot_heartbeat"), 32, 32)
+            GeneralHelper.newResLoc("gui/werewolf_transformation/bloodshot_heartbeat"), 64, 64)
             .addOverlay(1).addOverlay(2).addOverlay(3).addOverlay(5);
     public static final WerewolfTransformationOverlay HYPERSENSITIVE_VISION = new WerewolfTransformationOverlay(
             GeneralHelper.newResLoc("gui/werewolf_transformation/hypersensitive_vision"),
