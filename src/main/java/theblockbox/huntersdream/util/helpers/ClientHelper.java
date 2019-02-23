@@ -55,30 +55,6 @@ public class ClientHelper {
         return maxWidth;
     }
 
-    public static void drawConnection(int x1, int y1, int x2, int y2, float zLevel) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlpha();
-
-        bufferBuilder.begin(ClientHelper.GL_LINES, DefaultVertexFormats.POSITION);
-        GlStateManager.glLineWidth(11.0F);
-        GlStateManager.color(0, 0, 0);
-        bufferBuilder.pos(x1, y1, zLevel).endVertex();
-        bufferBuilder.pos(x2, y2, zLevel).endVertex();
-        tessellator.draw();
-
-        bufferBuilder.begin(ClientHelper.GL_LINES, DefaultVertexFormats.POSITION);
-        GlStateManager.glLineWidth(3.0F);
-        GlStateManager.color(1, 1, 1);
-        bufferBuilder.pos(x1, y1, zLevel).endVertex();
-        bufferBuilder.pos(x2, y2, zLevel).endVertex();
-        tessellator.draw();
-
-        GlStateManager.enableTexture2D();
-    }
-
     public static void drawCentralString(String text, int x, int y, int color, float size, FontRenderer fontRenderer) {
         GlStateManager.pushMatrix();
         GlStateManager.scale(size, size, 1);

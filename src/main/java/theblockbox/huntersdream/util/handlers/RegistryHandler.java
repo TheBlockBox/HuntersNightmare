@@ -138,7 +138,6 @@ public class RegistryHandler {
     // Client
 
     public static void preInitClient() {
-        KeyBindingInit.register();
     }
 
     public static void initClient() {

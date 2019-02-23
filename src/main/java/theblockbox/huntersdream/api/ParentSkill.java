@@ -156,7 +156,7 @@ public class ParentSkill extends Skill {
     }
 
     @Override
-    public Skill getSkillWithLevel(int level) {
+    public Skill getSkillWithLevel(int level) throws IndexOutOfBoundsException {
         if (level == 0)
             return this;
         else

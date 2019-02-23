@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 
 public class GuiButtonSkill extends GuiButton {
     private final Skill skill;
-    private final GuiButtonSkill childButton;
     private final int middleX;
     private final int middleY;
     // I'm not going to create a getter for every
@@ -28,13 +27,11 @@ public class GuiButtonSkill extends GuiButton {
     final int descriptionHeight;
     final int highestWidth;
 
-    public GuiButtonSkill(Skill skill, int buttonId, int x, int y, @Nullable GuiButtonSkill childButton,
-                          FontRenderer fontRenderer, int textWidth) {
+    public GuiButtonSkill(Skill skill, int buttonId, int x, int y, FontRenderer fontRenderer, int textWidth) {
         super(buttonId, x, y, 16, 16, "");
         if(fontRenderer == null)
             fontRenderer = Minecraft.getMinecraft().fontRenderer;
         this.skill = skill;
-        this.childButton = childButton;
         this.middleX = this.x + this.width / 2;
         this.middleY = this.y + this.height / 2;
 
@@ -63,11 +60,6 @@ public class GuiButtonSkill extends GuiButton {
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
         return super.mousePressed(mc, mouseX, mouseY) && this.skill.canPlayerUnlockSkill(mc.player);
-    }
-
-    @Nullable
-    public GuiButtonSkill getChildButton() {
-        return this.childButton;
     }
 
     public int getMiddleX() {

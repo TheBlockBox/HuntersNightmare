@@ -199,8 +199,9 @@ public class WerewolfEventHandler {
                 WerewolfHelper.setTimeSinceTransformation(player, -1);
                 WerewolfHelper.setTransformationStage(player, 0);
                 Main.getLogger().warn(
-                        "Has the ingame time been changed, did the player leave the world or did the player use wolfsbane? Player "
-                                + player.getName() + "'s transformation stage (" + nextStage + ") is invalid");
+                        "Has the ingame time been changed or has the player left the world? Player " + player.getName()
+                                + "'s transformation stage (" + nextStage + ") is invalid");
+                PacketHandler.sendTransformationMessage(player);
                 return;
             }
             if (nextStage > WerewolfHelper.getTransformationStage(player)) {
@@ -210,7 +211,15 @@ public class WerewolfEventHandler {
     }
 
     static void notWerewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-        // currently does nothing
+        // test if player has no transformation stage
+        if (WerewolfHelper.getTransformationStage(player) != 0) {
+            WerewolfHelper.setTimeSinceTransformation(player, -1);
+            WerewolfHelper.setTransformationStage(player, 0);
+            Main.getLogger().warn(
+                    "Has the ingame time been changed or has the player left the world? Player " + player.getName()
+                            + "'s transformation stage wasn't 0 although the player wasn't transformed");
+            PacketHandler.sendTransformationMessage(player);
+        }
     }
 
     static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {

@@ -47,9 +47,6 @@ public class SkillBarHandler {
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (KeyBindingInit.ACTIVATE_SKILL_BAR.isPressed()) {
-            SkillBarHandler.showSkillBar();
-        }
         if (SkillBarHandler.isSkillBarShown()) {
             Minecraft mc = Minecraft.getMinecraft();
             for (int i = 0; i < SkillBarHandler.SKILL_BAR.length; ++i) {
@@ -111,7 +108,7 @@ public class SkillBarHandler {
 
                 // draw cross
                 mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                if(SkillBarHandler.crossSprite != null) {
+                if (SkillBarHandler.crossSprite != null) {
                     ClientHelper.drawTexturedModalRect(halfScaledWidth + 92, scaledHeight, SkillBarHandler.crossSprite, 16, 16, SkillBarHandler.SKILL_BAR_Z_LEVEL);
                 }
 
@@ -206,6 +203,6 @@ public class SkillBarHandler {
     @Nullable
     public static Skill getCurrentSkill() {
         return (SkillBarHandler.currentSkill == SkillBarHandler.SKILL_BAR.length) ? null
-                :SkillBarHandler.SKILL_BAR[SkillBarHandler.currentSkill];
+                : SkillBarHandler.SKILL_BAR[SkillBarHandler.currentSkill];
     }
 }

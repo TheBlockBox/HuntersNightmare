@@ -29,7 +29,7 @@ import theblockbox.huntersdream.init.GeneralInit;
 import theblockbox.huntersdream.init.ParticleInit;
 import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.WerewolfTransformationOverlay;
+import theblockbox.huntersdream.api.WerewolfTransformationOverlay;
 import theblockbox.huntersdream.util.helpers.*;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
@@ -109,14 +109,6 @@ public class TransformationClientEventHandler {
             // TODO: Create less instances?
             buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, new GuiSkillTab(),
                     TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIconAsSprite()));
-            // TODO: Different skill icon?
-            buttonList.add(new GuiButtonClickable(buttonList.size(), x + 19, y, SkillInit.BITE_0.getIconAsSprite()) {
-                @Override
-                public void onClicked(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-                    mc.displayGuiScreen(null);
-                    SkillBarHandler.showSkillBar();
-                }
-            });
         }
     }
 
@@ -137,7 +129,7 @@ public class TransformationClientEventHandler {
         for (int i = 1; i <= WerewolfHelper.getAmountOfTransformationStages(); i++) {
             Collection<WerewolfTransformationOverlay> collection = WerewolfTransformationOverlay.getOverlaysForTransformationStage(i);
             if(collection != null) {
-                collection.forEach(overlay -> overlay.sprite = map.registerSprite(overlay.getPath()));
+                collection.forEach(overlay -> overlay.stitchTexture(map));
             }
         }
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
@@ -175,10 +167,10 @@ public class TransformationClientEventHandler {
                 mc.getTextureManager().bindTexture(Gui.ICONS);
             }
         } else if (type == RenderGameOverlayEvent.ElementType.ALL) {
-            int width = event.getResolution().getScaledWidth();
-            int height = event.getResolution().getScaledHeight();
             // draw overlays
             if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
+                int width = event.getResolution().getScaledWidth();
+                int height = event.getResolution().getScaledHeight();
                 int transformationStage = WerewolfHelper.getTransformationStage(player);
                 if (transformationStage != 0) {
                     mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -188,27 +180,15 @@ public class TransformationClientEventHandler {
                             .getOverlaysForTransformationStage(transformationStage);
                     if (collection != null) {
                         for (WerewolfTransformationOverlay overlay : collection) {
-                            int overlayWidth = overlay.getWidth();
-                            int overlayHeight = overlay.getHeight();
-                            GlStateManager.pushMatrix();
-                            GlStateManager.scale(width / (double) overlayWidth, height / (double) overlayHeight, 1.0D);
-                            mc.ingameGUI.drawTexturedModalRect(0, 0, overlay.sprite, overlayWidth, overlayHeight);
-                            GlStateManager.popMatrix();
+                            overlay.draw(width, height);
                         }
                     }
                     // draw heart beat for transformed werewolves
                 } else if (WerewolfHelper.isTransformed(player)) {
-                    int overlayWidth = GeneralInit.BLOODSHOT_HEARTBEAT.getWidth();
-                    int overlayHeight = GeneralInit.BLOODSHOT_HEARTBEAT.getHeight();
                     mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    GlStateManager.pushMatrix();
                     GlStateManager.enableAlpha();
                     GlStateManager.enableBlend();
-                    GlStateManager.scale(width / (double) overlayWidth, height / (double) overlayHeight, 1.0D);
-                    GlStateManager.color(1.0F, 1.0F, 1.0F, 0.25F);
-                    mc.ingameGUI.drawTexturedModalRect(0, 0, GeneralInit.BLOODSHOT_HEARTBEAT.sprite,
-                            overlayWidth, overlayHeight);
-                    GlStateManager.popMatrix();
+                    GeneralInit.BLOODSHOT_HEARTBEAT.draw(width, height);
                 }
             }
         }

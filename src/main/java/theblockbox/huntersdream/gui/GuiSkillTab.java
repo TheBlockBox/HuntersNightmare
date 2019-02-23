@@ -29,19 +29,13 @@ public class GuiSkillTab extends GuiScreen {
 	public static final int RECT_SIZE = 24;
 	// length of a connections of button and rect
 	public static final int RECT_CONNECTION_LENGTH = 18;
-	// length of a connection of two buttons
-	public static final int BUTTON_CONNECTION_LENGTH = 22;
 	public static final int MAX_TEXT_WIDTH = 200;
 	private static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/skills/skill_window.png");
 	// tp = TransformationPlayer
 	private final ITransformationPlayer tp;
 	private float fade = 0.0F;
-	private int rectMinX;
-	private int rectMinY;
-	private int rectMaxX;
-	private int rectMaxY;
-	private int rectMiddleX;
-	private int rectMiddleY;
+	private int xMiddle;
+	private int yMiddle;
 
 	public GuiSkillTab() {
 		this.tp = TransformationHelper.getITransformationPlayer(Minecraft.getMinecraft().player);
@@ -51,15 +45,13 @@ public class GuiSkillTab extends GuiScreen {
 	public void initGui() {
 		super.initGui();
 		int halfRectSize = GuiSkillTab.RECT_SIZE / 2;
-		this.rectMiddleX = this.width / 2;
-		this.rectMiddleY = this.height / 2 + 4;
-		this.rectMinX = this.rectMiddleX - halfRectSize;
-		this.rectMinY = this.rectMiddleY - halfRectSize;
-		this.rectMaxX = this.rectMiddleX + halfRectSize;
-		this.rectMaxY = this.rectMiddleY + halfRectSize;
+		this.xMiddle = this.width / 2 - 2;
+		this.yMiddle = this.height / 2 + 4;
 
 		// TODO: Use different collection?
-		Collection<Skill> skills = Skill.getAllSkills().stream().filter(Skill::isParentSkill)
+		// TODO: Make everything cleaner?
+		Collection<ParentSkill> skills = Skill.getAllSkills().stream().filter(Skill::isParentSkill)
+				.map(s -> s.getAsParentSkill().get())
 				.filter(s -> s.isForTransformation(this.tp.getTransformation()))
 				.collect(Collectors.toCollection(ArrayDeque::new));
 
@@ -70,32 +62,18 @@ public class GuiSkillTab extends GuiScreen {
 		double radius = halfRectSize + GuiSkillTab.RECT_CONNECTION_LENGTH;
 		double angle = 0;
 		double step = (Math.PI * 2) / skills.size();
-		int xOffset = this.rectMiddleX - 8;
-		int yOffset = this.rectMiddleY - 8;
+		int xOffset = this.xMiddle - 8;
+		int yOffset = this.yMiddle - 8;
 
 		// create buttons
 		int buttonId = 0;
-		for(Skill s : skills) {
-			ParentSkill skill = (ParentSkill) s;
-			double cos = Math.cos(angle);
-			double sin = Math.sin(angle);
-
-			// create parent button
-			int x = (int) (xOffset + radius * cos);
-			int y = (int) (yOffset + radius * sin);
-			GuiButtonSkill lastButton = new GuiButtonSkill(skill, buttonId++, x, y, null, this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH);
-			this.buttonList.add(lastButton);
-
-			// create child buttons
-			for(Skill childSkill : skill.getChildSkills()) {
-				double r = radius + GuiSkillTab.BUTTON_CONNECTION_LENGTH * childSkill.getLevel();
-				int childX = (int) (xOffset + r * cos);
-				int childY = (int) (yOffset + r * sin);
-				lastButton = new GuiButtonSkill(childSkill, buttonId++, childX, childY, lastButton,
-						this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH);
-				this.buttonList.add(lastButton);
-			}
-
+		for(ParentSkill parentSkill : skills) {
+			Skill skill = parentSkill.getSkillWithLevel(Math.min(this.tp.getSkillLevel(parentSkill) + 1,
+					parentSkill.getMaximumLevel()));
+			// create button
+			int x = (int) (xOffset + radius * Math.cos(angle));
+			int y = (int) (yOffset + radius * Math.sin(angle));
+			this.buttonList.add(new GuiButtonSkill(skill, buttonId++, x, y, this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH));
 			angle += step;
 		}
 	}
@@ -125,17 +103,6 @@ public class GuiSkillTab extends GuiScreen {
 				// button is being hovered)
 				button.drawButton(this.mc, mouseX, mouseY, partialTicks);
 
-				// draw connection between button and rect
-				ClientHelper.drawConnection(button.getMiddleX(), button.getMiddleY(), this.rectMiddleX, this.rectMiddleY,
-						this.zLevel);
-
-				// draw connection between button and child button
-				GuiButtonSkill child = button.getChildButton();
-				if(child != null) {
-					ClientHelper.drawConnection(button.getMiddleX(), button.getMiddleY(), child.getMiddleX(),
-							child.getMiddleY(), this.zLevel - 1);
-				}
-
 				// if the player is hovering over the button
 				if (button.isMouseOver()) {
 					// set the hovered button to this button (it will be drawn later)
@@ -153,12 +120,9 @@ public class GuiSkillTab extends GuiScreen {
 			}
 		}
 
-		// draw rect (the one in the middle)
-		ClientHelper.drawRect(this.rectMinX, this.rectMinY, this.rectMaxX, this.rectMaxY, this.zLevel);
-
 		// draw xp
 		String xp = String.valueOf(this.mc.player.experienceLevel);
-		ClientHelper.drawCentralString(xp, this.rectMiddleX, this.rectMiddleY, 3141706, 1.5F, GuiSkillTab.RECT_SIZE,
+		ClientHelper.drawCentralString(xp, this.xMiddle, this.yMiddle, 3141706, 1.5F, GuiSkillTab.RECT_SIZE,
 				this.fontRenderer);
 
 		// make everything darker if player hovers over button (fade gets set to 0 when
@@ -221,8 +185,7 @@ public class GuiSkillTab extends GuiScreen {
 			// otherwise reset the color
 			GlStateManager.color(255, 255, 255);
 		}
-		this.drawTexturedModalRect(button.x, button.y, button.getSkill().getIconAsSprite(), button.width,
-				button.height);
+		this.drawTexturedModalRect(button.x, button.y, button.getSkill().getIconAsSprite(), button.width, button.height);
 	}
 
 	@Override

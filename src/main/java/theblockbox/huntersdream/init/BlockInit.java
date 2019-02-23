@@ -19,9 +19,6 @@ import java.util.List;
 public class BlockInit {
     public static final List<BlockOre> ORES = new ArrayList<>();
 
-    @GameRegistry.ObjectHolder("huntersdream:block_silver")
-    public static final Block BLOCK_SILVER = null;
-
     @GameRegistry.ObjectHolder("huntersdream:furnace_silver")
     public static final Block FURNACE_SILVER = null;
 
