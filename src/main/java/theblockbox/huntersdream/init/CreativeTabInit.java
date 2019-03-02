@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import theblockbox.huntersdream.util.Reference;
 
 /**
- * @author Mr. Random
+ * @author Ms. Random (discord: "Ms. Random#5794")
  */
 
 public class CreativeTabInit {
