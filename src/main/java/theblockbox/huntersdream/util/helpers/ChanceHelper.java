@@ -5,10 +5,9 @@ import net.minecraft.util.Rotation;
 import net.minecraft.world.World;
 
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class ChanceHelper {
-    private static final InternalRandom INTERNAL_RANDOM = new InternalRandom();
+    private static final ChanceHelper.InternalRandom INTERNAL_RANDOM = new ChanceHelper.InternalRandom();
 
     /**
      * Returns a random byte. If the given bound is 0, 0 is returned. If the given
@@ -71,7 +70,7 @@ public class ChanceHelper {
      */
     public static int consistentIntFromSeed(long seed, int bound) {
         ChanceHelper.INTERNAL_RANDOM.setSeed(seed);
-        System.out.println(seed + " " + INTERNAL_RANDOM.currentSeed);
+        System.out.println(seed + " " + ChanceHelper.INTERNAL_RANDOM.currentSeed);
         return ChanceHelper.INTERNAL_RANDOM.nextInt(bound);
     }
 

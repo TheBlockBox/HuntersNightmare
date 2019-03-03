@@ -36,7 +36,7 @@ import theblockbox.huntersdream.commands.CommandTransformation;
 import theblockbox.huntersdream.commands.CommandTransformationTexture;
 import theblockbox.huntersdream.init.*;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.SilverFurnaceRecipe;
+import theblockbox.huntersdream.api.SilverFurnaceRecipe;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.world.gen.WorldGenHuntersCamp;
 import theblockbox.huntersdream.world.gen.WorldGenOres;

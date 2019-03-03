@@ -27,8 +27,8 @@ public abstract class RenderLycanthrope<T extends EntityLivingBase> extends Rend
 	@Override
 	public ResourceLocation getEntityTexture(T entity) {
 		Optional<ITransformation> transformation = TransformationHelper.getITransformation(entity);
-		return Transformation.WEREWOLF.getTextures()[transformation.isPresent() ? transformation.get().getTextureIndex()
-				: 0];
+		return Transformation.WEREWOLF.getTextures()[(transformation.isPresent() ? transformation.get().getTextureIndex()
+				: 0)];
 	}
 
 	@Override

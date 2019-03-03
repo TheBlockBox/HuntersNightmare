@@ -110,10 +110,10 @@ transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and y
 
 # Config
 huntersdream.config.title=Hunter's Dream Config
-huntersdream.config.customPlayerRender=Custom Player Render
-huntersdream.config.showPacketMessages=Show Packet Messages
+huntersdream.config.customPlayerRender=Custom player render
+huntersdream.config.showPacketMessages=Show packet messages
 huntersdream.config.veinSize=Veins of ore per chunk
-huntersdream.config.generateSilverOre=Generate Silver Ore
+huntersdream.config.generateSilverOre=Generate silver ore
 huntersdream.config.silverMinY=Minimum height of silver
 huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverChance=Average silver ores per vein
@@ -126,12 +126,10 @@ huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
 huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
 huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
 huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
-huntersdream.config.dontRender=Don't render
-huntersdream.config.topLeft=Top Left
-huntersdream.config.topRight=Top Right
-huntersdream.config.bottomLeft=Bottom Left
-huntersdream.config.bottomRight=Bottom Right
-huntersdream.config.showActiveSkill=Show Active Skill
+huntersdream.config.showActiveSkill=Show active skill
+huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
+huntersdream.config.renderSkillBarSlotLeft=Render skill bar slot on the left
+
 
 # Skills
 huntersdream.skillCost=Price: %s experience levels

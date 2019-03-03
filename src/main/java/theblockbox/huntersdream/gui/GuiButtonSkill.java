@@ -8,8 +8,6 @@ import net.minecraft.client.resources.I18n;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.util.helpers.ClientHelper;
 
-import javax.annotation.Nullable;
-
 public class GuiButtonSkill extends GuiButton {
     private final Skill skill;
     private final int middleX;

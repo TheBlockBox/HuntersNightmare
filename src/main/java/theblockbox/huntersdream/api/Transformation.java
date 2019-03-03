@@ -50,7 +50,8 @@ public class Transformation {
             .setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
             .setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage)
             .setTexturesHD("werewolf/lycanthrope_brown", "werewolf/lycanthrope_black", "werewolf/lycanthrope_white",
-                    "werewolf/lycanthrope_yellow")
+                    "werewolf/lycanthrope_yellow", "werewolf/lycanthrope_brown_alpha", "werewolf/lycanthrope_black_alpha",
+                    "werewolf/lycanthrope_white_alpha", "werewolf/lycanthrope_yellow_alpha")
             .setGetTextureIndex(WerewolfHelper::getTextureIndexForWerewolf).create();
     /**
      * The transformation for vampires

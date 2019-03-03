@@ -25,8 +25,11 @@ public class ConfigHandler {
 		@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
 		public boolean customPlayerRender = true;
 
-		@Config.LangKey(Reference.CFG_LANG + "showActiveSkill")
-		public boolean showActiveSkill = true;
+		@Config.LangKey(Reference.CFG_LANG + "showSkillBarSlot")
+		public boolean showSkillBarSlot = true;
+
+		@Config.LangKey(Reference.CFG_LANG + "renderSkillBarSlotLeft")
+		public boolean renderSkillBarSlotLeft = true;
 	}
 
 	public static class Common {

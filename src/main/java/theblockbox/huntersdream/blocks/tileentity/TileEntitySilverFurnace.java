@@ -18,11 +18,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import theblockbox.huntersdream.api.SilverFurnaceRecipe;
 import theblockbox.huntersdream.blocks.BlockSilverFurnace;
 import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.SideItemHandler;
-import theblockbox.huntersdream.util.SilverFurnaceRecipe;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class TileEntitySilverFurnace extends TileEntity implements ITickable {

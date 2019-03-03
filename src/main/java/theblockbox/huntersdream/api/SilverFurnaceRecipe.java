@@ -1,23 +1,20 @@
-package theblockbox.huntersdream.util;
+package theblockbox.huntersdream.api;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jline.utils.InputStreamReader;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.util.Reference;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;

@@ -22,12 +22,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
-import theblockbox.huntersdream.gui.GuiButtonClickable;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.init.GeneralInit;
 import theblockbox.huntersdream.init.ParticleInit;
-import theblockbox.huntersdream.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.api.WerewolfTransformationOverlay;
 import theblockbox.huntersdream.util.helpers.*;
@@ -150,8 +148,6 @@ public class TransformationClientEventHandler {
                     && ((WerewolfHelper.getTransformationStage(player) >= 5) || WerewolfHelper.isTransformed(player))) {
                 mc.getTextureManager().bindTexture(TransformationClientEventHandler.WEREWOLF_HEALTH);
             }
-        } else if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-            SkillBarHandler.onGameOverlayRenderPre(event);
         }
     }
 
@@ -265,7 +261,7 @@ public class TransformationClientEventHandler {
             ITransformationPlayer transformation = TransformationHelper
                     .getITransformationPlayer(this.player);
             ResourceLocation werewolfHand = TransformationClientEventHandler.WEREWOLF_HANDS[(("slim".equals(clientPlayer.getSkinType())
-                    ? transformation.getTransformation().getTextures().length
+                    ? transformation.getTransformation().getTextures().length / 2
                     : 0)
                     + TransformationHelper.getITransformationPlayer(clientPlayer).getTextureIndex())];
             this.bindTexture(werewolfHand);
