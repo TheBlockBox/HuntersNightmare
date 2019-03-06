@@ -34,15 +34,6 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:aconite_garland")
     public static final BlockAconiteGarland ACONITE_GARLAND = null;
 
-    @GameRegistry.ObjectHolder("huntersdream:aconite_garland_t")
-    public static final BlockAconiteGarland ACONITE_GARLAND_TOP = null;
-
-    @GameRegistry.ObjectHolder("huntersdream:aconite_garland_b")
-    public static final BlockAconiteGarland ACONITE_GARLAND_BOTTOM = null;
-
-    @GameRegistry.ObjectHolder("huntersdream:aconite_garland_tb")
-    public static final BlockAconiteGarland ACONITE_GARLAND_TOP_AND_BOTTOM = null;
-
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)
                 .setHardness(5.0F), "block_silver", event);
@@ -56,10 +47,8 @@ public class BlockInit {
             BlockInit.registerBlockWithItem(new BlockCampfire(type), "campfire_" + type.getName(), 1, event);
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
-        BlockInit.registerBlockWithItem(new BlockAconiteGarland(false, false), "aconite_garland", event);
-        BlockInit.registerBlock(new BlockAconiteGarland(true, false), "aconite_garland_t", event);
-        BlockInit.registerBlock(new BlockAconiteGarland(false, true), "aconite_garland_b", event);
-        BlockInit.registerBlock(new BlockAconiteGarland(true, true), "aconite_garland_tb", event);
+        BlockInit.registerBlockWithItem(new BlockAconiteGarland(), "aconite_garland", event);
+        BlockInit.registerBlockWithItem(new BlockMountainAsh(), "mountain_ash", event);
     }
 
     private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {

@@ -46,6 +46,7 @@ tile.huntersdream.furnace_silver.name=Silver Furnace
 tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.aconite_flower.name=Aconite Flower
 tile.huntersdream.aconite_garland.name=Aconite Garland
+tile.huntersdream.mountain_ash.name=Mountain Ash
 
 # Entities
 entity.goblintd.name=Goblin
@@ -128,7 +129,6 @@ huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
 huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
 huntersdream.config.showActiveSkill=Show active skill
 huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
-huntersdream.config.renderSkillBarSlotLeft=Render skill bar slot on the left
 
 
 # Skills

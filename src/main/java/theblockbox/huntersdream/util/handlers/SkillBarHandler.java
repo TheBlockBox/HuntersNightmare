@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.MouseEvent;
@@ -166,12 +167,12 @@ public class SkillBarHandler {
                         : TransformationHelper.getTransformation(mc.player).getIconAsSprite();
                 if (sprite != null) {
                     mc.ingameGUI.drawTexturedModalRect(event.getResolution().getScaledWidth() / 2
-                                    + (ConfigHandler.client.renderSkillBarSlotLeft ? -112 : 96),
+                                    + ((mc.player.getPrimaryHand() == EnumHandSide.LEFT) ? -112 : 96),
                             event.getResolution().getScaledHeight() - 19, sprite, 16, 16);
                 }
                 if (SkillBarHandler.isSkillBarSlotChosen && !shouldDrawSkillBar) {
                     mc.getTextureManager().bindTexture(SkillBarHandler.WIDGETS);
-                    mc.ingameGUI.drawTexturedModalRect(halfScaledWidth + (ConfigHandler.client.renderSkillBarSlotLeft ?
+                    mc.ingameGUI.drawTexturedModalRect(halfScaledWidth + ((mc.player.getPrimaryHand() == EnumHandSide.LEFT) ?
                             -116 : 92), scaledHeight - 30, 0, 22, 24, 22);
                     mc.player.inventory.currentItem += 30;
                 }

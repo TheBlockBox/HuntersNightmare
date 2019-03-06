@@ -9,22 +9,9 @@ import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
-public class BlockAconiteGarland extends BlockGarland<BlockAconiteGarland> {
-    public BlockAconiteGarland(boolean hasTopBlock, boolean hasBottomBlock) {
-        super(hasTopBlock, hasBottomBlock);
+public class BlockAconiteGarland extends BlockGarland {
+    public BlockAconiteGarland() {
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
-    }
-
-    @Override
-    public BlockAconiteGarland getWithProperties(boolean hasTop, boolean hasBottom) {
-        return hasTop ? (hasBottom ? BlockInit.ACONITE_GARLAND_TOP_AND_BOTTOM : BlockInit.ACONITE_GARLAND_TOP)
-                : (hasBottom ? BlockInit.ACONITE_GARLAND_BOTTOM : BlockInit.ACONITE_GARLAND);
-    }
-
-    @Override
-    public boolean isTheSameAs(BlockGarland<?> otherBlock) {
-        return (otherBlock == BlockInit.ACONITE_GARLAND) || (otherBlock == BlockInit.ACONITE_GARLAND_TOP)
-                || (otherBlock == BlockInit.ACONITE_GARLAND_BOTTOM) || (otherBlock == BlockInit.ACONITE_GARLAND_TOP_AND_BOTTOM);
     }
 
     @Override

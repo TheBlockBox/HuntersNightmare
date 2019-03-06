@@ -12,89 +12,86 @@ import theblockbox.huntersdream.util.Reference;
 @Config.LangKey(Reference.CFG_LANG + "title")
 public class ConfigHandler {
 
-	@Config.LangKey(Reference.CFG_LANG + "client")
-	public static ConfigHandler.Client client = new ConfigHandler.Client();
+    @Config.LangKey(Reference.CFG_LANG + "client")
+    public static ConfigHandler.Client client = new ConfigHandler.Client();
 
-	@Config.LangKey(Reference.CFG_LANG + "server")
-	public static ConfigHandler.Server server = new ConfigHandler.Server();
+    @Config.LangKey(Reference.CFG_LANG + "server")
+    public static ConfigHandler.Server server = new ConfigHandler.Server();
 
-	@Config.LangKey(Reference.CFG_LANG + "common")
-	public static ConfigHandler.Common common = new ConfigHandler.Common();
+    @Config.LangKey(Reference.CFG_LANG + "common")
+    public static ConfigHandler.Common common = new ConfigHandler.Common();
 
-	public static class Client {
-		@Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
-		public boolean customPlayerRender = true;
+    public static class Client {
+        @Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
+        public boolean customPlayerRender = true;
 
-		@Config.LangKey(Reference.CFG_LANG + "showSkillBarSlot")
-		public boolean showSkillBarSlot = true;
+        @Config.LangKey(Reference.CFG_LANG + "showSkillBarSlot")
+        public boolean showSkillBarSlot = true;
+    }
 
-		@Config.LangKey(Reference.CFG_LANG + "renderSkillBarSlotLeft")
-		public boolean renderSkillBarSlotLeft = true;
-	}
+    public static class Common {
+        @Config.LangKey(Reference.CFG_LANG + "showFullStackTrace")
+        public boolean showFullStackTrace = false;
 
-	public static class Common {
-		@Config.LangKey(Reference.CFG_LANG + "showFullStackTrace")
-		public boolean showFullStackTrace = false;
+        @Config.LangKey(Reference.CFG_LANG + "showPacketMessages")
+        public boolean showPacketMessages = false;
+    }
 
-		@Config.LangKey(Reference.CFG_LANG + "showPacketMessages")
-		public boolean showPacketMessages = false;
-	}
+    public static class Server {
+        @Config.LangKey(Reference.CFG_LANG + "ores")
+        public ConfigHandler.Server.Ores ores = new ConfigHandler.Server.Ores();
 
-	public static class Server {
-		@Config.LangKey(Reference.CFG_LANG + "ores")
-		public ConfigHandler.Server.Ores ores = new ConfigHandler.Server.Ores();
+        @Config.LangKey(Reference.CFG_LANG + "generateVillagerCastle")
+        @Config.RequiresWorldRestart
+        public boolean generateVillagerCastle = true;
 
-		@Config.LangKey(Reference.CFG_LANG + "generateVillagerCastle")
-		@Config.RequiresWorldRestart
-		public boolean generateVillagerCastle = true;
+        @Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
+        @Config.RequiresWorldRestart
+        public boolean generateHuntersCabin = true;
 
-		@Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
-		@Config.RequiresWorldRestart
-		public boolean generateHuntersCabin = true;
+        @Config.LangKey(Reference.CFG_LANG + "generateHuntersCamp")
+        @Config.RequiresWorldRestart
+        public boolean generateHuntersCamp = true;
 
-		@Config.LangKey(Reference.CFG_LANG + "generateHuntersCamp")
-		@Config.RequiresWorldRestart
-		public boolean generateHuntersCamp = true;
+        @Config.LangKey(Reference.CFG_LANG + "generateWerewolfCabin")
+        @Config.RequiresWorldRestart
+        public boolean generateWerewolfCabin = true;
 
-		@Config.LangKey(Reference.CFG_LANG + "generateWerewolfCabin")
-		@Config.RequiresWorldRestart
-		public boolean generateWerewolfCabin = true;
+        public static class Ores {
+            @Config.LangKey(Reference.CFG_LANG + "veinSize")
+            @Config.RequiresWorldRestart
+            @Config.RangeInt(min = 0, max = 20)
+            public int veinSize = 4;
 
-		public static class Ores {
-			@Config.LangKey(Reference.CFG_LANG + "veinSize")
-			@Config.RequiresWorldRestart
-			@Config.RangeInt(min = 0, max = 20)
-			public int veinSize = 4;
+            @Config.LangKey(Reference.CFG_LANG + "generateSilverOre")
+            @Config.RequiresWorldRestart
+            public boolean generateSilverOre = true;
 
-			@Config.LangKey(Reference.CFG_LANG + "generateSilverOre")
-			@Config.RequiresWorldRestart
-			public boolean generateSilverOre = true;
+            @Config.LangKey(Reference.CFG_LANG + "silverMinY")
+            @Config.RequiresWorldRestart
+            @Config.RangeInt(min = 1, max = 70)
+            public int silverMinY = 5;
 
-			@Config.LangKey(Reference.CFG_LANG + "silverMinY")
-			@Config.RequiresWorldRestart
-			@Config.RangeInt(min = 1, max = 70)
-			public int silverMinY = 5;
+            @Config.LangKey(Reference.CFG_LANG + "silverMaxY")
+            @Config.RequiresWorldRestart
+            @Config.RangeInt(min = 1, max = 70)
+            public int silverMaxY = 35;
 
-			@Config.LangKey(Reference.CFG_LANG + "silverMaxY")
-			@Config.RequiresWorldRestart
-			@Config.RangeInt(min = 1, max = 70)
-			public int silverMaxY = 35;
+            @Config.LangKey(Reference.CFG_LANG + "silverChance")
+            @Config.RequiresWorldRestart
+            @Config.RangeInt(min = 0, max = 70)
+            public int silverChance = 4;
+        }
+    }
 
-			@Config.LangKey(Reference.CFG_LANG + "silverChance")
-			@Config.RequiresWorldRestart
-			@Config.RangeInt(min = 0, max = 70)
-			public int silverChance = 4;
-		}
-	}
-
-	@Mod.EventBusSubscriber(modid = Reference.MODID)
-	public static class ConfigEventHandler {
-		@SubscribeEvent
-		public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-			if (event.getModID().equals(Reference.MODID)) {
-				ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
-				Main.getLogger().info("Hunter's Dream Config has been changed");
-			}
-		}
-	}
+    @Mod.EventBusSubscriber(modid = Reference.MODID)
+    public static class ConfigEventHandler {
+        @SubscribeEvent
+        public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+            if (event.getModID().equals(Reference.MODID)) {
+                ConfigManager.sync(Reference.MODID, Config.Type.INSTANCE);
+                Main.getLogger().info("Hunter's Dream Config has been changed");
+            }
+        }
+    }
 }
