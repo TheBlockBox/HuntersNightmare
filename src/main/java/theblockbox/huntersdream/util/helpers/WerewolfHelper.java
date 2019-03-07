@@ -8,10 +8,8 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.Validate;
@@ -367,29 +365,6 @@ public class WerewolfHelper {
 
     public static void validateIsWerewolf(EntityLivingBase entity) {
         TransformationHelper.getTransformation(entity).validateEquals(Transformation.WEREWOLF);
-    }
-
-    /**
-     * Returns a werewolf texture index depending on where the werewolf currently
-     * is.
-     */
-    public static int getTextureIndexForWerewolf(EntityLivingBase werewolf) {
-        // 0 is brown, 1 is black, 2 is white and 3 is yellow
-        BlockPos pos = werewolf.getPosition();
-        World world = werewolf.world;
-        if (world.isBlockLoaded(pos)) {
-            Biome biome = world.getBiome(pos);
-            if (biome.getTempCategory() == Biome.TempCategory.WARM)
-                return 3;
-                // if the biome is snowy or there can be snow where the werewolf is, use the
-                // white skin (also works on mountains with snow)
-            else if (biome.isSnowyBiome() || (biome.getTemperature(werewolf.getPosition()) < 0.15F))
-                return 2;
-                // TODO: Rethink when the werewolf skin should be brown
-            else
-                return werewolf.getRNG().nextBoolean() ? 0 : 1;
-        }
-        return 0;
     }
 
     /**

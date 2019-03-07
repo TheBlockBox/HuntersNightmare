@@ -2,6 +2,7 @@ package theblockbox.huntersdream.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +19,7 @@ import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 public class BlockAconiteFlower extends BlockFlower {
     public BlockAconiteFlower() {
+        this.setSoundType(SoundType.PLANT);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
     }
 

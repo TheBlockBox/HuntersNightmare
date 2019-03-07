@@ -5,7 +5,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.init.CreativeTabInit;
 import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 

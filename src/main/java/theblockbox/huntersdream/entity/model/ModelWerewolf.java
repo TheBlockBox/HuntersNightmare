@@ -15,11 +15,8 @@ public class ModelWerewolf extends ModelBiped {
     public ModelRenderer earl;
     public ModelRenderer facefurl;
     public ModelRenderer facefurr;
-    public ModelRenderer snout2;
     public ModelRenderer earr2;
-    public ModelRenderer earr3;
     public ModelRenderer earl2;
-    public ModelRenderer earl3;
     public ModelRenderer arml2;
     public ModelRenderer clawarml;
     public ModelRenderer clawarml2;
@@ -32,8 +29,6 @@ public class ModelWerewolf extends ModelBiped {
     public ModelRenderer clawarmr;
     public ModelRenderer clawarmr2;
     public ModelRenderer clawarmr3;
-    public ModelRenderer tail2;
-    public ModelRenderer tail3;
     public ModelRenderer legr2;
     public ModelRenderer clawlegr;
     public ModelRenderer clawlegr2;
@@ -51,31 +46,50 @@ public class ModelWerewolf extends ModelBiped {
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
+        this.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, true);
+    }
+
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+                       float headPitch, float scale, boolean moveTail) {
+        this.isSneak = entityIn.isSneaking();
+        this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn, moveTail);
         GlStateManager.pushMatrix();
-        if (entityIn.isSneaking()) {
-            GlStateManager.translate(0.0F, 0.2F, 0.0F);
-        }
-
+        if (this.isSneak)
+            GlStateManager.translate(0.0F, 0.4F, 0.0F);
         this.bipedBody.render(scale);
-
         GlStateManager.popMatrix();
     }
 
     @Override
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
+        this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn, true);
+    }
+
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+                                  float headPitch, float scaleFactor, Entity entityIn, boolean moveTail) {
+        scaleFactor *= 0.9F;
+        this.isSneak = entityIn.isSneaking();
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
+
         // fix legs
-        this.bipedRightLeg.rotateAngleX -= 0.3D;
-        this.bipedLeftLeg.rotateAngleX -= 0.3D;
-        if (limbSwingAmount >= 0.2F) {
-            // animate
-            // if it's going up and bigger than 0.5, go down
-            // if it's going down and less than 0, go up
-            this.isTailGoingUp = this.tail.rotateAngleX  < (this.isTailGoingUp ? 0.2F : -0.6F);
-            this.tail.rotateAngleX += this.isTailGoingUp ? 0.01F : -0.01F;
-        } else if (this.tail.rotateAngleX > -0.75F) {
-            this.tail.rotateAngleX -= 0.01F;
+        this.bipedRightLeg.rotateAngleX -= this.isSneak ? 0.95D : 0.3D;
+        this.bipedLeftLeg.rotateAngleX -= this.isSneak ? 0.95D : 0.3D;
+        // fix head and arms when sneaking
+        if (this.isSneak) {
+            this.bipedHead.rotateAngleX -= 0.4D;
+            this.bipedRightArm.rotateAngleX -= 0.65D;
+            this.bipedLeftArm.rotateAngleX -= 0.65D;
+        }
+        if (moveTail) {
+            if (limbSwingAmount >= 0.2F) {
+                // animate
+                // if it's going up and bigger than 0.2, go down
+                // if it's going down and less than -0.6, go up
+                this.isTailGoingUp = this.tail.rotateAngleX  < (this.isTailGoingUp ? 1.4F : 0.6F);
+                this.tail.rotateAngleX += this.isTailGoingUp ? 0.01F : -0.01F;
+            } else if (this.tail.rotateAngleX > 1.95F) {
+                this.tail.rotateAngleX -= 0.01F;
+            }
         }
     }
 }

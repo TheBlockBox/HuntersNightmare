@@ -1,8 +1,5 @@
 package theblockbox.huntersdream.init;
 
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.WerewolfTransformationOverlay;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 

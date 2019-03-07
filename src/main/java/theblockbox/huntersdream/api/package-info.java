@@ -4,4 +4,7 @@
  * 
  * @since 1.0.0
  */
+@MethodsReturnNonnullByDefault
 package theblockbox.huntersdream.api;
+
+import mcp.MethodsReturnNonnullByDefault;

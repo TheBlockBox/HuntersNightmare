@@ -82,7 +82,6 @@ public class SkillBarHandler {
                 event.setCanceled(true);
             }
 
-            InventoryPlayer inventory = Minecraft.getMinecraft().player.inventory;
             if ((button == 1) && SkillBarHandler.isSkillBarFullyShown()) {
                 Skill skill = SkillBarHandler.getCurrentSkill();
                 SkillBarHandler.hideSkillBar();
@@ -135,13 +134,16 @@ public class SkillBarHandler {
                     mc.getTextureManager().bindTexture(SkillBarHandler.WIDGETS);
 
                     // draw skill bar and highlight chosen skill
-                    ClientHelper.drawTexturedModalRect(halfScaledWidth - 91, scaledHeight - 3, 0, 0, 182, 22, SkillBarHandler.SKILL_BAR_Z_LEVEL);
-                    ClientHelper.drawTexturedModalRect(halfScaledWidth - 92 + SkillBarHandler.currentSkill * 20, scaledHeight - 4, 0, 22, 24, 23, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+                    ClientHelper.drawTexturedModalRect(halfScaledWidth - 91, scaledHeight - 3, 0,
+                            0, 182, 22, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+                    ClientHelper.drawTexturedModalRect(halfScaledWidth - 92 + SkillBarHandler.currentSkill * 20,
+                            scaledHeight - 4, 0, 22, 24, 23, SkillBarHandler.SKILL_BAR_Z_LEVEL);
 
                     // draw cross
                     mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     if (SkillBarHandler.crossSprite != null) {
-                        ClientHelper.drawTexturedModalRect(halfScaledWidth + 92, scaledHeight, SkillBarHandler.crossSprite, 16, 16, SkillBarHandler.SKILL_BAR_Z_LEVEL);
+                        ClientHelper.drawTexturedModalRect(halfScaledWidth + 92, scaledHeight, SkillBarHandler.crossSprite,
+                                16, 16, SkillBarHandler.SKILL_BAR_Z_LEVEL);
                     }
 
                     // draw the skills
