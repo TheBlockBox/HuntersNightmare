@@ -36,7 +36,8 @@ public class ParentSkill extends Skill {
      * Constructs a new ParentSkill instance from the given arguments.
      *
      * @param registryName              A unique {@link ResourceLocation} that is used to identify this skill.
-     * @param neededExperienceLevels    The amount of experience levels that are needed to unlock this skill.
+     * @param neededExperienceLevels    The amount of experience levels that are needed to unlock this skill. If this
+     *                                  skill is not obtainable via experience levels, pass {@code -1} here.
      * @param forTransformations        A set that contains all transformations that can unlock this skill. The set will
      *                                  be copied, so if you change something in the passed set, it won't change in this
      *                                  skill's private set.
@@ -79,7 +80,8 @@ public class ParentSkill extends Skill {
      * {@code huntersdream.bite.name} and the one for the description would be {@code huntersdream.bite.description}.
      *
      * @param registryName           A unique {@link ResourceLocation} that is used to identify this skill.
-     * @param neededExperienceLevels The amount of experience levels that are needed to unlock this skill.
+     * @param neededExperienceLevels The amount of experience levels that are needed to unlock this skill. If this skill
+     *                               is not obtainable via experience levels, pass {@code -1} here.
      * @param forTransformations     A set that contains all transformations that can unlock this skill. The set will
      *                               be copied, so if you change something in the passed set, it won't change in this
      *                               skill's private set.
@@ -192,7 +194,7 @@ public class ParentSkill extends Skill {
     void addChildSkill(ChildSkill childSkill) {
         int index = childSkill.getLevel() - 1;
         Skill atIndex = GeneralHelper.safeGet(this.childSkills, index);
-        if(atIndex == null) {
+        if (atIndex == null) {
             GeneralHelper.safeSet(this.childSkills, index, childSkill);
         } else {
             throw new IllegalArgumentException("Tried to add child skill " + childSkill + " to parent skill " + this

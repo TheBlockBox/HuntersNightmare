@@ -53,23 +53,24 @@ public class ActivateSkillMessage extends MessageBase<ActivateSkillMessage> {
                     Skill skill = Skill.fromName(message.skill);
                     ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(player);
 
-                    if(skill == null) {
+                    if (skill == null) {
                         tp.setActiveSkill(null);
                         PacketHandler.sendTransformationMessage(player);
                         return;
                     }
 
-                    if(tp.hasSkill(skill)) {
-                        if(skill.isAlwaysActive()) {
+                    if (skill.shouldShowSkillInSkillBar(player)) {
+                        if (skill.isAlwaysActive()) {
                             Main.getLogger().error("The player " + player + " tried to activate the skill "
                                     + message.skill + " but couldn't because it is always active");
                         } else {
+                            skill.onSkillActivated(player);
                             tp.setActiveSkill(skill);
                             PacketHandler.sendTransformationMessage(player);
                         }
                     } else {
                         Main.getLogger().error("The player " + player + " tried to activate the skill "
-                                + message.skill + " but hasn't unlocked it yet");
+                                + message.skill + " but wasn't allowed to");
                     }
                 });
             }

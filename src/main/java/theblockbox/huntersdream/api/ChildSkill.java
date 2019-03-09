@@ -32,7 +32,8 @@ public class ChildSkill extends Skill {
      * level of 2, the child skill's registry name would be {@code huntersdream:bite_2}.
      *
      * @param parent                    The parent of this skill.
-     * @param neededExperienceLevels    The experience levels that are needed to unlock this skill.
+     * @param neededExperienceLevels    The experience levels that are needed to unlock this skill. If this skill is
+     *                                  not obtainable via experience levels, pass {@code -1} here.
      * @param level                     The level of this skill (must be higher than 0)
      * @param translationKeyName        A key for getting this skill's translated name.
      * @param translationKeyDescription A key for getting this skill's translated description.
@@ -55,7 +56,8 @@ public class ChildSkill extends Skill {
      * {@link ParentSkill#ParentSkill(ResourceLocation, int, Collection, boolean)}.
      *
      * @param parent                 The parent of this skill.
-     * @param neededExperienceLevels The experience levels that are needed to unlock this skill.
+     * @param neededExperienceLevels The experience levels that are needed to unlock this skill. If this skill is
+     *                               not obtainable via experience levels, pass {@code -1} here.
      * @param level                  The level of this skill (must be higher than 0)
      * @see #ChildSkill(ParentSkill, int, int, String, String)
      * @see ParentSkill#ParentSkill(ResourceLocation, int, Collection, boolean)

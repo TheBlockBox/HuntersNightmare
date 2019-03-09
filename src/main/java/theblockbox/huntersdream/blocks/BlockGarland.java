@@ -77,8 +77,8 @@ public class BlockGarland extends Block {
     public boolean isAllowedNeighbor(IBlockAccess blockAccess, BlockPos pos, EnumFacing facing) {
         IBlockState state = blockAccess.getBlockState(pos);
         // TODO: Test if this works
-        return (state.getBlockFaceShape(blockAccess, pos, facing) == BlockFaceShape.SOLID)
-                || (!BlockDoor.isOpen(blockAccess, pos) && (state.getValue(BlockDoor.FACING) == facing));
+        return (state.getBlockFaceShape(blockAccess, pos, facing) == BlockFaceShape.SOLID) || (state.getProperties()
+                .containsKey(BlockDoor.FACING) && (state.getValue(BlockDoor.FACING) == facing.getOpposite()));
     }
 
     public boolean isAllowedState(IBlockState state) {

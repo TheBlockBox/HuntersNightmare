@@ -51,9 +51,8 @@ public class GuiSkillTab extends GuiScreen {
 
         // TODO: Use different collection?
         // TODO: Make everything cleaner?
-        Collection<ParentSkill> skills = Skill.getAllSkills().stream().filter(Skill::isParentSkill)
-                .map(s -> s.getAsParentSkill().get())
-                .filter(s -> s.isForTransformation(this.tp.getTransformation()))
+        Collection<ParentSkill> skills = Skill.getAllSkills().stream().filter(s -> s.isParentSkill() && s.canBeBoughtWithExperience())
+                .map(s -> s.getAsParentSkill().get()).filter(s -> s.isForTransformation(this.tp.getTransformation()))
                 .collect(Collectors.toCollection(ArrayDeque::new));
 
         // I did not think of this myself

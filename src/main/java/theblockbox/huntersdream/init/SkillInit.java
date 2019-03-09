@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.init;
 
+import net.minecraft.entity.player.EntityPlayer;
 import theblockbox.huntersdream.api.ChildSkill;
 import theblockbox.huntersdream.api.ParentSkill;
 import theblockbox.huntersdream.api.Transformation;
@@ -34,5 +35,10 @@ public class SkillInit {
     public static final ChildSkill BITE_1 = new ChildSkill(SkillInit.BITE_0, 80, 1);
     public static final ChildSkill BITE_2 = new ChildSkill(SkillInit.BITE_0, 120, 2);
 
-    public static final ParentSkill WILFUL_TRANSFORMATION = new ParentSkill(newResLoc("wilful_transformation"), 200, SkillInit.WEREWOLF_SET, false);
+    public static final ParentSkill WILFUL_TRANSFORMATION = new ParentSkill(newResLoc("wilful_transformation"), -1, SkillInit.WEREWOLF_SET, false) {
+        @Override
+        public boolean shouldShowSkillInSkillBar(EntityPlayer player) {
+            return true;
+        }
+    };
 }

@@ -19,11 +19,12 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Mouse;
 import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.helpers.ClientHelper;
 import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -85,28 +86,36 @@ public class SkillBarHandler {
             if ((button == 1) && SkillBarHandler.isSkillBarFullyShown()) {
                 Skill skill = SkillBarHandler.getCurrentSkill();
                 SkillBarHandler.hideSkillBar();
+                if (skill != null) {
+                    skill.onSkillActivated(Minecraft.getMinecraft().player);
+                }
                 PacketHandler.sendActivateSkillMessage(Minecraft.getMinecraft().world, skill);
                 event.setCanceled(true);
             }
-        } else if (ConfigHandler.client.showSkillBarSlot) {
-            Minecraft mc = Minecraft.getMinecraft();
-            InventoryPlayer inventory = mc.player.inventory;
-            if (SkillBarHandler.isSkillBarSlotChosen) {
-                if (dWheel == 1) {
-                    inventory.currentItem = 0;
-                    SkillBarHandler.isSkillBarSlotChosen = false;
-                } else if (dWheel == -1) {
-                    inventory.currentItem = 8;
-                    SkillBarHandler.isSkillBarSlotChosen = false;
+        } else {
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            if (ConfigHandler.client.showSkillBarSlot) {
+                InventoryPlayer inventory = player.inventory;
+                if (SkillBarHandler.isSkillBarSlotChosen) {
+                    if (dWheel == 1) {
+                        inventory.currentItem = 0;
+                        SkillBarHandler.isSkillBarSlotChosen = false;
+                    } else if (dWheel == -1) {
+                        inventory.currentItem = 8;
+                        SkillBarHandler.isSkillBarSlotChosen = false;
+                    }
+                    if (button == 1) {
+                        SkillBarHandler.showSkillBar();
+                        event.setCanceled(true);
+                    } else if (button == 0) {
+                        event.setCanceled(true);
+                    }
+                } else if (((inventory.currentItem == 0) && (dWheel == 1)) || ((inventory.currentItem == 8) && (dWheel == -1))) {
+                    SkillBarHandler.isSkillBarSlotChosen = true;
                 }
-                if (button == 1) {
-                    SkillBarHandler.showSkillBar();
-                    event.setCanceled(true);
-                } else if (button == 0) {
-                    event.setCanceled(true);
-                }
-            } else if (((inventory.currentItem == 0) && (dWheel == 1)) || ((inventory.currentItem == 8) && (dWheel == -1))) {
-                SkillBarHandler.isSkillBarSlotChosen = true;
+            }
+            if (!SkillBarHandler.isSkillBarSlotChosen && (button == 1) && WerewolfHelper.canPlayerWilfullyTransform(player)) {
+                PacketHandler.sendUseWilfulTransformationMessage(player.world);
             }
         }
     }
@@ -216,12 +225,13 @@ public class SkillBarHandler {
         if (!SkillBarHandler.isSkillBarShown()) {
             SkillBarHandler.skillBarShowStage = -0.01F;
             SkillBarHandler.isBarGoingUp = true;
-            ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(Minecraft.getMinecraft().player);
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            Transformation transformation = TransformationHelper.getTransformation(player);
 
             // add skills
             int index = 0;
-            for (Skill skill : tp.getSkills()) {
-                if (!skill.isAlwaysActive() && (tp.getSkillLevel(skill.getGroupParent()) == skill.getLevel())) {
+            for (Skill skill : Skill.getAllSkills()) {
+                if (!skill.isAlwaysActive() && skill.isForTransformation(transformation) && skill.shouldShowSkillInSkillBar(player)) {
                     SkillBarHandler.SKILL_BAR[index++] = skill;
                 }
             }

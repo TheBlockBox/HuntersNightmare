@@ -106,10 +106,23 @@ public abstract class Skill {
 
     /**
      * Returns the experience levels that are
-     * required to unlock this skill.
+     * required to unlock this skill. If this
+     * skill is not buyable via experience levels,
+     * this will return -1
      */
     public final int getNeededExperienceLevels() {
         return this.neededExperienceLevels;
+    }
+
+    /**
+     * Returns true when this skill can bought with
+     * experience in the skill tab. The return value
+     * of this method is always the same as
+     * {@code skill.getNeededExperienceLevels() != -1},
+     * where {@code skill} is this skill.
+     */
+    public final boolean canBeBoughtWithExperience() {
+        return this.getNeededExperienceLevels() != -1;
     }
 
     /**
@@ -160,6 +173,25 @@ public abstract class Skill {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Is called on client and server side when this skill has been activated in the skill bar by the given player.
+     */
+    public void onSkillActivated(EntityPlayer player) {
+    }
+
+    /**
+     * Returns true if this skill should be shown in the skill bar of the given player. The standard implementation
+     * tests if the given player has unlocked this skill with this skill's specific level, though it is not necessary to
+     * have unlocked the skill in order to show it in the skill bar. Therefore, you can also add skills to the skill bar
+     * that the player hasn't even unlocked. It is also possible to add multiple skills of the same type but different
+     * level to the skill bar, although this is not recommended. If {@link #isAlwaysActive()} returns false, this method
+     * will neither have any effect nor even be called.
+     */
+    public boolean shouldShowSkillInSkillBar(EntityPlayer player) {
+        // TODO: Make this more efficient by passing the ITransformationPlayer capability of the player, too?
+        return TransformationHelper.getITransformationPlayer(player).getSkillLevel(this.getGroupParent()) == this.getLevel();
     }
 
     /**

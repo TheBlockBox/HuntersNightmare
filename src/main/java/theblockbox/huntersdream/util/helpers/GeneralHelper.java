@@ -6,6 +6,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -494,5 +496,10 @@ public class GeneralHelper {
             EnumParticleTypes.BY_NAME.put(particle.getParticleName(), particle);
             return particle;
         }
+    }
+
+    public static void addHeartsToPlayer(EntityPlayer player, double extraHalfHearts) {
+        IAttributeInstance attribute = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+        attribute.setBaseValue(attribute.getBaseValue() + extraHalfHearts);
     }
 }

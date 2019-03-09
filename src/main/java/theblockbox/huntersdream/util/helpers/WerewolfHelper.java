@@ -35,8 +35,11 @@ import java.util.Optional;
 
 public class WerewolfHelper {
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
-    public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource(
-            "huntersdream:werewolfTransformationDamage");
+    public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource("huntersdream:werewolfTransformationDamage");
+    /**
+     * How many ticks a player can be transformed via wilful transformation
+     */
+    public static final int WILFUL_TRANSFORMATION_TICKS = 6000;
 
     /**
      * Returns true when a werewolf can transform in this world
@@ -318,6 +321,45 @@ public class WerewolfHelper {
         WerewolfHelper.validateIsWerewolf(entity);
         NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
         compound.setBoolean("lastAttackBite", wasBite);
+    }
+
+    /**
+     * Returns the amount of ticks the given werewolf player has been transformed. If the returned value is 0, they
+     * haven't wilfully transformed yet. If the value is positive, they are currently wilfully transformed and the int is
+     * the tick at which they started to transform. If the value is negative, they have already been transformed and the
+     * int is the tick at which they transformed back with a minus sign in front of it.
+     */
+    public static int getWilfulTransformationTicks(EntityPlayer player) {
+        WerewolfHelper.validateIsWerewolf(player);
+        return TransformationHelper.getTransformationData(player).getInteger("wilfulTransformationTicks");
+    }
+
+    /**
+     * Sets a werewolf player's wilful transformation ticks (used for the wilful transformation).
+     * No packet is being sent to the client
+     */
+    public static void setWilfulTransformationTicks(EntityPlayerMP player, int ticks) {
+        WerewolfHelper.validateIsWerewolf(player);
+        NBTTagCompound compound = TransformationHelper.getTransformationData(player);
+        compound.setInteger("wilfulTransformationTicks", ticks);
+    }
+
+    /**
+     * Returns true when the given player can wilfully transform, but does NOT check if it is the correct moon phase.
+     * (The reason it is not checked is that the method only works server side, while this method is supposed to be both
+     * client and server side.)
+     */
+    public static boolean canPlayerWilfullyTransform(EntityPlayer werewolf) {
+        // 18000 ticks = 5 minutes cooldown
+        ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
+        if (transformation.getTransformation() == Transformation.WEREWOLF) {
+            int ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
+            return (werewolf.getActiveItemStack().isEmpty()
+                    && (transformation.getActiveSkill().orElse(null) == SkillInit.WILFUL_TRANSFORMATION)
+                    && !WerewolfHelper.isTransformed(werewolf) && (ticks <= 0) && ((werewolf.ticksExisted + ticks) >= 18000));
+        } else {
+            return false;
+        }
     }
 
     // add potion effects to werewolves

@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
@@ -11,6 +12,8 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketParticles;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -24,6 +27,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
+import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.event.effectiveness.ArmorEffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.EffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.EntityEffectivenessEvent;
@@ -79,6 +83,11 @@ public class TransformationEventHandler {
                                 break;
                             }
                         }
+                        if (isWerewolfTime && (!isTransformed)) {
+                            playerMP.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
+                                    EnumParticleTypes.SMOKE_LARGE, false, (float) player.posX, (float) player.posY
+                                    + 0.5F, (float) player.posZ, 0.0F, 1.3F, 0.0F, 0.0F, 20));
+                        }
                     }
 
                     if (player.ticksExisted % 80 == 0) {
@@ -88,33 +97,42 @@ public class TransformationEventHandler {
                                 if (isTransformed) {
                                     WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap);
                                 } else {
-                                    WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap);
+                                    WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_STARTING);
                                 }
                             } else {
                                 if (isTransformed) {
-                                    WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap);
+                                    WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END);
                                 } else {
                                     WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap);
                                 }
                             }
-                        }
-                        // this piece of code syncs the player data every six minutes, so basically
-                        // you don't have to sync the data every time you change something (though it is
-                        // recommended)
-                        if (player.ticksExisted % 7200 == 0) {
-                            PacketHandler.sendTransformationMessage(playerMP);
+                            int ticks = WerewolfHelper.getWilfulTransformationTicks(player);
+                            if (ticks > 0) {
+                                if ((player.ticksExisted >= (ticks + WerewolfHelper.WILFUL_TRANSFORMATION_TICKS))) {
+                                    Preconditions.checkArgument(isTransformed);
+                                    WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
+                                } else if (!isTransformed) {
+                                    WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_STARTING);
+                                }
+                            }
+                            // this piece of code syncs the player data every six minutes, so basically
+                            // you don't have to sync the data every time you change something (though it is
+                            // recommended)
+                            if (player.ticksExisted % 7200 == 0) {
+                                PacketHandler.sendTransformationMessage(playerMP);
+                            }
                         }
                     }
-                }
-                // TODO: Does every 35 ticks work or should something be changed?
-                // when a werewolf player is transforming, deal damage
-                if ((player.ticksExisted % 35 == 0) && isWerewolf && !isTransformed && isWerewolfTime
-                        && (WerewolfHelper.getTransformationStage(player) != 0)) {
-                    if (player.getHealth() > 1) {
-                        player.attackEntityFrom(WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE, 1.0F);
-                        // TODO: Add sound here
-                        // player.world.playSound(null, player.posX, player.posY, player.posZ,
-                        // SoundInit.SOUND, SoundCategory.PLAYERS, 100, 1);
+                    // TODO: Does every 35 ticks work or should something be changed?
+                    // when a werewolf player is transforming, deal damage
+                    if ((player.ticksExisted % 35 == 0) && isWerewolf && !isTransformed && isWerewolfTime
+                            && (WerewolfHelper.getTransformationStage(player) != 0)) {
+                        if (player.getHealth() > 1) {
+                            player.attackEntityFrom(WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE, 1.0F);
+                            // TODO: Add sound here
+                            // player.world.playSound(null, player.posX, player.posY, player.posZ,
+                            // SoundInit.SOUND, SoundCategory.PLAYERS, 100, 1);
+                        }
                     }
                 }
             }
@@ -158,7 +176,8 @@ public class TransformationEventHandler {
         }
     }
 
-    private static boolean addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase hurt,
+    private static boolean addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase
+            hurt,
                                                Transformation transformationHurt) {
         // don't apply when it was thorns damage
         if (!event.getSource().damageType.equals(TransformationHelper.THORNS_DAMAGE_NAME)) {
