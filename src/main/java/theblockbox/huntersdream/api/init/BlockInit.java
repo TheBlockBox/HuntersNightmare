@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.init;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
@@ -7,10 +7,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.blocks.*;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
 import java.util.ArrayList;
@@ -34,6 +34,12 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:aconite_garland")
     public static final BlockAconiteGarland ACONITE_GARLAND = null;
 
+    @GameRegistry.ObjectHolder("huntersdream:mountain_ash")
+    public static final Block MOUNTAIN_ASH = null;
+
+    @GameRegistry.ObjectHolder("huntersdream:mountain_ash_barrier")
+    public static final Block MOUNTAIN_ASH_BARRIER = null;
+
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)
                 .setHardness(5.0F), "block_silver", event);
@@ -49,6 +55,7 @@ public class BlockInit {
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
         BlockInit.registerBlockWithItem(new BlockAconiteGarland(), "aconite_garland", event);
         BlockInit.registerBlockWithItem(new BlockMountainAsh(), "mountain_ash", event);
+        BlockInit.registerBlock(new BlockMountainAshBarrier(), "mountain_ash_barrier", event);
     }
 
     private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {

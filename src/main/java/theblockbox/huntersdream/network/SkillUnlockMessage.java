@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 
 public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
@@ -48,9 +48,14 @@ public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
                 MessageBase.addScheduledTask(ctx, () -> {
 					EntityPlayerMP player = ctx.getServerHandler().player;
 					Skill skill = Skill.fromName(message.skill);
+					if (skill == null) {
+						Main.getLogger().error("The player " + player + " tried to unlock a null skill");
+						return;
+					}
 					if(skill.unlockSkillForPlayer(player)){
-						player.sendMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
-								new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()));
+						player.sendStatusMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
+								new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()),
+								true);
 						PacketHandler.sendTransformationMessage(player);
 					} else {
 						Main.getLogger().error("The player " + player + " tried to unlock the skill " + message.skill

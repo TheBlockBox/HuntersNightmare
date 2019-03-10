@@ -1,13 +1,13 @@
-package theblockbox.huntersdream.init;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraftforge.event.RegistryEvent;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.potions.PotionAconite;
 import theblockbox.huntersdream.potions.PotionFear;
 import theblockbox.huntersdream.potions.PotionSunscreen;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class PotionInit {
 

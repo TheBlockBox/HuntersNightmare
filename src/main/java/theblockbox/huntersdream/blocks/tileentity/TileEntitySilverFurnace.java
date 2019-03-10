@@ -1,9 +1,5 @@
 package theblockbox.huntersdream.blocks.tileentity;
 
-import java.util.Optional;
-
-import org.apache.commons.lang3.tuple.MutablePair;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -18,12 +14,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.MutablePair;
 import theblockbox.huntersdream.api.SilverFurnaceRecipe;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.blocks.BlockSilverFurnace;
-import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.SideItemHandler;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+
+import java.util.Optional;
 
 public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 	public static final String KEY_ITEM_HANDLER = "itemHandler";

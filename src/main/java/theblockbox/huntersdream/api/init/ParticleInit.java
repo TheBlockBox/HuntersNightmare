@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.init;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleCrit;
@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 
 import java.util.Objects;
 import java.util.Random;

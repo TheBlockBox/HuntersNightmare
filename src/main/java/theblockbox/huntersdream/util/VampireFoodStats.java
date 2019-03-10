@@ -10,8 +10,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.helpers.VampireHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 /**

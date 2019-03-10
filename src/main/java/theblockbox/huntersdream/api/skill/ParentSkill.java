@@ -1,13 +1,14 @@
-package theblockbox.huntersdream.api;
+package theblockbox.huntersdream.api.skill;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.collection.TransformationSet;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.ArrayList;

@@ -15,10 +15,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.blocks.BlockCampfire;
-import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.SideItemHandler;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class TileEntityCampfire extends TileEntity implements ITickable {
 	public static final String KEY_ITEM_HANDLER = "itemHandler";

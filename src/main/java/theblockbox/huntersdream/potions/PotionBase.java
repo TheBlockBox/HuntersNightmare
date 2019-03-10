@@ -5,8 +5,8 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public abstract class PotionBase extends Potion {
 

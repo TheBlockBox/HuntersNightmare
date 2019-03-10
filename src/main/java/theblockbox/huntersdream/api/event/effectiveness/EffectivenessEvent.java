@@ -7,7 +7,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 
 /**
  * EffectivenessEvent is fired when a transformed entity is hurt by a different

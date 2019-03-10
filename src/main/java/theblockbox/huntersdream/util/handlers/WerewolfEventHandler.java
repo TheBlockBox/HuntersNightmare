@@ -7,18 +7,12 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -29,16 +23,16 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.init.*;
+import theblockbox.huntersdream.api.helpers.ChanceHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -161,134 +155,6 @@ public class WerewolfEventHandler {
         }
     }
 
-    public static void werewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-        WerewolfHelper.applyLevelBuffs(player);
-        Random random = player.getRNG();
-        int soundTicksBefore = WerewolfHelper.getSoundTicks(player);
-        WerewolfHelper.setSoundTicks(player, soundTicksBefore + 1);
-        if (random.nextInt(13) < soundTicksBefore) {
-            WerewolfHelper.setSoundTicks(player, -80);
-            player.world.playSound(null, player.posX, player.posY, player.posZ, ENTITY_WOLF_GROWL,
-                    player.getSoundCategory(), 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F);
-        }
-    }
-
-    public static void werewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap,
-                                                  WerewolfTransformingEvent.WerewolfTransformingReason reason) {
-        if (WerewolfHelper.canWerewolfTransform(player)) {
-            if (MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(player, false, reason)))
-                return;
-            if (WerewolfHelper.getTransformationStage(player) <= 0) {
-                WerewolfHelper.setTimeSinceTransformation(player, player.ticksExisted);
-                WerewolfEventHandler.onStageChanged(player, 1, reason.getActualTransformingReason());
-                return;
-            }
-
-            // every five seconds (20 * 5 = 100) one stage up
-            int nextStage = MathHelper
-                    .floor(((player.ticksExisted - WerewolfHelper.getTimeSinceTransformation(player))) / 100.0D);
-
-            if (nextStage > 6 || nextStage < 0) {
-                WerewolfHelper.setTimeSinceTransformation(player, -1);
-                WerewolfHelper.setTransformationStage(player, 0);
-                Main.getLogger().warn(
-                        "Has the ingame time been changed or has the player left the world? Player " + player.getName()
-                                + "'s transformation stage (" + nextStage + ") is invalid");
-                PacketHandler.sendTransformationMessage(player);
-                return;
-            }
-
-            if (nextStage > WerewolfHelper.getTransformationStage(player)) {
-                WerewolfEventHandler.onStageChanged(player, nextStage, reason.getActualTransformingReason());
-            }
-        }
-    }
-
-    public static void notWerewolfTimeNotTransformed(EntityPlayerMP player, ITransformationPlayer cap) {
-        // test if player has no transformation stage
-        if (WerewolfHelper.getTransformationStage(player) != 0) {
-            WerewolfHelper.setTimeSinceTransformation(player, -1);
-            WerewolfHelper.setTransformationStage(player, 0);
-            Main.getLogger().warn(
-                    "Has the ingame time been changed or has the player left the world? Player " + player.getName()
-                            + "'s transformation stage wasn't 0 although the player wasn't transformed");
-            PacketHandler.sendTransformationMessage(player);
-        }
-    }
-
-    public static void notWerewolfTimeTransformed(EntityPlayerMP player, ITransformationPlayer cap, WerewolfTransformingEvent.WerewolfTransformingReason reason) {
-        if ((WerewolfHelper.getTransformationStage(player) <= 0) && WerewolfHelper.transformPlayer(player,
-                false, reason)) {
-            ITextComponent message = new TextComponentTranslation(
-                    "transformations.huntersdream:werewolf.transformingBack.0");
-            message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.BLUE);
-            player.sendMessage(message);
-            PacketHandler.sendTransformationMessage(player);
-            player.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
-            player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
-            player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 4));
-            player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
-            // night vision for better blindness effect
-            player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
-        }
-    }
-
-    /**
-     * Called when infection stage changes
-     */
-    private static void onStageChanged(EntityPlayerMP player, int nextStage, WerewolfTransformingEvent.WerewolfTransformingReason reasonForEvent) {
-        WerewolfHelper.setTransformationStage(player, nextStage);
-        int transformationStage = WerewolfHelper.getTransformationStage(player);
-
-        // send chat messages
-        if (transformationStage != 0) {
-            ITextComponent message = new TextComponentTranslation(
-                    "transformations.huntersdream:werewolf.transformingInto."
-                            + WerewolfHelper.getTransformationStage(player));
-            message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
-            player.sendMessage(message);
-            player.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
-                    ParticleInit.BLOOD_PARTICLE, false, (float) player.posX - 1.0F, (float) player.posY,
-                    (float) player.posZ - 1.0F, 2.0F, 0.0F, 2.0F, 0.0F, 30));
-        }
-
-        switch (transformationStage) {
-            case 1:
-                player.world.playSound(null, player.posX, player.posY, player.posZ, SoundInit.HEART_BEAT,
-                        SoundCategory.PLAYERS, 100, 1);
-                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 550, 1));
-                break;
-            case 2:
-                player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 450, 1));
-                break;
-            case 3:
-                player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 350, 255));
-                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 350, 255));
-                player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 350, 255));
-                break;
-            case 4:
-                player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 110, 0));
-                break;
-            case 5:
-                player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0));
-                break;
-            case 6:
-                player.world.playSound(null, player.getPosition(), SoundInit.WEREWOLF_HOWLING, SoundCategory.PLAYERS, 100,
-                        1);
-                WerewolfHelper.setTimeSinceTransformation(player, -1);
-                WerewolfHelper.setTransformationStage(player, 0);
-                WerewolfHelper.transformPlayer(player, true, reasonForEvent);
-                // completely heal player
-                player.setHealth(player.getMaxHealth());
-                break;
-            default:
-                throw new UnexpectedBehaviorException(
-                        "Stage " + WerewolfHelper.getTransformationStage(player) + " is not a valid stage");
-        }
-        // sync transformation extra data with player (for transformation overlays)
-        PacketHandler.sendTransformationMessageToPlayer(player, player);
-    }
-
     @SubscribeEvent
     public static void onEntityItemPickup(EntityItemPickupEvent event) {
         if (WerewolfHelper.isTransformed(event.getEntityPlayer()) && !event.getEntityPlayer().isCreative()) {
@@ -379,19 +245,18 @@ public class WerewolfEventHandler {
     @SubscribeEvent
     public static void onPlayerTransforming(WerewolfTransformingEvent.PlayerWerewolfTransformingEvent event) {
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
-        int ticks = WerewolfHelper.getWilfulTransformationTicks(player);
         WerewolfTransformingEvent.WerewolfTransformingReason reason = event.getTransformingEventReason();
         // if the ticks are higher than 0 (meaning that the player is transformed because of wilful transformation),
         // the player still has time until they'll get turned back, the fired event is trying to transform them back and
         // the reason is that the full moon has "ended", cancel the event and don't turn them back
-        if ((ticks > 0) && (player.ticksExisted < (ticks + WerewolfHelper.WILFUL_TRANSFORMATION_TICKS)) && event.transformingBack()
-                && (reason == WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END)) {
+        if (WerewolfHelper.isPlayerWilfullyTransformed(player) && !WerewolfHelper.hasPlayerReachedWilfulTransformationLimit(player)
+                && event.transformingBack() && (reason == WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END)) {
             event.setCanceled(true);
             // else if the player transformed back because they either were forced or did it themselves,
         } else if ((reason == WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_ENDING)
                 || (reason == WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING)) {
             // reset the ticks
-            WerewolfHelper.setWilfulTransformationTicks(player, -player.ticksExisted);
+            WerewolfHelper.setWilfulTransformationTicks(player, -player.world.getTotalWorldTime());
         }
     }
 }

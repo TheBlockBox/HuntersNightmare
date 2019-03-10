@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.init;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
@@ -7,11 +7,11 @@ import net.minecraft.item.*;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.items.*;
 import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 import java.util.ArrayList;
 import java.util.List;

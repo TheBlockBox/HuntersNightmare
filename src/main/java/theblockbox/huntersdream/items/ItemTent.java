@@ -16,8 +16,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.blocks.BlockTent;
-import theblockbox.huntersdream.init.BlockInit;
 
 public class ItemTent extends Item {
 	

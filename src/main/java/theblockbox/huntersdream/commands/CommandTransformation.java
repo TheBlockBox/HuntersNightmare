@@ -1,9 +1,5 @@
 package theblockbox.huntersdream.commands;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,9 +8,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
-import theblockbox.huntersdream.util.helpers.CommandHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.CommandHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CommandTransformation extends CommandBase {
 

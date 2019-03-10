@@ -11,7 +11,7 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.template.Template;
-import theblockbox.huntersdream.init.StructureInit;
+import theblockbox.huntersdream.api.init.StructureInit;
 
 import java.util.List;
 import java.util.Random;

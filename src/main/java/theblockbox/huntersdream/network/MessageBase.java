@@ -1,12 +1,5 @@
 package theblockbox.huntersdream.network;
 
-import java.util.function.Function;
-import java.util.function.IntFunction;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.Validate;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,10 +10,15 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+
+import javax.annotation.Nonnull;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 public abstract class MessageBase<T extends MessageBase<T>> implements IMessage {
 

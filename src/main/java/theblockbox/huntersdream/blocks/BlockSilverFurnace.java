@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.blocks;
 
-import java.util.Random;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -20,8 +18,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.init.CreativeTabInit;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
-import theblockbox.huntersdream.init.CreativeTabInit;
+
+import java.util.Random;
 
 public class BlockSilverFurnace extends BlockContainer {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;

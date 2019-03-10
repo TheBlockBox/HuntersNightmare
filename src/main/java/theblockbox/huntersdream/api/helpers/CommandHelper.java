@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.helpers;
+package theblockbox.huntersdream.api.helpers;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.text.TextComponentTranslation;

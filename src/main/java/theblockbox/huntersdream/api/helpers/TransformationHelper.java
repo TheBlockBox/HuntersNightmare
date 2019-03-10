@@ -1,11 +1,4 @@
-package theblockbox.huntersdream.util.helpers;
-
-import java.util.Collections;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.Validate;
+package theblockbox.huntersdream.api.helpers;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -18,12 +11,13 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.api.event.IsLivingInfectedEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
-import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
@@ -33,6 +27,10 @@ import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
+
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.Optional;
 
 public class TransformationHelper {
     public static final Capability<ITransformationPlayer> CAPABILITY_TRANSFORMATION_PLAYER = CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER;

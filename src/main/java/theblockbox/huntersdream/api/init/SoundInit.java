@@ -1,9 +1,9 @@
-package theblockbox.huntersdream.init;
-
-import java.util.ArrayList;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.util.SoundEvent;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+
+import java.util.ArrayList;
 
 public class SoundInit {
 	public static final ArrayList<SoundEvent> SOUND_EVENTS = new ArrayList<>();

@@ -4,8 +4,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.util.EnumHand;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.helpers.ChanceHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 
 public class EntityAIWerewolfAttack extends EntityAIAttackMelee {
 

@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.blocks;
 
-import java.util.Random;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.MapColor;
@@ -22,8 +20,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.init.CreativeTabInit;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
-import theblockbox.huntersdream.init.CreativeTabInit;
+
+import java.util.Random;
 
 public class BlockCampfire extends BlockContainer {
 	public static final PropertyBool BURNING = PropertyBool.create("burning");

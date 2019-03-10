@@ -26,18 +26,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.SilverFurnaceRecipe;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.*;
+import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandMoonphase;
 import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
 import theblockbox.huntersdream.commands.CommandTransformationTexture;
-import theblockbox.huntersdream.init.*;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.api.SilverFurnaceRecipe;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 import theblockbox.huntersdream.world.gen.WorldGenHuntersCamp;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
 import theblockbox.huntersdream.world.gen.WorldGenWerewolfCabin;
@@ -114,7 +114,7 @@ public class RegistryHandler {
         GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
         RegistryHandler.directory = event.getModConfigurationDirectory();
         MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
-        GeneralInit.preInit();
+        WerewolfTransformationOverlayInit.preInit();
     }
 
     public static void initCommon(FMLInitializationEvent event) {

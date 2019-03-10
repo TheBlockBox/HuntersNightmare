@@ -1,14 +1,13 @@
 package theblockbox.huntersdream.capabilities;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.Validate;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
 public class TransformationCreatureProvider implements ICapabilitySerializable<NBTTagCompound> {

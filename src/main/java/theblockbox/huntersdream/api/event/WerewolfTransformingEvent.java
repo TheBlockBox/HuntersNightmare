@@ -108,7 +108,7 @@ public class WerewolfTransformingEvent extends LivingEvent {
          * Returns the reason that should be used to fire the event for the actual changing of the transformation.
          * (Actual transformation does not include the transformation process for players, but only is the part when
          * isTransformed is set to true via a call to
-         * {@link theblockbox.huntersdream.util.helpers.WerewolfHelper#setTransformed(EntityLivingBase, boolean)}.)
+         * {@link theblockbox.huntersdream.api.helpers.WerewolfHelper#setTransformed(EntityLivingBase, boolean)}.)
          * <br>
          * Default return value is {@code this}.
          */

@@ -5,8 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
-import theblockbox.huntersdream.api.Skill;
-import theblockbox.huntersdream.util.helpers.ClientHelper;
+import theblockbox.huntersdream.api.helpers.ClientHelper;
+import theblockbox.huntersdream.api.skill.Skill;
 
 public class GuiButtonSkill extends GuiButton {
     private final Skill skill;

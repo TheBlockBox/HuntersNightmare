@@ -5,8 +5,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 /**
  * ExtraDataEvent is fired when an entity that is not a player transforms (back)

@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.init;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

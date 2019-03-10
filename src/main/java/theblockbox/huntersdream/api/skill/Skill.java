@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.api;
+package theblockbox.huntersdream.api.skill;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,9 +7,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.SkillRegistryEvent;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;

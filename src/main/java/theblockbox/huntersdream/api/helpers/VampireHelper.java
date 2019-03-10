@@ -1,8 +1,4 @@
-package theblockbox.huntersdream.util.helpers;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.Validate;
+package theblockbox.huntersdream.api.helpers;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,13 +9,16 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.PotionInit;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.PotionInit;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
+
+import javax.annotation.Nonnull;
 
 public class VampireHelper {
 	public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;

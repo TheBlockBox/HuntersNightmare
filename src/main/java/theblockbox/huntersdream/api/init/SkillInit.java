@@ -1,12 +1,12 @@
-package theblockbox.huntersdream.init;
+package theblockbox.huntersdream.api.init;
 
 import net.minecraft.entity.player.EntityPlayer;
-import theblockbox.huntersdream.api.ChildSkill;
-import theblockbox.huntersdream.api.ParentSkill;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.skill.ChildSkill;
+import theblockbox.huntersdream.api.skill.ParentSkill;
 import theblockbox.huntersdream.util.collection.TransformationSet;
 
-import static theblockbox.huntersdream.util.helpers.GeneralHelper.newResLoc;
+import static theblockbox.huntersdream.api.helpers.GeneralHelper.newResLoc;
 
 /**
  * A simple class for storing all skill instances.

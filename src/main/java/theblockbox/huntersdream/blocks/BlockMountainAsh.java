@@ -9,14 +9,18 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.init.CreativeTabInit;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.CreativeTabInit;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -47,8 +51,6 @@ public class BlockMountainAsh extends Block {
             PropertyEnum.create("west", BlockMountainAsh.EnumAttachPosition.class);
     public static final PropertyEnum<BlockMountainAsh.EnumAttachPosition> EAST =
             PropertyEnum.create("east", BlockMountainAsh.EnumAttachPosition.class);
-    public static final AxisAlignedBB COLLISION_AABB = new AxisAlignedBB(0.0D, -5.0D, 0.0D,
-            1.0D, 5.0D, 1.0D);
 
     public BlockMountainAsh() {
         // TODO: Better material and soundtype?
@@ -59,6 +61,12 @@ public class BlockMountainAsh extends Block {
                 .withProperty(BlockMountainAsh.SOUTH, BlockMountainAsh.EnumAttachPosition.NONE)
                 .withProperty(BlockMountainAsh.WEST, BlockMountainAsh.EnumAttachPosition.NONE)
                 .withProperty(BlockMountainAsh.EAST, BlockMountainAsh.EnumAttachPosition.NONE));
+    }
+
+    public static boolean canEntityNotPass(Entity entity) {
+        return (entity instanceof EntityLivingBase) && (TransformationHelper.getTransformation((EntityLivingBase) entity)
+                .getTransformationType() == Transformation.TransformationType.PHYSICAL_SUPERNATURAL)
+                || (entity instanceof EntityZombie) || (entity instanceof EntitySkeleton);
     }
 
     @Override
@@ -139,25 +147,41 @@ public class BlockMountainAsh extends Block {
 
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        // TODO: Needed?
         if (!worldIn.isRemote) {
-            for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL) {
-                worldIn.notifyNeighborsOfStateChange(pos.offset(enumfacing), this, false);
+//            // TODO: Needed?
+//            for (EnumFacing facing : EnumFacing.Plane.VERTICAL) {
+//                worldIn.notifyNeighborsOfStateChange(pos.offset(facing), this, false);
+//            }
+            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(pos).move(EnumFacing.UP);
+            for (; !worldIn.isOutsideBuildHeight(mutablePos) && worldIn.isAirBlock(mutablePos); mutablePos.move(EnumFacing.UP)) {
+                worldIn.setBlockState(mutablePos, BlockInit.MOUNTAIN_ASH_BARRIER.getDefaultState());
             }
         }
     }
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        if (!worldIn.isRemote && !this.canPlaceBlockAt(worldIn, pos)) {
-            this.dropBlockAsItem(worldIn, pos, state, 0);
-            worldIn.setBlockToAir(pos);
+        if (!worldIn.isRemote) {
+            if (this.canPlaceBlockAt(worldIn, pos)) {
+                BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(pos).move(EnumFacing.UP);
+                for (; !worldIn.isOutsideBuildHeight(mutablePos) && worldIn.isAirBlock(mutablePos); mutablePos.move(EnumFacing.UP)) {
+                    worldIn.setBlockState(mutablePos, BlockInit.MOUNTAIN_ASH_BARRIER.getDefaultState());
+                }
+            } else {
+                this.dropBlockAsItem(worldIn, pos, state, 0);
+                worldIn.setBlockToAir(pos);
+            }
         }
     }
 
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
         return worldIn.getBlockState(pos.down()).isTopSolid();
+    }
+
+    @Override
+    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
+        return super.getBlockHardness(blockState, worldIn, pos);
     }
 
     @Override
@@ -188,10 +212,8 @@ public class BlockMountainAsh extends Block {
     @Override
     public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
                                       List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
-        // TODO: Check if they're physical supernaturals and not only supernaturals
-        if ((entityIn instanceof EntityLivingBase) && TransformationHelper.getTransformation((EntityLivingBase) entityIn)
-                .isSupernatural()) {
-            AxisAlignedBB boundingBox = BlockMountainAsh.COLLISION_AABB.offset(pos);
+        if (BlockMountainAsh.canEntityNotPass(entityIn)) {
+            AxisAlignedBB boundingBox = Block.FULL_BLOCK_AABB.offset(pos);
             if (entityBox.intersects(boundingBox)) {
                 collidingBoxes.add(boundingBox);
             }

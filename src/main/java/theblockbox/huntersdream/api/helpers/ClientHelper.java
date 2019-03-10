@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.helpers;
+package theblockbox.huntersdream.api.helpers;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiIngame;

@@ -18,13 +18,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Mouse;
-import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.ClientHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.ClientHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -114,7 +114,8 @@ public class SkillBarHandler {
                     SkillBarHandler.isSkillBarSlotChosen = true;
                 }
             }
-            if (!SkillBarHandler.isSkillBarSlotChosen && (button == 1) && WerewolfHelper.canPlayerWilfullyTransform(player)) {
+            if ((WerewolfHelper.canPlayerWilfullyTransform(player) || WerewolfHelper.canPlayerWilfullyTransformBack(player))
+                    && !SkillBarHandler.isSkillBarSlotChosen && (button == 1)) {
                 PacketHandler.sendUseWilfulTransformationMessage(player.world);
             }
         }

@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.util.handlers;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityCreature;
@@ -19,6 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,16 +32,18 @@ import theblockbox.huntersdream.api.event.effectiveness.ArmorEffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.EffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.EntityEffectivenessEvent;
 import theblockbox.huntersdream.api.event.effectiveness.ItemEffectivenessEvent;
+import theblockbox.huntersdream.api.helpers.ChanceHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.OreDictionaryInit;
+import theblockbox.huntersdream.blocks.BlockMountainAsh;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.OreDictionaryInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
@@ -95,24 +97,27 @@ public class TransformationEventHandler {
                         if (isWerewolf) {
                             if (isWerewolfTime) {
                                 if (isTransformed) {
-                                    WerewolfEventHandler.werewolfTimeTransformed(playerMP, cap);
+                                    WerewolfHelper.addTransformationEffects(playerMP, cap);
                                 } else {
-                                    WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_STARTING);
+                                    WerewolfHelper.advanceWerewolfTransformation(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_STARTING);
                                 }
                             } else {
                                 if (isTransformed) {
-                                    WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END);
+                                    WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END);
                                 } else {
-                                    WerewolfEventHandler.notWerewolfTimeNotTransformed(playerMP, cap);
+                                    WerewolfHelper.resetTransformationStageWhenNeeded(playerMP, cap);
                                 }
                             }
-                            int ticks = WerewolfHelper.getWilfulTransformationTicks(player);
-                            if (ticks > 0) {
-                                if ((player.ticksExisted >= (ticks + WerewolfHelper.WILFUL_TRANSFORMATION_TICKS))) {
-                                    Preconditions.checkArgument(isTransformed);
-                                    WerewolfEventHandler.notWerewolfTimeTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
+                            if (WerewolfHelper.isPlayerWilfullyTransformed(player)) {
+                                if (WerewolfHelper.hasPlayerReachedWilfulTransformationLimit(player)) {
+                                    // if the player has reached their wilful transformation limit, transform them back
+                                    WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
                                 } else if (!isTransformed) {
-                                    WerewolfEventHandler.werewolfTimeNotTransformed(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_STARTING);
+                                    // if the player is technically wilfully transformed but the transformation isn't
+                                    // done yet, advance it
+                                    WerewolfHelper.advanceWerewolfTransformation(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_STARTING);
+                                } else {
+                                    WerewolfHelper.addTransformationEffects(playerMP, cap);
                                 }
                             }
                             // this piece of code syncs the player data every six minutes, so basically
@@ -380,6 +385,13 @@ public class TransformationEventHandler {
         if ((event.getHurtTransformation() == Transformation.WEREWOLF)
                 && GeneralHelper.itemStackHasOreDicts(event.getItemStack(), OreDictionaryInit.SILVER_NAMES)) {
             event.setDamage(event.getDamage() * (WerewolfHelper.isTransformed(event.getEntityLiving()) ? 4.0F : 2.0F));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerHarvestCheck(BlockEvent.BreakEvent event) {
+        if ((event.getState().getBlock() == BlockInit.MOUNTAIN_ASH) && BlockMountainAsh.canEntityNotPass(event.getPlayer())) {
+            event.setCanceled(true);
         }
     }
 }

@@ -5,8 +5,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.items.SlotItemHandler;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 public class ContainerClothingTab extends Container {
 	public final IInventory playerInventory;

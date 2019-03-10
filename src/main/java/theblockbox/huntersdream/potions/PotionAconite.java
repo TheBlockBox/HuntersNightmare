@@ -2,7 +2,7 @@ package theblockbox.huntersdream.potions;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 
 public class PotionAconite extends PotionBase {
 	public PotionAconite() {

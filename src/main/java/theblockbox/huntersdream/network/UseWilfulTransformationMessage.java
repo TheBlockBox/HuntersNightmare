@@ -6,38 +6,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.init.SkillInit;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.handlers.WerewolfEventHandler;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 public class UseWilfulTransformationMessage extends MessageBase<UseWilfulTransformationMessage> {
-    private boolean activate;
-
     public UseWilfulTransformationMessage() {
-    }
-
-    public UseWilfulTransformationMessage(boolean activate) {
-        this.activate = activate;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.activate = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(this.activate);
     }
 
     @Override
     public String getName() {
-        return "Activate Wilful Transformation Message";
+        return "Use Wilful Transformation Message";
     }
 
     @Override
@@ -52,27 +40,23 @@ public class UseWilfulTransformationMessage extends MessageBase<UseWilfulTransfo
             if (ctx.side == Side.SERVER) {
                 MessageBase.addScheduledTask(ctx, () -> {
                     EntityPlayerMP player = ctx.getServerHandler().player;
-                    if (message.activate) {
+                    if (WerewolfHelper.isTransformed(player)) {
+                        if (WerewolfHelper.canPlayerWilfullyTransformBack(player)) {
+                            WerewolfHelper.transformWerewolfBack(player, TransformationHelper.getITransformationPlayer(player),
+                                    WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_ENDING);
+                        } else {
+                            Main.getLogger().error("The player " + player + " tried to transform back via deactivating " +
+                                    "wilful transformation but wasn't allowed to");
+                        }
+                    } else {
                         if (WerewolfHelper.canPlayerWilfullyTransform(player)) {
                             if (player.world.provider.getCurrentMoonPhaseFactor() != 1.0F) {
-                                WerewolfHelper.setWilfulTransformationTicks(player, player.ticksExisted);
+                                WerewolfHelper.setWilfulTransformationTicks(player, player.world.getTotalWorldTime());
                                 PacketHandler.sendTransformationMessage(player);
                             }
                         } else {
                             Main.getLogger().error("The player " + player + " tried to activate wilful transformation but " +
                                     "wasn't allowed to");
-                        }
-                    } else {
-                        int ticks = WerewolfHelper.getWilfulTransformationTicks(player);
-                        ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(player);
-                        if ((transformation.getTransformation() == Transformation.WEREWOLF) && player.getActiveItemStack().isEmpty()
-                                && (transformation.getActiveSkill().orElse(null) == SkillInit.WILFUL_TRANSFORMATION)
-                                && WerewolfHelper.isTransformed(player) && (ticks >= 0)) {
-                            WerewolfEventHandler.notWerewolfTimeTransformed(player, transformation,
-                                    WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_ENDING);
-                        } else {
-                            Main.getLogger().error("The player " + player + " tried to transform back via deactivating " +
-                                    "wilful transformation but wasn't allowed to");
                         }
                     }
                 });

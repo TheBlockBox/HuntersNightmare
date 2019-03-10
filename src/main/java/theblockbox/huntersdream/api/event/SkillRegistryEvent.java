@@ -5,12 +5,12 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
-import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.skill.Skill;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static theblockbox.huntersdream.init.SkillInit.*;
+import static theblockbox.huntersdream.api.init.SkillInit.*;
 
 /**
  * SkillRegistryEvent is fired when the skills are being registered. <br>

@@ -10,12 +10,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import theblockbox.huntersdream.api.ParentSkill;
-import theblockbox.huntersdream.api.Skill;
+import theblockbox.huntersdream.api.helpers.ClientHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.skill.ParentSkill;
+import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.helpers.ClientHelper;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.io.IOException;

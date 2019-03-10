@@ -5,8 +5,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
  * TransformationEvent is fired when an entity changes its transformation. It is

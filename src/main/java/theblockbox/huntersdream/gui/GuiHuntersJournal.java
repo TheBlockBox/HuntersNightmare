@@ -1,17 +1,16 @@
 package theblockbox.huntersdream.gui;
 
-import java.awt.Color;
-import java.io.IOException;
-
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.HuntersJournalPage;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+
+import java.awt.*;
+import java.io.IOException;
 
 public class GuiHuntersJournal extends GuiScreen {
 	private final HuntersJournalPage[] pages;

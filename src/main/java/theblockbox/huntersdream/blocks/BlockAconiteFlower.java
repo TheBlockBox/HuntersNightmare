@@ -13,9 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.init.CreativeTabInit;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.CreativeTabInit;
 import theblockbox.huntersdream.util.BlockStateWrapper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 
 public class BlockAconiteFlower extends BlockFlower {
     public BlockAconiteFlower() {

@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.container;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -13,9 +11,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.apache.commons.lang3.BooleanUtils;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
-import theblockbox.huntersdream.init.CapabilitiesInit;
 import theblockbox.huntersdream.inventory.SlotOutput;
 
 public class ContainerSilverFurnace extends Container {

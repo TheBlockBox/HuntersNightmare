@@ -3,10 +3,10 @@ package theblockbox.huntersdream.entity.renderer;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.model.ModelGoblinTD;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
 	private static final ResourceLocation[] TEXTURES = new ResourceLocation[EntityGoblinTD.TEXTURES];

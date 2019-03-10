@@ -7,8 +7,8 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.init.CreativeTabInit;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.CreativeTabInit;
 
 public class ItemHerbalAconiteWater extends ItemFood {
     public ItemHerbalAconiteWater() {

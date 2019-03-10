@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.container.ContainerCampfire;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiCampfire extends GuiContainer {
 	public static final int WIDTH = 176;

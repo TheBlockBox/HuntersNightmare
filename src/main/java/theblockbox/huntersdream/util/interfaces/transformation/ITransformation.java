@@ -3,8 +3,8 @@ package theblockbox.huntersdream.util.interfaces.transformation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 
 /**
  * This interface is for entites that can transform

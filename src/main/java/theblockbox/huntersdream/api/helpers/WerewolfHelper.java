@@ -1,27 +1,36 @@
-package theblockbox.huntersdream.util.helpers;
+package theblockbox.huntersdream.api.helpers;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.Validate;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.ParticleInit;
+import theblockbox.huntersdream.api.init.SkillInit;
+import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.init.CapabilitiesInit;
-import theblockbox.huntersdream.init.SkillInit;
-import theblockbox.huntersdream.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
@@ -31,15 +40,15 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.Random;
+
+import static net.minecraft.init.SoundEvents.ENTITY_WOLF_GROWL;
 
 public class WerewolfHelper {
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
     public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource("huntersdream:werewolfTransformationDamage");
-    /**
-     * How many ticks a player can be transformed via wilful transformation
-     */
-    public static final int WILFUL_TRANSFORMATION_TICKS = 6000;
 
     /**
      * Returns true when a werewolf can transform in this world
@@ -231,6 +240,7 @@ public class WerewolfHelper {
      *
      * @param entity The entity to be transformed
      */
+    @Nullable
     public static EntityWerewolf toWerewolfWhenNight(EntityCreature entity) {
         World world = entity.world;
         if (world.isRemote) {
@@ -325,23 +335,28 @@ public class WerewolfHelper {
 
     /**
      * Returns the amount of ticks the given werewolf player has been transformed. If the returned value is 0, they
-     * haven't wilfully transformed yet. If the value is positive, they are currently wilfully transformed and the int is
-     * the tick at which they started to transform. If the value is negative, they have already been transformed and the
-     * int is the tick at which they transformed back with a minus sign in front of it.
+     * haven't wilfully transformed yet. If the value is positive, they are currently wilfully transformed and the long
+     * is the tick (gotten from {@link World#getTotalWorldTime()}) at which they started to transform. If the value is
+     * negative, they have already been transformed and the long is the tick at which they transformed back with a minus
+     * sign in front of it.
+     * <br>
+     * Try to always prefer {@link #isPlayerWilfullyTransformed(EntityPlayer)} and {@link #hasPlayerReachedWilfulTransformationLimit(EntityPlayer)}
+     * over this method since they make the code easier to understand and make bugs because of small things (like having
+     * written the wrong number) less probable.
      */
-    public static int getWilfulTransformationTicks(EntityPlayer player) {
+    public static long getWilfulTransformationTicks(EntityPlayer player) {
         WerewolfHelper.validateIsWerewolf(player);
-        return TransformationHelper.getTransformationData(player).getInteger("wilfulTransformationTicks");
+        return TransformationHelper.getTransformationData(player).getLong("wilfulTransformationTicks");
     }
 
     /**
      * Sets a werewolf player's wilful transformation ticks (used for the wilful transformation).
-     * No packet is being sent to the client
+     * No packet is being sent to the client.
      */
-    public static void setWilfulTransformationTicks(EntityPlayerMP player, int ticks) {
+    public static void setWilfulTransformationTicks(EntityPlayerMP player, long ticks) {
         WerewolfHelper.validateIsWerewolf(player);
         NBTTagCompound compound = TransformationHelper.getTransformationData(player);
-        compound.setInteger("wilfulTransformationTicks", ticks);
+        compound.setLong("wilfulTransformationTicks", ticks);
     }
 
     /**
@@ -350,28 +365,25 @@ public class WerewolfHelper {
      * client and server side.)
      */
     public static boolean canPlayerWilfullyTransform(EntityPlayer werewolf) {
-        // 18000 ticks = 5 minutes cooldown
         ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
         if (transformation.getTransformation() == Transformation.WEREWOLF) {
-            int ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
+            long ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
+            // 18000 ticks = 5 minutes cooldown
+            // if the player hasn't wilfully transformed, they won't have any cooldown
             return (werewolf.getActiveItemStack().isEmpty()
                     && (transformation.getActiveSkill().orElse(null) == SkillInit.WILFUL_TRANSFORMATION)
-                    && !WerewolfHelper.isTransformed(werewolf) && (ticks <= 0) && ((werewolf.ticksExisted + ticks) >= 18000));
+                    && !WerewolfHelper.isTransformed(werewolf) && !WerewolfHelper.isPlayerWilfullyTransformed(werewolf)
+                    && ((ticks == 0) || ((werewolf.world.getTotalWorldTime() + ticks) >= 18000)));
         } else {
             return false;
         }
     }
 
-    // add potion effects to werewolves
-    // TODO: Make that it practically would also work when it's day, as long as the
-    // werewolf is transformed
-    public static void applyLevelBuffs(EntityPlayerMP werewolf) {
-        int duration = 101;
-        ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(werewolf);
-        werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 401, 0, false, false));
-        werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, tp.getSkillLevel(SkillInit.SPEED_0) + 1, false, false));
-        werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, duration, tp.getSkillLevel(SkillInit.JUMP_0) + 1, false, false));
-        werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, duration, 2, false, false));
+    public static boolean canPlayerWilfullyTransformBack(EntityPlayer werewolf) {
+        ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
+        return (transformation.getTransformation() == Transformation.WEREWOLF) && werewolf.getActiveItemStack().isEmpty()
+                && (transformation.getActiveSkill().orElse(null) == SkillInit.WILFUL_TRANSFORMATION)
+                && WerewolfHelper.isPlayerWilfullyTransformed(werewolf);
     }
 
     /**
@@ -449,5 +461,187 @@ public class WerewolfHelper {
      */
     public static int getAmountOfTransformationStages() {
         return 6;
+    }
+
+    /**
+     * Adds the effects a werewolf should get when they're transformed to the given player. The applied effects are the
+     * werewolf sounds, night vision, speed, jump boost and hunger. It is NOT checked if the given player is a werewolf.
+     */
+    public static void addTransformationEffects(EntityPlayerMP werewolf, ITransformationPlayer cap) {
+        ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(werewolf);
+        werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 401, 0, false, false));
+        werewolf.addPotionEffect(new PotionEffect(MobEffects.SPEED, 101, tp.getSkillLevel(SkillInit.SPEED_0) + 1, false, false));
+        werewolf.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 101, tp.getSkillLevel(SkillInit.JUMP_0) + 1, false, false));
+        werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 101, 2, false, false));
+        Random random = werewolf.getRNG();
+        int soundTicksBefore = WerewolfHelper.getSoundTicks(werewolf);
+        WerewolfHelper.setSoundTicks(werewolf, soundTicksBefore + 1);
+        if (random.nextInt(13) < soundTicksBefore) {
+            WerewolfHelper.setSoundTicks(werewolf, -80);
+            werewolf.world.playSound(null, werewolf.posX, werewolf.posY, werewolf.posZ, ENTITY_WOLF_GROWL,
+                    werewolf.getSoundCategory(), 1.0F, (random.nextFloat() - random.nextFloat()) * 0.2F);
+        }
+    }
+
+    /**
+     * Advances the werewolf transformation via changing the transformation stage and applying some effects. Should be
+     * called until the werewolf is transformed to make sure the transformation is fully done. Always checks if the
+     * given player is a werewolf.
+     */
+    public static void advanceWerewolfTransformation(EntityPlayerMP werewolf, ITransformationPlayer cap,
+                                                     WerewolfTransformingEvent.WerewolfTransformingReason reason) {
+        if (WerewolfHelper.canWerewolfTransform(werewolf)) {
+            if (MinecraftForge.EVENT_BUS.post(new WerewolfTransformingEvent(werewolf, false, reason)))
+                return;
+            if (WerewolfHelper.getTransformationStage(werewolf) <= 0) {
+                WerewolfHelper.setTimeSinceTransformation(werewolf, werewolf.ticksExisted);
+                WerewolfHelper.onStageChanged(werewolf, 1, reason.getActualTransformingReason());
+                return;
+            }
+
+            // every five seconds (20 * 5 = 100) one stage up
+            int nextStage = MathHelper
+                    .floor(((werewolf.ticksExisted - WerewolfHelper.getTimeSinceTransformation(werewolf))) / 100.0D);
+
+            if (nextStage > 6 || nextStage < 0) {
+                WerewolfHelper.setTimeSinceTransformation(werewolf, -1);
+                WerewolfHelper.setTransformationStage(werewolf, 0);
+                Main.getLogger().warn(
+                        "Has the ingame time been changed or has the player left the world? Player " + werewolf.getName()
+                                + "'s transformation stage (" + nextStage + ") is invalid");
+                PacketHandler.sendTransformationMessage(werewolf);
+                return;
+            }
+
+            if (nextStage > WerewolfHelper.getTransformationStage(werewolf)) {
+                WerewolfHelper.onStageChanged(werewolf, nextStage, reason.getActualTransformingReason());
+            }
+        }
+    }
+
+    /**
+     * Called when transformation stage changes
+     */
+    private static void onStageChanged(EntityPlayerMP player, int nextStage, WerewolfTransformingEvent.WerewolfTransformingReason reasonForEvent) {
+        WerewolfHelper.setTransformationStage(player, nextStage);
+        int transformationStage = WerewolfHelper.getTransformationStage(player);
+
+        // send chat messages
+        if (transformationStage != 0) {
+            ITextComponent message = new TextComponentTranslation(
+                    "transformations.huntersdream:werewolf.transformingInto."
+                            + WerewolfHelper.getTransformationStage(player));
+            message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
+            player.sendStatusMessage(message, true);
+            player.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
+                    ParticleInit.BLOOD_PARTICLE, false, (float) player.posX - 1.0F, (float) player.posY,
+                    (float) player.posZ - 1.0F, 2.0F, 0.0F, 2.0F, 0.0F, 30));
+        }
+
+        switch (transformationStage) {
+            case 1:
+                player.world.playSound(null, player.posX, player.posY, player.posZ, SoundInit.HEART_BEAT,
+                        SoundCategory.PLAYERS, 100, 1);
+                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 550, 1));
+                break;
+            case 2:
+                player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 450, 1));
+                break;
+            case 3:
+                player.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 350, 255));
+                player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 350, 255));
+                player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 350, 255));
+                break;
+            case 4:
+                player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 110, 0));
+                break;
+            case 5:
+                player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0));
+                break;
+            case 6:
+                player.world.playSound(null, player.getPosition(), SoundInit.WEREWOLF_HOWLING, SoundCategory.PLAYERS, 100,
+                        1);
+                WerewolfHelper.setTimeSinceTransformation(player, -1);
+                WerewolfHelper.setTransformationStage(player, 0);
+                WerewolfHelper.transformPlayer(player, true, reasonForEvent);
+                // completely heal player
+                player.setHealth(player.getMaxHealth());
+                break;
+            default:
+                throw new UnexpectedBehaviorException(
+                        "Stage " + WerewolfHelper.getTransformationStage(player) + " is not a valid stage");
+        }
+        // sync transformation extra data with player (for transformation overlays)
+        PacketHandler.sendTransformationMessageToPlayer(player, player);
+    }
+
+    /**
+     * Should be called when the given player is NOT transformed but it should be ensured that their transformation stage
+     * and time are reset. This method always checks if the given player is a werewolf but does NOT check if they're
+     * untransformed.
+     */
+    public static void resetTransformationStageWhenNeeded(EntityPlayerMP werewolf, ITransformationPlayer cap) {
+        // test if player has no transformation stage
+        if ((WerewolfHelper.getTransformationStage(werewolf) != 0) && !WerewolfHelper.isPlayerWilfullyTransformed(werewolf)) {
+            WerewolfHelper.setTimeSinceTransformation(werewolf, -1);
+            WerewolfHelper.setTransformationStage(werewolf, 0);
+            Main.getLogger().warn(
+                    "Has the ingame time been changed or has the player left the world? Player " + werewolf.getName()
+                            + "'s transformation stage wasn't 0 although the player wasn't transformed");
+            PacketHandler.sendTransformationMessage(werewolf);
+        }
+    }
+
+    /**
+     * Does the opposite of {@link #advanceWerewolfTransformation(EntityPlayerMP, ITransformationPlayer, WerewolfTransformingEvent.WerewolfTransformingReason)}
+     * but does not to but called multiple times but only once. This method always checks if the player is a werewolf and
+     * can be canceled by {@link WerewolfTransformingEvent}. The effects that are applied to the player are hunger,
+     * weakness, slowness, blindness and night vision (for a better blindness effect). In addition, a message is also sent.
+     * Does NOT execute when the werewolf is currently transforming.
+     */
+    public static void transformWerewolfBack(EntityPlayerMP werewolf, ITransformationPlayer cap, WerewolfTransformingEvent.WerewolfTransformingReason reason) {
+        if ((WerewolfHelper.getTransformationStage(werewolf) <= 0) && WerewolfHelper.transformPlayer(werewolf,
+                false, reason)) {
+            ITextComponent message = new TextComponentTranslation(
+                    "transformations.huntersdream:werewolf.transformingBack.0");
+            message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.BLUE);
+            werewolf.sendStatusMessage(message, true);
+            PacketHandler.sendTransformationMessage(werewolf);
+            werewolf.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 1200, 2));
+            werewolf.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 1200, 1));
+            werewolf.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 4));
+            werewolf.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
+            // night vision for better blindness effect
+            werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
+        }
+    }
+
+    /**
+     * Returns true if the given player is wilfully transformed. Does also return true when they're not actually transformed
+     * yet. (Meaning they've started transforming but are still in a transformation stage.) This method always checks if
+     * the given player is a werewolf.
+     */
+    public static boolean isPlayerWilfullyTransformed(EntityPlayer werewolf) {
+        return WerewolfHelper.getWilfulTransformationTicks(werewolf) > 0;
+    }
+
+    /**
+     * Returns true if the given player has reached their wilful transformation limit, meaning that they've been
+     * wilfully transformed for more than 6000 ticks/5 minutes. This method always checks if the given player is a
+     * werewolf and will throw an exception if the player is over the wilful transformation limit but isn't transformed.
+     */
+    public static boolean hasPlayerReachedWilfulTransformationLimit(EntityPlayer werewolf) {
+        long ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
+        long totalWorldTime = werewolf.world.getTotalWorldTime();
+        // 6000 ticks = 5 minutes limit for being transformed wilfully
+        if (WerewolfHelper.isPlayerWilfullyTransformed(werewolf) && (totalWorldTime > (ticks + 6000))) {
+            // check if the player is transformed to ensure nothing is going wrong
+            Preconditions.checkArgument(WerewolfHelper.isTransformed(werewolf), "Player " + werewolf +
+                    " was wilfully transformed and has reached their wilful transformation limit with " + ticks +
+                    " ticks (current tick: " + totalWorldTime + ") but wasn't transformed. Please report this!");
+            return true;
+        } else {
+            return false;
+        }
     }
 }

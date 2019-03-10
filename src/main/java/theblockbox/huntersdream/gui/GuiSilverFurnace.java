@@ -5,9 +5,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.container.ContainerSilverFurnace;
-import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
 
 public class GuiSilverFurnace extends GuiContainer {
 	public static final int WIDTH = 176;

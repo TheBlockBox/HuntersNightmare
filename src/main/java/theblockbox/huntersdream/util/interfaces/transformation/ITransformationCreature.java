@@ -1,15 +1,15 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
-import java.util.Set;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import theblockbox.huntersdream.util.collection.TransformationSet;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+
+import java.util.Set;
 
 /**
  * This interface is for creatures that can transform (for the capability)

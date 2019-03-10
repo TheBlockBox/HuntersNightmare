@@ -1,15 +1,15 @@
 package theblockbox.huntersdream.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.util.helpers.CommandHelper;
+import theblockbox.huntersdream.api.helpers.CommandHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandMoonphase extends CommandBase {
 	private static final Exception AIOOBE = new ArrayIndexOutOfBoundsException(0);

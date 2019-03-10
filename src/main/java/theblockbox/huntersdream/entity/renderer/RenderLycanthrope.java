@@ -11,13 +11,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.model.ModelWerewolf;
 import theblockbox.huntersdream.entity.model.ModelWerewolfAlex;
 import theblockbox.huntersdream.entity.model.ModelWerewolfSteve;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
 import java.util.Optional;

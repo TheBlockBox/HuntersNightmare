@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.helpers;
+package theblockbox.huntersdream.api.helpers;
 
 import com.google.common.base.CaseFormat;
 import net.minecraft.block.state.IBlockState;
@@ -31,6 +31,7 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -56,7 +57,7 @@ public class GeneralHelper {
     public static final DataSerializer<byte[]> BYTE_ARRAY_DATA_SERIALIZER = new DataSerializer<byte[]>() {
 
         @Override
-        public void write(PacketBuffer buf, byte[] value) {
+        public void write(PacketBuffer buf, @Nonnull byte[] value) {
             buf.writeByteArray(value);
         }
 

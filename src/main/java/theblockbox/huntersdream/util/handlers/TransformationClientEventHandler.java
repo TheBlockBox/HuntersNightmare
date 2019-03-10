@@ -17,21 +17,22 @@ import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.WerewolfTransformationOverlay;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.VampireHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.ParticleInit;
+import theblockbox.huntersdream.api.init.WerewolfTransformationOverlayInit;
+import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.gui.GuiSkillTab;
-import theblockbox.huntersdream.init.GeneralInit;
-import theblockbox.huntersdream.init.ParticleInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
-import theblockbox.huntersdream.util.helpers.VampireHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 import java.util.Collection;
@@ -51,7 +52,7 @@ public class TransformationClientEventHandler {
     private static RenderLycanthropePlayer renderLycantrophePlayer = null;
     private static RenderPlayer renderPlayerHand = null;
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (ConfigHandler.client.customPlayerRender && !mc.playerController.isSpectator()) {
@@ -180,7 +181,7 @@ public class TransformationClientEventHandler {
                     mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     GlStateManager.enableAlpha();
                     GlStateManager.enableBlend();
-                    GeneralInit.BLOODSHOT_HEARTBEAT.draw(width, height);
+                    WerewolfTransformationOverlayInit.BLOODSHOT_HEARTBEAT.draw(width, height);
                 }
             }
         }

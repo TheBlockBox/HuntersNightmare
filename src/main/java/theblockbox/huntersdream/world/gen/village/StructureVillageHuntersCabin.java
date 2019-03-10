@@ -1,13 +1,13 @@
 package theblockbox.huntersdream.world.gen.village;
 
-import java.util.List;
-import java.util.Random;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
-import theblockbox.huntersdream.init.StructureInit;
+import theblockbox.huntersdream.api.init.StructureInit;
+
+import java.util.List;
+import java.util.Random;
 
 public class StructureVillageHuntersCabin extends StructureVillageComponent {
 	// TODO: Use real dimensions

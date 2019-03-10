@@ -9,12 +9,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.event.TransformationRegistryEvent;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.VampireHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.helpers.VampireHelper;
-import theblockbox.huntersdream.util.helpers.WerewolfHelper;
 import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFunction;
 
 import javax.annotation.Nonnull;
@@ -24,6 +24,8 @@ import java.util.function.ObjDoubleConsumer;
 import java.util.function.ToIntFunction;
 
 import static theblockbox.huntersdream.api.Transformation.TransformationEntry.of;
+import static theblockbox.huntersdream.api.Transformation.TransformationType.NORMAL;
+import static theblockbox.huntersdream.api.Transformation.TransformationType.PHYSICAL_SUPERNATURAL;
 
 /**
  * A class to represent transformations and their properties. To register new
@@ -37,12 +39,12 @@ public class Transformation {
     /**
      * Used to indicate that no transformation is present and it won't change
      */
-    public static final Transformation NONE = of("none").setSupernatural(false).create();
+    public static final Transformation NONE = of("none").setTransformationType(NORMAL).create();
     /**
      * Used to indicate that no transformation is currently present but it could
      * change
      */
-    public static final Transformation HUMAN = of("human").setSupernatural(false).create();
+    public static final Transformation HUMAN = of("human").setTransformationType(NORMAL).create();
     /**
      * The transformation for werewolves
      */
@@ -198,13 +200,6 @@ public class Transformation {
     }
 
     /**
-     * Returns true if this transformation is supernatural
-     */
-    public boolean isSupernatural() {
-        return this.entry.supernatural;
-    }
-
-    /**
      * Returns the {@link TextComponentTranslation} for this transformation
      */
     public TextComponentTranslation getTranslation() {
@@ -246,6 +241,10 @@ public class Transformation {
     @Override
     public String toString() {
         return this.registryNameString;
+    }
+
+    public Transformation.TransformationType getTransformationType() {
+        return this.entry.transformationType;
     }
 
     /**
@@ -348,12 +347,25 @@ public class Transformation {
         return obj == this;
     }
 
+    public enum TransformationType {
+        NORMAL(false), PHYSICAL_SUPERNATURAL(true), UNPHYSICAL_SUPERNATURAL(true);
+        private boolean supernatural;
+
+        TransformationType(boolean supernatural) {
+            this.supernatural = supernatural;
+        }
+
+        public boolean isSupernatural() {
+            return this.supernatural;
+        }
+    }
+
     /**
      * Used to register new transformations. All set methods are optional.
      */
     public static class TransformationEntry {
         private final ResourceLocation registryName;
-        private boolean supernatural = true;
+        private Transformation.TransformationType transformationType = PHYSICAL_SUPERNATURAL;
         private ResourceLocation[] textures = new ResourceLocation[0];
         private Consumer<EntityLivingBase> infect = null;
         /**
@@ -389,10 +401,11 @@ public class Transformation {
         }
 
         /**
-         * Sets this transformation to be supernatural
+         * Sets the {@link Transformation.TransformationType}. The default value is
+         * {@link Transformation.TransformationType#PHYSICAL_SUPERNATURAL}.
          */
-        public Transformation.TransformationEntry setSupernatural(boolean supernatural) {
-            this.supernatural = supernatural;
+        public Transformation.TransformationEntry setTransformationType(Transformation.TransformationType type) {
+            this.transformationType = type;
             return this;
         }
 

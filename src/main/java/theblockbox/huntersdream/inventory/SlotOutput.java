@@ -6,7 +6,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 
 public class SlotOutput extends SlotItemHandler {
 	private final TileEntity te;

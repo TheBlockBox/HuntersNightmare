@@ -3,8 +3,8 @@ package theblockbox.huntersdream.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.gen.feature.WorldGenMinable;
-import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.init.CreativeTabInit;
+import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.CreativeTabInit;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
 public class BlockOre extends Block {

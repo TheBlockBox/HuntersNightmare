@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.world.gen;
 
-import java.util.Random;
-
 import net.minecraft.block.state.pattern.BlockMatcher;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -10,10 +8,12 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.blocks.BlockOre;
-import theblockbox.huntersdream.init.BlockInit;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
+
+import java.util.Random;
 
 public class WorldGenOres implements IWorldGenerator {
 

@@ -5,6 +5,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
+import javax.annotation.Nonnull;
+
 public class CapabilityProvider<T> implements ICapabilitySerializable<NBTTagCompound> {
 
 	private final Capability<T> cap;
@@ -16,12 +18,12 @@ public class CapabilityProvider<T> implements ICapabilitySerializable<NBTTagComp
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		return (capability == this.cap);
 	}
 
 	@Override
-	public <E> E getCapability(Capability<E> capability, EnumFacing facing) {
+	public <E> E getCapability(@Nonnull Capability<E> capability, EnumFacing facing) {
 		return capability == this.cap ? this.cap.cast(this.instance) : null;
 	}
 

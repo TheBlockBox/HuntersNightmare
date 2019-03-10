@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.items;
 
-import java.util.List;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,8 +14,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.HuntersJournalPage;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
+
+import java.util.List;
 
 public class ItemHuntersJournal extends Item {
 
@@ -31,7 +31,7 @@ public class ItemHuntersJournal extends Item {
 		HuntersJournalPage[] pages = TransformationHelper.getITransformationPlayer(playerIn).getUnlockedPages();
 		if (pages.length <= 0) {
 			if (!worldIn.isRemote) {
-				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".noPage"));
+				playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".noPage"), true);
 			}
 			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		} else {

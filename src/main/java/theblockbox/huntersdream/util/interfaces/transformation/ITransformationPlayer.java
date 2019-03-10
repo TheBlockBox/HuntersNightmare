@@ -1,25 +1,23 @@
 package theblockbox.huntersdream.util.interfaces.transformation;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Sets;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import theblockbox.huntersdream.api.ParentSkill;
-import theblockbox.huntersdream.api.Skill;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.skill.ParentSkill;
+import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
 import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
-import theblockbox.huntersdream.util.helpers.GeneralHelper;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ITransform for players (players can have xp)

@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import theblockbox.huntersdream.util.helpers.VampireHelper;
+import theblockbox.huntersdream.api.helpers.VampireHelper;
 
 public class BloodMessage extends MessageBase<BloodMessage> {
 	private int player;

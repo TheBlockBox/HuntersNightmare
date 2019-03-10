@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.items;
 
-import java.util.List;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +14,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
-import theblockbox.huntersdream.util.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+
+import java.util.List;
 
 public class ItemBestiary extends Item {
 	public ItemBestiary() {
@@ -32,8 +32,8 @@ public class ItemBestiary extends Item {
             if (playerIn.isCreative()) {
                 Transformation transformation = TransformationHelper.getTransformation(playerIn).cycle();
                 TransformationHelper.changeTransformation(playerIn, transformation, TransformationEvent.TransformationEventReason.BESTIARY);
-                playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick",
-                        transformation.getTranslation()));
+                playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick",
+                        transformation.getTranslation()), true);
                 return new ActionResult<>(EnumActionResult.SUCCESS, heldStack);
             } else {
                 return new ActionResult<>(EnumActionResult.FAIL, heldStack);

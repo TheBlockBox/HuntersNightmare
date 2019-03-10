@@ -16,10 +16,10 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.init.BlockInit;
-import theblockbox.huntersdream.init.LootTableInit;
+import theblockbox.huntersdream.api.helpers.ChanceHelper;
+import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.LootTableInit;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.helpers.ChanceHelper;
 
 import java.io.InputStreamReader;
 import java.net.URL;
