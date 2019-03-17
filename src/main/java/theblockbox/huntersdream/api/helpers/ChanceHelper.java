@@ -70,7 +70,6 @@ public class ChanceHelper {
      */
     public static int consistentIntFromSeed(long seed, int bound) {
         ChanceHelper.INTERNAL_RANDOM.setSeed(seed);
-        System.out.println(seed + " " + ChanceHelper.INTERNAL_RANDOM.currentSeed);
         return ChanceHelper.INTERNAL_RANDOM.nextInt(bound);
     }
 

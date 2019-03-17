@@ -11,59 +11,59 @@ import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 
 public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
-	private String skill;
+    private String skill;
 
-	public SkillUnlockMessage() {
-	}
+    public SkillUnlockMessage() {
+    }
 
-	public SkillUnlockMessage(Skill skillToUnlock) {
-		this.skill = skillToUnlock.toString();
-	}
+    public SkillUnlockMessage(Skill skillToUnlock) {
+        this.skill = skillToUnlock.toString();
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		this.skill = MessageBase.readString(buf);
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        this.skill = MessageBase.readString(buf);
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+    @Override
+    public void toBytes(ByteBuf buf) {
         MessageBase.writeString(buf, this.skill);
-	}
+    }
 
-	@Override
-	public String getName() {
-		return "Skill Unlock Message";
-	}
+    @Override
+    public String getName() {
+        return "Skill Unlock Message";
+    }
 
-	@Override
-	public MessageBase.MessageHandler<SkillUnlockMessage, ? extends IMessage> getMessageHandler() {
-		return new SkillUnlockMessage.Handler();
-	}
+    @Override
+    public MessageBase.MessageHandler<SkillUnlockMessage, ? extends IMessage> getMessageHandler() {
+        return new SkillUnlockMessage.Handler();
+    }
 
-	public static class Handler extends MessageBase.MessageHandler<SkillUnlockMessage, IMessage> {
+    public static class Handler extends MessageBase.MessageHandler<SkillUnlockMessage, IMessage> {
 
         @Override
-		public IMessage onMessageReceived(SkillUnlockMessage message, MessageContext ctx) {
-			if (ctx.side == Side.SERVER) {
+        public IMessage onMessageReceived(SkillUnlockMessage message, MessageContext ctx) {
+            if (ctx.side == Side.SERVER) {
                 MessageBase.addScheduledTask(ctx, () -> {
-					EntityPlayerMP player = ctx.getServerHandler().player;
-					Skill skill = Skill.fromName(message.skill);
-					if (skill == null) {
-						Main.getLogger().error("The player " + player + " tried to unlock a null skill");
-						return;
-					}
-					if(skill.unlockSkillForPlayer(player)){
-						player.sendStatusMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
-								new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()),
-								true);
-						PacketHandler.sendTransformationMessage(player);
-					} else {
-						Main.getLogger().error("The player " + player + " tried to unlock the skill " + message.skill
-								+ " but wasn't allowed to unlock it");
-					}
-				});
-			}
-			return null;
-		}
-	}
+                    EntityPlayerMP player = ctx.getServerHandler().player;
+                    Skill skill = Skill.fromName(message.skill);
+                    if (skill == null) {
+                        Main.getLogger().error("The player " + player + " tried to unlock a null skill");
+                        return;
+                    }
+                    if(skill.unlockSkillForPlayer(player)){
+                        player.sendStatusMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
+                                        new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()),
+                                true);
+                        PacketHandler.sendTransformationMessage(player);
+                    } else {
+                        Main.getLogger().error("The player " + player + " tried to unlock the skill " + message.skill
+                                + " but wasn't allowed to unlock it");
+                    }
+                });
+            }
+            return null;
+        }
+    }
 }

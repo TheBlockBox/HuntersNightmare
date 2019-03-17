@@ -26,7 +26,8 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
-import theblockbox.huntersdream.api.init.ParticleInit;
+import theblockbox.huntersdream.api.init.ParticleClientInit;
+import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.init.WerewolfTransformationOverlayInit;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
@@ -128,8 +129,8 @@ public class TransformationClientEventHandler {
             }
         }
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
-        ParticleInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
-                + ParticleInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
+        ParticleClientInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
+                + ParticleCommonInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
     }
 
     @SubscribeEvent

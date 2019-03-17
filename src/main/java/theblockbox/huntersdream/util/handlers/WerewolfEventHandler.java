@@ -46,7 +46,10 @@ import static net.minecraft.init.SoundEvents.*;
 public class WerewolfEventHandler {
     // use LivingDamage only for removing damage and LivingHurt for damage and
     // damaged resources
-    @SubscribeEvent
+
+    /**
+     * Called from {@link TransformationEventHandler#onEntityHurt(LivingHurtEvent)}
+     */
     public static void onEntityHurt(LivingHurtEvent event) {
         EntityLivingBase attacked = event.getEntityLiving();
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
@@ -54,19 +57,12 @@ public class WerewolfEventHandler {
             Optional<ITransformation> transformationAttacker = TransformationHelper.getITransformation(attacker);
 
             if (transformationAttacker.isPresent() && WerewolfHelper.isTransformed(attacker)) {
+                // TODO: Make damage go through armor
                 if (attacker instanceof EntityPlayer) {
-                    // TODO: Cooldown
-                    EntityPlayer player = (EntityPlayer) attacker;
-                    int biteLevel = TransformationHelper.getITransformationPlayer(player).getSkillLevel(SkillInit.BITE_0);
-                    if (biteLevel != -1) {
-                        WerewolfHelper.setLastAttackBite(attacker, ChanceHelper.chanceOf(attacker, 25));
-                        if (biteLevel > 1) {
-                            // TODO: Ingore armor
-                            event.setAmount(event.getAmount() + 5.0F);
-                            if ((biteLevel == 2) && ChanceHelper.chanceOf(attacker, 25)
-                                    && attacked.isEntityUndead()) {
-                                attacked.addPotionEffect(new PotionEffect(MobEffects.WITHER, 100));
-                            }
+                    if (WerewolfHelper.wasLastAttackBite(attacker)) {
+                        int biteLevel = TransformationHelper.getITransformationPlayer((EntityPlayer) attacker).getSkillLevel(SkillInit.BITE_0);
+                        if ((biteLevel >= 2) && (attacked.isEntityUndead()) || (TransformationHelper.getTransformation(attacked).isUndead())) {
+                            attacked.addPotionEffect(new PotionEffect(MobEffects.WITHER, 100));
                         }
                     }
                 }
@@ -76,8 +72,7 @@ public class WerewolfEventHandler {
                 if (WerewolfHelper.canInfect(attacker)) {
                     if (ChanceHelper.chanceOf(attacker, WerewolfHelper.getInfectionPercentage(attacker))) {
                         // and the entity can be infected
-                        if (TransformationHelper.canChangeTransformation(attacked)
-                                && TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, attacked)
+                        if (TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, attacked)
                                 && (!TransformationHelper.isInfected(attacked))) {
                             // infect the entity
                             WerewolfHelper.infectEntityAsWerewolf(attacked);
@@ -105,14 +100,13 @@ public class WerewolfEventHandler {
 
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
-        EntityLivingBase killed = event.getEntityLiving();
         DamageSource source = event.getSource();
         if ("player".equals(source.getDamageType())) {
             // just hope that all this casting won't cause any problems
             EntityPlayer player = (EntityPlayer) source.getTrueSource();
             if (WerewolfHelper.isTransformed(player)) {
-                // every full heart of the entity's max health gives the player half a hunger
-                player.getFoodStats().addStats((int) (killed.getMaxHealth() / 2), 1);
+                // every kill gives one full hunger
+                player.getFoodStats().addStats(2, 1);
             }
         }
     }

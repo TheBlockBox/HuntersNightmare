@@ -56,7 +56,7 @@ public class Transformation {
      * The transformation for vampires
      */
     public static final Transformation VAMPIRE = of("vampire").setCalculateDamage(VampireHelper::calculateDamage)
-            .setCalculateReducedDamage(VampireHelper::calculateReducedDamage).create();
+            .setCalculateReducedDamage(VampireHelper::calculateReducedDamage).setUndead().create();
 
     private static Transformation[] transformations = null;
     private final Transformation.TransformationEntry entry;
@@ -223,13 +223,13 @@ public class Transformation {
     }
 
     /**
-     * Throws an exception if this transformation does not equal the given
+     * Throws an {@link WrongTransformationException} if this transformation does not equal the given
      * transformation
      */
     public void validateEquals(Transformation other) {
         if (this != other)
             throw new WrongTransformationException(
-                    String.format("The transformation should be \"%s\" but is \"%s\"\n", this, other), other);
+                    String.format("The transformation should be \"%s\" but is \"%s\"\n", other, this), this);
     }
 
     /**
@@ -277,6 +277,13 @@ public class Transformation {
      */
     public int getTextureIndexForEntity(EntityLivingBase entity) {
         return this.entry.getTextureIndex.applyAsInt(entity);
+    }
+
+    /**
+     * Returns true when this transformation is considered to be undead
+     */
+    public boolean isUndead() {
+        return this.entry.isUndead;
     }
 
     public Consumer<EntityLivingBase> getInfect() {
@@ -374,6 +381,7 @@ public class Transformation {
         private ToFloatObjFloatFunction<EntityLivingBase> calculateDamage = (e, f) -> f;
         private ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage = (e, f) -> f;
         private ToIntFunction<EntityLivingBase> getTextureIndex = e -> 0;
+        private boolean isUndead = false;
         private ResourceLocation icon;
 
         private TransformationEntry(ResourceLocation registryName) {
@@ -463,6 +471,14 @@ public class Transformation {
          */
         public Transformation.TransformationEntry setGetTextureIndex(ToIntFunction<EntityLivingBase> getTextureIndex) {
             this.getTextureIndex = getTextureIndex;
+            return this;
+        }
+
+        /**
+         * Marks this transformation as being undead. Default value is {@code false}.
+         */
+        public Transformation.TransformationEntry setUndead() {
+            this.isUndead = true;
             return this;
         }
 

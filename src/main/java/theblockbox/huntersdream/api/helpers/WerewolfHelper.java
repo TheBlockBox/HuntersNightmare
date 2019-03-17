@@ -25,7 +25,7 @@ import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
-import theblockbox.huntersdream.api.init.ParticleInit;
+import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.init.SkillInit;
 import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.entity.EntityWerewolf;
@@ -73,7 +73,9 @@ public class WerewolfHelper {
             if (transformed) {
                 // default: 6 lvl 0: 7 lvl 1: 8 lvl 2: 9
                 if (entity.getHeldItemMainhand().isEmpty()) {
-                    return TransformationHelper.getITransformationPlayer((EntityPlayer) entity).getSkillLevel(SkillInit.UNARMED_0) + 7.0F;
+                    ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
+                    return transformation.getSkillLevel(SkillInit.UNARMED_0) + ((WerewolfHelper.wasLastAttackBite(entity)
+                            && transformation.getSkillLevel(SkillInit.BITE_0) > 0) ? 13.0F : 7.0F);
                 } else {
                     return initialDamage;
                 }
@@ -93,7 +95,7 @@ public class WerewolfHelper {
     }
 
     /**
-     * /** Returns how much damage the given entity should get if the entity and the
+     * Returns how much damage the given entity should get if the entity and the
      * initial damage are the passed arguments (this method can also be called when
      * the entity is not transformed, as long as it's still a werewolf)
      */
@@ -173,12 +175,11 @@ public class WerewolfHelper {
      * Returns the chance of a werewolf infecting a mob/player
      *
      * @param entity The entity whose chance to return
-     * @return Returns the chance of infection (100% = always, 0% = never)
+     * @return Returns the chance of infection (100 = always, 0 = never)
      */
     public static int getInfectionPercentage(EntityLivingBase entity) {
         if (WerewolfHelper.canInfect(entity)) {
-            // TODO: Return different infection percantage if entity is player
-            return 25;
+            return (entity instanceof EntityPlayer) ? 25 : 100;
         } else {
             throw new WrongTransformationException("The given entity is not a werewolf",
                     TransformationHelper.getTransformation(entity));
@@ -202,7 +203,8 @@ public class WerewolfHelper {
     }
 
     /**
-     * Transforms a werewolf. No packet is being sent to the client.
+     * Transforms a werewolf. No packet is being sent to the client. Prefer to use
+     * {@link #transformPlayer(EntityPlayerMP, boolean, WerewolfTransformingEvent.WerewolfTransformingReason)}
      */
     public static void setTransformed(EntityLivingBase werewolf, boolean transformed) {
         WerewolfHelper.validateIsWerewolf(werewolf);
@@ -232,10 +234,10 @@ public class WerewolfHelper {
     /**
      * Caution! Your entity has to extend EntityLiving or a subclass and needs a
      * constructor World, int, Transformations (World = spawn world, int = texture
-     * to use, Transformations = transformation that the entity should have) When
+     * to use, Transformation = transformation that the entity should have) When
      * the werewolf transforms back, this constructor will be called and World will
      * be {@link EntityWerewolf#getEntityWorld()}, int will be
-     * {@link EntityWerewolf#getTextureIndex()} and Transformations will be
+     * {@link EntityWerewolf#getTextureIndex()} and Transformation will be
      * {@link Transformation#WEREWOLF}
      *
      * @param entity The entity to be transformed
@@ -331,6 +333,21 @@ public class WerewolfHelper {
         WerewolfHelper.validateIsWerewolf(entity);
         NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
         compound.setBoolean("lastAttackBite", wasBite);
+    }
+
+    public static long getBiteTicks(EntityLivingBase entity) {
+        WerewolfHelper.validateIsWerewolf(entity);
+        return TransformationHelper.getTransformationData(entity).getLong("biteTicks");
+    }
+
+    /**
+     * Sets the the world tick at which the given entity used bite the last time. 0 means that it hasn't used it yet.
+     * No packet is being sent to the client
+     */
+    public static void setBiteTicks(EntityLivingBase entity, long biteTicks) {
+        WerewolfHelper.validateIsWerewolf(entity);
+        NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
+        compound.setLong("biteTicks", biteTicks);
     }
 
     /**
@@ -532,10 +549,10 @@ public class WerewolfHelper {
                     "transformations.huntersdream:werewolf.transformingInto."
                             + WerewolfHelper.getTransformationStage(player));
             message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
-            player.sendStatusMessage(message, true);
+            player.sendStatusMessage(message, true); // TODO: Make text appear over multiple lines
             player.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
-                    ParticleInit.BLOOD_PARTICLE, false, (float) player.posX - 1.0F, (float) player.posY,
-                    (float) player.posZ - 1.0F, 2.0F, 0.0F, 2.0F, 0.0F, 30));
+                    ParticleCommonInit.BLOOD_PARTICLE, false, (float) player.posX, (float) player.posY,
+                    (float) player.posZ, 0.0F, 0.0F, 0.0F, 0.0F, 30));
         }
 
         switch (transformationStage) {
@@ -613,6 +630,11 @@ public class WerewolfHelper {
             werewolf.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
             // night vision for better blindness effect
             werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
+            // reset wilful transformation ticks if necessary
+            long wilfulTransformationTicks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
+            if (wilfulTransformationTicks > 0) {
+                WerewolfHelper.setWilfulTransformationTicks(werewolf, -wilfulTransformationTicks);
+            }
         }
     }
 
@@ -629,6 +651,7 @@ public class WerewolfHelper {
      * Returns true if the given player has reached their wilful transformation limit, meaning that they've been
      * wilfully transformed for more than 6000 ticks/5 minutes. This method always checks if the given player is a
      * werewolf and will throw an exception if the player is over the wilful transformation limit but isn't transformed.
+     *
      */
     public static boolean hasPlayerReachedWilfulTransformationLimit(EntityPlayer werewolf) {
         long ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
@@ -643,5 +666,23 @@ public class WerewolfHelper {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns true if the given player's bite cooldown has ended (cooldown is 5 seconds/100 ticks). Does not check if
+     * the player can actually use bite again. For a method that does this, please look at {@link #canPlayerBiteAgain(EntityPlayer)}
+     */
+    public static boolean hasBiteCooldownEnded(EntityPlayer player) {
+        long biteTicks = WerewolfHelper.getBiteTicks(player);
+        // 5 seconds (= 100 ticks) cooldown
+        // return true if either the cooldown has ended or if the player hasn't used bite yet
+        return ((player.world.getTotalWorldTime() - biteTicks) > 100) || (biteTicks == 0);
+    }
+
+    /**
+     * Returns true if the given player can bite again, meaning that the cooldown has ended and the player is transformed.
+     */
+    public static boolean canPlayerBiteAgain(EntityPlayer player) {
+        return WerewolfHelper.hasBiteCooldownEnded(player) && WerewolfHelper.isTransformed(player);
     }
 }

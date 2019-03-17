@@ -22,7 +22,6 @@ import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.ClientHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
-import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.Reference;
 
@@ -114,9 +113,10 @@ public class SkillBarHandler {
                     SkillBarHandler.isSkillBarSlotChosen = true;
                 }
             }
-            if ((WerewolfHelper.canPlayerWilfullyTransform(player) || WerewolfHelper.canPlayerWilfullyTransformBack(player))
-                    && !SkillBarHandler.isSkillBarSlotChosen && (button == 1)) {
-                PacketHandler.sendUseWilfulTransformationMessage(player.world);
+            Optional<Skill> activeSkill = TransformationHelper.getITransformationPlayer(player).getActiveSkill();
+            if (!SkillBarHandler.isSkillBarSlotChosen && (button == 1) && player.getActiveItemStack().isEmpty()
+                    && (activeSkill.isPresent() && activeSkill.get().onSkillUse(player))) {
+                PacketHandler.sendUseSkillMessage(player.world);
             }
         }
     }

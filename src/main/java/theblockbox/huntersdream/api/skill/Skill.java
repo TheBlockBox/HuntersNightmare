@@ -183,6 +183,16 @@ public abstract class Skill {
     }
 
     /**
+     * Is called when this skill was chosen in the skill bar and the player right clicked on an empty slot while out of
+     * the skill bar. This is called on both client and server, though the latter is only called when the call on the
+     * client returns true. Default behavior is to do nothing, return false and therefore not send any packet to the server.
+     * If the skill is a child skill, it'll call the parent's onSkillUse method.
+     */
+    public boolean onSkillUse(EntityPlayer player) {
+        return !this.isParentSkill() && this.getGroupParent().onSkillUse(player);
+    }
+
+    /**
      * Returns true if this skill should be shown in the skill bar of the given player. The standard implementation
      * tests if the given player has unlocked this skill with this skill's specific level, though it is not necessary to
      * have unlocked the skill in order to show it in the skill bar. Therefore, you can also add skills to the skill bar

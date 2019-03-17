@@ -85,11 +85,12 @@ public class TransformationEventHandler {
                                 break;
                             }
                         }
-                        if (isWerewolfTime && (!isTransformed)) {
+                       // if (isWerewolfTime && (!isTransformed)) {
                             playerMP.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
-                                    EnumParticleTypes.SMOKE_LARGE, false, (float) player.posX, (float) player.posY
-                                    + 0.5F, (float) player.posZ, 0.0F, 1.3F, 0.0F, 0.0F, 20));
-                        }
+                                    EnumParticleTypes.SMOKE_LARGE, false, (float) player.posX - 0.1F,
+                                    (float) player.posY - 0.2F, (float) player.posZ - 0.1F, 0.2F,
+                                    1.4F, 0.2F, 0.0F, 50));
+                        //}
                     }
 
                     if (player.ticksExisted % 80 == 0) {
@@ -152,10 +153,16 @@ public class TransformationEventHandler {
             EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
             Transformation transformationAtt = TransformationHelper.getTransformation(attacker);
 
-            // make that player deals more damage
             if (transformationAtt.isTransformation()) {
+                // make that player deals more damage
                 if (attacker instanceof EntityPlayer) {
                     event.setAmount(transformationAtt.getDamage(attacker, event.getAmount()));
+                }
+                // reset lastAttackBite if this attack isn't bite
+                if ((attacker instanceof EntityPlayer) && WerewolfHelper.isTransformed(attacker)
+                        && WerewolfHelper.wasLastAttackBite(attacker)
+                        && ((attacker.world.getTotalWorldTime() - WerewolfHelper.getBiteTicks(attacker)) != 0)) {
+                    WerewolfHelper.setLastAttackBite(attacker, false);
                 }
             }
 
@@ -179,21 +186,13 @@ public class TransformationEventHandler {
                 && (event.getSource() != TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION)) {
             event.setAmount(transformationHurt.getReducedDamage(hurt, event.getAmount()));
         }
+        WerewolfEventHandler.onEntityHurt(event);
     }
 
     private static boolean addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase
-            hurt,
-                                               Transformation transformationHurt) {
+            hurt, Transformation transformationHurt) {
         // don't apply when it was thorns damage
         if (!event.getSource().damageType.equals(TransformationHelper.THORNS_DAMAGE_NAME)) {
-//			// first check if immediate source is effective, then weapon and then attacker
-//			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker).filter(
-//					obj -> obj != null && EffectivenessHelper.effectiveAgainstTransformation(transformationHurt, obj))
-//					.findFirst().ifPresent(object -> {
-//						event.setAmount(EffectivenessHelper.getEffectivenessAgainst(transformationHurt, object)
-//								* transformationHurt.getReducedDamage(hurt, event.getAmount()));
-//					});
-
             Object[] objects = {event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker};
             for (Object obj : objects) {
                 if (obj != null) {
