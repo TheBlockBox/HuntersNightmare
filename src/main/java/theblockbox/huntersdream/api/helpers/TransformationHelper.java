@@ -88,7 +88,6 @@ public class TransformationHelper {
                     if (entity instanceof EntityPlayerMP) {
                         TransformationHelper.changeTransformation((EntityPlayerMP) entity, transformation);
                     } else if (entity instanceof EntityCreature) {
-                        // TODO: Does this here make sense?
                         ITransformation it = TransformationHelper.getITransformation(entity).get();
                         it.setTransformation(transformation);
 

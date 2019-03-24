@@ -2,7 +2,6 @@ package theblockbox.huntersdream.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPlanks;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -31,7 +30,7 @@ public class BlockCampfire extends BlockContainer {
 	private final BlockPlanks.EnumType plankType;
 
 	public BlockCampfire(BlockPlanks.EnumType plankType) {
-		super(Material.WOOD);
+		super(Material.WOOD, plankType.getMapColor());
 		this.plankType = plankType;
 		this.setHardness(2.0F);
 		this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
@@ -41,12 +40,6 @@ public class BlockCampfire extends BlockContainer {
 
 	public BlockPlanks.EnumType getPlankType() {
 		return this.plankType;
-	}
-
-	@Override
-	public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-		// TODO: Remove if unnecessary
-		return this.getPlankType().getMapColor();
 	}
 
 	@Override
@@ -131,7 +124,6 @@ public class BlockCampfire extends BlockContainer {
 
 	@Override
 	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random random) {
-		// TODO: Does #isBurning also have its own particles? If so, remove this method
 		if (stateIn.getValue(BlockCampfire.BURNING)) {
 			Blocks.FIRE.randomDisplayTick(stateIn, worldIn, pos, random);
 		}

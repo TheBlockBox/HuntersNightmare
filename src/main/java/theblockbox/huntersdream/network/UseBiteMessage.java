@@ -60,7 +60,7 @@ public class UseBiteMessage extends MessageBase<UseBiteMessage> {
                             player.attackTargetEntityWithCurrentItem(entity);
                         } else {
                             Main.getLogger().error("The player " + player + " tried to use the bite skill but couldn't since " +
-                                    "either the attacked entity (" + entity + ") was out of their reach (5 blocks maximum) or it was null");
+                                    "either the attacked entity (" + entity + ") was out of their reach (5 blocks maximum) or was null");
                         }
                     } else {
                         Main.getLogger().error("The player " + player + " tried to use the bite skill but couldn't since " +

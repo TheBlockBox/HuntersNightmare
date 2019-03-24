@@ -56,7 +56,16 @@ public class WerewolfHelper {
     public static boolean isWerewolfTime(World world) {
         if (world.isRemote)
             throw new WrongSideException("Can only test if it is werewolf time on server side", world);
-        return (world.getCurrentMoonPhaseFactor() == 1.0F) && !world.isDaytime();
+        return WerewolfHelper.isFullmoon(world) && !world.isDaytime();
+    }
+
+    /**
+     * Returns true if it is full moon in the given world
+     */
+    public static boolean isFullmoon(World world) {
+        if (world.isRemote)
+            throw new WrongSideException("Can only test if it is full moon and night on server side", world);
+        return (world.getCurrentMoonPhaseFactor() == 1.0F);
     }
 
     /**
@@ -370,7 +379,7 @@ public class WerewolfHelper {
      * Sets a werewolf player's wilful transformation ticks (used for the wilful transformation).
      * No packet is being sent to the client.
      */
-    public static void setWilfulTransformationTicks(EntityPlayerMP player, long ticks) {
+    public static void setWilfulTransformationTicks(EntityPlayer player, long ticks) {
         WerewolfHelper.validateIsWerewolf(player);
         NBTTagCompound compound = TransformationHelper.getTransformationData(player);
         compound.setLong("wilfulTransformationTicks", ticks);

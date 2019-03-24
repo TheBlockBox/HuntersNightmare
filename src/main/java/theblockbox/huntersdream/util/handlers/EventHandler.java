@@ -18,7 +18,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
-import theblockbox.huntersdream.api.init.LootTableInit;
 import theblockbox.huntersdream.util.Reference;
 
 import java.io.InputStreamReader;
@@ -62,7 +61,8 @@ public class EventHandler {
         // for a list of all loot tables see
         // net.minecraft.world.storage.loot.LootTableList
         if (event.getName().toString().startsWith("minecraft:chests/")) {
-            event.getTable().addPool(LootTableInit.HUNTERS_JOURNAL_PAGE_POOL);
+//            TODO: Uncomment this when the hunter's journal will be worked on
+//            event.getTable().addPool(LootTableInit.HUNTERS_JOURNAL_PAGE_POOL);
         }
     }
 

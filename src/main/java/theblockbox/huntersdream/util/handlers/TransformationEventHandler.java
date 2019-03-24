@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
@@ -85,12 +86,12 @@ public class TransformationEventHandler {
                                 break;
                             }
                         }
-                       // if (isWerewolfTime && (!isTransformed)) {
+                        if (isWerewolfTime && (!isTransformed)) {
                             playerMP.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
                                     EnumParticleTypes.SMOKE_LARGE, false, (float) player.posX - 0.1F,
                                     (float) player.posY - 0.2F, (float) player.posZ - 0.1F, 0.2F,
                                     1.4F, 0.2F, 0.0F, 50));
-                        //}
+                        }
                     }
 
                     if (player.ticksExisted % 80 == 0) {
@@ -111,8 +112,21 @@ public class TransformationEventHandler {
                             }
                             if (WerewolfHelper.isPlayerWilfullyTransformed(player)) {
                                 if (WerewolfHelper.hasPlayerReachedWilfulTransformationLimit(player)) {
-                                    // if the player has reached their wilful transformation limit, transform them back
-                                    WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
+                                    // if the player has reached their wilful transformation limit
+                                    if (isWerewolfTime) {
+                                        // and it is night, only reset the wilful transformation ticks and log an error
+                                        // (this shouldn't be possible except the player logged out or the time changed
+                                        long wilfulTransformationTicks = WerewolfHelper.getWilfulTransformationTicks(playerMP);
+                                        if (wilfulTransformationTicks > 0) {
+                                            WerewolfHelper.setWilfulTransformationTicks(playerMP, -wilfulTransformationTicks);
+                                            Main.getLogger().error("Did the time change or has " + player + " just logged in? "
+                                                    + "They are wilfully transformed although it is night.");
+                                        }
+                                    } else {
+                                        // and it isn't night, transform them back (wilful transformation ticks are also
+                                        // reset by this
+                                        WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
+                                    }
                                 } else if (!isTransformed) {
                                     // if the player is technically wilfully transformed but the transformation isn't
                                     // done yet, advance it
@@ -387,6 +401,7 @@ public class TransformationEventHandler {
         }
     }
 
+    // TODO: Is there a better way to do this?
     @SubscribeEvent
     public static void onPlayerHarvestCheck(BlockEvent.BreakEvent event) {
         if ((event.getState().getBlock() == BlockInit.MOUNTAIN_ASH) && BlockMountainAsh.canEntityNotPass(event.getPlayer())) {

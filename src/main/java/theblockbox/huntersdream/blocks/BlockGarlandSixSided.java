@@ -106,7 +106,6 @@ public abstract class BlockGarlandSixSided<T extends BlockGarlandSixSided<T>> ex
         return super.getStateFromMeta(meta);
     }
 
-    // TODO: Port
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
                                             float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {

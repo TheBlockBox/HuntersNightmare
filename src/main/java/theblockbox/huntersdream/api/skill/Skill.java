@@ -201,7 +201,6 @@ public abstract class Skill {
      * will neither have any effect nor even be called.
      */
     public boolean shouldShowSkillInSkillBar(EntityPlayer player) {
-        // TODO: Make this more efficient by passing the ITransformationPlayer capability of the player, too?
         return TransformationHelper.getITransformationPlayer(player).getSkillLevel(this.getGroupParent()) == this.getLevel();
     }
 

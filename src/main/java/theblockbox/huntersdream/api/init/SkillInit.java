@@ -3,7 +3,6 @@ package theblockbox.huntersdream.api.init;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
@@ -41,14 +40,19 @@ public class SkillInit {
     public static final ChildSkill ARMOR_2 = new ChildSkill(SkillInit.ARMOR_0, 120, 2);
 
     public static final ParentSkill BITE_0 = new ParentSkill(newResLoc("bite"), 40, SkillInit.WEREWOLF_SET, false) {
+        private long lastSuccessfulUse = 0;
+
         @Override
         public boolean onSkillUse(EntityPlayer player) {
             if (player.world.isRemote && WerewolfHelper.canPlayerBiteAgain(player)) {
-                Minecraft mc = Minecraft.getMinecraft();
-                if ((mc.objectMouseOver != null) && (mc.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY)) {
-                    // TODO: do animation here
-                    player.swingArm(EnumHand.MAIN_HAND); // TODO: Remove once animation is done
-                    PacketHandler.sendUseBiteMessage(player.world, mc.objectMouseOver.entityHit);
+                RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+                long totalWorldTime = player.world.getTotalWorldTime();
+                if ((mouseOver != null) && (mouseOver.typeOfHit == RayTraceResult.Type.ENTITY)
+                        && (this.lastSuccessfulUse < (totalWorldTime - 60))) {
+                    // set last successful use to prevent double clicking
+                    this.lastSuccessfulUse = totalWorldTime;
+                    // send message to server
+                    PacketHandler.sendUseBiteMessage(player.world, mouseOver.entityHit);
                 }
             }
             return false;
@@ -81,8 +85,7 @@ public class SkillInit {
                     }
                 } else {
                     if (WerewolfHelper.canPlayerWilfullyTransform(playerMP)) {
-                        // TODO: Not hardcode this?
-                        if (playerMP.world.provider.getCurrentMoonPhaseFactor() != 1.0F) {
+                        if (!WerewolfHelper.isFullmoon(playerMP.world)) {
                             WerewolfHelper.setWilfulTransformationTicks(playerMP, playerMP.world.getTotalWorldTime());
                             PacketHandler.sendTransformationMessage(playerMP);
                             return true;

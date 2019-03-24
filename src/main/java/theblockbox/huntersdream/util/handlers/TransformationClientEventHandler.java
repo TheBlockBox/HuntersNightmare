@@ -55,9 +55,8 @@ public class TransformationClientEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (ConfigHandler.client.customPlayerRender && !mc.playerController.isSpectator()) {
-            EntityPlayer player = event.getEntityPlayer();
+        EntityPlayer player = event.getEntityPlayer();
+        if (ConfigHandler.client.customPlayerRender && !player.isSpectator()) {
             // werewolf
             if (WerewolfHelper.isTransformed(player)) {
                 event.setCanceled(true);
