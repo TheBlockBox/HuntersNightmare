@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
@@ -87,8 +88,9 @@ public class TransformationEventHandler {
                         }
                         if (isWerewolfTime && (!isTransformed)) {
                             playerMP.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
-                                    EnumParticleTypes.SMOKE_LARGE, false, (float) player.posX, (float) player.posY
-                                    + 0.5F, (float) player.posZ, 0.0F, 1.3F, 0.0F, 0.0F, 20));
+                                    EnumParticleTypes.SMOKE_LARGE, false, (float) player.posX - 0.1F,
+                                    (float) player.posY - 0.2F, (float) player.posZ - 0.1F, 0.2F,
+                                    1.4F, 0.2F, 0.0F, 50));
                         }
                     }
 
@@ -110,8 +112,21 @@ public class TransformationEventHandler {
                             }
                             if (WerewolfHelper.isPlayerWilfullyTransformed(player)) {
                                 if (WerewolfHelper.hasPlayerReachedWilfulTransformationLimit(player)) {
-                                    // if the player has reached their wilful transformation limit, transform them back
-                                    WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
+                                    // if the player has reached their wilful transformation limit
+                                    if (isWerewolfTime) {
+                                        // and it is night, only reset the wilful transformation ticks and log an error
+                                        // (this shouldn't be possible except the player logged out or the time changed
+                                        long wilfulTransformationTicks = WerewolfHelper.getWilfulTransformationTicks(playerMP);
+                                        if (wilfulTransformationTicks > 0) {
+                                            WerewolfHelper.setWilfulTransformationTicks(playerMP, -wilfulTransformationTicks);
+                                            Main.getLogger().error("Did the time change or has " + player + " just logged in? "
+                                                    + "They are wilfully transformed although it is night.");
+                                        }
+                                    } else {
+                                        // and it isn't night, transform them back (wilful transformation ticks are also
+                                        // reset by this
+                                        WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
+                                    }
                                 } else if (!isTransformed) {
                                     // if the player is technically wilfully transformed but the transformation isn't
                                     // done yet, advance it
@@ -152,10 +167,16 @@ public class TransformationEventHandler {
             EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
             Transformation transformationAtt = TransformationHelper.getTransformation(attacker);
 
-            // make that player deals more damage
             if (transformationAtt.isTransformation()) {
+                // make that player deals more damage
                 if (attacker instanceof EntityPlayer) {
                     event.setAmount(transformationAtt.getDamage(attacker, event.getAmount()));
+                }
+                // reset lastAttackBite if this attack isn't bite
+                if ((attacker instanceof EntityPlayer) && WerewolfHelper.isTransformed(attacker)
+                        && WerewolfHelper.wasLastAttackBite(attacker)
+                        && ((attacker.world.getTotalWorldTime() - WerewolfHelper.getBiteTicks(attacker)) != 0)) {
+                    WerewolfHelper.setLastAttackBite(attacker, false);
                 }
             }
 
@@ -179,21 +200,13 @@ public class TransformationEventHandler {
                 && (event.getSource() != TransformationHelper.EFFECTIVE_AGAINST_TRANSFORMATION)) {
             event.setAmount(transformationHurt.getReducedDamage(hurt, event.getAmount()));
         }
+        WerewolfEventHandler.onEntityHurt(event);
     }
 
     private static boolean addEffectiveAgainst(LivingHurtEvent event, EntityLivingBase attacker, EntityLivingBase
-            hurt,
-                                               Transformation transformationHurt) {
+            hurt, Transformation transformationHurt) {
         // don't apply when it was thorns damage
         if (!event.getSource().damageType.equals(TransformationHelper.THORNS_DAMAGE_NAME)) {
-//			// first check if immediate source is effective, then weapon and then attacker
-//			Stream.<Object>of(event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker).filter(
-//					obj -> obj != null && EffectivenessHelper.effectiveAgainstTransformation(transformationHurt, obj))
-//					.findFirst().ifPresent(object -> {
-//						event.setAmount(EffectivenessHelper.getEffectivenessAgainst(transformationHurt, object)
-//								* transformationHurt.getReducedDamage(hurt, event.getAmount()));
-//					});
-
             Object[] objects = {event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker};
             for (Object obj : objects) {
                 if (obj != null) {
@@ -388,6 +401,7 @@ public class TransformationEventHandler {
         }
     }
 
+    // TODO: Is there a better way to do this?
     @SubscribeEvent
     public static void onPlayerHarvestCheck(BlockEvent.BreakEvent event) {
         if ((event.getState().getBlock() == BlockInit.MOUNTAIN_ASH) && BlockMountainAsh.canEntityNotPass(event.getPlayer())) {

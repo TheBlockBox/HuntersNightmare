@@ -54,7 +54,7 @@ public class BlockMountainAsh extends Block {
 
     public BlockMountainAsh() {
         // TODO: Better material and soundtype?
-        super(Material.PLANTS);
+        super(Material.CIRCUITS);
         this.setSoundType(SoundType.PLANT);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
         this.setDefaultState(this.getDefaultState().withProperty(BlockMountainAsh.NORTH, BlockMountainAsh.EnumAttachPosition.NONE)

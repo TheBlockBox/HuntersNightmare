@@ -474,7 +474,6 @@ public class GeneralHelper {
         for (int y = pos.getY(); y > 5; y--) {
             for (int x = pos.getX(); x <= maxX; x++) {
                 for (int z = pos.getZ(); z <= maxZ; z++) {
-                    // TODO: Compare states instead of blocks?
                     if (world.getBlockState(blockPos.setPos(x, y, z)) == topBlock) {
                         return y + 1;
                     }

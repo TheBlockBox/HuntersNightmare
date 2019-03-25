@@ -18,12 +18,10 @@ import theblockbox.huntersdream.util.Reference;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class SilverFurnaceRecipe {
+    public static final int DEFAULT_SMELTING_TIME = 200;
     private static final Set<SilverFurnaceRecipe> RECIPES = new HashSet<>();
     private static int currentID = 0;
     private final Ingredient in1;
@@ -35,7 +33,7 @@ public class SilverFurnaceRecipe {
     private final int smeltingTime;
     private final int id;
 
-    protected SilverFurnaceRecipe(Ingredient input1, Ingredient input2, int amount1, int amount2, ItemStack output1,
+    public SilverFurnaceRecipe(Ingredient input1, Ingredient input2, int amount1, int amount2, ItemStack output1,
                                   ItemStack output2, int smeltingTime) {
         this.in1 = input1;
         this.in2 = input2;
@@ -45,6 +43,11 @@ public class SilverFurnaceRecipe {
         this.out2 = output2;
         this.smeltingTime = smeltingTime;
         this.id = SilverFurnaceRecipe.currentID++;
+    }
+
+    public SilverFurnaceRecipe(Ingredient input1, Ingredient input2, int amount1, int amount2, ItemStack output1,
+                                  ItemStack output2) {
+        this(input1, input2, amount1, amount2, output1, output2, SilverFurnaceRecipe.DEFAULT_SMELTING_TIME);
     }
 
     public static void addRecipe(SilverFurnaceRecipe recipe) {
@@ -57,7 +60,7 @@ public class SilverFurnaceRecipe {
                 throw new JsonParseException(
                         String.format("The type of a silver furnace recipe was \"%s\" but should have been \"%s\"",
                                 json.get("type").getAsString(), Reference.MODID + ":silver_furnace_recipe"));
-            int smeltingTime = JsonUtils.getInt(json, "smeltingTime", 200);
+            int smeltingTime = JsonUtils.getInt(json, "smeltingTime", SilverFurnaceRecipe.DEFAULT_SMELTING_TIME);
             JsonObject input1 = json.getAsJsonObject("input1");
             JsonObject input2 = json.getAsJsonObject("input2");
             Ingredient inputIngredient1 = CraftingHelper.getIngredient(input1, new JsonContext("minecraft"));
@@ -130,14 +133,14 @@ public class SilverFurnaceRecipe {
     /**
      * Returns a copy of the first itemstack that should be outputted
      */
-    public ItemStack getOutput1() {
+    public ItemStack getOutput1(Random random) {
         return this.out1.copy();
     }
 
     /**
      * Returns a copy of the second itemstack that should be outputted
      */
-    public ItemStack getOutput2() {
+    public ItemStack getOutput2(Random random) {
         return this.out2.copy();
     }
 
@@ -145,7 +148,7 @@ public class SilverFurnaceRecipe {
      * Returns the experience gotten when the player takes one item in the output 1
      * out of the furnace
      */
-    public float getExperience1() {
+    public float getExperience1(Random random) {
         return FurnaceRecipes.instance().getSmeltingExperience(this.out1);
     }
 
@@ -153,7 +156,7 @@ public class SilverFurnaceRecipe {
      * Returns the experience gotten when the player takes one item in the output 2
      * out of the furnace
      */
-    public float getExperience2() {
+    public float getExperience2(Random random) {
         return FurnaceRecipes.instance().getSmeltingExperience(this.out2);
     }
 

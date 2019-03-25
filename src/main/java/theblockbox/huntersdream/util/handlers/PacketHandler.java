@@ -2,6 +2,7 @@ package theblockbox.huntersdream.util.handlers;
 
 // using static import for CLIENT and SERVER enum constants
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -35,8 +36,10 @@ public class PacketHandler {
                 PacketHandler.networkID++, SERVER);
         PacketHandler.INSTANCE.registerMessage(ActivateSkillMessage.Handler.class, ActivateSkillMessage.class,
                 PacketHandler.networkID++, SERVER);
-        PacketHandler.INSTANCE.registerMessage(UseWilfulTransformationMessage.Handler.class,
-                UseWilfulTransformationMessage.class, PacketHandler.networkID++, SERVER);
+        PacketHandler.INSTANCE.registerMessage(UseSkillMessage.Handler.class,
+                UseSkillMessage.class, PacketHandler.networkID++, SERVER);
+        PacketHandler.INSTANCE.registerMessage(UseBiteMessage.Handler.class,
+                UseBiteMessage.class, PacketHandler.networkID++, SERVER);
     }
 
     private static <REQ extends IMessage> void registerMessage(
@@ -97,8 +100,14 @@ public class PacketHandler {
                 () -> PacketHandler.INSTANCE.sendTo(message, player));
     }
 
-    public static void sendUseWilfulTransformationMessage(World forSideCheck) {
-        UseWilfulTransformationMessage message = new UseWilfulTransformationMessage();
+    public static void sendUseSkillMessage(World forSideCheck) {
+        UseSkillMessage message = new UseSkillMessage();
+        PacketHandler.afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
+                () -> PacketHandler.INSTANCE.sendToServer(message));
+    }
+
+    public static void sendUseBiteMessage(World forSideCheck, Entity toAttack) {
+        UseBiteMessage message = new UseBiteMessage(toAttack);
         PacketHandler.afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
                 () -> PacketHandler.INSTANCE.sendToServer(message));
     }

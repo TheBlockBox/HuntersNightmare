@@ -26,7 +26,8 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
-import theblockbox.huntersdream.api.init.ParticleInit;
+import theblockbox.huntersdream.api.init.ParticleClientInit;
+import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.init.WerewolfTransformationOverlayInit;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
@@ -54,9 +55,8 @@ public class TransformationClientEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
-        Minecraft mc = Minecraft.getMinecraft();
-        if (ConfigHandler.client.customPlayerRender && !mc.playerController.isSpectator()) {
-            EntityPlayer player = event.getEntityPlayer();
+        EntityPlayer player = event.getEntityPlayer();
+        if (ConfigHandler.client.customPlayerRender && !player.isSpectator()) {
             // werewolf
             if (WerewolfHelper.isTransformed(player)) {
                 event.setCanceled(true);
@@ -128,8 +128,8 @@ public class TransformationClientEventHandler {
             }
         }
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
-        ParticleInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
-                + ParticleInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
+        ParticleClientInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
+                + ParticleCommonInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
     }
 
     @SubscribeEvent

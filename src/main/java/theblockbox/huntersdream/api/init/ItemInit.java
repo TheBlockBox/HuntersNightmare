@@ -8,7 +8,9 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
-import theblockbox.huntersdream.items.*;
+import theblockbox.huntersdream.items.ItemBestiary;
+import theblockbox.huntersdream.items.ItemHerbalAconiteWater;
+import theblockbox.huntersdream.items.ItemTent;
 import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
@@ -39,12 +41,12 @@ public class ItemInit {
 
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         ItemInit.ITEMS.forEach(item -> ItemInit.registerItemBlock(item, event));
-        // TODO: Is there a better way to do this?
         Item silverIngot = ItemInit.registerItem(new Item(), "ingot_silver", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.TOOL_SILVER.setRepairItem(new ItemStack(silverIngot));
         ItemInit.ARMOR_SILVER.setRepairItem(new ItemStack(silverIngot));
-        ItemInit.registerItem(new ItemHuntersJournal(), "hunters_journal", event);
-        ItemInit.registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
+//        TODO: Uncomment this when the hunter's journal will be worked on
+//        ItemInit.registerItem(new ItemHuntersJournal(), "hunters_journal", event);
+//        ItemInit.registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemBestiary(), "bestiary", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerToolSet("silver", ItemInit.TOOL_SILVER, event);

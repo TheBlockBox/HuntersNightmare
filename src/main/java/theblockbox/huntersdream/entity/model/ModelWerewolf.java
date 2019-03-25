@@ -4,8 +4,10 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
-// TODO: Add sneaking
 public class ModelWerewolf extends ModelBiped {
     public ModelRenderer tail;
     public ModelRenderer bodyfurb;
@@ -68,8 +70,14 @@ public class ModelWerewolf extends ModelBiped {
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
                                   float headPitch, float scaleFactor, Entity entityIn, boolean moveTail) {
         scaleFactor *= 0.9F;
-        this.isSneak = entityIn.isSneaking();
+        boolean isBiting = ConfigHandler.client.biteAnimation && (entityIn instanceof EntityPlayer)
+                && ((entityIn.world.getTotalWorldTime() - WerewolfHelper.getBiteTicks((EntityPlayer) entityIn)) < 4);
+        this.isSneak = isBiting || entityIn.isSneaking();
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
+        if (isBiting) {
+            this.bipedRightArm.rotateAngleX = -1.0F;
+            this.bipedLeftArm.rotateAngleX = -1.0F;
+        }
 
         // fix legs
         this.bipedRightLeg.rotateAngleX -= this.isSneak ? 0.95D : 0.3D;
@@ -85,7 +93,7 @@ public class ModelWerewolf extends ModelBiped {
                 // animate
                 // if it's going up and bigger than 0.2, go down
                 // if it's going down and less than -0.6, go up
-                this.isTailGoingUp = this.tail.rotateAngleX  < (this.isTailGoingUp ? 1.4F : 0.6F);
+                this.isTailGoingUp = this.tail.rotateAngleX < (this.isTailGoingUp ? 1.4F : 0.6F);
                 this.tail.rotateAngleX += this.isTailGoingUp ? 0.01F : -0.01F;
             } else if (this.tail.rotateAngleX > 1.95F) {
                 this.tail.rotateAngleX -= 0.01F;

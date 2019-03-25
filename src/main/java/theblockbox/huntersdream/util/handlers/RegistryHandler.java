@@ -5,6 +5,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
@@ -43,6 +44,7 @@ import theblockbox.huntersdream.world.gen.WorldGenOres;
 import theblockbox.huntersdream.world.gen.WorldGenWerewolfCabin;
 
 import java.io.File;
+import java.util.Random;
 
 /**
  * In this class everythings gets registered (items, blocks, entities, biomes,
@@ -123,6 +125,7 @@ public class RegistryHandler {
         LootTableInit.register();
         StructureInit.register();
         OreDictionaryInit.registerOres();
+        ParticleCommonInit.init();
         GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
         // TODO: Better weights?
         GameRegistry.registerWorldGenerator(new WorldGenWerewolfCabin(), 1);
@@ -130,6 +133,13 @@ public class RegistryHandler {
         for (Biome biome : Biome.REGISTRY) {
             biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
         }
+        SilverFurnaceRecipe.addRecipe(new SilverFurnaceRecipe(new OreIngredient("logWood"), Ingredient.EMPTY, 1,
+                0, new ItemStack(Items.COAL, 1, 1), new ItemStack(BlockInit.MOUNTAIN_ASH)) {
+            @Override
+            public ItemStack getOutput2(Random random) {
+                return random.nextBoolean() ? super.getOutput2(random) : ItemStack.EMPTY;
+            }
+        });
     }
 
     public static void postInitCommon(FMLPostInitializationEvent event) {
@@ -141,7 +151,7 @@ public class RegistryHandler {
     }
 
     public static void initClient() {
-        ParticleInit.registerParticles();
+        ParticleClientInit.registerParticles();
     }
 
     public static void postInitClient() {

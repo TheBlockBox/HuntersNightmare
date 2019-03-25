@@ -25,6 +25,9 @@ public class ConfigHandler {
         @Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
         public boolean customPlayerRender = true;
 
+        @Config.LangKey(Reference.CFG_LANG + "biteAnimation")
+        public boolean biteAnimation = true;
+
         @Config.LangKey(Reference.CFG_LANG + "showSkillBarSlot")
         public boolean showSkillBarSlot = true;
     }

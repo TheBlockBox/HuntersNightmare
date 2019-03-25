@@ -1,3 +1,4 @@
+#PARSE_ESCAPES
 # Language: English
 # Region: USA
 # Translated by: 
@@ -53,13 +54,13 @@ entity.goblintd.name=Goblin
 entity.werewolf.name=Werewolf
 
 # Transformations
-huntersdream:human=Human
-huntersdream:werewolf=Werewolf
-huntersdream:vampire=Vampire
-huntersdream:witch=Witch
-huntersdream:clockworkandroid=Clockworkandroid
-huntersdream:hybrid=Hybrid
-huntersdream:hunter=Hunter
+huntersdream\:human=Human
+huntersdream\:werewolf=Werewolf
+huntersdream\:vampire=Vampire
+huntersdream\:witch=Witch
+huntersdream\:clockworkandroid=Clockworkandroid
+huntersdream\:hybrid=Hybrid
+huntersdream\:hunter=Hunter
 
 # Sounds (Subtitles)
 huntersdream.transformation.heartbeat=Heartbeat of a werewolf
@@ -89,7 +90,7 @@ command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill
 command.huntersdream.skill.add=The skill %s has been added to %s
 command.huntersdream.skill.remove=The skill %s has been removed from %s
 command.huntersdream.skill.clear=%s's skills have been cleared
-command.huntersdream.skill.list=%s's skills are: %s
+command.huntersdream.skill.list=%s's skills are\: %s
 
 # Chat messages
 transformations.huntersdream.infected.werewolf=You've been bitten but the wound is ... healing?
@@ -98,20 +99,21 @@ item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all
 item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
 item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
-death.attack.vampireDrankBlood=%s got drank dried by a vampire
+death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
 # Werewolf transformation (all the text is shown in italics and red)
-transformations.huntersdream:werewolf.transformingInto.1=You feel weird and nauseous
-transformations.huntersdream:werewolf.transformingInto.2=You bend over in pain, your lungs and kidneys have failed
-transformations.huntersdream:werewolf.transformingInto.3=Your internal organs have stopped working and started to repair differently
-transformations.huntersdream:werewolf.transformingInto.4=You go blind, your eyesight is changing. Still screaming in pain... This won't let you die
-transformations.huntersdream:werewolf.transformingInto.5=Your body is now having dramatic changes, bones and muscle tissue breaking and reforming, your eyesight is back but different. Your mind can only think about killing
-transformations.huntersdream:werewolf.transformingInto.6=You howl as the wolf within is now free...
-transformations.huntersdream:werewolf.transformingBack.0=The wolf subsides and you pass out
+transformations.huntersdream\:werewolf.transformingInto.1=You feel weird and nauseous
+transformations.huntersdream\:werewolf.transformingInto.2=You bend over in pain, your lungs and kidneys have failed
+transformations.huntersdream\:werewolf.transformingInto.3=Your internal organs have stopped working and started to repair differently
+transformations.huntersdream\:werewolf.transformingInto.4=You go blind, your eyesight is changing.\r\nStill screaming in pain... This won't let you die.
+transformations.huntersdream\:werewolf.transformingInto.5=Your body is now having dramatic changes.\r\nBones and muscle tissue breaking and reforming, your eyesight is back but different.\r\nYour mind can only think about killing.
+transformations.huntersdream\:werewolf.transformingInto.6=You howl as the wolf within is now free...
+transformations.huntersdream\:werewolf.transformingBack.0=The wolf subsides and you pass out
 
 # Config
 huntersdream.config.title=Hunter's Dream Config
 huntersdream.config.customPlayerRender=Custom player render
+huntersdream.config.biteAnimation=Show bite animation
 huntersdream.config.showPacketMessages=Show packet messages
 huntersdream.config.veinSize=Veins of ore per chunk
 huntersdream.config.generateSilverOre=Generate silver ore
@@ -132,47 +134,46 @@ huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
 
 
 # Skills
-huntersdream.skillCost=Price: %s experience levels
+huntersdream.skillCost=Price\: %s experience levels
 huntersdream.permissionUnlockSkill=Do you really want to unlock the skill %s for %s experience levels?
 huntersdream.unlockedSkill=You successfully unlocked the skill %s for %s experience levels!
 
 huntersdream.bite.name=Bite I
-huntersdream.bite.description=This is a very long test description to test if this actually works.
+huntersdream.bite.description=Infectious Teeth\: Can infect players with 25%% chance but has a cooldown of 5 seconds.
 huntersdream.bite_1.name=Bite II
-huntersdream.bite_1.description=Test Description
+huntersdream.bite_1.description=Steel Teeth\: Biting does more damage (+5) and ignores armor.
 huntersdream.bite_2.name=Bite III
-huntersdream.bite_2.description=
+huntersdream.bite_2.description=Venomous Bite\: Undead mobs and players will now have a 25%% chance of receiving wither for 5 seconds.
 
 huntersdream.speed.name=Speed I
-huntersdream.speed.description=
+huntersdream.speed.description=Increase speed (1 to 2).
 huntersdream.speed_1.name=Speed II
-huntersdream.speed_1.description=
+huntersdream.speed_1.description=Increase speed (2 to 3).
 huntersdream.speed_2.name=Speed III
-huntersdream.speed_2.description=
+huntersdream.speed_2.description=Increase speed (3 to 4).
 
 huntersdream.jump.name=Jump I
-huntersdream.jump.description=
+huntersdream.jump.description=Increase jump (1 to 2).
 huntersdream.jump_1.name=Jump II
-huntersdream.jump_1.description=
+huntersdream.jump_1.description=Increase jump (2 to 3).
 huntersdream.jump_2.name=Jump III
-huntersdream.jump_2.description=
+huntersdream.jump_2.description=Increase jump (3 to 4).
 
 huntersdream.unarmed.name=Unarmed I
-huntersdream.unarmed.description=
+huntersdream.unarmed.description=Increases damage from 6 to 7.
 huntersdream.unarmed_1.name=Unarmed II
-huntersdream.unarmed_1.description=
+huntersdream.unarmed_1.description=Increases damage from 7 to 8.
 huntersdream.unarmed_2.name=Unarmed III
-huntersdream.unarmed_2.description=
+huntersdream.unarmed_2.description=Increases damage from 8 to 9.
 
 huntersdream.natural_armor.name=Natural Armor I
-huntersdream.natural_armor.description=
+huntersdream.natural_armor.description=Makes the natural armor be as strong as a full set of chainmail armor.
 huntersdream.natural_armor_1.name=Natural Armor II
-huntersdream.natural_armor_1.description=
+huntersdream.natural_armor_1.description=Makes the natural armor be as strong as a full set of iron armor.
 huntersdream.natural_armor_2.name=Natural Armor III
-huntersdream.natural_armor_2.description=
+huntersdream.natural_armor_2.description=Makes the natural armor be as strong as a full set of diamond armor.
 
 huntersdream.wilful_transformation.name=Wilful Transformation
-huntersdream.wilful_transformation.description=
 
 # Hunter's Journal
 huntersdream.hunters_journal.test.title=Test Page
