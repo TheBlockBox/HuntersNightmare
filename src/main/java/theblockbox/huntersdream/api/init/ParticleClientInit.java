@@ -12,6 +12,7 @@ import java.util.Random;
 /**
  * Init class for particles. Should only be called on the client side. For a version for both client and server, see
  * {@link ParticleCommonInit}.
+ *
  * @see ParticleCommonInit
  */
 public class ParticleClientInit {

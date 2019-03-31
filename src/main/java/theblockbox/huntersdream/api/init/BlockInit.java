@@ -49,7 +49,7 @@ public class BlockInit {
                 "overworld_ore_silver", event);
         BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "aconite_flower", event);
         BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "furnace_silver", event);
-        for(BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
+        for (BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
             BlockInit.registerBlockWithItem(new BlockCampfire(type), "campfire_" + type.getName(), 1, event);
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);

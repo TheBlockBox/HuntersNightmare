@@ -3,7 +3,9 @@
     "variants": {
         "normal": {
             "model": "minecraft:cube_all",
-            "textures": { "all": "huntersdream:nothing" }
+            "textures": {
+                "all": "huntersdream:nothing"
+            }
         }
     }
 }

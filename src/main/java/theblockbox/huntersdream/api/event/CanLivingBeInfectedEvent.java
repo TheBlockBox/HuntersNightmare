@@ -26,15 +26,17 @@ import theblockbox.huntersdream.api.helpers.TransformationHelper;
  **/
 @Cancelable
 public class CanLivingBeInfectedEvent extends LivingEvent {
-	private final Transformation infection;
+    private final Transformation infection;
 
-	public CanLivingBeInfectedEvent(EntityLivingBase entity, Transformation infection) {
-		super(entity);
-		this.infection = infection;
-	}
+    public CanLivingBeInfectedEvent(EntityLivingBase entity, Transformation infection) {
+        super(entity);
+        this.infection = infection;
+    }
 
-	/** Returns the infection with which the entity should be infected. */
-	public Transformation getInfection() {
-		return this.infection;
-	}
+    /**
+     * Returns the infection with which the entity should be infected.
+     */
+    public Transformation getInfection() {
+        return this.infection;
+    }
 }

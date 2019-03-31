@@ -21,64 +21,64 @@ import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 import javax.annotation.Nonnull;
 
 public class VampireHelper {
-	public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
+    public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
 
-	public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
+    public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
         VampireHelper.validateIsVampire(vampire);
 
-		if (drinkFrom.isEntityUndead()) {
-			vampire.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 60, 2));
-		}
-		if (vampire instanceof EntityPlayerMP) {
-			EntityPlayerMP player = (EntityPlayerMP) vampire;
-			IVampirePlayer vamp = VampireHelper.getIVampire(player);
-			if (vamp.getBlood() < 20) {
-				vamp.incrementBlood();
-			}
-			PacketHandler.sendBloodMessage(player);
-		}
-		drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1.0F);
-	}
+        if (drinkFrom.isEntityUndead()) {
+            vampire.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 60, 2));
+        }
+        if (vampire instanceof EntityPlayerMP) {
+            EntityPlayerMP player = (EntityPlayerMP) vampire;
+            IVampirePlayer vamp = VampireHelper.getIVampire(player);
+            if (vamp.getBlood() < 20) {
+                vamp.incrementBlood();
+            }
+            PacketHandler.sendBloodMessage(player);
+        }
+        drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1.0F);
+    }
 
-	public static IVampirePlayer getIVampire(@Nonnull EntityPlayer player) {
-		Validate.notNull(player);
-		return player.getCapability(VampireHelper.CAPABILITY_VAMPIRE, null);
-	}
+    public static IVampirePlayer getIVampire(@Nonnull EntityPlayer player) {
+        Validate.notNull(player);
+        return player.getCapability(VampireHelper.CAPABILITY_VAMPIRE, null);
+    }
 
-	public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {
+    public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {
         VampireHelper.validateIsVampire(vampire);
-		return initialDamage;
-	}
+        return initialDamage;
+    }
 
-	// TODO: Make better values
-	public static float calculateDamage(EntityLivingBase vampire, float initialDamage) {
+    // TODO: Make better values
+    public static float calculateDamage(EntityLivingBase vampire, float initialDamage) {
         VampireHelper.validateIsVampire(vampire);
-		if (vampire.getHeldItemMainhand().isEmpty()) {
-			return 10.0F * initialDamage;
-		} else {
-			return initialDamage;
-		}
-	}
+        if (vampire.getHeldItemMainhand().isEmpty()) {
+            return 10.0F * initialDamage;
+        } else {
+            return initialDamage;
+        }
+    }
 
-	/**
-	 * Throws a {@link WrongTransformationException} if the given entity is not a
-	 * vampire
-	 */
-	public static void validateIsVampire(EntityLivingBase toCheck) {
-		TransformationHelper.getTransformation(toCheck).validateEquals(Transformation.VAMPIRE);
-	}
+    /**
+     * Throws a {@link WrongTransformationException} if the given entity is not a
+     * vampire
+     */
+    public static void validateIsVampire(EntityLivingBase toCheck) {
+        TransformationHelper.getTransformation(toCheck).validateEquals(Transformation.VAMPIRE);
+    }
 
-	public static boolean shouldVampireBurn(EntityLivingBase vampire) {
+    public static boolean shouldVampireBurn(EntityLivingBase vampire) {
         VampireHelper.validateIsVampire(vampire);
-		World world = vampire.world;
-		if (world.isRemote)
-			throw new WrongSideException("Can only test if vampire should burn on server side", world);
-		// TODO: Check for glasses
-		BlockPos pos = vampire.getPosition();
-		boolean canSeeSky = world.canSeeSky(pos);
-		if (!canSeeSky) {
-			canSeeSky = GeneralHelper.canBlockSeeSky(world, pos);
-		}
-		return !vampire.isPotionActive(PotionInit.POTION_SUNSCREEN) && world.isDaytime() && canSeeSky;
-	}
+        World world = vampire.world;
+        if (world.isRemote)
+            throw new WrongSideException("Can only test if vampire should burn on server side", world);
+        // TODO: Check for glasses
+        BlockPos pos = vampire.getPosition();
+        boolean canSeeSky = world.canSeeSky(pos);
+        if (!canSeeSky) {
+            canSeeSky = GeneralHelper.canBlockSeeSky(world, pos);
+        }
+        return !vampire.isPotionActive(PotionInit.POTION_SUNSCREEN) && world.isDaytime() && canSeeSky;
+    }
 }

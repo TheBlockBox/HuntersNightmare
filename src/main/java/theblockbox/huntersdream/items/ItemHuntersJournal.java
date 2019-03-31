@@ -21,28 +21,28 @@ import java.util.List;
 
 public class ItemHuntersJournal extends Item {
 
-	public ItemHuntersJournal() {
+    public ItemHuntersJournal() {
         this.setMaxStackSize(1);
-	}
+    }
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack stack = playerIn.getHeldItem(handIn);
-		HuntersJournalPage[] pages = TransformationHelper.getITransformationPlayer(playerIn).getUnlockedPages();
-		if (pages.length <= 0) {
-			if (!worldIn.isRemote) {
-				playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".noPage"), true);
-			}
-			return new ActionResult<>(EnumActionResult.FAIL, stack);
-		} else {
-			Main.proxy.openHuntersJournal(playerIn, pages);
-			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-		}
-	}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        ItemStack stack = playerIn.getHeldItem(handIn);
+        HuntersJournalPage[] pages = TransformationHelper.getITransformationPlayer(playerIn).getUnlockedPages();
+        if (pages.length <= 0) {
+            if (!worldIn.isRemote) {
+                playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".noPage"), true);
+            }
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
+        } else {
+            Main.proxy.openHuntersJournal(playerIn, pages);
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        }
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add(TextFormatting.GRAY + I18n.format("book.byAuthor", "Scarlet"));
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(TextFormatting.GRAY + I18n.format("book.byAuthor", "Scarlet"));
+    }
 }

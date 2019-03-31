@@ -19,6 +19,7 @@ import java.util.*;
  * Represents a skill (like speed, jump etc.) for one or more transformations
  * that can be unlocked by players. This class is only extended by the classes
  * {@link ChildSkill} and {@link ParentSkill}.
+ *
  * @see ChildSkill
  * @see ParentSkill
  */

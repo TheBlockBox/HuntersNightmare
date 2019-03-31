@@ -211,7 +211,9 @@ public class TransformationHelper {
         }
     }
 
-    /** Returns the {@link IInfectInTicks} capability of the given entity */
+    /**
+     * Returns the {@link IInfectInTicks} capability of the given entity
+     */
     public static Optional<IInfectInTicks> getIInfectInTicks(@Nonnull EntityLivingBase entity) {
         Validate.notNull(entity);
         return Optional.ofNullable(entity.getCapability(TransformationHelper.CAPABILITY_INFECT_IN_TICKS, null));
@@ -230,7 +232,9 @@ public class TransformationHelper {
         iit.setInfectionTransformation(infectTo);
     }
 
-    /** Returns true if the given entity is infected */
+    /**
+     * Returns true if the given entity is infected
+     */
     public static boolean isInfected(EntityLivingBase entity) {
         Optional<IInfectInTicks> iit = TransformationHelper.getIInfectInTicks(entity);
         Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);

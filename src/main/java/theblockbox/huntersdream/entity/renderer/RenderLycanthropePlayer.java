@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class RenderLycanthropePlayer extends RenderLycanthrope<EntityPlayer> {
 
-	public RenderLycanthropePlayer(RenderManager manager) {
-		super(manager);
-	}
+    public RenderLycanthropePlayer(RenderManager manager) {
+        super(manager);
+    }
 }

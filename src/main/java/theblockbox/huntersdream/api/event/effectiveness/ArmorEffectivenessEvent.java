@@ -24,87 +24,89 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  **/
 @Cancelable
 public class ArmorEffectivenessEvent extends EffectivenessEvent {
-	private final ItemStack armor;
-	private float thorns = 0.0F;
-	private float removedDamage = 0.0F;
-	private int armorDamage = 0;
+    private final ItemStack armor;
+    private float thorns = 0.0F;
+    private float removedDamage = 0.0F;
+    private int armorDamage = 0;
 
-	public ArmorEffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float initialDamage,
-			ItemStack armor) {
-		super(hurt, attacker, initialDamage);
-		this.armor = armor;
-	}
+    public ArmorEffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float initialDamage,
+                                   ItemStack armor) {
+        super(hurt, attacker, initialDamage);
+        this.armor = armor;
+    }
 
-	/**
-	 * Returns the armor part of the hurt entity. Is guaranteed to never be
-	 * empty<br>
-	 * Don't damage the returned ItemStack but use {@link #setArmorDamage(int)}
-	 * instead
-	 */
-	public ItemStack getArmor() {
-		return this.armor;
-	}
+    /**
+     * Returns the armor part of the hurt entity. Is guaranteed to never be
+     * empty<br>
+     * Don't damage the returned ItemStack but use {@link #setArmorDamage(int)}
+     * instead
+     */
+    public ItemStack getArmor() {
+        return this.armor;
+    }
 
-	/**
-	 * Returns the damage the armor part will get after the event was fired. Default
-	 * value is 0
-	 */
-	public int getArmorDamage() {
-		return this.armorDamage;
-	}
+    /**
+     * Returns the damage the armor part will get after the event was fired. Default
+     * value is 0
+     */
+    public int getArmorDamage() {
+        return this.armorDamage;
+    }
 
-	/**
-	 * Sets the armor damage the armor part will get after this event was fired and
-	 * cancels it
-	 */
-	public void setArmorDamage(int armorDamage) {
-		this.armorDamage = armorDamage;
-		this.setCanceled(true);
-	}
+    /**
+     * Sets the armor damage the armor part will get after this event was fired and
+     * cancels it
+     */
+    public void setArmorDamage(int armorDamage) {
+        this.armorDamage = armorDamage;
+        this.setCanceled(true);
+    }
 
-	/**
-	 * Returns the thorns damage in half hearts that the attacker will get after
-	 * this event was fired. If it is 0, the attacker won't be attacked. <br>
-	 * Default value is 0.<br>
-	 * Thorns of multiple events will add up (for example if the helmet event
-	 * returns 5 thorns and the chestplate one 4, the thorns value will be 9)
-	 */
-	public float getThorns() {
-		return this.thorns;
-	}
+    /**
+     * Returns the thorns damage in half hearts that the attacker will get after
+     * this event was fired. If it is 0, the attacker won't be attacked. <br>
+     * Default value is 0.<br>
+     * Thorns of multiple events will add up (for example if the helmet event
+     * returns 5 thorns and the chestplate one 4, the thorns value will be 9)
+     */
+    public float getThorns() {
+        return this.thorns;
+    }
 
-	/**
-	 * Sets the thorns damage that the attacker will get after this event was fired
-	 * and cancels it
-	 */
-	public void setThorns(float thorns) {
-		this.thorns = thorns;
-		this.setCanceled(true);
-	}
+    /**
+     * Sets the thorns damage that the attacker will get after this event was fired
+     * and cancels it
+     */
+    public void setThorns(float thorns) {
+        this.thorns = thorns;
+        this.setCanceled(true);
+    }
 
-	/**
-	 * Returns the damage in half hearts that will be removed from the initial
-	 * damage to get the actual damage the hurt entity will get. (For example if the
-	 * intial damage was 7 and the removed damage was 3, the entity would get 4
-	 * damage)<br>
-	 * Default value is 0 (no damage change)
-	 */
-	public float getRemovedDamage() {
-		return this.removedDamage;
-	}
+    /**
+     * Returns the damage in half hearts that will be removed from the initial
+     * damage to get the actual damage the hurt entity will get. (For example if the
+     * intial damage was 7 and the removed damage was 3, the entity would get 4
+     * damage)<br>
+     * Default value is 0 (no damage change)
+     */
+    public float getRemovedDamage() {
+        return this.removedDamage;
+    }
 
-	/** Sets the removed damage and cancels this event */
-	public void setRemovedDamage(float removedDamage) {
-		this.removedDamage = removedDamage;
-		this.setCanceled(true);
-	}
+    /**
+     * Sets the removed damage and cancels this event
+     */
+    public void setRemovedDamage(float removedDamage) {
+        this.removedDamage = removedDamage;
+        this.setCanceled(true);
+    }
 
-	/**
-	 * This method does not work in this implementation. Throws an
-	 * {@link UnsupportedOperationException} if called.
-	 */
-	@Override
-	public void setDamage(float damage) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * This method does not work in this implementation. Throws an
+     * {@link UnsupportedOperationException} if called.
+     */
+    @Override
+    public void setDamage(float damage) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
 }

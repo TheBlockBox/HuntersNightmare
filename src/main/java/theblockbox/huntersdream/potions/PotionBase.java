@@ -10,18 +10,18 @@ import theblockbox.huntersdream.util.Reference;
 
 public abstract class PotionBase extends Potion {
 
-	public PotionBase(boolean isBadEffectIn, int liquidColorIn, int iconIndex, String name) {
-		super(isBadEffectIn, liquidColorIn);
+    public PotionBase(boolean isBadEffectIn, int liquidColorIn, int iconIndex, String name) {
+        super(isBadEffectIn, liquidColorIn);
 
         this.setRegistryName(GeneralHelper.newResLoc(name));
         this.setPotionName("effect." + Reference.MODID + "." + name);
         this.setIconIndex(iconIndex % 6, MathHelper.floor(iconIndex / 6.0D));
-	}
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public boolean hasStatusIcon() {
-		Minecraft.getMinecraft().renderEngine.bindTexture(GeneralHelper.newResLoc("textures/gui/potion_icons.png"));
-		return true;
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean hasStatusIcon() {
+        Minecraft.getMinecraft().renderEngine.bindTexture(GeneralHelper.newResLoc("textures/gui/potion_icons.png"));
+        return true;
+    }
 }

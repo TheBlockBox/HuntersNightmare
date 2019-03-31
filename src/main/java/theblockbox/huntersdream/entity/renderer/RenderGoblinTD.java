@@ -9,20 +9,20 @@ import theblockbox.huntersdream.entity.model.ModelGoblinTD;
 import theblockbox.huntersdream.util.Reference;
 
 public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
-	private static final ResourceLocation[] TEXTURES = new ResourceLocation[EntityGoblinTD.TEXTURES];
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[EntityGoblinTD.TEXTURES];
 
-	static {
-		for (int i = 0; i < EntityGoblinTD.TEXTURES; i++) {
-			RenderGoblinTD.TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin" + i + ".png");
-		}
-	}
+    static {
+        for (int i = 0; i < EntityGoblinTD.TEXTURES; i++) {
+            RenderGoblinTD.TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin" + i + ".png");
+        }
+    }
 
-	public RenderGoblinTD(RenderManager manager) {
-		super(manager, new ModelGoblinTD(), 0.5F);
-	}
+    public RenderGoblinTD(RenderManager manager) {
+        super(manager, new ModelGoblinTD(), 0.5F);
+    }
 
-	@Override
-	protected ResourceLocation getEntityTexture(EntityGoblinTD entity) {
-		return RenderGoblinTD.TEXTURES[entity.getTexture()];
-	}
+    @Override
+    protected ResourceLocation getEntityTexture(EntityGoblinTD entity) {
+        return RenderGoblinTD.TEXTURES[entity.getTexture()];
+    }
 }

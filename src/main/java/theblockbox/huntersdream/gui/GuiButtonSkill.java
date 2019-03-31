@@ -27,7 +27,7 @@ public class GuiButtonSkill extends GuiButton {
 
     public GuiButtonSkill(Skill skill, int buttonId, int x, int y, FontRenderer fontRenderer, int textWidth) {
         super(buttonId, x, y, 16, 16, "");
-        if(fontRenderer == null)
+        if (fontRenderer == null)
             fontRenderer = Minecraft.getMinecraft().fontRenderer;
         this.skill = skill;
         this.middleX = this.x + this.width / 2;

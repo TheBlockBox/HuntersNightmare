@@ -52,7 +52,7 @@ public class SkillUnlockMessage extends MessageBase<SkillUnlockMessage> {
                         Main.getLogger().error("The player " + player + " tried to unlock a null skill");
                         return;
                     }
-                    if(skill.unlockSkillForPlayer(player)){
+                    if (skill.unlockSkillForPlayer(player)) {
                         player.sendStatusMessage(new TextComponentTranslation("huntersdream.unlockedSkill",
                                         new TextComponentTranslation(skill.getTranslationKeyName()), skill.getNeededExperienceLevels()),
                                 true);

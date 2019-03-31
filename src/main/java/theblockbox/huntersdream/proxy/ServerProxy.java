@@ -9,42 +9,42 @@ import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
 public class ServerProxy implements IProxy {
-	@Override
-	public void registerItemRenderer(Item item, int meta, String id) {
-		throw new WrongSideException("Can't register item renderer on server", Side.SERVER);
-	}
+    @Override
+    public void registerItemRenderer(Item item, int meta, String id) {
+        throw new WrongSideException("Can't register item renderer on server", Side.SERVER);
+    }
 
-	@Override
-	public void preInit() {
-		RegistryHandler.preInitServer();
-	}
+    @Override
+    public void preInit() {
+        RegistryHandler.preInitServer();
+    }
 
-	@Override
-	public void init() {
-		RegistryHandler.initServer();
-	}
+    @Override
+    public void init() {
+        RegistryHandler.initServer();
+    }
 
-	@Override
-	public void postInit() {
-		RegistryHandler.postInitServer();
-	}
+    @Override
+    public void postInit() {
+        RegistryHandler.postInitServer();
+    }
 
-	@Override
-	public boolean isPhysicalClient() {
-		return false;
-	}
+    @Override
+    public boolean isPhysicalClient() {
+        return false;
+    }
 
-	@Override
-	public EntityPlayer getPlayer() {
-		return null;
-	}
+    @Override
+    public EntityPlayer getPlayer() {
+        return null;
+    }
 
-	@Override
-	public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
-	}
+    @Override
+    public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
+    }
 
-	@Override
-	public <T extends Entity> T getEntityFromID(int id) {
-		throw new UnsupportedOperationException("Can't get entity from server");
-	}
+    @Override
+    public <T extends Entity> T getEntityFromID(int id) {
+        throw new UnsupportedOperationException("Can't get entity from server");
+    }
 }

@@ -33,6 +33,7 @@ import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.entity.ai.EntityAIBreakAllDoors;
 import theblockbox.huntersdream.entity.ai.EntityAIWerewolfAttack;
+import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
@@ -135,7 +136,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
                 new EntityAINearestAttackableTarget<>(this, EntityCreature.class, 10, true, false, predicateMob));
         this.targetTasks.addTask(3,
                 new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, 10, true, false, predicatePlayer));
-        ((PathNavigateGround) this.getNavigator()).setBreakDoors(true);
+        ((PathNavigateGround) this.navigator).setBreakDoors(ConfigHandler.server.werewolvesBreakDoors);
     }
 
     @Override

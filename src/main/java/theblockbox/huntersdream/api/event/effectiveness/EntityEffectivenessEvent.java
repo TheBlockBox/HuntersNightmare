@@ -26,16 +26,16 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  **/
 public class EntityEffectivenessEvent extends EffectivenessEvent {
 
-	public EntityEffectivenessEvent(EntityLivingBase hurt, Entity attacker, float damage) {
-		super(hurt, attacker, damage);
-	}
+    public EntityEffectivenessEvent(EntityLivingBase hurt, Entity attacker, float damage) {
+        super(hurt, attacker, damage);
+    }
 
-	/**
-	 * Returns the entity that attacked. Will never be null, but may be the
-	 * immediate source (an arrow for example).
-	 */
-	@Override
-	public Entity getAttacker() {
-		return super.getAttacker();
-	}
+    /**
+     * Returns the entity that attacked. Will never be null, but may be the
+     * immediate source (an arrow for example).
+     */
+    @Override
+    public Entity getAttacker() {
+        return super.getAttacker();
+    }
 }

@@ -10,18 +10,18 @@ import theblockbox.huntersdream.util.Reference;
 
 public class CreativeTabInit {
 
-	public static final CreativeTabs HUNTERSDREAM_TOOLS_AND_WEAPONS = new CreativeTabs(
-			Reference.MODID + ".toolsandcombat") {
-		@Override
-		public ItemStack createIcon() {
-			return new ItemStack(ItemInit.SWORD_SILVER);
-		}
-	};
+    public static final CreativeTabs HUNTERSDREAM_TOOLS_AND_WEAPONS = new CreativeTabs(
+            Reference.MODID + ".toolsandcombat") {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ItemInit.SWORD_SILVER);
+        }
+    };
 
-	public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs(Reference.MODID + ".misc") {
-		@Override
-		public ItemStack createIcon() {
-			return new ItemStack(ItemInit.INGOT_SILVER);
-		}
-	};
+    public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs(Reference.MODID + ".misc") {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ItemInit.INGOT_SILVER);
+        }
+    };
 }

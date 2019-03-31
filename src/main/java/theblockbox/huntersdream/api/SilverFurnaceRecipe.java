@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -34,7 +33,7 @@ public class SilverFurnaceRecipe {
     private final int id;
 
     public SilverFurnaceRecipe(Ingredient input1, Ingredient input2, int amount1, int amount2, ItemStack output1,
-                                  ItemStack output2, int smeltingTime) {
+                               ItemStack output2, int smeltingTime) {
         this.in1 = input1;
         this.in2 = input2;
         this.amount1 = amount1;
@@ -46,7 +45,7 @@ public class SilverFurnaceRecipe {
     }
 
     public SilverFurnaceRecipe(Ingredient input1, Ingredient input2, int amount1, int amount2, ItemStack output1,
-                                  ItemStack output2) {
+                               ItemStack output2) {
         this(input1, input2, amount1, amount2, output1, output2, SilverFurnaceRecipe.DEFAULT_SMELTING_TIME);
     }
 
@@ -142,22 +141,6 @@ public class SilverFurnaceRecipe {
      */
     public ItemStack getOutput2(Random random) {
         return this.out2.copy();
-    }
-
-    /**
-     * Returns the experience gotten when the player takes one item in the output 1
-     * out of the furnace
-     */
-    public float getExperience1(Random random) {
-        return FurnaceRecipes.instance().getSmeltingExperience(this.out1);
-    }
-
-    /**
-     * Returns the experience gotten when the player takes one item in the output 2
-     * out of the furnace
-     */
-    public float getExperience2(Random random) {
-        return FurnaceRecipes.instance().getSmeltingExperience(this.out2);
     }
 
     /**

@@ -5,44 +5,60 @@
     },
     "variants": {
         "north": {
-            "side": { "textures": { "side_north": "huntersdream:blocks/mountain_ash_line_ns" } },
+            "side": {
+                "textures": {
+                    "side_north": "huntersdream:blocks/mountain_ash_line_ns"
+                }
+            },
             "up": {
                 "textures": {
                     "up_north": "huntersdream:blocks/mountain_ash_line_ns",
                     "side_north": "huntersdream:blocks/mountain_ash_line_ns"
                 }
             },
-            "none": {  }
+            "none": {}
         },
         "south": {
-            "side": { "textures": { "side_south": "huntersdream:blocks/mountain_ash_line_ns" } },
+            "side": {
+                "textures": {
+                    "side_south": "huntersdream:blocks/mountain_ash_line_ns"
+                }
+            },
             "up": {
                 "textures": {
                     "up_south": "huntersdream:blocks/mountain_ash_line_ns",
                     "side_south": "huntersdream:blocks/mountain_ash_line_ns"
                 }
             },
-            "none": {  }
+            "none": {}
         },
         "west": {
-            "side": { "textures": { "side_west": "huntersdream:blocks/mountain_ash_line_we" } },
+            "side": {
+                "textures": {
+                    "side_west": "huntersdream:blocks/mountain_ash_line_we"
+                }
+            },
             "up": {
                 "textures": {
                     "up_west": "huntersdream:blocks/mountain_ash_line_ns",
                     "side_west": "huntersdream:blocks/mountain_ash_line_we"
                 }
             },
-            "none": {  }
+            "none": {}
         },
         "east": {
-            "side": { "textures": { "side_east": "huntersdream:blocks/mountain_ash_line_we" } },
+            "side": {
+                "textures": {
+                    "side_east": "huntersdream:blocks/mountain_ash_line_we"
+                }
+            },
             "up": {
                 "textures": {
                     "up_east": "huntersdream:blocks/mountain_ash_line_ns",
                     "side_east": "huntersdream:blocks/mountain_ash_line_we"
                 }
             },
-            "none": {  }
+            "none": {}
         }
     }
 }

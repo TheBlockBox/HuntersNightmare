@@ -6,6 +6,7 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 /**
  * An init class for particles. Can be called on either client or server. For the client side only version, see
  * {@link ParticleClientInit}.
+ *
  * @see ParticleClientInit
  */
 public class ParticleCommonInit {

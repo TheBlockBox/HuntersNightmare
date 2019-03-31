@@ -93,7 +93,7 @@ command.huntersdream.skill.clear=%s's skills have been cleared
 command.huntersdream.skill.list=%s's skills are\: %s
 
 # Chat messages
-transformations.huntersdream.infected.werewolf=You've been bitten but the wound is ... healing?
+transformations.huntersdream.infected.werewolf=You feel a curse surrounding you...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
 item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
@@ -102,12 +102,12 @@ huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
 # Werewolf transformation (all the text is shown in italics and red)
-transformations.huntersdream\:werewolf.transformingInto.1=You feel weird and nauseous
-transformations.huntersdream\:werewolf.transformingInto.2=You bend over in pain, your lungs and kidneys have failed
-transformations.huntersdream\:werewolf.transformingInto.3=Your internal organs have stopped working and started to repair differently
-transformations.huntersdream\:werewolf.transformingInto.4=You go blind, your eyesight is changing.\r\nStill screaming in pain... This won't let you die.
-transformations.huntersdream\:werewolf.transformingInto.5=Your body is now having dramatic changes.\r\nBones and muscle tissue breaking and reforming, your eyesight is back but different.\r\nYour mind can only think about killing.
-transformations.huntersdream\:werewolf.transformingInto.6=You howl as the wolf within is now free...
+transformations.huntersdream\:werewolf.transformingInto.1=You feel weak and nauseous...
+transformations.huntersdream\:werewolf.transformingInto.2=Your bones and muscles are aching...
+transformations.huntersdream\:werewolf.transformingInto.3=You begin to rage and think about killing...
+transformations.huntersdream\:werewolf.transformingInto.4=You’re in huge amounts of pain and feel your body changing...
+transformations.huntersdream\:werewolf.transformingInto.5=Your body now starts to resemble more like a wolf...
+transformations.huntersdream\:werewolf.transformingInto.6=The wolf is now in control...
 transformations.huntersdream\:werewolf.transformingBack.0=The wolf subsides and you pass out
 
 # Config
@@ -131,6 +131,7 @@ huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
 huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
 huntersdream.config.showActiveSkill=Show active skill
 huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
+huntersdream.config.werewolvesBreakDoors=Werewolves destroy doors (including iron)
 
 
 # Skills

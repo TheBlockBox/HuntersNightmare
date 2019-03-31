@@ -23,7 +23,7 @@ import theblockbox.huntersdream.api.helpers.TransformationHelper;
  **/
 @Cancelable
 public class IsLivingInfectedEvent extends LivingEvent {
-	public IsLivingInfectedEvent(EntityLivingBase entity) {
-		super(entity);
-	}
+    public IsLivingInfectedEvent(EntityLivingBase entity) {
+        super(entity);
+    }
 }

@@ -10,15 +10,15 @@ import java.util.function.ToDoubleBiFunction;
  */
 @FunctionalInterface
 public interface ToFloatObjFloatFunction<T> extends BiFunction<T, Float, Float>, ToDoubleBiFunction<T, Float> {
-	public float applyAsFloat(T value, float f);
+    public float applyAsFloat(T value, float f);
 
-	@Override
-	default Float apply(T t, Float f) {
-		return this.applyAsFloat(t, f);
-	}
+    @Override
+    default Float apply(T t, Float f) {
+        return this.applyAsFloat(t, f);
+    }
 
-	@Override
-	default double applyAsDouble(T t, Float f) {
-		return this.applyAsFloat(t, f);
-	}
+    @Override
+    default double applyAsDouble(T t, Float f) {
+        return this.applyAsFloat(t, f);
+    }
 }

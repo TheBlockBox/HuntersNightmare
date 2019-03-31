@@ -25,58 +25,58 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class ExtraDataEvent extends Event {
-	private final EntityCreature creature;
-	private NBTTagCompound extraData;
-	private final boolean onDataSave;
+    private final EntityCreature creature;
+    private NBTTagCompound extraData;
+    private final boolean onDataSave;
 
-	public ExtraDataEvent(EntityCreature creature, NBTTagCompound extraData, boolean onDataSave) {
-		this.creature = creature;
-		this.extraData = extraData;
-		this.onDataSave = onDataSave;
-	}
+    public ExtraDataEvent(EntityCreature creature, NBTTagCompound extraData, boolean onDataSave) {
+        this.creature = creature;
+        this.extraData = extraData;
+        this.onDataSave = onDataSave;
+    }
 
-	/**
-	 * The creature to which the data is being saved/from which the data has been
-	 * retrieved (always an untransformed entity, so it can't be a werewolf or a
-	 * vampire, but a villager or a goblin)
-	 */
-	public EntityCreature getEntityCreature() {
-		return this.creature;
-	}
+    /**
+     * The creature to which the data is being saved/from which the data has been
+     * retrieved (always an untransformed entity, so it can't be a werewolf or a
+     * vampire, but a villager or a goblin)
+     */
+    public EntityCreature getEntityCreature() {
+        return this.creature;
+    }
 
-	/**
-	 * Gets the extra data that is going to be saved/applied. If
-	 * {@link #isBeingSaved()} returns true, the data should be the exact same data
-	 * gotten through the method
-	 * {@link EntityCreature#writeEntityToNBT(NBTTagCompound)} except for the health
-	 * (the untransformed entity has the same percentage of health as the
-	 * transformed one to make things a bit more realistic) and other parameters
-	 * that have been changed by an event handler that received the event before the
-	 * current event handler
-	 */
-	public NBTTagCompound getExtraData() {
-		return this.extraData;
-	}
+    /**
+     * Gets the extra data that is going to be saved/applied. If
+     * {@link #isBeingSaved()} returns true, the data should be the exact same data
+     * gotten through the method
+     * {@link EntityCreature#writeEntityToNBT(NBTTagCompound)} except for the health
+     * (the untransformed entity has the same percentage of health as the
+     * transformed one to make things a bit more realistic) and other parameters
+     * that have been changed by an event handler that received the event before the
+     * current event handler
+     */
+    public NBTTagCompound getExtraData() {
+        return this.extraData;
+    }
 
-	/**
-	 * Sets the extra data that is going to be saved/applied. If
-	 * {@link #isBeingSaved()} returns true, the data should be the exact same data
-	 * gotten through the method
-	 * {@link EntityCreature#writeEntityToNBT(NBTTagCompound)} except for the health
-	 * (the untransformed entity has the same percentage of health as the
-	 * transformed one to make things a bit more realistic) and other parameters
-	 * that have been changed by an event handler that received the event before the
-	 * current event handler
-	 */
-	public void setExtraData(NBTTagCompound extraData) {
-		this.extraData = extraData;
-	}
+    /**
+     * Sets the extra data that is going to be saved/applied. If
+     * {@link #isBeingSaved()} returns true, the data should be the exact same data
+     * gotten through the method
+     * {@link EntityCreature#writeEntityToNBT(NBTTagCompound)} except for the health
+     * (the untransformed entity has the same percentage of health as the
+     * transformed one to make things a bit more realistic) and other parameters
+     * that have been changed by an event handler that received the event before the
+     * current event handler
+     */
+    public void setExtraData(NBTTagCompound extraData) {
+        this.extraData = extraData;
+    }
 
-	/**
-	 * Returns true if the data is currently being saved to the transforming entity,
-	 * returns false if the data is being applied to the untransformed entity
-	 */
-	public boolean isBeingSaved() {
-		return this.onDataSave;
-	}
+    /**
+     * Returns true if the data is currently being saved to the transforming entity,
+     * returns false if the data is being applied to the untransformed entity
+     */
+    public boolean isBeingSaved() {
+        return this.onDataSave;
+    }
 }

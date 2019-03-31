@@ -16,26 +16,26 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 public class ItemHuntersJournalPage extends Item {
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		if (!playerIn.world.isRemote) {
-			ItemStack stack = playerIn.getHeldItem(handIn);
-			ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(playerIn);
-			HuntersJournalPage page = cap.getRandomNotUnlockedPage(playerIn.getRNG());
-			if (page != null) {
-				if (!playerIn.capabilities.isCreativeMode) {
-					stack.shrink(1);
-				}
-				cap.unlockPage(page);
-				PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
-				playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onPageUnlock",
-						new TextComponentTranslation(page.getTitle())));
-				return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-			} else {
-				playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".allUnlocked"), true);
-				return new ActionResult<>(EnumActionResult.FAIL, stack);
-			}
-		}
-		return super.onItemRightClick(worldIn, playerIn, handIn);
-	}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        if (!playerIn.world.isRemote) {
+            ItemStack stack = playerIn.getHeldItem(handIn);
+            ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(playerIn);
+            HuntersJournalPage page = cap.getRandomNotUnlockedPage(playerIn.getRNG());
+            if (page != null) {
+                if (!playerIn.capabilities.isCreativeMode) {
+                    stack.shrink(1);
+                }
+                cap.unlockPage(page);
+                PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
+                playerIn.sendMessage(new TextComponentTranslation(this.getTranslationKey() + ".onPageUnlock",
+                        new TextComponentTranslation(page.getTitle())));
+                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            } else {
+                playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".allUnlocked"), true);
+                return new ActionResult<>(EnumActionResult.FAIL, stack);
+            }
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
 }

@@ -1,12 +1,10 @@
 {
     "type": "minecraft:crafting_shaped",
-    
     "pattern": [
         "S S",
         "ASA",
         "IAI"
     ],
-    
     "key": {
         "A": {
             "type": "forge:ore_dict",
@@ -21,7 +19,6 @@
             "ore": "ingotSilver"
         }
     },
-    
     "result": {
         "item": "huntersdream:aconite_garland",
         "count": 1

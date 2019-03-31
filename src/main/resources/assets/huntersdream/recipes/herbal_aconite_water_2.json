@@ -1,6 +1,5 @@
 {
     "type": "minecraft:crafting_shapeless",
-
     "ingredients": [
         {
             "type": "forge:ore_dict",
@@ -14,7 +13,6 @@
             "item": "minecraft:potion"
         }
     ],
-    
     "result": {
         "item": "huntersdream:herbal_aconite_water",
         "count": 1

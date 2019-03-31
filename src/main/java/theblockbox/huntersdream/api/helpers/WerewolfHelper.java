@@ -56,7 +56,9 @@ public class WerewolfHelper {
     public static boolean isWerewolfTime(World world) {
         if (world.isRemote)
             throw new WrongSideException("Can only test if it is werewolf time on server side", world);
-        return WerewolfHelper.isFullmoon(world) && !world.isDaytime();
+        long worldTime = world.getWorldTime();
+        // 23459 and 12540 are the exact times between which it is day (according to World#isDaytime)
+        return WerewolfHelper.isFullmoon(world) && ((worldTime > 12540L) && (worldTime < 23459L));
     }
 
     /**
@@ -660,7 +662,6 @@ public class WerewolfHelper {
      * Returns true if the given player has reached their wilful transformation limit, meaning that they've been
      * wilfully transformed for more than 6000 ticks/5 minutes. This method always checks if the given player is a
      * werewolf and will throw an exception if the player is over the wilful transformation limit but isn't transformed.
-     *
      */
     public static boolean hasPlayerReachedWilfulTransformationLimit(EntityPlayer werewolf) {
         long ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);

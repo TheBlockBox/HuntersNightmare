@@ -165,7 +165,7 @@ public class WerewolfEventHandler {
             ItemStack stack = event.getItemStack();
             if ((TransformationHelper.getTransformation(interactedWith) == Transformation.WEREWOLF)
                     && (stack.getItem() == Item.getItemFromBlock(BlockInit.ACONITE_FLOWER))) {
-                // we don't want to open any gui, so we say that this
+                // we don't want to open any gui, so we say that the
                 // interaction was a success and cancel the event
                 event.setCanceled(true);
                 event.setCancellationResult(EnumActionResult.SUCCESS);
@@ -175,6 +175,13 @@ public class WerewolfEventHandler {
                         stack.shrink(1);
                     }
                 }
+            }
+            EntityPlayer interacting = event.getEntityPlayer();
+            if (WerewolfHelper.isTransformed(interacting)) {
+                // we don't want the werewolf to interact with anything when transformed,
+                // so we'll say that the interaction was a success and cancel the event
+                event.setCanceled(true);
+                event.setCancellationResult(EnumActionResult.SUCCESS);
             }
         }
     }

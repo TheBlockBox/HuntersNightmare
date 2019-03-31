@@ -11,54 +11,54 @@ import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
 public class TransformationCreatureProvider implements ICapabilitySerializable<NBTTagCompound> {
-	public static final Capability<ITransformationCreature> CAP = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
-	private final ITransformationCreature instance;
+    public static final Capability<ITransformationCreature> CAP = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;
+    private final ITransformationCreature instance;
 
-	public TransformationCreatureProvider(Transformation... notImmuneTo) {
-		this.instance = new TransformationCreatureProvider.TransformationCreatureImplementation(notImmuneTo);
-	}
+    public TransformationCreatureProvider(Transformation... notImmuneTo) {
+        this.instance = new TransformationCreatureProvider.TransformationCreatureImplementation(notImmuneTo);
+    }
 
-	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return (capability == TransformationCreatureProvider.CAP);
-	}
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return (capability == TransformationCreatureProvider.CAP);
+    }
 
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return capability == TransformationCreatureProvider.CAP ? TransformationCreatureProvider.CAP.cast(this.instance) : null;
-	}
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        return capability == TransformationCreatureProvider.CAP ? TransformationCreatureProvider.CAP.cast(this.instance) : null;
+    }
 
-	@Override
-	public NBTTagCompound serializeNBT() {
-		return (NBTTagCompound) TransformationCreatureProvider.CAP.getStorage().writeNBT(TransformationCreatureProvider.CAP, this.instance, null);
-	}
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return (NBTTagCompound) TransformationCreatureProvider.CAP.getStorage().writeNBT(TransformationCreatureProvider.CAP, this.instance, null);
+    }
 
-	@Override
-	public void deserializeNBT(NBTTagCompound nbt) {
-		TransformationCreatureProvider.CAP.getStorage().readNBT(TransformationCreatureProvider.CAP, this.instance, null, nbt);
-	}
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        TransformationCreatureProvider.CAP.getStorage().readNBT(TransformationCreatureProvider.CAP, this.instance, null, nbt);
+    }
 
-	private static class TransformationCreatureImplementation extends ITransformationCreature.TransformationCreature {
-		private Transformation[] transformationsNotImmuneTo = new Transformation[0];
+    private static class TransformationCreatureImplementation extends ITransformationCreature.TransformationCreature {
+        private Transformation[] transformationsNotImmuneTo = new Transformation[0];
 
-		private TransformationCreatureImplementation(Transformation[] notImmuneTo) {
-			Validate.noNullElements(notImmuneTo,
-					"Null transformations not allowed (null transformation in array %s at index %d)",
-					ArrayUtils.toString(notImmuneTo));
-			this.transformationsNotImmuneTo = notImmuneTo;
-		}
+        private TransformationCreatureImplementation(Transformation[] notImmuneTo) {
+            Validate.noNullElements(notImmuneTo,
+                    "Null transformations not allowed (null transformation in array %s at index %d)",
+                    ArrayUtils.toString(notImmuneTo));
+            this.transformationsNotImmuneTo = notImmuneTo;
+        }
 
-		@Override
-		public Transformation[] getTransformationsNotImmuneTo() {
-			return this.transformationsNotImmuneTo;
-		}
+        @Override
+        public Transformation[] getTransformationsNotImmuneTo() {
+            return this.transformationsNotImmuneTo;
+        }
 
-		@Override
-		public void setTransformationsNotImmuneTo(Transformation... transformationsNotImmuneTo) {
-			Validate.noNullElements(transformationsNotImmuneTo,
-					"Null transformations not allowed (null transformation in array %s at index %d)",
-					ArrayUtils.toString(transformationsNotImmuneTo));
-			this.transformationsNotImmuneTo = transformationsNotImmuneTo;
-		}
-	}
+        @Override
+        public void setTransformationsNotImmuneTo(Transformation... transformationsNotImmuneTo) {
+            Validate.noNullElements(transformationsNotImmuneTo,
+                    "Null transformations not allowed (null transformation in array %s at index %d)",
+                    ArrayUtils.toString(transformationsNotImmuneTo));
+            this.transformationsNotImmuneTo = transformationsNotImmuneTo;
+        }
+    }
 }

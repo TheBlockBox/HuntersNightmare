@@ -26,18 +26,18 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  **/
 @Cancelable
 public class ItemEffectivenessEvent extends EffectivenessEvent {
-	private final ItemStack itemStack;
+    private final ItemStack itemStack;
 
-	public ItemEffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float damage, ItemStack itemStack) {
-		super(hurt, attacker, damage);
-		this.itemStack = itemStack;
-	}
+    public ItemEffectivenessEvent(EntityLivingBase hurt, EntityLivingBase attacker, float damage, ItemStack itemStack) {
+        super(hurt, attacker, damage);
+        this.itemStack = itemStack;
+    }
 
-	/**
-	 * Returns the item stack that was used to attack the entity. Is guaranteed to
-	 * never be empty
-	 */
-	public ItemStack getItemStack() {
-		return this.itemStack;
-	}
+    /**
+     * Returns the item stack that was used to attack the entity. Is guaranteed to
+     * never be empty
+     */
+    public ItemStack getItemStack() {
+        return this.itemStack;
+    }
 }

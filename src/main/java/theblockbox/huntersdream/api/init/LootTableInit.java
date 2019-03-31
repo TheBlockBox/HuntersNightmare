@@ -9,8 +9,8 @@ public class LootTableInit {
 //			new LootEntry[] {LootTableInit.HUNTERS_JOURNAL_PAGE_ENTRY}, new LootCondition[0], new RandomValueRange(1.0F),
 //			new RandomValueRange(0), Reference.MODID + "_inject_pool");
 
-	public static void register() {
+    public static void register() {
 //            TODO: Uncomment this when the hunter's journal will be worked on
 //            LootTableList.register(LootTableInit.HUNTERS_JOURNAL_PAGE);
-	}
+    }
 }

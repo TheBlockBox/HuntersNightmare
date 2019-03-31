@@ -39,7 +39,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
         this.skills = skills.toArray(new Skill[0]);
         this.pages = pages;
         this.transformationData = transformationData;
-        this.activeSkill = Objects.toString(activeSkill,"");
+        this.activeSkill = Objects.toString(activeSkill, "");
     }
 
     @Override

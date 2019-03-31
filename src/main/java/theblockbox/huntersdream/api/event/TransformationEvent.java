@@ -23,55 +23,69 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
  **/
 @Cancelable
 public class TransformationEvent extends LivingEvent {
-	private final Transformation transformationBefore;
-	private final Transformation transformationAfter;
-	private final TransformationEvent.TransformationEventReason reason;
+    private final Transformation transformationBefore;
+    private final Transformation transformationAfter;
+    private final TransformationEvent.TransformationEventReason reason;
 
-	public TransformationEvent(EntityLivingBase entity, Transformation transformationAfter,
-			TransformationEvent.TransformationEventReason reason) {
-		super(entity);
-		this.transformationBefore = TransformationHelper.getTransformation(entity);
-		this.transformationAfter = transformationAfter;
-		this.transformationBefore.validateIsTransformation();
-		this.transformationAfter.validateIsTransformation();
-		this.reason = reason;
-	}
+    public TransformationEvent(EntityLivingBase entity, Transformation transformationAfter,
+                               TransformationEvent.TransformationEventReason reason) {
+        super(entity);
+        this.transformationBefore = TransformationHelper.getTransformation(entity);
+        this.transformationAfter = transformationAfter;
+        this.transformationBefore.validateIsTransformation();
+        this.transformationAfter.validateIsTransformation();
+        this.reason = reason;
+    }
 
-	/** Returns the entity's current transformation. */
-	public Transformation getTransformationBefore() {
-		return this.transformationBefore;
-	}
+    /**
+     * Returns the entity's current transformation.
+     */
+    public Transformation getTransformationBefore() {
+        return this.transformationBefore;
+    }
 
-	/** Returns the transformation that the entity should get. */
-	public Transformation getTransformationAfter() {
-		return this.transformationAfter;
-	}
+    /**
+     * Returns the transformation that the entity should get.
+     */
+    public Transformation getTransformationAfter() {
+        return this.transformationAfter;
+    }
 
-	/** Returns the reason why the transformation should be changed. */
-	public TransformationEvent.TransformationEventReason getTransformationEventReason() {
-		return this.reason;
-	}
+    /**
+     * Returns the reason why the transformation should be changed.
+     */
+    public TransformationEvent.TransformationEventReason getTransformationEventReason() {
+        return this.reason;
+    }
 
-	/** The reason for the transformation change. */
-	public enum TransformationEventReason {
-		/** Caused by an infection */
-		INFECTION,
-		/**
-		 * When an entity spawns with the given transformation (may not always work, for
-		 * example there's no call for {@link EntityWerewolf}
-		 */
-		SPAWN,
-		/** When a command is executed */
-		COMMAND,
-		/** When the bestiary item is clicked in creative mode */
-		BESTIARY,
-		/**
-		 * When an aconite potion is used to cure a werewolf
-		 */
-		ACONITE,
-		/**
-		 * Other cause that doesn't fit into one of these categories
-		 */
-		OTHER
-	}
+    /**
+     * The reason for the transformation change.
+     */
+    public enum TransformationEventReason {
+        /**
+         * Caused by an infection
+         */
+        INFECTION,
+        /**
+         * When an entity spawns with the given transformation (may not always work, for
+         * example there's no call for {@link EntityWerewolf}
+         */
+        SPAWN,
+        /**
+         * When a command is executed
+         */
+        COMMAND,
+        /**
+         * When the bestiary item is clicked in creative mode
+         */
+        BESTIARY,
+        /**
+         * When an aconite potion is used to cure a werewolf
+         */
+        ACONITE,
+        /**
+         * Other cause that doesn't fit into one of these categories
+         */
+        OTHER
+    }
 }

@@ -49,7 +49,7 @@ public class StructureVillageComponent extends StructureVillagePieces.House1 {
         for (int i = 0; i < this.xSize; i++) {
             for (int j = 0; j < this.zSize; j++) {
                 this.clearCurrentPositionBlocksUpwards(worldIn, i, this.ySize, j, boundingBoxIn);
-                this.replaceAirAndLiquidDownwards(worldIn,worldIn.getBiome(new BlockPos(this.getXWithOffset(0, 0),
+                this.replaceAirAndLiquidDownwards(worldIn, worldIn.getBiome(new BlockPos(this.getXWithOffset(0, 0),
                         this.getYWithOffset(0), this.getZWithOffset(0, 0))).fillerBlock, i, -1, j, boundingBoxIn);
             }
         }

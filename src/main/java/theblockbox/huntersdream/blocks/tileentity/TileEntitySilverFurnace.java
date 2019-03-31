@@ -38,12 +38,18 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
     public static final String KEY_SMELTING_RECIPE_SINCE = "smeltingRecipeSince";
 
     private int ticks = 0;
-    /** The tick on which the current recipe has started smelting */
+    /**
+     * The tick on which the current recipe has started smelting
+     */
     private int smeltingRecipeSince;
-    /** The time that is needed to completely smelt the current recipe */
+    /**
+     * The time that is needed to completely smelt the current recipe
+     */
     private int fullNeededSmeltingTime;
     private int burnTime = 0;
-    /** The full burn time of the used fuel item (used for rendering) */
+    /**
+     * The full burn time of the used fuel item (used for rendering)
+     */
     private int fullBurnTime = 0;
     /**
      * The amount that should be subtracted from the first input stack when the

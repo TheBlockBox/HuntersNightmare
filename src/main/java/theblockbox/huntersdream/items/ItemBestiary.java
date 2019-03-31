@@ -19,13 +19,13 @@ import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import java.util.List;
 
 public class ItemBestiary extends Item {
-	public ItemBestiary() {
-		this.setMaxStackSize(1);
-	}
+    public ItemBestiary() {
+        this.setMaxStackSize(1);
+    }
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack heldStack = playerIn.getHeldItem(handIn);
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        ItemStack heldStack = playerIn.getHeldItem(handIn);
         if (worldIn.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, heldStack);
         } else {
@@ -39,11 +39,11 @@ public class ItemBestiary extends Item {
                 return new ActionResult<>(EnumActionResult.FAIL, heldStack);
             }
         }
-	}
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add(I18n.format(this.getTranslationKey() + ".tooltip"));
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(I18n.format(this.getTranslationKey() + ".tooltip"));
+    }
 }

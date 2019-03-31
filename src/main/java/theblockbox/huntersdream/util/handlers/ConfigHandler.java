@@ -60,6 +60,10 @@ public class ConfigHandler {
         @Config.RequiresWorldRestart
         public boolean generateWerewolfCabin = true;
 
+        @Config.LangKey(Reference.CFG_LANG + "werewolvesBreakDoors")
+        @Config.RequiresWorldRestart
+        public boolean werewolvesBreakDoors = true;
+
         public static class Ores {
             @Config.LangKey(Reference.CFG_LANG + "veinSize")
             @Config.RequiresWorldRestart
