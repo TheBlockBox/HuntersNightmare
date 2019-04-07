@@ -28,13 +28,11 @@ import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.ParticleClientInit;
 import theblockbox.huntersdream.api.init.ParticleCommonInit;
-import theblockbox.huntersdream.api.init.WerewolfTransformationOverlayInit;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
 import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 import java.util.Collection;
 import java.util.List;
@@ -101,8 +99,7 @@ public class TransformationClientEventHandler {
             GuiContainer gui = (GuiContainer) event.getGui();
             int x = gui.getGuiLeft() + 2;
             int y = gui.getGuiTop() - 18;
-            // TODO: Create less instances?
-            buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, new GuiSkillTab(),
+            buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, GuiSkillTab.INSTANCE.refresh(),
                     TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIconAsSprite()));
         }
     }
@@ -159,29 +156,21 @@ public class TransformationClientEventHandler {
                 // binding icon texture so that food bar still gets shown
                 mc.getTextureManager().bindTexture(Gui.ICONS);
             }
-        } else if (type == RenderGameOverlayEvent.ElementType.ALL) {
+        } else if ((type == RenderGameOverlayEvent.ElementType.ALL) && (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF)) {
             // draw overlays
-            if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
-                int width = event.getResolution().getScaledWidth();
-                int height = event.getResolution().getScaledHeight();
-                int transformationStage = WerewolfHelper.getTransformationStage(player);
-                if (transformationStage != 0) {
-                    mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    GlStateManager.enableAlpha();
-                    GlStateManager.enableBlend();
-                    Collection<WerewolfTransformationOverlay> collection = WerewolfTransformationOverlay
-                            .getOverlaysForTransformationStage(transformationStage);
-                    if (collection != null) {
-                        for (WerewolfTransformationOverlay overlay : collection) {
-                            overlay.draw(width, height);
-                        }
+            int width = event.getResolution().getScaledWidth();
+            int height = event.getResolution().getScaledHeight();
+            int transformationStage = WerewolfHelper.getTransformationStage(player);
+            if (transformationStage != 0) {
+                mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                GlStateManager.enableAlpha();
+                GlStateManager.enableBlend();
+                Collection<WerewolfTransformationOverlay> collection = WerewolfTransformationOverlay
+                        .getOverlaysForTransformationStage(transformationStage);
+                if (collection != null) {
+                    for (WerewolfTransformationOverlay overlay : collection) {
+                        overlay.draw(width, height);
                     }
-                    // draw heart beat for transformed werewolves
-                } else if (WerewolfHelper.isTransformed(player)) {
-                    mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    GlStateManager.enableAlpha();
-                    GlStateManager.enableBlend();
-                    WerewolfTransformationOverlayInit.BLOODSHOT_HEARTBEAT.draw(width, height);
                 }
             }
         }
@@ -193,14 +182,13 @@ public class TransformationClientEventHandler {
             mc.profiler.startSection("huntersdream:hunger_werewolf");
             event.setCanceled(true);
             GuiIngameForge ingGUI = (GuiIngameForge) mc.ingameGUI;
-            IVampirePlayer vampire = VampireHelper.getIVampire(player);
             GlStateManager.enableBlend();
             {
                 mc.getTextureManager().bindTexture(TransformationClientEventHandler.BLOOD_BAR);
                 int left = event.getResolution().getScaledWidth() / 2 + 91;
                 int top = event.getResolution().getScaledHeight() - GuiIngameForge.right_height;
                 GuiIngameForge.right_height += 10;
-                int blood = vampire.getBlood();
+                int blood = VampireHelper.getBlood(player);
 
                 for (int i = 0; i < 10; ++i) {
                     int idx = i * 2 + 1;

@@ -179,7 +179,9 @@ public class TransformationHelper {
             Optional<IInfectInTicks> iit = TransformationHelper.getIInfectInTicks(entity);
             Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
             // can't infect entity that already has the transformation
-            if (TransformationHelper.getTransformation(entity) == infection) {
+            Transformation transformation = TransformationHelper.getTransformation(entity);
+            // TODO: Check if ghosts really can't be infected
+            if ((transformation == infection) || (transformation == Transformation.GHOST)) {
                 return false;
             } else if (ionm.isPresent() && infection == Transformation.WEREWOLF) {
                 return true;

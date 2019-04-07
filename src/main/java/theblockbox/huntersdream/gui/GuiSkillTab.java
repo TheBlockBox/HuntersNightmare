@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class GuiSkillTab extends GuiScreen {
+    public static final GuiSkillTab INSTANCE = new GuiSkillTab();
     public static final int TEXTURE_WIDTH = 256;
     public static final int TEXTURE_HEIGHT = 190;
     public static final int TOOLTIP_COLOR = 11250603;
@@ -33,13 +34,18 @@ public class GuiSkillTab extends GuiScreen {
     public static final int MAX_TEXT_WIDTH = 200;
     private static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/skills/skill_window.png");
     // tp = TransformationPlayer
-    private final ITransformationPlayer tp;
+    private ITransformationPlayer tp;
     private float fade = 0.0F;
     private int xMiddle;
     private int yMiddle;
 
     public GuiSkillTab() {
+        this.refresh();
+    }
+
+    public GuiSkillTab refresh() {
         this.tp = TransformationHelper.getITransformationPlayer(Minecraft.getMinecraft().player);
+        return this;
     }
 
     @Override
@@ -49,8 +55,6 @@ public class GuiSkillTab extends GuiScreen {
         this.xMiddle = this.width / 2 - 2;
         this.yMiddle = this.height / 2 + 4;
 
-        // TODO: Use different collection?
-        // TODO: Make everything cleaner?
         Collection<ParentSkill> skills = Skill.getAllSkills().stream().filter(s -> s.isParentSkill() && s.canBeBoughtWithExperience())
                 .map(s -> s.getAsParentSkill().get()).filter(s -> s.isForTransformation(this.tp.getTransformation()))
                 .collect(Collectors.toCollection(ArrayDeque::new));
@@ -68,12 +72,11 @@ public class GuiSkillTab extends GuiScreen {
         // create buttons
         int buttonId = 0;
         for (ParentSkill parentSkill : skills) {
-            Skill skill = parentSkill.getSkillWithLevel(Math.min(this.tp.getSkillLevel(parentSkill) + 1,
-                    parentSkill.getMaximumLevel()));
             // create button
             int x = (int) (xOffset + radius * Math.cos(angle));
             int y = (int) (yOffset + radius * Math.sin(angle));
-            this.buttonList.add(new GuiButtonSkill(skill, buttonId++, x, y, this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH));
+            this.buttonList.add(new GuiButtonSkill(parentSkill.getSkillWithLevel(Math.min(this.tp.getSkillLevel(parentSkill) + 1,
+                    parentSkill.getMaximumLevel())), buttonId++, x, y, this.fontRenderer, GuiSkillTab.MAX_TEXT_WIDTH));
             angle += step;
         }
     }

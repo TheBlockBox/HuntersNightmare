@@ -20,7 +20,6 @@ public class EntityAIWerewolfAttack extends EntityAIAttackMelee {
             this.attackTick = 20;
             this.attacker.swingArm(EnumHand.MAIN_HAND);
             this.attacker.attackEntityAsMob(enemy);
-            // TODO: Needed?
             WerewolfHelper.setLastAttackBite(this.attacker, ChanceHelper.chanceOf(this.attacker, 25));
         }
     }

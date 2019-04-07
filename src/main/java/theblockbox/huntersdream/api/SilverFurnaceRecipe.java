@@ -91,7 +91,7 @@ public class SilverFurnaceRecipe {
         // if directory doesn't exist, make it and add default files
         if (!sfrLocation.exists()) {
             sfrLocation.mkdirs();
-            // TODO: Add recipes here
+            // add files here
         }
         JsonParser parser = new JsonParser();
         FileUtils.listFiles(sfrLocation, new String[]{"json"}, true).stream().map(file -> {

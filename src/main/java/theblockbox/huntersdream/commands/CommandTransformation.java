@@ -37,7 +37,8 @@ public class CommandTransformation extends CommandBase {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
                                           BlockPos targetPos) {
         if (args.length == 1) {
-            List<String> toReturn = Stream.of(Transformation.getAllTransformations()).map(Transformation::toString).collect(Collectors.toList());
+            List<String> toReturn = Stream.of(Transformation.getAllTransformations()).filter(Transformation::isTransformation)
+                    .map(Transformation::toString).collect(Collectors.toList());
             toReturn.add("get");
             return CommandBase.getListOfStringsMatchingLastWord(args, toReturn);
         } else {

@@ -53,7 +53,6 @@ public class BlockGarland extends Block {
     }
 
     public BlockGarland() {
-        // TODO: Better material and soundtype?
         super(Material.PLANTS);
         this.setSoundType(SoundType.PLANT);
         IBlockState defaultState = this.getDefaultState();
@@ -76,7 +75,6 @@ public class BlockGarland extends Block {
 
     public boolean isAllowedNeighbor(IBlockAccess blockAccess, BlockPos pos, EnumFacing facing) {
         IBlockState state = blockAccess.getBlockState(pos);
-        // TODO: Test if this works
         return (state.getBlockFaceShape(blockAccess, pos, facing) == BlockFaceShape.SOLID) || (state.getProperties()
                 .containsKey(BlockDoor.FACING) && (state.getValue(BlockDoor.FACING) == facing.getOpposite()));
     }
@@ -107,8 +105,6 @@ public class BlockGarland extends Block {
                     if (this.isAllowedNeighbor(blockAccess, pos.move(facing), opposite)) {
                         stateToReturn = stateToReturn.withProperty(property, true);
                     } else {
-                        // TODO: Needed? (Doesn't the default state only have properties with false?)
-                        stateToReturn = stateToReturn.withProperty(property, false);
                         removedGarlands++;
                     }
                     pos.move(opposite);
@@ -173,17 +169,17 @@ public class BlockGarland extends Block {
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         switch (rot) {
-            case CLOCKWISE_90:
+            case Rotation.CLOCKWISE_90:
                 return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.EAST))
                         .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.SOUTH))
                         .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.WEST))
                         .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.NORTH));
-            case CLOCKWISE_180:
+            case Rotation.CLOCKWISE_180:
                 return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.SOUTH))
                         .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.WEST))
                         .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.NORTH))
                         .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.EAST));
-            case COUNTERCLOCKWISE_90:
+            case Rotation.COUNTERCLOCKWISE_90:
                 return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.WEST))
                         .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.NORTH))
                         .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.EAST))

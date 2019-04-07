@@ -14,10 +14,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
@@ -34,16 +31,31 @@ import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.api.init.SkillInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
-import java.util.Optional;
 import java.util.Random;
 
 import static net.minecraft.init.SoundEvents.*;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class WerewolfEventHandler {
+    private static EntityLivingBase lastBittenEntity = null;
+    private static float lastBiteDamage = 0.0F;
+
+    // TODO: Better way to make damage not go through armor?
+    @SubscribeEvent
+    public static void onEntityDamaged(LivingDamageEvent event) {
+        EntityLivingBase attacked = event.getEntityLiving();
+        if ((WerewolfEventHandler.lastBittenEntity == attacked) && (event.getSource().getTrueSource() instanceof EntityLivingBase)) {
+            EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+            if (TransformationHelper.getITransformation(attacker).isPresent() && WerewolfHelper.isTransformed(attacker)
+                    && (attacker instanceof EntityPlayer) && WerewolfHelper.wasLastAttackBite(attacker)) {
+                event.setAmount(Math.max(WerewolfEventHandler.lastBiteDamage, event.getAmount()));
+                WerewolfEventHandler.lastBittenEntity = null;
+            }
+        }
+    }
+
     // use LivingDamage only for removing damage and LivingHurt for damage and
     // damaged resources
 
@@ -51,20 +63,20 @@ public class WerewolfEventHandler {
      * Called from {@link TransformationEventHandler#onEntityHurt(LivingHurtEvent)}
      */
     public static void onEntityHurt(LivingHurtEvent event) {
+        // reset last bitten entity
+        WerewolfEventHandler.lastBittenEntity = null;
         EntityLivingBase attacked = event.getEntityLiving();
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
             EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
-            Optional<ITransformation> transformationAttacker = TransformationHelper.getITransformation(attacker);
-
-            if (transformationAttacker.isPresent() && WerewolfHelper.isTransformed(attacker)) {
-                // TODO: Make damage go through armor
-                if (attacker instanceof EntityPlayer) {
-                    if (WerewolfHelper.wasLastAttackBite(attacker)) {
-                        int biteLevel = TransformationHelper.getITransformationPlayer((EntityPlayer) attacker).getSkillLevel(SkillInit.BITE_0);
-                        if ((biteLevel >= 2) && (attacked.isEntityUndead()) || (TransformationHelper.getTransformation(attacked).isUndead())) {
-                            attacked.addPotionEffect(new PotionEffect(MobEffects.WITHER, 100));
-                        }
+            if (TransformationHelper.getITransformation(attacker).isPresent() && WerewolfHelper.isTransformed(attacker)) {
+                if ((attacker instanceof EntityPlayer) && WerewolfHelper.wasLastAttackBite(attacker)) {
+                    if ((TransformationHelper.getITransformationPlayer((EntityPlayer) attacker).getSkillLevel(SkillInit.BITE_0) >= 2)
+                            && (attacked.isEntityUndead()) || (TransformationHelper.getTransformation(attacked).isUndead())) {
+                        attacked.addPotionEffect(new PotionEffect(MobEffects.WITHER, 100));
                     }
+                    // set last bitten entity and bite damage
+                    WerewolfEventHandler.lastBittenEntity = attacked;
+                    WerewolfEventHandler.lastBiteDamage = event.getAmount();
                 }
 
                 // handle werewolf infection
@@ -111,14 +123,12 @@ public class WerewolfEventHandler {
         }
     }
 
-    // heal werewolf players twice as fast as normal
+    // heal transformed werewolf players twice as fast as normal
     @SubscribeEvent
     public static void onWerewolfPlayerHeal(LivingHealEvent event) {
         EntityLivingBase entity = event.getEntityLiving();
-        // TODO: Should this work for human AND werewolf form or only for human form?
-        // TODO: Find better way for regenerating twice as fast
-        if ((entity instanceof EntityPlayerMP)
-                && (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF)) {
+        if ((entity instanceof EntityPlayerMP) && (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF)
+                && WerewolfHelper.isTransformed(entity)) {
             event.setAmount(event.getAmount() * 2);
         }
     }
@@ -191,7 +201,6 @@ public class WerewolfEventHandler {
         EntityPlayer player = event.getEntityPlayer();
         if ((TransformationHelper.getTransformation(player) == Transformation.WEREWOLF)
                 && WerewolfHelper.isTransformed(player)) {
-            // TODO: set to EntityPlayer.SleepResult#NOT_POSSIBLE_NOW ?
             event.setResult(EntityPlayer.SleepResult.OTHER_PROBLEM);
             if (!player.world.isRemote) {
                 player.sendStatusMessage(new TextComponentTranslation(Reference.MODID + ".werewolfNotAllowedToSleep"),

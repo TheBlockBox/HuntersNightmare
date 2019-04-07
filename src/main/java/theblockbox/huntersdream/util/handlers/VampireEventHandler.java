@@ -23,7 +23,6 @@ import theblockbox.huntersdream.api.init.PotionInit;
 import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.VampireFoodStats;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class VampireEventHandler {
@@ -33,15 +32,15 @@ public class VampireEventHandler {
         EntityPlayer player = event.getEntityPlayer();
         if ((TransformationHelper.getTransformation(player) == Transformation.VAMPIRE) && player.isSneaking()
                 && event.getTarget() instanceof EntityLivingBase) {
-            IVampirePlayer vampire = VampireHelper.getIVampire(player);
             event.setCancellationResult(EnumActionResult.SUCCESS);
             event.setCanceled(true);
-            int time = player.ticksExisted - vampire.getTimeDrinking();
-            if (!player.world.isRemote && time > 20 && (vampire.getBlood() < 20)) {
-                player.world.playSound(null, player.getPosition(), SoundInit.VAMPIRE_GULP, SoundCategory.PLAYERS, 10,
-                        1);
-                vampire.setTimeDrinking(player.ticksExisted);
-                GeneralHelper.executeOnMainThreadIn(() -> VampireHelper.drinkBlood(player, (EntityLivingBase) event.getTarget()), 400, player.world.getMinecraftServer(), "VampireBloodDrinking");
+            long totalWorldTime = player.world.getTotalWorldTime();
+            if (!player.world.isRemote && ((totalWorldTime - VampireHelper.getTimeDrinking(player)) > 20) && (VampireHelper.getBlood(player) < 20)) {
+                player.world.playSound(null, player.getPosition(), SoundInit.VAMPIRE_GULP, SoundCategory.PLAYERS,
+                        10, 1);
+                VampireHelper.setTimeDrinking(player, totalWorldTime);
+                GeneralHelper.executeOnMainThreadIn(() -> VampireHelper.drinkBlood(player, (EntityLivingBase) event.getTarget()),
+                        400, player.world.getMinecraftServer(), "VampireBloodDrinking");
             }
         }
     }
@@ -64,7 +63,7 @@ public class VampireEventHandler {
      * Called from {@link CapabilitiesInit#onPlayerClone(PlayerEvent.Clone)}
      */
     public static void onVampireRespawn(EntityPlayer player) {
-        VampireHelper.getIVampire(player).setBlood(10.0D);
+        VampireHelper.setBlood(player, 10.0D);
         if (!player.world.isRemote && player.world.isDaytime())
             player.addPotionEffect(new PotionEffect(PotionInit.POTION_SUNSCREEN, 300, 0, false, false));
     }
@@ -78,7 +77,7 @@ public class VampireEventHandler {
             if (TransformationHelper.getTransformation(player) == Transformation.WEREWOLF) {
                 WerewolfHelper.setTransformationStage((EntityPlayerMP) player, 0);
             }
-            PacketHandler.sendBloodMessage((EntityPlayerMP) player);
+            PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
         }
         if (TransformationHelper.getTransformation(player) == Transformation.VAMPIRE) {
             player.foodStats = VampireFoodStats.INSTANCE;

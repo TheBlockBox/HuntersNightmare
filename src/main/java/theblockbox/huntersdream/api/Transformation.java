@@ -57,6 +57,10 @@ public class Transformation {
      */
     public static final Transformation VAMPIRE = of("vampire").setCalculateDamage(VampireHelper::calculateDamage)
             .setCalculateReducedDamage(VampireHelper::calculateReducedDamage).setUndead().create();
+    /**
+     * The transformation for ghosts
+     */
+    public static final Transformation GHOST = of("ghost").setTransformationType(Transformation.TransformationType.UNPHYSICAL_SUPERNATURAL).create();
 
     private static Transformation[] transformations = null;
     private final Transformation.TransformationEntry entry;

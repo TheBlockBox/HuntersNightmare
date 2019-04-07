@@ -19,6 +19,7 @@ import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -31,7 +32,6 @@ import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
-import theblockbox.huntersdream.entity.ai.EntityAIBreakAllDoors;
 import theblockbox.huntersdream.entity.ai.EntityAIWerewolfAttack;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
@@ -84,12 +84,12 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
     }
 
     public EntityWerewolf(World worldIn, int textureIndex, EntityCreature entity, NBTTagCompound extraData) {
-        this(worldIn, textureIndex, (TransformationHelper.getITransformationCreature(entity).isPresent() ? "$bycap" : "")
+        this(worldIn, textureIndex, (TransformationHelper.getITransformationCreature(entity).isPresent() ? "$useCap" : "")
                 + entity.getClass().getName(), extraData);
     }
 
     public EntityWerewolf(World worldIn) {
-        this(worldIn, -1, "$bycap" + EntityVillager.class.getName(), GeneralHelper.EMPTY_COMPOUND);
+        this(worldIn, -1, "$useCap" + EntityVillager.class.getName(), GeneralHelper.EMPTY_COMPOUND);
     }
 
     public boolean usesAlexSkin() {
@@ -114,7 +114,18 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
     protected void initEntityAI() {
         super.initEntityAI();
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIBreakAllDoors(this));
+        this.tasks.addTask(1, new EntityAIBreakDoor(this) {
+            @Override
+            public void updateTask() {
+                super.updateTask();
+                // if the door should be destroyed but it couldn't be since the difficulty was not hard, destroy it
+                if (this.breakingTime == 240 && this.entity.world.getDifficulty() == EnumDifficulty.HARD) {
+                    this.entity.world.setBlockToAir(this.doorPosition);
+                    this.entity.world.playEvent(1021, this.doorPosition, 0);
+                    this.entity.world.playEvent(2001, this.doorPosition, Block.getIdFromBlock(this.doorBlock));
+                }
+            }
+        });
         this.tasks.addTask(2, new EntityAIWerewolfAttack(this, EntityWerewolf.SPEED + 0.2D, false));
 
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
@@ -192,73 +203,66 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
                             new WerewolfTransformingEvent(this, true, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END))) {
                         EntityCreature e;
                         String entityName = this.getUntransformedEntityName();
-
-                        // TODO: Remove this when no control is done (only the line below and its
-                        // bracket)
-                        if (!entityName.startsWith("player")) {
-
-                            if (entityName.startsWith("$bycap")) {
-                                String eName = entityName.substring(6);
-                                try {
-                                    @SuppressWarnings("unchecked")
-                                    Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
-                                            .forName(eName);
-                                    Constructor<?> constructor = entityClass.getConstructor(World.class);
-                                    e = (EntityCreature) constructor.newInstance(this.world);
-                                    // remember: this is only server side and the client doesn't actually need to
-                                    // know about this
-                                    ITransformationCreature transformation = TransformationHelper
-                                            .getITransformationCreature(e).get();
-                                    transformation.setTextureIndex(this.getTextureIndex());
-                                    transformation.setTransformation(this.getTransformation());
-                                } catch (NullPointerException ex) {
-                                    NullPointerException exception = new NullPointerException(
-                                            "Either the entity's capability or something else was null");
-                                    exception.setStackTrace(ex.getStackTrace());
-                                    throw exception;
-                                } catch (ClassNotFoundException ex) {
-                                    throw new NullPointerException("Can't find class " + eName);
-                                } catch (ClassCastException ex) {
-                                    throw new IllegalArgumentException("Given class " + eName + " is not an entity");
-                                } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-                                        | InstantiationException | InvocationTargetException ex) {
-                                    throw new IllegalArgumentException(
-                                            "This entity does not have an accessible constructor and is therefore not registered");
-                                }
-                            } else {
-                                try {
-                                    @SuppressWarnings("unchecked")
-                                    Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
-                                            .forName(entityName);
-                                    Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
-                                            Transformation.class);
-                                    e = (EntityCreature) constructor.newInstance(this.world, this.getTextureIndex(),
-                                            this.getTransformation());
-                                } catch (ClassNotFoundException ex) {
-                                    throw new RuntimeException(ex);
-                                } catch (ClassCastException ex) {
-                                    throw new RuntimeException("Given class " + entityName + " is not an entity", ex);
-                                } catch (NoSuchMethodException | InvocationTargetException | SecurityException
-                                        | IllegalAccessException ex) {
-                                    throw new RuntimeException("Class " + entityName
-                                            + " does not have an accessible constructor with parameters World, int, Transformation",
-                                            ex);
-                                } catch (InstantiationException ex) {
-                                    throw new RuntimeException("Can't instantiate class " + entityName, ex);
-                                }
+                        if (entityName.startsWith("$useCap")) {
+                            String eName = entityName.substring(6);
+                            try {
+                                @SuppressWarnings("unchecked")
+                                Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
+                                        .forName(eName);
+                                Constructor<?> constructor = entityClass.getConstructor(World.class);
+                                e = (EntityCreature) constructor.newInstance(this.world);
+                                // remember: this is only server side and the client doesn't actually need to
+                                // know about this
+                                ITransformationCreature transformation = TransformationHelper
+                                        .getITransformationCreature(e).get();
+                                transformation.setTextureIndex(this.getTextureIndex());
+                                transformation.setTransformation(this.getTransformation());
+                            } catch (NullPointerException ex) {
+                                NullPointerException exception = new NullPointerException(
+                                        "Either the entity's capability or something else was null");
+                                exception.setStackTrace(ex.getStackTrace());
+                                throw exception;
+                            } catch (ClassNotFoundException ex) {
+                                throw new NullPointerException("Can't find class " + eName);
+                            } catch (ClassCastException ex) {
+                                throw new IllegalArgumentException("Given class " + eName + " is not an entity");
+                            } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+                                    | InstantiationException | InvocationTargetException ex) {
+                                throw new IllegalArgumentException(
+                                        "This entity does not have an accessible constructor and is therefore not registered");
                             }
-
-                            // set health
-                            this.extraData.setFloat("Health",
-                                    e.getMaxHealth() / (this.getMaxHealth() / this.getHealth()));
-                            ExtraDataEvent extraDataEvent = new ExtraDataEvent(e, this.extraData, false);
-                            MinecraftForge.EVENT_BUS.post(extraDataEvent);
-                            e.readEntityFromNBT(extraDataEvent.getExtraData());
-
-                            e.setPosition(this.posX, this.posY, this.posZ);
-                            this.world.spawnEntity(e);
+                        } else {
+                            try {
+                                @SuppressWarnings("unchecked")
+                                Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
+                                        .forName(entityName);
+                                Constructor<?> constructor = entityClass.getConstructor(World.class, int.class,
+                                        Transformation.class);
+                                e = (EntityCreature) constructor.newInstance(this.world, this.getTextureIndex(),
+                                        this.getTransformation());
+                            } catch (ClassNotFoundException ex) {
+                                throw new RuntimeException(ex);
+                            } catch (ClassCastException ex) {
+                                throw new RuntimeException("Given class " + entityName + " is not an entity", ex);
+                            } catch (NoSuchMethodException | InvocationTargetException | SecurityException
+                                    | IllegalAccessException ex) {
+                                throw new RuntimeException("Class " + entityName
+                                        + " does not have an accessible constructor with parameters World, int, Transformation",
+                                        ex);
+                            } catch (InstantiationException ex) {
+                                throw new RuntimeException("Can't instantiate class " + entityName, ex);
+                            }
                         }
 
+                        // set health
+                        this.extraData.setFloat("Health",
+                                e.getMaxHealth() / (this.getMaxHealth() / this.getHealth()));
+                        ExtraDataEvent extraDataEvent = new ExtraDataEvent(e, this.extraData, false);
+                        MinecraftForge.EVENT_BUS.post(extraDataEvent);
+                        e.readEntityFromNBT(extraDataEvent.getExtraData());
+
+                        e.setPosition(this.posX, this.posY, this.posZ);
+                        this.world.spawnEntity(e);
                         this.world.removeEntity(this);
                     }
                 }

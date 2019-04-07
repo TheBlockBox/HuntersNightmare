@@ -12,7 +12,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 /**
  * A class for vampires extending {@link FoodStats} to change the way hunger
@@ -37,24 +36,23 @@ public class VampireFoodStats extends FoodStats {
 
     @Override
     public void onUpdate(EntityPlayer player) {
-        IVampirePlayer vampire = VampireHelper.getIVampire(player);
         if (player.ticksExisted % 2 == 0) {
-            int blood = vampire.getBlood();
+            int blood = VampireHelper.getBlood(player);
 
             if (player.isPotionActive(MobEffects.HUNGER) && (blood != 0)) {
-                double newBlood = vampire.getBloodDouble()
+                double newBlood = VampireHelper.getBloodDouble(player)
                         - (0.04F * (player.getActivePotionEffect(MobEffects.HUNGER).getAmplifier() + 1.0F));
 
                 if (newBlood <= 0) {
                     newBlood = 0;
                 }
 
-                vampire.setBlood(newBlood);
+                VampireHelper.setBlood(player, newBlood);
             }
 
             if (player.ticksExisted % 78 == 0) {
-                if (vampire.getBloodDouble() >= 1 && player.shouldHeal()) {
-                    vampire.decrementBlood();
+                if (VampireHelper.getBloodDouble(player) >= 1 && player.shouldHeal()) {
+                    VampireHelper.decrementBlood(player);
                     player.heal(1);
                 } else if (blood <= 0 && player.getHealth() > 1.0F) {
                     player.attackEntityFrom(DamageSource.STARVE, 1.0F);
@@ -62,12 +60,12 @@ public class VampireFoodStats extends FoodStats {
                 }
 
                 if (player.ticksExisted % 156 == 0 && blood >= 1) {
-                    vampire.setBlood(vampire.getBloodDouble() - 0.0416D);
+                    VampireHelper.setBlood(player, VampireHelper.getBloodDouble(player) - 0.0416D);
                 }
             }
 
-            if (vampire.getBlood() != blood)
-                PacketHandler.sendBloodMessage((EntityPlayerMP) player);
+            if (VampireHelper.getBlood(player) != blood)
+                PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
         }
     }
 

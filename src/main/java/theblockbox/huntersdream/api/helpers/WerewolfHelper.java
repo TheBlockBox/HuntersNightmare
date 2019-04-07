@@ -271,8 +271,8 @@ public class WerewolfHelper {
                         return new EntityWerewolf(world, TransformationHelper
                                 .getITransformationCreature(entity)
                                 .orElseThrow(() -> new IllegalArgumentException(
-                                        "Entity does not implement interface \"ITransformation\" or has TransformationCreature capability"))
-                                .getTextureIndex(), "$bycap" + entity.getClass().getName(),
+                                        "Entity does not implement interface \"ITransformation\" or does not have the TransformationCreature capability"))
+                                .getTextureIndex(), "$useCap" + entity.getClass().getName(),
                                 WerewolfHelper.postExtraDataEvent(entity, true));
                     }
                 }
@@ -560,7 +560,7 @@ public class WerewolfHelper {
                     "transformations.huntersdream:werewolf.transformingInto."
                             + WerewolfHelper.getTransformationStage(player));
             message.getStyle().setItalic(Boolean.TRUE).setColor(TextFormatting.RED);
-            player.sendStatusMessage(message, true); // TODO: Make text appear over multiple lines
+            player.sendStatusMessage(message, true);
             player.getServerWorld().getEntityTracker().sendToTrackingAndSelf(player, new SPacketParticles(
                     ParticleCommonInit.BLOOD_PARTICLE, false, (float) player.posX, (float) player.posY,
                     (float) player.posZ, 0.0F, 0.0F, 0.0F, 0.0F, 30));

@@ -38,7 +38,6 @@ public class SkillRegistryEvent extends Event {
      *                                  the same registry name
      * @see #registerSkills(Skill...)
      */
-    // TODO: Remove the boolean return type
     public boolean registerSkill(Skill skill) throws IllegalArgumentException {
         Validate.notNull(skill);
         String registryName = skill.toString();

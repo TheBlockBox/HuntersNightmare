@@ -31,7 +31,6 @@ public class PacketHandler {
 
     public static void register() {
         PacketHandler.registerMessage(TransformationMessage.Handler.class, TransformationMessage.class);
-        PacketHandler.registerMessage(BloodMessage.Handler.class, BloodMessage.class);
         PacketHandler.INSTANCE.registerMessage(SkillUnlockMessage.Handler.class, SkillUnlockMessage.class,
                 PacketHandler.networkID++, SERVER);
         PacketHandler.INSTANCE.registerMessage(ActivateSkillMessage.Handler.class, ActivateSkillMessage.class,
@@ -70,7 +69,6 @@ public class PacketHandler {
                 () -> PacketHandler.INSTANCE.sendToDimension(message, applyOn.world.provider.getDimension()));
     }
 
-    // TODO: Look where this is used to send that the player has transformed
     public static void sendTransformationMessageToPlayer(EntityPlayerMP applyOn, EntityPlayerMP sendTo) {
         ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
         TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
@@ -92,12 +90,6 @@ public class PacketHandler {
         ActivateSkillMessage message = new ActivateSkillMessage(toActivate);
         PacketHandler.afterPacketSent(SERVER, GeneralHelper.getSideFromWorld(forSideCheck), message,
                 () -> PacketHandler.INSTANCE.sendToServer(message));
-    }
-
-    public static void sendBloodMessage(EntityPlayerMP player) {
-        BloodMessage message = new BloodMessage(player);
-        PacketHandler.afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(player), message,
-                () -> PacketHandler.INSTANCE.sendTo(message, player));
     }
 
     public static void sendUseSkillMessage(World forSideCheck) {

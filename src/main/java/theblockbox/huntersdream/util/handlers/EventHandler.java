@@ -70,7 +70,6 @@ public class EventHandler {
     public static void onBiomeDecoration(DecorateBiomeEvent.Decorate event) {
         Event.Result result = event.getResult();
         Random random = event.getRand();
-        // TODO: Better percentage
         if ((result == Event.Result.ALLOW || result == Event.Result.DEFAULT)
                 && event.getType() == DecorateBiomeEvent.Decorate.EventType.FLOWERS
                 && ChanceHelper.chanceOf(random, 1.0D)) {

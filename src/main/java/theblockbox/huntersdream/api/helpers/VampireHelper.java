@@ -1,28 +1,21 @@
 package theblockbox.huntersdream.api.helpers;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.api.init.PotionInit;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
-
-import javax.annotation.Nonnull;
 
 public class VampireHelper {
-    public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = CapabilitiesInit.CAPABILITY_VAMPIRE;
-
     public static void drinkBlood(EntityLivingBase vampire, EntityLivingBase drinkFrom) {
         VampireHelper.validateIsVampire(vampire);
 
@@ -31,18 +24,12 @@ public class VampireHelper {
         }
         if (vampire instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) vampire;
-            IVampirePlayer vamp = VampireHelper.getIVampire(player);
-            if (vamp.getBlood() < 20) {
-                vamp.incrementBlood();
+            if (VampireHelper.getBlood(vampire) < 20) {
+                VampireHelper.incrementBlood(vampire);
             }
-            PacketHandler.sendBloodMessage(player);
+            PacketHandler.sendTransformationMessage(player);
         }
         drinkFrom.attackEntityFrom(new DamageSource("vampireDrankBlood"), 1.0F);
-    }
-
-    public static IVampirePlayer getIVampire(@Nonnull EntityPlayer player) {
-        Validate.notNull(player);
-        return player.getCapability(VampireHelper.CAPABILITY_VAMPIRE, null);
     }
 
     public static float calculateReducedDamage(EntityLivingBase vampire, float initialDamage) {
@@ -80,5 +67,50 @@ public class VampireHelper {
             canSeeSky = GeneralHelper.canBlockSeeSky(world, pos);
         }
         return !vampire.isPotionActive(PotionInit.POTION_SUNSCREEN) && world.isDaytime() && canSeeSky;
+    }
+
+    /**
+     * Returns a vampire's current blood. One blood is half a blood drop.
+     */
+    public static int getBlood(EntityLivingBase entity) {
+        return MathHelper.ceil(VampireHelper.getBloodDouble(entity));
+    }
+
+    public static double getBloodDouble(EntityLivingBase entity) {
+        VampireHelper.validateIsVampire(entity);
+        return TransformationHelper.getTransformationData(entity).getDouble("blood");
+    }
+
+    /**
+     * Sets the blood of a vampire to the given double
+     * No packet is being sent to the client
+     */
+    public static void setBlood(EntityLivingBase entity, double blood) {
+        VampireHelper.validateIsVampire(entity);
+        NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
+        compound.setDouble("blood", blood);
+    }
+
+    public static void incrementBlood(EntityLivingBase entity) {
+        VampireHelper.setBlood(entity, VampireHelper.getBloodDouble(entity) + 1.0D);
+    }
+
+    public static void decrementBlood(EntityLivingBase entity) {
+        VampireHelper.setBlood(entity, VampireHelper.getBloodDouble(entity) - 1.0D);
+    }
+
+    public static long getTimeDrinking(EntityLivingBase entity) {
+        VampireHelper.validateIsVampire(entity);
+        return TransformationHelper.getTransformationData(entity).getLong("timeDrinking");
+    }
+
+    /**
+     * Sets the time since which the given vampire is drinking blood.
+     * No packet is being sent to the client
+     */
+    public static void setTimeDrinking(EntityLivingBase entity, long blood) {
+        VampireHelper.validateIsVampire(entity);
+        NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
+        compound.setLong("timeDrinking", blood);
     }
 }

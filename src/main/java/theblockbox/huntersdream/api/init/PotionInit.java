@@ -6,12 +6,10 @@ import net.minecraft.potion.PotionType;
 import net.minecraftforge.event.RegistryEvent;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.potions.PotionAconite;
-import theblockbox.huntersdream.potions.PotionFear;
 import theblockbox.huntersdream.potions.PotionSunscreen;
 
 public class PotionInit {
 
-    public static final Potion POTION_FEAR = new PotionFear();
     public static final Potion POTION_ACONITE = new PotionAconite();
     public static final Potion POTION_SUNSCREEN = new PotionSunscreen();
 
@@ -19,7 +17,7 @@ public class PotionInit {
             .setRegistryName(GeneralHelper.newResLoc("aconite"));
 
     public static void registerPotions(RegistryEvent.Register<Potion> event) {
-        event.getRegistry().registerAll(PotionInit.POTION_FEAR, PotionInit.POTION_ACONITE, PotionInit.POTION_SUNSCREEN);
+        event.getRegistry().registerAll(PotionInit.POTION_ACONITE, PotionInit.POTION_SUNSCREEN);
     }
 
     public static void registerPotionTypes(RegistryEvent.Register<PotionType> event) {

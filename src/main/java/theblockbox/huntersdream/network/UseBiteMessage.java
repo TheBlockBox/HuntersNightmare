@@ -56,7 +56,6 @@ public class UseBiteMessage extends MessageBase<UseBiteMessage> {
                             WerewolfHelper.setBiteTicks(player, totalWorldTime);
                             WerewolfHelper.setLastAttackBite(player, true);
                             PacketHandler.sendTransformationMessage(player);
-                            // TODO: Call different method for attacking?
                             player.attackTargetEntityWithCurrentItem(entity);
                         } else {
                             Main.getLogger().error("The player " + player + " tried to use the bite skill but couldn't since " +

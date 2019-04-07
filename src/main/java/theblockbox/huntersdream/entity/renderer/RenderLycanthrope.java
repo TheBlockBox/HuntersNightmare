@@ -15,8 +15,6 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.model.ModelWerewolf;
-import theblockbox.huntersdream.entity.model.ModelWerewolfAlex;
-import theblockbox.huntersdream.entity.model.ModelWerewolfSteve;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 
@@ -25,13 +23,9 @@ import java.util.Optional;
 public abstract class RenderLycanthrope<T extends EntityLivingBase> extends RenderLivingBase<T> implements LayerRenderer<T> {
     private static final ResourceLocation WEREWOLF_OVERLAY = GeneralHelper.newResLoc(
             Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_overlay.png");
-    protected ModelWerewolfAlex modelAlex = new ModelWerewolfAlex();
-    protected ModelWerewolfSteve modelSteve;
 
     public RenderLycanthrope(RenderManager manager) {
-        super(manager, new ModelWerewolfSteve(), 0.5F);
-        // assign this so that the steve model is always the same
-        this.modelSteve = (ModelWerewolfSteve) this.mainModel;
+        super(manager, new ModelWerewolf(), 0.5F);
         this.addLayer(this);
     }
 
@@ -53,15 +47,9 @@ public abstract class RenderLycanthrope<T extends EntityLivingBase> extends Rend
     }
 
     @Override
-    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        // set correct model
-        this.mainModel = RenderLycanthrope.isAlex(entity) ? this.modelAlex : this.modelSteve;
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
-    }
-
-    @Override
     public void doRenderLayer(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
                               float netHeadYaw, float headPitch, float scale) {
+        // add werewolf overlay
         this.bindTexture(RenderLycanthrope.WEREWOLF_OVERLAY);
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();

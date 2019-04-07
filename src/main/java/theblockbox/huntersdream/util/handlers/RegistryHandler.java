@@ -127,9 +127,8 @@ public class RegistryHandler {
         OreDictionaryInit.registerOres();
         ParticleCommonInit.init();
         GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
-        // TODO: Better weights?
-        GameRegistry.registerWorldGenerator(new WorldGenWerewolfCabin(), 1);
-        GameRegistry.registerWorldGenerator(new WorldGenHuntersCamp(), 1);
+        GameRegistry.registerWorldGenerator(new WorldGenWerewolfCabin(), 2);
+        GameRegistry.registerWorldGenerator(new WorldGenHuntersCamp(), 2);
         for (Biome biome : Biome.REGISTRY) {
             biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
         }

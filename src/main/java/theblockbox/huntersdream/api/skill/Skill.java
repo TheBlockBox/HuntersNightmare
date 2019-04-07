@@ -48,7 +48,7 @@ public abstract class Skill {
     }
 
     /**
-     * Returns an unmodifiable collection of all skills.
+     * Returns a modifiable collection of all skills.
      */
     public static Collection<Skill> getAllSkills() {
         return Skill.skills == null ? Collections.emptySet() : Collections.unmodifiableCollection(Skill.skills.values());

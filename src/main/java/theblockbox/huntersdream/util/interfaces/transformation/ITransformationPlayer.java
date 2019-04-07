@@ -8,6 +8,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.skill.ChildSkill;
 import theblockbox.huntersdream.api.skill.ParentSkill;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
@@ -17,7 +18,6 @@ import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * ITransform for players (players can have xp)
@@ -94,12 +94,14 @@ public interface ITransformationPlayer extends ITransformation {
      * Returns the level of the given skill the player has.
      * If the player doesn't have the skill, -1 is returned.
      */
-    // TODO: Other way?
     public default int getSkillLevel(ParentSkill skill) {
-        Stream.Builder<Skill> builder = Stream.builder();
-        for (Skill s : skill.getChildSkills())
-            builder.add(s);
-        return builder.add(skill).build().filter(this::hasSkill).mapToInt(Skill::getLevel).max().orElse(-1);
+        int maxLevel = this.hasSkill(skill) ? skill.getLevel() : -1;
+        for (ChildSkill childSkill : skill.getChildSkills()) {
+            if (this.hasSkill(childSkill)) {
+                maxLevel = Math.max(maxLevel, childSkill.getLevel());
+            }
+        }
+        return maxLevel;
     }
 
     public ItemHandlerClothingTab getClothingTab();
@@ -107,13 +109,6 @@ public interface ITransformationPlayer extends ITransformation {
     public void setClothingTab(ItemHandlerClothingTab clothingTab);
 
     public static class TransformationPlayer implements ITransformationPlayer {
-        private static final NBTTagCompound DEFAULT_TRANSFORMATION_DATA = new NBTTagCompound();
-
-        static {
-            // TODO: Test if this makes sense
-            ITransformationPlayer.TransformationPlayer.DEFAULT_TRANSFORMATION_DATA.setString("transformation", Transformation.WEREWOLF.toString());
-        }
-
         private Transformation transformation = Transformation.HUMAN;
         private int textureIndex = 0;
         /**
@@ -122,7 +117,7 @@ public interface ITransformationPlayer extends ITransformation {
         private Set<Skill> skills = new HashSet<>();
         private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
         private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
-        private NBTTagCompound transformationData = ITransformationPlayer.TransformationPlayer.DEFAULT_TRANSFORMATION_DATA;
+        private NBTTagCompound transformationData = new NBTTagCompound();
         private Skill activeSkill = null;
 
         @Override

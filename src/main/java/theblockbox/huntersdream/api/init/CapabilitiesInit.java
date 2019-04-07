@@ -27,7 +27,6 @@ import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.util.interfaces.transformation.IVampirePlayer;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
 public class CapabilitiesInit {
@@ -39,8 +38,6 @@ public class CapabilitiesInit {
     public static final Capability<IInfectInTicks> CAPABILITY_INFECT_IN_TICKS = null;
     @CapabilityInject(IInfectOnNextMoon.class)
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = null;
-    @CapabilityInject(IVampirePlayer.class)
-    public static final Capability<IVampirePlayer> CAPABILITY_VAMPIRE = null;
     @CapabilityInject(IItemHandler.class)
     public static final Capability<IItemHandler> CAPABILITY_ITEM_HANDLER = null;
 
@@ -52,7 +49,6 @@ public class CapabilitiesInit {
         CapabilityManager.INSTANCE.register(IInfectInTicks.class, new IInfectInTicks.InfectInTicksStorage(), IInfectInTicks.InfectInTicks::new);
         CapabilityManager.INSTANCE.register(IInfectOnNextMoon.class, new IInfectOnNextMoon.InfectOnNextMoonStorage(),
                 IInfectOnNextMoon.InfectOnNextMoon::new);
-        CapabilityManager.INSTANCE.register(IVampirePlayer.class, new IVampirePlayer.VampireStorage(), IVampirePlayer.Vampire::new);
     }
 
     public static final ResourceLocation TRANSFORMATION_PLAYER_CAPABILITIY = GeneralHelper
@@ -61,7 +57,6 @@ public class CapabilitiesInit {
             .newResLoc("transformationcreature");
     public static final ResourceLocation INFECT_IN_TICKS_CAPABILITY = GeneralHelper.newResLoc("infectinticks");
     public static final ResourceLocation INFECT_ON_NEXT_MOON = GeneralHelper.newResLoc("infectonnextmoon");
-    public static final ResourceLocation VAMPIRE = GeneralHelper.newResLoc("vampire");
     public static final ResourceLocation ITEM_HANDLER = GeneralHelper.newResLoc("itemhandler");
 
     @SubscribeEvent
@@ -70,7 +65,6 @@ public class CapabilitiesInit {
         if (entity instanceof EntityPlayer) {
             event.addCapability(CapabilitiesInit.TRANSFORMATION_PLAYER_CAPABILITIY,
                     new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
-            event.addCapability(CapabilitiesInit.VAMPIRE, new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_VAMPIRE));
         } else if (entity instanceof EntityVillager) {
             event.addCapability(CapabilitiesInit.TRANSFORMATION_CREATURE_CAPABILITY,
                     new TransformationCreatureProvider(Transformation.WEREWOLF, Transformation.VAMPIRE));
@@ -135,7 +129,6 @@ public class CapabilitiesInit {
         for (EntityPlayerMP p : server.getPlayerList().getPlayers()) {
             PacketHandler.sendTransformationMessageToPlayer(p, player);
         }
-        PacketHandler.sendBloodMessage(player);
         PacketHandler.sendTransformationMessage(player);
     }
 }

@@ -131,7 +131,7 @@ huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
 huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
 huntersdream.config.showActiveSkill=Show active skill
 huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
-huntersdream.config.werewolvesBreakDoors=Werewolves destroy doors (including iron)
+huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
 
 
 # Skills

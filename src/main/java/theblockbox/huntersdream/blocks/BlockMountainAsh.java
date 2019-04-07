@@ -2,7 +2,10 @@ package theblockbox.huntersdream.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLogic;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -51,10 +54,20 @@ public class BlockMountainAsh extends Block {
             PropertyEnum.create("west", BlockMountainAsh.EnumAttachPosition.class);
     public static final PropertyEnum<BlockMountainAsh.EnumAttachPosition> EAST =
             PropertyEnum.create("east", BlockMountainAsh.EnumAttachPosition.class);
+    public static final Material MOUNTAIN_ASH = new MaterialLogic(MapColor.FOLIAGE) {
+        @Override
+        public boolean isSolid() {
+            return true;
+        }
+
+        @Override
+        public EnumPushReaction getPushReaction() {
+            return EnumPushReaction.BLOCK;
+        }
+    };
 
     public BlockMountainAsh() {
-        // TODO: Better material and soundtype?
-        super(Material.CIRCUITS);
+        super(BlockMountainAsh.MOUNTAIN_ASH);
         this.setSoundType(SoundType.PLANT);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
         this.setDefaultState(this.getDefaultState().withProperty(BlockMountainAsh.NORTH, BlockMountainAsh.EnumAttachPosition.NONE)
@@ -111,17 +124,17 @@ public class BlockMountainAsh extends Block {
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         switch (rot) {
-            case CLOCKWISE_180:
+            case Rotation.CLOCKWISE_180:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.SOUTH))
                         .withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.NORTH))
                         .withProperty(BlockMountainAsh.WEST, state.getValue(BlockMountainAsh.EAST));
-            case COUNTERCLOCKWISE_90:
+            case Rotation.COUNTERCLOCKWISE_90:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.EAST))
                         .withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.SOUTH))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.WEST, state.getValue(BlockMountainAsh.NORTH));
-            case CLOCKWISE_90:
+            case Rotation.CLOCKWISE_90:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.NORTH))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.EAST))
@@ -134,10 +147,10 @@ public class BlockMountainAsh extends Block {
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
         switch (mirrorIn) {
-            case LEFT_RIGHT:
+            case Mirror.LEFT_RIGHT:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.SOUTH))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.NORTH));
-            case FRONT_BACK:
+            case Mirror.FRONT_BACK:
                 return state.withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.WEST, state.getValue(BlockMountainAsh.EAST));
             default:
@@ -148,10 +161,6 @@ public class BlockMountainAsh extends Block {
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         if (!worldIn.isRemote) {
-//            // TODO: Needed?
-//            for (EnumFacing facing : EnumFacing.Plane.VERTICAL) {
-//                worldIn.notifyNeighborsOfStateChange(pos.offset(facing), this, false);
-//            }
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(pos).move(EnumFacing.UP);
             for (; !worldIn.isOutsideBuildHeight(mutablePos) && worldIn.isAirBlock(mutablePos); mutablePos.move(EnumFacing.UP)) {
                 worldIn.setBlockState(mutablePos, BlockInit.MOUNTAIN_ASH_BARRIER.getDefaultState());
@@ -177,11 +186,6 @@ public class BlockMountainAsh extends Block {
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
         return worldIn.getBlockState(pos.down()).isTopSolid();
-    }
-
-    @Override
-    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
-        return super.getBlockHardness(blockState, worldIn, pos);
     }
 
     @Override

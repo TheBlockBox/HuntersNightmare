@@ -143,15 +143,11 @@ public class TransformationEventHandler {
                             }
                         }
                     }
-                    // TODO: Does every 35 ticks work or should something be changed?
                     // when a werewolf player is transforming, deal damage
                     if ((player.ticksExisted % 35 == 0) && isWerewolf && !isTransformed && isWerewolfTime
                             && (WerewolfHelper.getTransformationStage(player) != 0)) {
                         if (player.getHealth() > 1) {
                             player.attackEntityFrom(WerewolfHelper.WEREWOLF_TRANSFORMATION_DAMAGE, 1.0F);
-                            // TODO: Add sound here
-                            // player.world.playSound(null, player.posX, player.posY, player.posZ,
-                            // SoundInit.SOUND, SoundCategory.PLAYERS, 100, 1);
                         }
                     }
                 }

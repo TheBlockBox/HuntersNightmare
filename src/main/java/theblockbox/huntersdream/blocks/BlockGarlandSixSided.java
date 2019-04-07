@@ -15,8 +15,6 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 // TODO: test if #withRotation actually works
-// TODO: Make everything cleaner
-// TODO: Make better hitbox
 public abstract class BlockGarlandSixSided<T extends BlockGarlandSixSided<T>> extends BlockGarland {
     public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0D, 0.05D, 0.0D, 1.0D, 0.05D, 1.0D);
     public static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0D, 0.95D, 0.0D, 1.0D, 0.95D, 1.0D);
@@ -115,18 +113,18 @@ public abstract class BlockGarlandSixSided<T extends BlockGarlandSixSided<T>> ex
         if ((oldBlock instanceof BlockGarlandSixSided) && this.isTheSameAs((BlockGarlandSixSided<?>) oldBlock)) {
             BlockGarlandSixSided<?> block = (BlockGarlandSixSided<?>) oldBlock;
             switch (facing) {
-                case UP:
+                case EnumFacing.UP:
                     return this.copyStateWithProperties(block.hasTopBlock(), true, oldState);
-                case DOWN:
+                case EnumFacing.DOWN:
                     return this.copyStateWithProperties(true, block.hasBottomBlock(), oldState);
                 default:
                     return oldState.withProperty(BlockGarland.PROPERTIES[facing.getOpposite().getIndex() - 2], true);
             }
         } else {
             switch (facing) {
-                case UP:
+                case EnumFacing.UP:
                     return this.getWithProperties(false, true).getDefaultState();
-                case DOWN:
+                case EnumFacing.DOWN:
                     return this.getWithProperties(true, false).getDefaultState();
                 default:
                     return this.getWithProperties(false, false).getDefaultState()

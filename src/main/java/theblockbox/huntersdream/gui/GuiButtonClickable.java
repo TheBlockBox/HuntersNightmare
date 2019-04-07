@@ -24,7 +24,7 @@ public abstract class GuiButtonClickable extends GuiButton {
                 this.hasMouseBeenPressed = false;
             }
             mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            this.drawTexturedModalRect(this.x + 1, this.y + 1, this.sprite, 16, 16);
+            this.drawTexturedModalRect(this.x + 1, this.y + 1, this.getSprite(), 16, 16);
         }
     }
 
@@ -35,6 +35,10 @@ public abstract class GuiButtonClickable extends GuiButton {
     public void playPressSound(SoundHandler soundHandlerIn) {
         super.playPressSound(soundHandlerIn);
         this.hasMouseBeenPressed = true;
+    }
+
+    public TextureAtlasSprite getSprite() {
+        return this.sprite;
     }
 
     public boolean hasMouseBeenPressed() {
