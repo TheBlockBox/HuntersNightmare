@@ -66,9 +66,10 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
                 break;
             }
 
+            this.checkForRecipe();
             if (this.hasRecipe()) {
                 if (this.isBurning()) {
-                    if (this.ticks > (this.smeltingRecipeSince + 180)) {
+                    if (this.ticks >= (this.smeltingRecipeSince + 180)) {
                         if (this.itemHandler.insertItem(2, this.output, false).isEmpty()) {
                             this.itemHandler.extractItem(0, 1, false);
                         }
@@ -77,9 +78,8 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
                 } else {
                     this.setHasRecipe(false);
                 }
-            } else {
-                this.checkForRecipe();
             }
+            this.checkForRecipe();
 
             if (wasBurning != this.isBurning())
                 this.world.setBlockState(this.pos,
@@ -95,10 +95,12 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
         ItemStack out = FurnaceRecipes.instance().getSmeltingResult(this.itemHandler.getStackInSlot(0)).copy();
         if (out.getItem() instanceof ItemFood) {
             if (this.itemHandler.insertItem(2, out, true).isEmpty()) {
-                if (!(ItemStack.areItemStacksEqual(this.output, out) || this.hasRecipe())) {
-                    this.output = out;
+                // if everything is still the same, just return true and do nothing
+                if (this.hasRecipe() && ItemStack.areItemStacksEqual(this.output, out)) {
+                    return true;
                 }
                 this.smeltingRecipeSince = this.ticks;
+                this.output = out;
                 this.setHasRecipe(true);
                 return true;
             }
@@ -208,8 +210,6 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
         @Override
         protected void onContentsChanged(int slot) {
             if (TileEntityCampfire.this.world != null && !TileEntityCampfire.this.world.isRemote) {
-                // checks if recipe has changed
-                TileEntityCampfire.this.checkForRecipe();
                 TileEntityCampfire.this.markDirty();
             }
         }

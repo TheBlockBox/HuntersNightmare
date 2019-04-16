@@ -93,7 +93,7 @@ public class ChildSkill extends Skill {
     }
 
     @Override
-    public boolean canPlayerUnlockSkill(EntityPlayer player) {
+    public boolean canBeUnlockedByPlayer(EntityPlayer player) {
         ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(player);
         if ((player.experienceLevel >= this.getNeededExperienceLevels())
                 && this.isForTransformation(tp.getTransformation()) && !tp.hasSkill(this)) {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class StructureVillageHuntersCabin extends StructureVillageComponent {
-    // TODO: Use real dimensions
+    // TODO: Use real dimensions (when it's getting reimplemented)
     public static final int SIZE_X = 14;
     public static final int SIZE_Y = 8;
     public static final int SIZE_Z = 11;

@@ -23,6 +23,18 @@ public class VampireFoodStats extends FoodStats {
     private VampireFoodStats() {
     }
 
+    /**
+     * Tries to replace the given player's foodstats with a vampire one. Returns true when it was successful, meaning
+     * that the logical side was server and the foodstats wasn't already set to the vampire foodstats.
+     */
+    public static boolean replaceFoodStats(EntityPlayer player) {
+        if (!player.world.isRemote && (player.foodStats != VampireFoodStats.INSTANCE)) {
+            player.foodStats = VampireFoodStats.INSTANCE;
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public float getSaturationLevel() {
         return 0.0F;
@@ -30,7 +42,7 @@ public class VampireFoodStats extends FoodStats {
 
     @Override
     public int getFoodLevel() {
-        // returning ten to make players move with normal speed
+        // returning ten to make players move with normal
         return 20;
     }
 

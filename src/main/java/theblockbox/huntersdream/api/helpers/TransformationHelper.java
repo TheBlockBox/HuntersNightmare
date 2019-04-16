@@ -176,16 +176,12 @@ public class TransformationHelper {
     public static boolean canBeInfectedWith(Transformation infection, EntityLivingBase entity) {
         Validate.notNull(infection, "The transformation isn't allowed to be null");
         if (TransformationHelper.canChangeTransformation(entity)) {
-            Optional<IInfectInTicks> iit = TransformationHelper.getIInfectInTicks(entity);
-            Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
             // can't infect entity that already has the transformation
-            Transformation transformation = TransformationHelper.getTransformation(entity);
-            // TODO: Check if ghosts really can't be infected
-            if ((transformation == infection) || (transformation == Transformation.GHOST)) {
+            if (TransformationHelper.getTransformation(entity) == infection) {
                 return false;
-            } else if (ionm.isPresent() && infection == Transformation.WEREWOLF) {
+            } else if (WerewolfHelper.getIInfectOnNextMoon(entity).isPresent() && infection == Transformation.WEREWOLF) {
                 return true;
-            } else if (iit.isPresent()) {
+            } else if (TransformationHelper.getIInfectInTicks(entity).isPresent()) {
                 if (entity instanceof EntityCreature) {
                     Optional<ITransformationCreature> otc = TransformationHelper.getITransformationCreature((EntityCreature) entity);
                     if (otc.isPresent()) {

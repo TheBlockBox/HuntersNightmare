@@ -75,7 +75,7 @@ public class PacketHandler {
                 cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData(),
                 cap.getActiveSkill().orElse(null));
         if (cap.getTransformation() == Transformation.VAMPIRE)
-            applyOn.foodStats = VampireFoodStats.INSTANCE;
+            VampireFoodStats.replaceFoodStats(applyOn);
         PacketHandler.afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
                 () -> PacketHandler.INSTANCE.sendTo(message, sendTo));
     }

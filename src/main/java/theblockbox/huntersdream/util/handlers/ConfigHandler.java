@@ -64,6 +64,9 @@ public class ConfigHandler {
         @Config.RequiresWorldRestart
         public boolean werewolvesBreakDoors = true;
 
+        @Config.LangKey(Reference.CFG_LANG + "logStructureSpawns")
+        public boolean logStructureSpawns = false;
+
         public static class Ores {
             @Config.LangKey(Reference.CFG_LANG + "veinSize")
             @Config.RequiresWorldRestart

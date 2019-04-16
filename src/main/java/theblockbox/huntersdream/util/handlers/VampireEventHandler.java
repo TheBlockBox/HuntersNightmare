@@ -52,7 +52,7 @@ public class VampireEventHandler {
                 && event.getTransformationAfter() != event.getTransformationBefore()) {
             EntityPlayer player = (EntityPlayer) event.getEntityLiving();
             if (event.getTransformationAfter() == Transformation.VAMPIRE) {
-                player.foodStats = VampireFoodStats.INSTANCE;
+                VampireFoodStats.replaceFoodStats(player);
             } else if (event.getTransformationBefore() == Transformation.VAMPIRE) {
                 player.foodStats = new FoodStats();
             }
@@ -80,7 +80,7 @@ public class VampireEventHandler {
             PacketHandler.sendTransformationMessage((EntityPlayerMP) player);
         }
         if (TransformationHelper.getTransformation(player) == Transformation.VAMPIRE) {
-            player.foodStats = VampireFoodStats.INSTANCE;
+            VampireFoodStats.replaceFoodStats(player);
         }
     }
 

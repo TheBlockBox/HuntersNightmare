@@ -83,8 +83,6 @@ public class ContainerSilverFurnace extends Container {
                 // try to move to inventory or hotbar
                 if (!this.tryMove(stack, 5, 32))
                     this.tryMove(stack, 32, 41);
-                // make sure the te is not thinking it's still cooking something
-                this.tileEntity.checkForRecipe();
             } else {
                 boolean inventory = slotIndex < 31;
                 // if there's fuel try to move it there

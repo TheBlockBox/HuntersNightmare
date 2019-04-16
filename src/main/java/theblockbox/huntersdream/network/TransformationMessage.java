@@ -89,7 +89,7 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
                     cap.setTransformationData(message.transformationData);
                     cap.setActiveSkill(Skill.fromName(message.activeSkill));
                     if (message.transformation == Transformation.VAMPIRE)
-                        player.foodStats = VampireFoodStats.INSTANCE;
+                        VampireFoodStats.replaceFoodStats(player);
                 });
             }
             return null;

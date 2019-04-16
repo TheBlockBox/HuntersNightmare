@@ -8,8 +8,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -17,7 +19,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
+import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.StructureInit;
 import theblockbox.huntersdream.util.Reference;
 
 import java.io.InputStreamReader;
@@ -92,6 +96,20 @@ public class EventHandler {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPopulateChunkPre(PopulateChunkEvent.Pre event) {
+        World world = event.getWorld();
+        if (BiomeDictionary.hasType(world.getBiome(new BlockPos(event.getChunkX() * 16, 60, event.getChunkZ() * 16)),
+                BiomeDictionary.Type.FOREST)) {
+            Random random = event.getRand();
+            if (ChanceHelper.chanceOf(random, 50)) {
+                GeneralHelper.trySpawnStructure(StructureInit.HUNTERS_CAMP, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
+            } else {
+                GeneralHelper.trySpawnStructure(StructureInit.WEREWOLF_CABIN, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
             }
         }
     }

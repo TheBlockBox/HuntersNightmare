@@ -39,7 +39,7 @@ public class Transformation {
     /**
      * Used to indicate that no transformation is present and it won't change
      */
-    public static final Transformation NONE = of("none").setTransformationType(NORMAL).create();
+    public static final Transformation NONE = of("none").setTransformationType(NORMAL).setHasNoSkills().create();
     /**
      * Used to indicate that no transformation is currently present but it could
      * change
@@ -51,7 +51,7 @@ public class Transformation {
     public static final Transformation WEREWOLF = of("werewolf")
             .setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
             .setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage)
-            .setTexturesHD("werewolf/werewolf_white").create();
+            .setTexturesHD("werewolf/werewolf", "werewolf/werewolf_whitetail").create();
     /**
      * The transformation for vampires
      */
@@ -60,7 +60,8 @@ public class Transformation {
     /**
      * The transformation for ghosts
      */
-    public static final Transformation GHOST = of("ghost").setTransformationType(Transformation.TransformationType.UNPHYSICAL_SUPERNATURAL).create();
+    public static final Transformation GHOST = of("ghost").setTransformationType(Transformation.TransformationType.UNPHYSICAL_SUPERNATURAL)
+            .setHasNoSkills().create();
 
     private static Transformation[] transformations = null;
     private final Transformation.TransformationEntry entry;
@@ -290,6 +291,13 @@ public class Transformation {
         return this.entry.isUndead;
     }
 
+    /**
+     * Returns true if this transformation has skills, meaning that it is shown a skill bar and tab.
+     */
+    public boolean hasSkills() {
+        return this.entry.hasSkills;
+    }
+
     public Consumer<EntityLivingBase> getInfect() {
         return this.entry.infect;
     }
@@ -311,8 +319,8 @@ public class Transformation {
      * Returns the {@link TextureAtlasSprite} for the icon of this transformation.
      * If this transformation is {@link Transformation#NONE} or this method is
      * called before {@link net.minecraftforge.client.event.TextureStitchEvent.Pre}
-     * has been fired for the first time, null will be returned. This method is
-     * client side only to prevent crashes.
+     * has been fired for the first time or {@link #hasSkills()} returns false, null
+     * will be returned. This method is client side only to prevent crashes.
      */
     @SideOnly(Side.CLIENT)
     @Nullable
@@ -328,6 +336,8 @@ public class Transformation {
     public void setIconSprite(@Nonnull TextureAtlasSprite sprite) {
         if (sprite == null)
             throw new NullPointerException("The icon sprite is not allowed to be null");
+        if (!this.hasSkills())
+            throw new WrongTransformationException("Can't set icon for transformation that shouldn't have one", this);
         this.iconSprite = sprite;
     }
 
@@ -387,6 +397,7 @@ public class Transformation {
         private ToIntFunction<EntityLivingBase> getTextureIndex = e -> 0;
         private boolean isUndead = false;
         private ResourceLocation icon;
+        private boolean hasSkills = true;
 
         private TransformationEntry(ResourceLocation registryName) {
             this.registryName = registryName;
@@ -492,8 +503,19 @@ public class Transformation {
          * generated ResourceLocation in the format
          * {@code modid:textures/gui/icon_transformation_name.png}.
          */
-        public void setIcon(ResourceLocation icon) {
+        public Transformation.TransformationEntry setIcon(ResourceLocation icon) {
             this.icon = icon;
+            return this;
+        }
+
+        /**
+         * When called, this makes the transformation have no skills, meaning
+         * it has won't be shown any skill bar or skill tab. The default behavior
+         * (when this method is not called) is to show skills.
+         */
+        public Transformation.TransformationEntry setHasNoSkills() {
+            this.hasSkills = false;
+            return this;
         }
 
         /**

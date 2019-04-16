@@ -124,17 +124,17 @@ public class BlockMountainAsh extends Block {
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         switch (rot) {
-            case Rotation.CLOCKWISE_180:
+            case CLOCKWISE_180:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.SOUTH))
                         .withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.NORTH))
                         .withProperty(BlockMountainAsh.WEST, state.getValue(BlockMountainAsh.EAST));
-            case Rotation.COUNTERCLOCKWISE_90:
+            case COUNTERCLOCKWISE_90:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.EAST))
                         .withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.SOUTH))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.WEST, state.getValue(BlockMountainAsh.NORTH));
-            case Rotation.CLOCKWISE_90:
+            case CLOCKWISE_90:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.NORTH))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.EAST))
@@ -147,10 +147,10 @@ public class BlockMountainAsh extends Block {
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
         switch (mirrorIn) {
-            case Mirror.LEFT_RIGHT:
+            case LEFT_RIGHT:
                 return state.withProperty(BlockMountainAsh.NORTH, state.getValue(BlockMountainAsh.SOUTH))
                         .withProperty(BlockMountainAsh.SOUTH, state.getValue(BlockMountainAsh.NORTH));
-            case Mirror.FRONT_BACK:
+            case FRONT_BACK:
                 return state.withProperty(BlockMountainAsh.EAST, state.getValue(BlockMountainAsh.WEST))
                         .withProperty(BlockMountainAsh.WEST, state.getValue(BlockMountainAsh.EAST));
             default:

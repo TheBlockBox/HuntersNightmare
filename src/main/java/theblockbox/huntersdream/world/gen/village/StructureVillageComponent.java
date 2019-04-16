@@ -7,14 +7,34 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeDesert;
+import net.minecraft.world.biome.BiomeSavanna;
+import net.minecraft.world.biome.BiomeTaiga;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
+import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class StructureVillageComponent extends StructureVillagePieces.House1 {
+    public final ITemplateProcessor biomeBlockChanger = (world, pos, blockInfo) -> {
+        if (blockInfo.blockState.getBlock() == Blocks.COBBLESTONE) {
+            return blockInfo;
+        }
+        Biome biome = world.getBiome(pos);
+        if (biome instanceof BiomeDesert) {
+            this.setStructureType(1);
+        } else if (biome instanceof BiomeSavanna) {
+            this.setStructureType(2);
+        } else if (biome instanceof BiomeTaiga) {
+            this.setStructureType(3);
+        }
+        return new Template.BlockInfo(pos, this.getBiomeSpecificBlockState(blockInfo.blockState), null);
+    };
     protected ResourceLocation structureLocation;
     protected int avgGroundLevel = -1;
     protected int xSize;
@@ -22,7 +42,7 @@ public class StructureVillageComponent extends StructureVillagePieces.House1 {
     protected int zSize;
 
     public StructureVillageComponent(StructureBoundingBox boundingBox, EnumFacing facing,
-                                     ResourceLocation structureLocation, int xSize, int ySize, int zSize) {
+                                     @Nonnull ResourceLocation structureLocation, int xSize, int ySize, int zSize) {
         this.setCoordBaseMode(facing);
         this.boundingBox = boundingBox;
         this.structureLocation = structureLocation;
@@ -60,7 +80,7 @@ public class StructureVillageComponent extends StructureVillagePieces.House1 {
         Template template = worldIn.getSaveHandler().getStructureTemplateManager()
                 .getTemplate(worldIn.getMinecraftServer(), this.structureLocation);
         BlockPos pos = new BlockPos(this.getXWithOffset(0, 0), this.getYWithOffset(0), this.getZWithOffset(0, 0));
-        template.addBlocksToWorld(worldIn, pos, this.getPlacementSettings(worldIn, randomIn, boundingBoxIn, pos));
+        template.addBlocksToWorld(worldIn, pos, this.biomeBlockChanger, this.getPlacementSettings(worldIn, randomIn, boundingBoxIn, pos), 2);
     }
 
     public PlacementSettings getPlacementSettings(World worldIn, Random randomIn, StructureBoundingBox boundingBoxIn,

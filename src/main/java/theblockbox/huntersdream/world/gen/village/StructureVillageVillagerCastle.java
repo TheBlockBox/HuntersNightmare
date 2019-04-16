@@ -1,16 +1,9 @@
 package theblockbox.huntersdream.world.gen.village;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeDesert;
-import net.minecraft.world.biome.BiomeSavanna;
-import net.minecraft.world.biome.BiomeTaiga;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
-import net.minecraft.world.gen.structure.template.Template;
 import theblockbox.huntersdream.api.init.StructureInit;
 
 import java.util.List;
@@ -22,11 +15,11 @@ public class StructureVillageVillagerCastle extends StructureVillageComponent {
     public static final int SIZE_Z = 16;
 
     public StructureVillageVillagerCastle() {
-        super(null, null, null, StructureVillageVillagerCastle.SIZE_X, StructureVillageVillagerCastle.SIZE_Y, StructureVillageVillagerCastle.SIZE_Z);
+        super(null, null, StructureInit.VILLAGER_CASTLE, StructureVillageVillagerCastle.SIZE_X, StructureVillageVillagerCastle.SIZE_Y, StructureVillageVillagerCastle.SIZE_Z);
     }
 
     public StructureVillageVillagerCastle(StructureBoundingBox boundingBox, EnumFacing facing) {
-        super(boundingBox, facing, null, StructureVillageVillagerCastle.SIZE_X, StructureVillageVillagerCastle.SIZE_Y, StructureVillageVillagerCastle.SIZE_Z);
+        super(boundingBox, facing, StructureInit.VILLAGER_CASTLE, StructureVillageVillagerCastle.SIZE_X, StructureVillageVillagerCastle.SIZE_Y, StructureVillageVillagerCastle.SIZE_Z);
     }
 
     public static StructureVillageVillagerCastle buildComponent(List<StructureComponent> pieces, int structureMinX,
@@ -36,25 +29,6 @@ public class StructureVillageVillagerCastle extends StructureVillageComponent {
         return StructureVillagePieces.Village.canVillageGoDeeper(boundingBox) && StructureComponent.findIntersecting(pieces, boundingBox) == null
                 ? new StructureVillageVillagerCastle(boundingBox, facing.getOpposite())
                 : null;
-    }
-
-    // TODO: Use other way to decide which structure to use
-    @Override
-    public void spawnStructure(World worldIn, Random randomIn, StructureBoundingBox boundingBoxIn) {
-        BlockPos pos = new BlockPos(this.getXWithOffset(0, 0), this.getYWithOffset(0), this.getZWithOffset(0, 0));
-        Biome biome = worldIn.getBiome(pos);
-        if (biome instanceof BiomeDesert) {
-            this.structureLocation = StructureInit.VILLAGER_CASTLE_SANDSTONE;
-        } else if (biome instanceof BiomeSavanna) {
-            this.structureLocation = StructureInit.VILLAGER_CASTLE_ACACIA;
-        } else if (biome instanceof BiomeTaiga) {
-            this.structureLocation = StructureInit.VILLAGER_CASTLE_SPRUCE;
-        } else {
-            this.structureLocation = StructureInit.VILLAGER_CASTLE_OAK;
-        }
-        Template template = worldIn.getSaveHandler().getStructureTemplateManager()
-                .getTemplate(worldIn.getMinecraftServer(), this.structureLocation);
-        template.addBlocksToWorld(worldIn, pos, this.getPlacementSettings(worldIn, randomIn, boundingBoxIn, pos));
     }
 
     public static class VillageVillagerCastleHandler extends VillageCreationHandler {

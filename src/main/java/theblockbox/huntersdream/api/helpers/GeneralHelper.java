@@ -23,18 +23,23 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.init.StructureInit;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
+import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
@@ -461,28 +466,6 @@ public class GeneralHelper {
         }
     }
 
-    /**
-     * Returns the y level where a structure at the given coordinates could spawn.
-     * Returns -1 if there's no optimal spawn.
-     */
-    public static int getStructureGenHeight(BlockPos pos, World world, BlockPos structureSize) {
-        int maxX = pos.getX() + structureSize.getX();
-        int maxZ = pos.getZ() + structureSize.getZ();
-        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos(pos);
-        IBlockState topBlock = world.getBiome(pos).topBlock;
-
-        for (int y = pos.getY(); y > 5; y--) {
-            for (int x = pos.getX(); x <= maxX; x++) {
-                for (int z = pos.getZ(); z <= maxZ; z++) {
-                    if (world.getBlockState(blockPos.setPos(x, y, z)) == topBlock) {
-                        return y + 1;
-                    }
-                }
-            }
-        }
-        return -1;
-    }
-
     public static EnumParticleTypes addParticle(ResourceLocation registryName, boolean shouldIgnoreRange) {
         String name = registryName.toString();
         EnumParticleTypes particle = EnumHelper.addEnum(EnumParticleTypes.class, CaseFormat.LOWER_UNDERSCORE
@@ -501,5 +484,64 @@ public class GeneralHelper {
     public static void addHeartsToPlayer(EntityPlayer player, double extraHalfHearts) {
         IAttributeInstance attribute = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
         attribute.setBaseValue(attribute.getBaseValue() + extraHalfHearts);
+    }
+
+    /**
+     * Gets a y coordinate for where the structure should be spawned. Returns -1 if none one was found.
+     */
+    public static int getYForStructure(World world, int x, int z, int structureSizeX, int structureSizeZ) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, 60, z);
+        IBlockState topBlockState = world.getBiome(pos).topBlock;
+        for (int y = 100; y >= 40; --y) {
+            if (GeneralHelper.doBlocksFit(world, pos.setPos(x, y, z), structureSizeX, structureSizeZ, topBlockState)) {
+                return y + 1;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean doBlocksFit(World world, BlockPos pos, int sizeX, int sizeZ, IBlockState state) {
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+        for (int x = pos.getX(); x <= pos.getX() + sizeX; ++x) {
+            for (int z = pos.getZ(); z <= pos.getZ() + sizeZ; ++z) {
+                if (world.getBlockState(mutablePos.setPos(x, pos.getY(), z)) != state) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean trySpawnStructure(ResourceLocation location, World world, int chunkX, int chunkZ, Random random) {
+        Template template = world.getSaveHandler().getStructureTemplateManager().getTemplate(world.getMinecraftServer(), location);
+        int sizeX = template.getSize().getX();
+        int sizeZ = template.getSize().getZ();
+        int x = (chunkX * 16) - sizeX;
+        int z = (chunkZ * 16) - sizeZ;
+        int y = GeneralHelper.getYForStructure(world, x, z, sizeX, sizeZ);
+        if (y != -1) {
+            BlockPos pos = new BlockPos(x, y, z);
+            if (location == StructureInit.WEREWOLF_CABIN) {
+                WerewolfHelper.addWerewolfCabin(pos, pos.add(sizeX, 0, sizeZ));
+            }
+            if (ConfigHandler.server.logStructureSpawns) {
+                Main.getLogger().info("Spawned structure {} at the coordinates [{}, {}, {}]", location, pos.getX(), pos.getY(), pos.getZ());
+            }
+            template.addBlocksToWorldChunk(world, pos, new PlacementSettings()
+                    .setRotation(ChanceHelper.randomRotation(random)));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if it's currently an "actual night" in the given world. Does not return true when it's raining
+     * but not night. Only returns true if the world time is greater than 12540 and less than 23459.
+     */
+    public static boolean isNight(World world) {
+        long worldTime = world.getWorldTime();
+        // 23459 and 12540 are the exact times between which it is day (according to World#isDaytime)
+        return WerewolfHelper.isFullmoon(world) && ((worldTime > 12540L) && (worldTime < 23459L));
     }
 }

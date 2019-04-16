@@ -39,9 +39,7 @@ import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
 import theblockbox.huntersdream.commands.CommandTransformationTexture;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.world.gen.WorldGenHuntersCamp;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
-import theblockbox.huntersdream.world.gen.WorldGenWerewolfCabin;
 
 import java.io.File;
 import java.util.Random;
@@ -127,8 +125,6 @@ public class RegistryHandler {
         OreDictionaryInit.registerOres();
         ParticleCommonInit.init();
         GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
-        GameRegistry.registerWorldGenerator(new WorldGenWerewolfCabin(), 2);
-        GameRegistry.registerWorldGenerator(new WorldGenHuntersCamp(), 2);
         for (Biome biome : Biome.REGISTRY) {
             biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
         }

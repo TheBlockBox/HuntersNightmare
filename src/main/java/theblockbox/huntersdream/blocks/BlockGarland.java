@@ -169,17 +169,17 @@ public class BlockGarland extends Block {
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         switch (rot) {
-            case Rotation.CLOCKWISE_90:
+            case CLOCKWISE_90:
                 return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.EAST))
                         .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.SOUTH))
                         .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.WEST))
                         .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.NORTH));
-            case Rotation.CLOCKWISE_180:
+            case CLOCKWISE_180:
                 return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.SOUTH))
                         .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.WEST))
                         .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.NORTH))
                         .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.EAST));
-            case Rotation.COUNTERCLOCKWISE_90:
+            case COUNTERCLOCKWISE_90:
                 return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.WEST))
                         .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.NORTH))
                         .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.EAST))

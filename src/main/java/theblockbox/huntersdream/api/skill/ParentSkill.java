@@ -9,6 +9,7 @@ import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.collection.TransformationSet;
+import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.ArrayList;
@@ -58,6 +59,12 @@ public class ParentSkill extends Skill {
                        Collection<Transformation> forTransformations, boolean isAlwaysActive, ResourceLocation icon,
                        String translationKeyName, String translationKeyDescription) {
         super(registryName, 0, neededExperienceLevels);
+        for (Transformation transformation : forTransformations) {
+            if (!(transformation.isTransformation() && transformation.hasSkills())) {
+                throw new WrongTransformationException("Couldn't instantiate the skill " + this.toString() +
+                        " since it is for a transformation that either has no skills or isn't an actual transformation", transformation);
+            }
+        }
         this.forTransformations = new TransformationSet(forTransformations);
         this.isAlwaysActive = isAlwaysActive;
         this.icon = icon;
@@ -118,7 +125,7 @@ public class ParentSkill extends Skill {
     }
 
     @Override
-    public boolean canPlayerUnlockSkill(EntityPlayer player) {
+    public boolean canBeUnlockedByPlayer(EntityPlayer player) {
         ITransformationPlayer tp = TransformationHelper.getITransformationPlayer(player);
         return (player.experienceLevel >= this.getNeededExperienceLevels())
                 && this.isForTransformation(tp.getTransformation()) && !tp.hasSkill(this);

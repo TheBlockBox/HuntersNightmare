@@ -29,6 +29,7 @@ import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.ExtraDataEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
+import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
@@ -204,7 +205,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
                         EntityCreature e;
                         String entityName = this.getUntransformedEntityName();
                         if (entityName.startsWith("$useCap")) {
-                            String eName = entityName.substring(6);
+                            String eName = entityName.substring(7);
                             try {
                                 @SuppressWarnings("unchecked")
                                 Class<? extends Entity> entityClass = (Class<? extends Entity>) Class
@@ -354,6 +355,13 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
     @Override
     public boolean isValidLightLevel() {
         // make werewolves only spawn on full moon
-        return WerewolfHelper.isWerewolfTime(this.world);
+        System.out.println("stuffz");
+        if (WerewolfHelper.isWerewolfTime(this.world)) {
+            return true;
+        } else if (ChanceHelper.chanceOf(this.world, 10)) {
+            // or with a chance of 10% in loaded werewolf cabins
+            WerewolfHelper.spawnWerewolfInCabin(this.world, this);
+        }
+        return false;
     }
 }

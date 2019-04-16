@@ -78,6 +78,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
             boolean wasBurning = this.isBurning();
             this.updateBurnTime(9);
 
+            this.checkForRecipe();
             if (this.hasRecipe()) {
                 if (this.isBurning()) {
                     if (this.ticks >= (this.smeltingRecipeSince + this.fullNeededSmeltingTime)) {
@@ -91,9 +92,8 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
                 } else {
                     this.setHasRecipe(false);
                 }
-            } else {
-                this.checkForRecipe();
             }
+            this.checkForRecipe();
 
             // reset blockstate if burning state changed
             if (wasBurning != this.isBurning()) {
@@ -176,9 +176,8 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
             this.outputs.setLeft(output1);
             this.outputs.setRight(output2);
             this.fullNeededSmeltingTime = fullSmeltingTime;
-            this.hasRecipe = true;
             this.smeltingRecipeSince = this.ticks;
-            this.markDirty();
+            this.setHasRecipe(true);
             return true;
         }
         this.setHasRecipe(false);
@@ -343,8 +342,6 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
         @Override
         protected void onContentsChanged(int slot) {
             if (TileEntitySilverFurnace.this.world != null && !TileEntitySilverFurnace.this.world.isRemote) {
-                // checks if recipe has changed
-                TileEntitySilverFurnace.this.checkForRecipe();
                 TileEntitySilverFurnace.this.markDirty();
             }
         }

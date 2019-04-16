@@ -75,8 +75,6 @@ public class ContainerCampfire extends Container {
                 // try to move to inventory or hotbar
                 if (!this.tryMove(stack, 3, 30))
                     this.tryMove(stack, 30, 39);
-                // make sure the te is not thinking it's still cooking something
-                this.tileEntity.checkForRecipe();
             } else {
                 boolean inventory = slotIndex < 30;
                 // if there's fuel try to move it there

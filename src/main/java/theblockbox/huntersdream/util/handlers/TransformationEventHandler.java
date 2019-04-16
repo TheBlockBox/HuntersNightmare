@@ -27,6 +27,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
+import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.event.effectiveness.ArmorEffectivenessEvent;
@@ -46,6 +47,7 @@ import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
@@ -401,6 +403,15 @@ public class TransformationEventHandler {
     @SubscribeEvent
     public static void onPlayerHarvestCheck(BlockEvent.BreakEvent event) {
         if ((event.getState().getBlock() == BlockInit.MOUNTAIN_ASH) && BlockMountainAsh.canEntityNotPass(event.getPlayer())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingInfected(CanLivingBeInfectedEvent event) {
+        EntityLivingBase entity = event.getEntityLiving();
+        Optional<IInfectOnNextMoon> ionm = WerewolfHelper.getIInfectOnNextMoon(entity);
+        if (ionm.isPresent() && (event.getInfection() == Transformation.WEREWOLF)) {
             event.setCanceled(true);
         }
     }

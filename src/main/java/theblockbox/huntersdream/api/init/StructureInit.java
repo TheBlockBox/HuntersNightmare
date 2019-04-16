@@ -9,13 +9,10 @@ import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.world.gen.village.StructureVillageVillagerCastle;
 
 public class StructureInit {
-    // in villages
-    public static final ResourceLocation VILLAGER_CASTLE_OAK = GeneralHelper.newResLoc("villagercastle_oak");
-    public static final ResourceLocation VILLAGER_CASTLE_SPRUCE = GeneralHelper.newResLoc("villagercastle_spruce");
-    public static final ResourceLocation VILLAGER_CASTLE_ACACIA = GeneralHelper.newResLoc("villagercastle_acacia");
-    public static final ResourceLocation VILLAGER_CASTLE_SANDSTONE = GeneralHelper.newResLoc("villagercastle_sandstone");
+    // only in villages
+    public static final ResourceLocation VILLAGER_CASTLE = GeneralHelper.newResLoc("villager_castle");
     public static final ResourceLocation HUNTERS_CABIN = GeneralHelper.newResLoc("hunters_cabin");
-    // somewhere else
+    // in the whole world
     public static final ResourceLocation HUNTERS_CAMP = GeneralHelper.newResLoc("hunters_camp");
     public static final ResourceLocation WEREWOLF_CABIN = GeneralHelper.newResLoc("werewolf_cabin");
 
@@ -25,7 +22,7 @@ public class StructureInit {
             MapGenStructureIO.registerStructureComponent(StructureVillageVillagerCastle.class,
                     Reference.MODID + ":villager_castle");
         }
-// TODO: Add structure and uncomment
+        // TODO: Add structure and uncomment
 //		if (ConfigHandler.server.generateHuntersCabin) {
 //			VillagerRegistry.instance().registerVillageCreationHandler(new StructureVillageHuntersCabin.VillageHuntersCabinHandler());
 //			MapGenStructureIO.registerStructureComponent(StructureVillageHuntersCabin.class,

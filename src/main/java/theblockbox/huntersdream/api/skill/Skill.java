@@ -206,6 +206,14 @@ public abstract class Skill {
     }
 
     /**
+     * Returns true if the given player can unlock this skill. If the player's transformation has allows no skills, this
+     * will always return false. Otherwise it'll delegate the call to the internal method {@link #canBeUnlockedByPlayer(EntityPlayer)}.
+     */
+    public final boolean canPlayerUnlockSkill(EntityPlayer player) {
+        return TransformationHelper.getTransformation(player).hasSkills() && this.canBeUnlockedByPlayer(player);
+    }
+
+    /**
      * Returns true if the given transformation can unlock
      * this skill.
      */
@@ -235,9 +243,11 @@ public abstract class Skill {
     public abstract boolean isAlwaysActive();
 
     /**
-     * Returns true if the given player can unlock this skill.
+     * Internal method used by {@link #canPlayerUnlockSkill(EntityPlayer)}
+     * to determine if the given player can unlock this skill. For more info,
+     * see {@link #canPlayerUnlockSkill(EntityPlayer)}.
      */
-    public abstract boolean canPlayerUnlockSkill(EntityPlayer player);
+    protected abstract boolean canBeUnlockedByPlayer(EntityPlayer player);
 
     /**
      * Returns the {@link ParentSkill} of this skill's group.

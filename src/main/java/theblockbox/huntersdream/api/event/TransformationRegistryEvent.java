@@ -28,7 +28,7 @@ public class TransformationRegistryEvent extends Event {
     private final Set<Transformation> transformationSet = new LinkedHashSet<>();
 
     public TransformationRegistryEvent() {
-        this.registerTransformations(NONE, HUMAN, WEREWOLF, VAMPIRE);
+        this.registerTransformations(NONE, HUMAN, WEREWOLF, VAMPIRE, GHOST);
     }
 
     /**

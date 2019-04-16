@@ -113,18 +113,18 @@ public abstract class BlockGarlandSixSided<T extends BlockGarlandSixSided<T>> ex
         if ((oldBlock instanceof BlockGarlandSixSided) && this.isTheSameAs((BlockGarlandSixSided<?>) oldBlock)) {
             BlockGarlandSixSided<?> block = (BlockGarlandSixSided<?>) oldBlock;
             switch (facing) {
-                case EnumFacing.UP:
+                case UP:
                     return this.copyStateWithProperties(block.hasTopBlock(), true, oldState);
-                case EnumFacing.DOWN:
+                case DOWN:
                     return this.copyStateWithProperties(true, block.hasBottomBlock(), oldState);
                 default:
                     return oldState.withProperty(BlockGarland.PROPERTIES[facing.getOpposite().getIndex() - 2], true);
             }
         } else {
             switch (facing) {
-                case EnumFacing.UP:
+                case UP:
                     return this.getWithProperties(false, true).getDefaultState();
-                case EnumFacing.DOWN:
+                case DOWN:
                     return this.getWithProperties(true, false).getDefaultState();
                 default:
                     return this.getWithProperties(false, false).getDefaultState()

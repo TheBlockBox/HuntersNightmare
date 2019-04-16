@@ -45,9 +45,7 @@ import java.util.Map;
 public class TransformationClientEventHandler {
     public static final ResourceLocation BLOOD_BAR = GeneralHelper.newResLoc("textures/gui/blood_bar.png");
     public static final ResourceLocation WEREWOLF_HEALTH = GeneralHelper.newResLoc("textures/gui/werewolf_health.png");
-    private static final ResourceLocation[] WEREWOLF_HANDS = {
-            GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms_normal_white.png"),
-            GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms_slim_white.png")};
+    private static final ResourceLocation WEREWOLF_HAND = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms.png");
     private static RenderLycanthropePlayer renderLycantrophePlayer = null;
     private static RenderPlayer renderPlayerHand = null;
 
@@ -71,14 +69,14 @@ public class TransformationClientEventHandler {
         Minecraft mc = Minecraft.getMinecraft();
         if (ConfigHandler.client.customPlayerRender && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
             EntityPlayerSP player = mc.player;
-            String skinType = player.getSkinType();
             if (WerewolfHelper.isTransformed(player)) {
                 if (TransformationClientEventHandler.renderPlayerHand == null) {
-                    TransformationClientEventHandler.renderPlayerHand = new TransformationClientEventHandler.RenderLycanthropeArm(skinType);
+                    TransformationClientEventHandler.renderPlayerHand = new TransformationClientEventHandler.RenderLycanthropeArm();
                 }
                 event.setCanceled(true);
                 if (mc.gameSettings.thirdPersonView == 0) {
                     Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().skinMap;
+                    String skinType = player.getSkinType();
                     RenderPlayer normalRender = skinMap.get(skinType);
                     skinMap.put(skinType, TransformationClientEventHandler.renderPlayerHand);
 
@@ -94,7 +92,7 @@ public class TransformationClientEventHandler {
 
     @SubscribeEvent
     public static void onGuiDraw(GuiScreenEvent.InitGuiEvent.Post event) {
-        if (event.getGui() instanceof GuiInventory) {
+        if ((event.getGui() instanceof GuiInventory) && TransformationHelper.getTransformation(Minecraft.getMinecraft().player).hasSkills()) {
             List<GuiButton> buttonList = event.getButtonList();
             GuiContainer gui = (GuiContainer) event.getGui();
             int x = gui.getGuiLeft() + 2;
@@ -109,7 +107,7 @@ public class TransformationClientEventHandler {
     public static void onTextureStichPre(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
         for (Transformation transformation : Transformation.getAllTransformations()) {
-            if (transformation.isTransformation()) {
+            if (transformation.isTransformation() && transformation.hasSkills()) {
                 transformation.setIconSprite(map.registerSprite(transformation.getIcon()));
             }
         }
@@ -179,7 +177,7 @@ public class TransformationClientEventHandler {
     public static void onHungerBarRendered(RenderGameOverlayEvent.Pre event, EntityPlayerSP player, Minecraft mc) {
         Transformation transformation = TransformationHelper.getTransformation(player);
         if (transformation == Transformation.VAMPIRE) {
-            mc.profiler.startSection("huntersdream:hunger_werewolf");
+            mc.profiler.startSection("huntersdream:hunger_vampire");
             event.setCanceled(true);
             GuiIngameForge ingGUI = (GuiIngameForge) mc.ingameGUI;
             GlStateManager.enableBlend();
@@ -224,8 +222,8 @@ public class TransformationClientEventHandler {
 
     public static class RenderLycanthropeArm extends RenderPlayer {
 
-        public RenderLycanthropeArm(String skinType) {
-            super(Minecraft.getMinecraft().getRenderManager(), "slim".equals(skinType));
+        public RenderLycanthropeArm() {
+            super(Minecraft.getMinecraft().getRenderManager(), false);
         }
 
         @Override
@@ -241,7 +239,7 @@ public class TransformationClientEventHandler {
         }
 
         public void bindTextures(AbstractClientPlayer clientPlayer) {
-            this.bindTexture(TransformationClientEventHandler.WEREWOLF_HANDS["slim".equals(clientPlayer.getSkinType()) ? 1 : 0]);
+            this.bindTexture(TransformationClientEventHandler.WEREWOLF_HAND);
         }
     }
 }

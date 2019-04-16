@@ -59,7 +59,7 @@ public class SkillBarHandler {
                     break;
                 }
             }
-        } else if (SkillBarHandler.isSkillBarSlotChosen && mc.gameSettings.keyBindDrop.isKeyDown()) {
+        } else if (SkillBarHandler.isSkillBarSlotChosen() && mc.gameSettings.keyBindDrop.isKeyDown()) {
             // TODO: Better approach?
             while (mc.gameSettings.keyBindDrop.isPressed()) ;
         }
@@ -93,9 +93,9 @@ public class SkillBarHandler {
             }
         } else {
             EntityPlayer player = Minecraft.getMinecraft().player;
-            if (ConfigHandler.client.showSkillBarSlot) {
+            if (SkillBarHandler.shouldShowSkillBarSlot()) {
                 InventoryPlayer inventory = player.inventory;
-                if (SkillBarHandler.isSkillBarSlotChosen) {
+                if (SkillBarHandler.isSkillBarSlotChosen()) {
                     if (dWheel == 1) {
                         inventory.currentItem = 0;
                         SkillBarHandler.isSkillBarSlotChosen = false;
@@ -114,7 +114,7 @@ public class SkillBarHandler {
                 }
             }
             Optional<Skill> activeSkill = TransformationHelper.getITransformationPlayer(player).getActiveSkill();
-            if (!SkillBarHandler.isSkillBarSlotChosen && (button == 1) && player.getActiveItemStack().isEmpty()
+            if (!SkillBarHandler.isSkillBarSlotChosen() && (button == 1) && player.getActiveItemStack().isEmpty()
                     && (activeSkill.isPresent() && activeSkill.get().onSkillUse(player))) {
                 PacketHandler.sendUseSkillMessage(player.world);
             }
@@ -172,17 +172,18 @@ public class SkillBarHandler {
                     mc.getTextureManager().bindTexture(SkillBarHandler.WIDGETS);
                 }
             }
-            if (ConfigHandler.client.showSkillBarSlot && (event.getType() == HOTBAR)) {
+            Transformation transformation = TransformationHelper.getTransformation(mc.player);
+            if ((event.getType() == HOTBAR) && SkillBarHandler.shouldShowSkillBarSlot()) {
                 mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 Optional<Skill> activeSkill = TransformationHelper.getITransformationPlayer(mc.player).getActiveSkill();
                 TextureAtlasSprite sprite = activeSkill.isPresent() ? activeSkill.get().getIconAsSprite()
-                        : TransformationHelper.getTransformation(mc.player).getIconAsSprite();
+                        : transformation.getIconAsSprite();
                 if (sprite != null) {
                     mc.ingameGUI.drawTexturedModalRect(event.getResolution().getScaledWidth() / 2
                                     + ((mc.player.getPrimaryHand() == EnumHandSide.LEFT) ? -112 : 96),
                             event.getResolution().getScaledHeight() - 19, sprite, 16, 16);
                 }
-                if (SkillBarHandler.isSkillBarSlotChosen && !shouldDrawSkillBar) {
+                if (SkillBarHandler.isSkillBarSlotChosen() && !shouldDrawSkillBar) {
                     mc.getTextureManager().bindTexture(SkillBarHandler.WIDGETS);
                     mc.ingameGUI.drawTexturedModalRect(halfScaledWidth + ((mc.player.getPrimaryHand() == EnumHandSide.LEFT) ?
                             -116 : 92), scaledHeight - 30, 0, 22, 24, 22);
@@ -194,6 +195,7 @@ public class SkillBarHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)
     public static void onGameOverlayRenderPostHighestReceiveCanceled(RenderGameOverlayEvent.Post event) {
+        EntityPlayer player = Minecraft.getMinecraft().player;
         if (SkillBarHandler.shouldDrawSkillBar(event)) {
             // translate everything back
             GlStateManager.translate(0, -SkillBarHandler.skillBarShowStage, 0);
@@ -205,29 +207,21 @@ public class SkillBarHandler {
                 // go down
                 SkillBarHandler.skillBarShowStage = Math.min(SkillBarHandler.skillBarShowStage + 0.4F, 0.0F);
             }
-        } else if ((event.getType() == HOTBAR) && ConfigHandler.client.showSkillBarSlot && SkillBarHandler.isSkillBarSlotChosen) {
-            InventoryPlayer inventory = Minecraft.getMinecraft().player.inventory;
+        } else if ((event.getType() == HOTBAR) && SkillBarHandler.isSkillBarSlotChosen()) {
+            InventoryPlayer inventory = player.inventory;
             inventory.currentItem = MathHelper.clamp(inventory.currentItem - 30, 0, 9);
         }
     }
 
-    public static boolean shouldDrawSkillBar(RenderGameOverlayEvent event) {
-        RenderGameOverlayEvent.ElementType type = event.getType();
-        return SkillBarHandler.isSkillBarShown() && ((type == HEALTH) || (type == FOOD) || (type == AIR)
-                || (type == ARMOR) || (type == EXPERIENCE) || (type == HEALTHMOUNT)
-                || (type == HOTBAR) || (type == JUMPBAR));
-    }
-
-    public static float getSkillBarShowStage() {
-        return SkillBarHandler.skillBarShowStage;
-    }
-
+    /**
+     * When called, opens the skill bar for the current player via an animation.
+     */
     public static void showSkillBar() {
-        if (!SkillBarHandler.isSkillBarShown()) {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        Transformation transformation = TransformationHelper.getTransformation(player);
+        if (!SkillBarHandler.isSkillBarShown() && transformation.hasSkills()) {
             SkillBarHandler.skillBarShowStage = -0.01F;
             SkillBarHandler.isBarGoingUp = true;
-            EntityPlayer player = Minecraft.getMinecraft().player;
-            Transformation transformation = TransformationHelper.getTransformation(player);
 
             // add skills
             int index = 0;
@@ -243,22 +237,65 @@ public class SkillBarHandler {
         }
     }
 
+    /**
+     * If this is called and the skill bar is currently opened, this will close it for the current player via an animation.
+     */
     public static void hideSkillBar() {
         SkillBarHandler.isBarGoingUp = false;
         SkillBarHandler.isSkillBarSlotChosen = false;
     }
 
+    /**
+     * Returns true if the opened skill bar should be drawn.
+     */
+    public static boolean shouldDrawSkillBar(RenderGameOverlayEvent event) {
+        RenderGameOverlayEvent.ElementType type = event.getType();
+        return SkillBarHandler.isSkillBarShown() && ((type == HEALTH) || (type == FOOD) || (type == AIR)
+                || (type == ARMOR) || (type == EXPERIENCE) || (type == HEALTHMOUNT)
+                || (type == HOTBAR) || (type == JUMPBAR));
+    }
+
+    /**
+     * Returns true when the skill bar is seeable. (Even if it's still in the animation and you can't interact with it.)
+     */
     public static boolean isSkillBarShown() {
-        return SkillBarHandler.skillBarShowStage < 0.0F;
+        return SkillBarHandler.shouldShowSkillBarSlot() && (SkillBarHandler.skillBarShowStage < 0.0F);
     }
 
+    /**
+     * Returns true when the skill bar is fully shown. Used to determine if you can already interact with it
+     * (e.g. select a skill or close it).
+     */
     public static boolean isSkillBarFullyShown() {
-        return SkillBarHandler.skillBarShowStage <= SkillBarHandler.HOTBAR_PUSH_HEIGHT;
+        return SkillBarHandler.isSkillBarShown() && (SkillBarHandler.skillBarShowStage <= SkillBarHandler.HOTBAR_PUSH_HEIGHT);
     }
 
+    /**
+     * Returns true if the skill bar slot should be drawn.
+     */
+    public static boolean shouldShowSkillBarSlot() {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        return ConfigHandler.client.showSkillBarSlot && TransformationHelper.getTransformation(player).hasSkills() && !player.isSpectator();
+    }
+
+    /**
+     * Returns true if the skill bar slot is selected. (Doesn't count as selected when {@link #shouldShowSkillBarSlot()}
+     * returns false.)
+     */
+    public static boolean isSkillBarSlotChosen() {
+        return SkillBarHandler.isSkillBarSlotChosen && SkillBarHandler.shouldShowSkillBarSlot();
+    }
+
+    /**
+     * Returns the currently selected skill. May be null if no skill is selected.
+     */
     @Nullable
     public static Skill getCurrentSkill() {
         return (SkillBarHandler.currentSkill == SkillBarHandler.SKILL_BAR.length) ? null
                 : SkillBarHandler.SKILL_BAR[SkillBarHandler.currentSkill];
+    }
+
+    public static float getSkillBarShowStage() {
+        return SkillBarHandler.skillBarShowStage;
     }
 }
