@@ -16,9 +16,10 @@ import theblockbox.huntersdream.api.helpers.TransformationHelper;
  * low priority.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
- * If this event is canceled, the set actions take effect (the event is also
- * canceled in ALL set methods, so you shouldn't have to manually cancel it),
- * otherwise nothing happens<br>
+ * If this event is canceled, the hurt entity won't reduce the damage with
+ * {@link Transformation#getReducedDamage(EntityLivingBase, float)} and the set
+ * actions take effect (the event is also canceled in ALL set methods, so you
+ * shouldn't have to manually cancel it), otherwise nothing happens<br>
  * <br>
  * This event does not have a result.
  * {@link net.minecraftforge.fml.common.eventhandler.Event.HasResult}<br>

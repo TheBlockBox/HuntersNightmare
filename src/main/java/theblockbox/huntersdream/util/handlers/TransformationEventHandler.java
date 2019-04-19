@@ -46,6 +46,7 @@ import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
+import theblockbox.huntersdream.util.interfaces.IAmmunition;
 import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
@@ -184,7 +185,6 @@ public class TransformationEventHandler {
                     if (hurt.isEntityUndead() && GeneralHelper.itemStackHasOreDicts(attacker.getHeldItemMainhand(),
                             OreDictionaryInit.SILVER_NAMES))
                         event.setAmount(event.getAmount() + 2.5F);
-
                     if (transformationHurt.isTransformation()
                             && TransformationEventHandler.addEffectiveAgainst(event, attacker, hurt, transformationHurt))
                         return;
@@ -208,7 +208,7 @@ public class TransformationEventHandler {
             Object[] objects = {event.getSource().getImmediateSource(), attacker.getHeldItemMainhand(), attacker};
             for (Object obj : objects) {
                 if (obj != null) {
-                    float damage = transformationHurt.getReducedDamage(hurt, event.getAmount());
+                    float damage = event.getAmount();
                     EffectivenessEvent ee = (obj instanceof Entity)
                             ? new EntityEffectivenessEvent(hurt, (Entity) obj, damage)
                             : ((obj instanceof ItemStack)
@@ -283,7 +283,6 @@ public class TransformationEventHandler {
 
             World world = creature.world;
             if (!world.isRemote) {
-
                 if (creature instanceof EntityGolem) {
                     EntityGolem entity = (EntityGolem) creature;
                     entity.targetTasks.addTask(2,
@@ -306,7 +305,6 @@ public class TransformationEventHandler {
                     if (!transformation.textureIndexInBounds())
                         transformation.setTextureIndex(creature);
                 }
-
                 tc.ifPresent(t -> {
                     if (!t.textureIndexInBounds())
                         t.setTextureIndex(creature);
@@ -388,6 +386,14 @@ public class TransformationEventHandler {
             }
             event.setThorns(event.getDamage() * thorns);
             event.setArmorDamage(4);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityEffectiveness(EntityEffectivenessEvent event) {
+        if (WerewolfHelper.isTransformed(event.getEntityLiving()) && (event.getAttacker() instanceof IAmmunition)
+                && ArrayUtils.contains(((IAmmunition) event.getAttacker()).getAmmunitionTypes(), IAmmunition.AmmunitionType.SILVER)) {
+            event.setDamage(event.getDamage() * 2.0F);
         }
     }
 

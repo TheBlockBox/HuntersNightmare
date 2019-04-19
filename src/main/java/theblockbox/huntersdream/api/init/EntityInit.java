@@ -12,8 +12,10 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.entity.EntityBullet;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.entity.renderer.RenderBullet;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 
@@ -37,7 +39,9 @@ public class EntityInit {
                         .spawn(EnumCreatureType.CREATURE, 2, 5, 5,
                                 StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
                                         .filter(b -> BiomeDictionary.hasType(b, BiomeDictionary.Type.FOREST))
-                                        .collect(Collectors.toSet())).build());
+                                        .collect(Collectors.toSet())).build(),
+                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).tracker(64, 20,
+                        false).build());
     }
 
     public static void registerEntityRenders() {
@@ -51,6 +55,12 @@ public class EntityInit {
             @Override
             public Render<? super EntityWerewolf> createRenderFor(RenderManager manager) {
                 return new RenderWerewolf(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, new IRenderFactory<EntityBullet>() {
+            @Override
+            public Render<? super EntityBullet> createRenderFor(RenderManager manager) {
+                return new RenderBullet(manager);
             }
         });
     }

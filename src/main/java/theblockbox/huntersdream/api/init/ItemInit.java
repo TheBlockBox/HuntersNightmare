@@ -7,13 +7,13 @@ import net.minecraft.item.*;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
-import theblockbox.huntersdream.items.ItemBestiary;
-import theblockbox.huntersdream.items.ItemHerbalAconiteWater;
-import theblockbox.huntersdream.items.ItemTent;
+import theblockbox.huntersdream.items.*;
 import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
+import theblockbox.huntersdream.util.interfaces.IAmmunition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,9 @@ public class ItemInit {
 
     @GameRegistry.ObjectHolder("huntersdream:tent")
     public static final Item TENT = null;
+
+    @GameRegistry.ObjectHolder("huntersdream:musket_ball")
+    public static final Item MUSKET_BALL = null;
 
     // Materials
     public static final Item.ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,
@@ -52,6 +55,15 @@ public class ItemInit {
         ItemInit.registerToolSet("silver", ItemInit.TOOL_SILVER, event);
         ItemInit.registerArmorSet("silver", ItemInit.ARMOR_SILVER, event);
         ItemInit.registerItem(new ItemHerbalAconiteWater(), "herbal_aconite_water", event);
+        ItemInit.registerItem(new ItemFlintlockGun(10, 3451, 1, 2),
+                "flintlock_musket", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemFlintlockGun(6, 3255, 1, 1),
+                "flintlock_pistol", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemFlintlockGunBlunderBuss(6, 3465, 5, 6),
+                "flintlock_blunderbuss", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemMusketBall(), "musket_ball", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemMusketBall(ArrayUtils.add(ItemMusketBall.AMMUNITION_TYPES,
+                IAmmunition.AmmunitionType.SILVER)), "silver_musket_ball", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
     }
 
     private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {

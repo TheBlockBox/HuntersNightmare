@@ -15,6 +15,11 @@ item.huntersdream.pickaxe_silver.name=Silver Pickaxe
 item.huntersdream.shovel_silver.name=Silver Shovel
 item.huntersdream.hoe_silver.name=Silver Hoe
 item.huntersdream.axe_silver.name=Silver Axe
+item.huntersdream.flintlock_musket.name=Flintlock Musket
+item.huntersdream.flintlock_pistol.name=Flintlock Pistol
+item.huntersdream.flintlock_blunderbuss=Blunderbuss
+item.huntersdream.musket_ball.name=Musket Ball
+item.huntersdream.silver_musket_ball.name=Silver Musket Ball
 
 # Other items
 item.huntersdream.ingot_silver.name=Silver Ingot

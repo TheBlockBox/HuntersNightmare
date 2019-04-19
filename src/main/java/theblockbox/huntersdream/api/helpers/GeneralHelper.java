@@ -10,6 +10,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -31,9 +32,12 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.init.StructureInit;
+import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
+import theblockbox.huntersdream.util.interfaces.IAmmunition;
+import theblockbox.huntersdream.util.interfaces.IGun;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -521,14 +525,15 @@ public class GeneralHelper {
         int y = GeneralHelper.getYForStructure(world, x, z, sizeX, sizeZ);
         if (y != -1) {
             BlockPos pos = new BlockPos(x, y, z);
-            if (location == StructureInit.WEREWOLF_CABIN) {
-                WerewolfHelper.addWerewolfCabin(pos, pos.add(sizeX, 0, sizeZ));
-            }
             if (ConfigHandler.server.logStructureSpawns) {
                 Main.getLogger().info("Spawned structure {} at the coordinates [{}, {}, {}]", location, pos.getX(), pos.getY(), pos.getZ());
             }
-            template.addBlocksToWorldChunk(world, pos, new PlacementSettings()
-                    .setRotation(ChanceHelper.randomRotation(random)));
+            if (location == StructureInit.WEREWOLF_CABIN) {
+                EntityWerewolf werewolf = new EntityWerewolf(world);
+                werewolf.setPosition(pos.getX() + (sizeX / 2), pos.getY() + 1, pos.getZ() + (sizeZ / 2));
+                world.spawnEntity(werewolf);
+            }
+            template.addBlocksToWorldChunk(world, pos, new PlacementSettings());
             return true;
         } else {
             return false;
@@ -543,5 +548,58 @@ public class GeneralHelper {
         long worldTime = world.getWorldTime();
         // 23459 and 12540 are the exact times between which it is day (according to World#isDaytime)
         return WerewolfHelper.isFullmoon(world) && ((worldTime > 12540L) && (worldTime < 23459L));
+    }
+
+    /**
+     * Returns true if the first given object equals any of the objects in the array via comparison by
+     * {@link Object#equals(Object)}. Does not throw any exception when the object is null, though it'll throw one
+     * when the array is null.
+     */
+    public static boolean equalsAny(Object object, Object... objects) {
+        if (object == null) {
+            for (Object o : objects)
+                if (o == null)
+                    return true;
+        } else {
+            for (Object o : objects)
+                if (object.equals(o))
+                    return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns a stack of ammunition working for the given gun by going through the offhand, the hotbar from left to
+     * right, the first inventory row, the second one, the third one and finally the armor slots until any working
+     * ammunition is found. If so, the (uncopied) stack is returned, otherwise, {@link ItemStack#EMPTY} will be returned.
+     */
+    public static ItemStack getAmmunitionStackForWeapon(EntityPlayer player, ItemStack gun, boolean allowsArrows) {
+        if (gun.getItem() instanceof IGun) {
+            IAmmunition.AmmunitionType[] ammunitionTypes = ((IGun) gun.getItem()).getAllowedAmmunitionTypes();
+            return Stream.of(player.inventory.offHandInventory, player.inventory.mainInventory, player.inventory.armorInventory)
+                    .flatMap(Collection::stream).filter(stack -> {
+                        if (allowsArrows && (GeneralHelper.equalsAny(stack.getItem(), Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW)))
+                            return true;
+                        if (stack.getItem() instanceof IAmmunition)
+                            for (IAmmunition.AmmunitionType gunType : ammunitionTypes)
+                                for (IAmmunition.AmmunitionType itemType : ((IAmmunition) stack.getItem()).getAmmunitionTypes())
+                                    if (gunType == itemType)
+                                        return true;
+                        return false;
+                    }).findFirst().orElse(ItemStack.EMPTY);
+        } else {
+            return ItemStack.EMPTY;
+        }
+    }
+
+    /**
+     * Tries to get the tag compound from the given {@link ItemStack}. If it doesn't have a tag compound, a new one is
+     * created and returned.
+     */
+    public static NBTTagCompound getTagCompoundFromItemStack(ItemStack stack) {
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        return stack.getTagCompound();
     }
 }

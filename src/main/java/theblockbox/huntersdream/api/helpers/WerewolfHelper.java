@@ -11,7 +11,6 @@ import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -42,14 +41,14 @@ import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPl
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Optional;
+import java.util.Random;
 
 import static net.minecraft.init.SoundEvents.ENTITY_WOLF_GROWL;
 
 public class WerewolfHelper {
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
     public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource("huntersdream:werewolfTransformationDamage");
-    private static final List<BlockPos> WEREWOLF_CABINS = new ArrayList<>();
 
     /**
      * Returns true when a werewolf can transform in this world
@@ -693,26 +692,5 @@ public class WerewolfHelper {
      */
     public static boolean canPlayerBiteAgain(EntityPlayer player) {
         return WerewolfHelper.hasBiteCooldownEnded(player) && WerewolfHelper.isTransformed(player);
-    }
-
-    /**
-     * Adds a werewolf cabin between the given coordinates. Werewolves will be spawned in the middle of the two positions
-     * at night. (Also if it's not full moon.)
-     */
-    public static void addWerewolfCabin(BlockPos pos1, BlockPos pos2) {
-        WerewolfHelper.WEREWOLF_CABINS.add(new BlockPos((pos1.getX() + pos2.getX()) / 2, pos1.getY() + 1, (pos1.getZ() + pos2.getZ()) / 2));
-    }
-
-    public static boolean spawnWerewolfInCabin(World world, EntityWerewolf werewolf) {
-        if (GeneralHelper.isNight(world)) {
-            Collections.shuffle(WerewolfHelper.WEREWOLF_CABINS, world.rand);
-            for (BlockPos pos : WerewolfHelper.WEREWOLF_CABINS) {
-                if (world.isBlockLoaded(pos)) {
-                    world.spawnEntity(werewolf);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }
