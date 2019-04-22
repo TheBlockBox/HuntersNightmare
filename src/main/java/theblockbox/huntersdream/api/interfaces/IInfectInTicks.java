@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces;
+package theblockbox.huntersdream.api.interfaces;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

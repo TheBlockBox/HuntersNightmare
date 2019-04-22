@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
-import theblockbox.huntersdream.util.interfaces.IAmmunition;
+import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
 import java.util.Collection;
 import java.util.stream.Stream;

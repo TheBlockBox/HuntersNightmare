@@ -2,5 +2,31 @@
     "parent": "item/handheld",
     "textures": {
         "layer0": "huntersdream:items/flintlock_pistol"
+    },
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [
+                -135,
+                90,
+                0
+            ],
+            "translation": [
+                0,
+                1.5,
+                -1.5
+            ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [
+                -135,
+                -90,
+                0
+            ],
+            "translation": [
+                0,
+                1.5,
+                -1.5
+            ]
+        }
     }
 }

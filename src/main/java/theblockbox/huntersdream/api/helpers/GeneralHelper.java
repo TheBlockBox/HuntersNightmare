@@ -18,6 +18,8 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -32,12 +34,12 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.init.StructureInit;
+import theblockbox.huntersdream.api.interfaces.IAmmunition;
+import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
-import theblockbox.huntersdream.util.interfaces.IAmmunition;
-import theblockbox.huntersdream.util.interfaces.IGun;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,6 +87,10 @@ public class GeneralHelper {
             return value.clone();
         }
     };
+    /**
+     * An array of all possible hands (currently {@link EnumHand#MAIN_HAND} and {@link EnumHand#OFF_HAND}).
+     */
+    public static final EnumHand[] HANDS = {EnumHand.MAIN_HAND, EnumHand.OFF_HAND};
     // A mutable AxisAlignedBB that is used in #canEntityExpandHeight(Entity, float)
     // to test if the entity can change its size. Here so that we don't have to
     // create a new one every tick
@@ -601,5 +607,21 @@ public class GeneralHelper {
             stack.setTagCompound(new NBTTagCompound());
         }
         return stack.getTagCompound();
+    }
+
+    /**
+     * Converts the given {@link EnumHandSide} into an {@link EnumHand} via the method {@link EntityLivingBase#getPrimaryHand()}
+     * of the given entity.
+     */
+    public static EnumHand convertEnumHandSide(EnumHandSide handSide, EntityLivingBase entity) {
+        return (entity.getPrimaryHand() == handSide) ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+    }
+
+    /**
+     * Converts the given {@link EnumHand} into an {@link EnumHandSide} via the method {@link EntityLivingBase#getPrimaryHand()}
+     * of the given entity.
+     */
+    public static EnumHandSide convertEnumHand(EnumHand hand, EntityLivingBase entity) {
+        return (hand == EnumHand.MAIN_HAND) ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
     }
 }

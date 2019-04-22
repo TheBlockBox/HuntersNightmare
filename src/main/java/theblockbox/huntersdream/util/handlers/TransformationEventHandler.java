@@ -41,17 +41,17 @@ import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.api.init.OreDictionaryInit;
+import theblockbox.huntersdream.api.interfaces.IAmmunition;
+import theblockbox.huntersdream.api.interfaces.IInfectInTicks;
+import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.blocks.BlockMountainAsh;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
-import theblockbox.huntersdream.util.interfaces.IAmmunition;
-import theblockbox.huntersdream.util.interfaces.IInfectInTicks;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.Optional;
 

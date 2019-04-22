@@ -13,10 +13,10 @@ import net.minecraft.util.math.MathHelper;
 import theblockbox.huntersdream.api.helpers.ClientHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.api.skill.ParentSkill;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.io.IOException;
 import java.util.ArrayDeque;

@@ -7,8 +7,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.api.skill.Skill;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.Optional;
 

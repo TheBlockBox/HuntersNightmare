@@ -14,13 +14,13 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.network.*;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.VampireFoodStats;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 import static net.minecraftforge.fml.relauncher.Side.SERVER;

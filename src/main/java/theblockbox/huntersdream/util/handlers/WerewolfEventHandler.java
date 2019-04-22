@@ -29,9 +29,9 @@ import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.api.init.SkillInit;
+import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.Reference;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.Random;
 

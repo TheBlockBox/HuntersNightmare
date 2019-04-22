@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces.transformation;
+package theblockbox.huntersdream.api.interfaces.transformation;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;

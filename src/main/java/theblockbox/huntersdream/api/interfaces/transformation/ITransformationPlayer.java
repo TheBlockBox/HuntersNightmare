@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces.transformation;
+package theblockbox.huntersdream.api.interfaces.transformation;
 
 import com.google.common.collect.Sets;
 import net.minecraft.nbt.NBTBase;

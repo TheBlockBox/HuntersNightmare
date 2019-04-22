@@ -8,9 +8,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.collection.TransformationSet;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.ArrayList;
 import java.util.Collection;

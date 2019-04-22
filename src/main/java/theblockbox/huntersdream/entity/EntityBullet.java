@@ -10,7 +10,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.init.ItemInit;
-import theblockbox.huntersdream.util.interfaces.IAmmunition;
+import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
 public class EntityBullet extends EntityArrow implements IAmmunition {
     private final Item item;

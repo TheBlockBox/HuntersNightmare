@@ -4,16 +4,18 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.BooleanUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.ItemInit;
+import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.entity.EntityBullet;
-import theblockbox.huntersdream.util.interfaces.IGun;
 
 // TODO: Add damage tooltip
 public abstract class ItemGun extends ItemBow implements IGun {
@@ -23,6 +25,9 @@ public abstract class ItemGun extends ItemBow implements IGun {
     public ItemGun(double damage, int ticksCooldown) {
         this.damage = damage;
         this.cooldown = ticksCooldown;
+        this.addPropertyOverride(new ResourceLocation("is_loaded"), ((stack, worldIn, entityIn) ->
+                BooleanUtils.toInteger((entityIn != null) && this.isLoaded(stack))));
+        this.setFull3D();
     }
 
     @Override
@@ -32,7 +37,6 @@ public abstract class ItemGun extends ItemBow implements IGun {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        // TODO: What does this method even do?
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (this.isLoaded(stack)) {
             // if the gun has already been loaded shoot the bullet
@@ -40,18 +44,16 @@ public abstract class ItemGun extends ItemBow implements IGun {
             GeneralHelper.getTagCompoundFromItemStack(stack).setLong("huntersdream:last_shot", worldIn.getTotalWorldTime());
             this.shoot(playerIn, stack);
             playerIn.resetActiveHand();
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        } else if ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
+                <= worldIn.getTotalWorldTime() && this.hasSufficientAmmunition(playerIn, stack)) {
+            // set active hand to make #onUsingTick(ItemStack, EntityLivingBase, int) get called
+            playerIn.setActiveHand(handIn);
+            // don't play reequip animation
             return new ActionResult<>(EnumActionResult.PASS, stack);
-        } else if (this.hasSufficientAmmunition(playerIn, stack)) {
-            if ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
-                    <= worldIn.getTotalWorldTime()) {
-                // set active hand to make #onUsingTick(ItemStack, EntityLivingBase, int) get called
-                playerIn.setActiveHand(handIn);
-                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-            } else {
-                return new ActionResult<>(EnumActionResult.FAIL, stack);
-            }
         } else {
-            return new ActionResult<>(EnumActionResult.PASS, stack);
+            // don't play reequip animation
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
         }
     }
 
@@ -65,7 +67,7 @@ public abstract class ItemGun extends ItemBow implements IGun {
                     && ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
                     <= entity.world.getTotalWorldTime())) {
                 player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.BLOCK_WOOD_BUTTON_CLICK_ON,
-                        SoundCategory.PLAYERS, 1.0F, 0.6F);
+                        SoundCategory.PLAYERS, 3.0F, 0.6F);
             }
         }
     }
@@ -81,6 +83,17 @@ public abstract class ItemGun extends ItemBow implements IGun {
                 this.reload(player, stack);
             }
         }
+    }
+
+    @Override
+    public EnumAction getItemUseAction(ItemStack stack) {
+        return this.isLoaded(stack) ? EnumAction.BOW : EnumAction.NONE;
+    }
+
+    @Override
+    public boolean shouldRenderDifferently(EntityPlayer entity, ItemStack gun) {
+        // when the gun is loaded, render it in both hands
+        return this.isLoaded(gun);
     }
 
     public boolean isLoaded(ItemStack stack) {

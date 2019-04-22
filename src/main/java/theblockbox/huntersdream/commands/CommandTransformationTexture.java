@@ -9,8 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import theblockbox.huntersdream.api.helpers.CommandHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import java.util.ArrayList;
 import java.util.List;

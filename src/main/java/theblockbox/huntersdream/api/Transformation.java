@@ -12,10 +12,10 @@ import theblockbox.huntersdream.api.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.interfaces.functional.ToFloatObjFloatFunction;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
-import theblockbox.huntersdream.util.interfaces.functional.ToFloatObjFloatFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

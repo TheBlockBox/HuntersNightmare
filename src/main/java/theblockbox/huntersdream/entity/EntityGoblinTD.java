@@ -26,8 +26,8 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.ExecutionPath;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
 
 public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IMob {
     /**

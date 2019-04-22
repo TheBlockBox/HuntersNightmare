@@ -1,7 +1,7 @@
 package theblockbox.huntersdream.items;
 
 import net.minecraft.item.Item;
-import theblockbox.huntersdream.util.interfaces.IAmmunition;
+import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
 public class ItemMusketBall extends Item implements IAmmunition {
     public static final IAmmunition.AmmunitionType[] AMMUNITION_TYPES = {IAmmunition.AmmunitionType.MUSKET_BALL};

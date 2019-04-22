@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.*;
@@ -28,6 +30,7 @@ import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.ParticleClientInit;
 import theblockbox.huntersdream.api.init.ParticleCommonInit;
+import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
 import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
@@ -48,6 +51,7 @@ public class TransformationClientEventHandler {
     private static final ResourceLocation WEREWOLF_HAND = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms.png");
     private static RenderLycanthropePlayer renderLycantrophePlayer = null;
     private static RenderPlayer renderPlayerHand = null;
+    private static int oldActiveStackUseCount = 0;
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
@@ -60,6 +64,31 @@ public class TransformationClientEventHandler {
                     TransformationClientEventHandler.renderLycantrophePlayer = new RenderLycanthropePlayer(Minecraft.getMinecraft().getRenderManager());
                 TransformationClientEventHandler.renderLycantrophePlayer.doRender(player, event.getX(), event.getY(),
                         event.getZ(), player.rotationYaw, event.getPartialRenderTick());
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onRenderPlayerPreLow(RenderPlayerEvent.Pre event) {
+        EntityPlayer player = event.getEntityPlayer();
+        for (EnumHand hand : GeneralHelper.HANDS) {
+            ItemStack stack = player.getHeldItem(hand);
+            if ((stack.getItem() instanceof IGun) && ((IGun) stack.getItem()).shouldRenderDifferently(player, stack)) {
+                TransformationClientEventHandler.oldActiveStackUseCount = player.activeItemStackUseCount;
+                player.activeItemStackUseCount = 1;
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onRenderPlayerPost(RenderPlayerEvent.Post event) {
+        EntityPlayer player = event.getEntityPlayer();
+        for (EnumHand hand : GeneralHelper.HANDS) {
+            ItemStack stack = player.getHeldItem(hand);
+            if ((stack.getItem() instanceof IGun) && ((IGun) stack.getItem()).shouldRenderDifferently(player, stack)
+                    && (player.activeItemStackUseCount == 1)) {
+                player.activeItemStackUseCount = TransformationClientEventHandler.oldActiveStackUseCount;
+                TransformationClientEventHandler.oldActiveStackUseCount = 0;
             }
         }
     }

@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces.functional;
+package theblockbox.huntersdream.api.interfaces.functional;
 
 import java.util.function.BiFunction;
 import java.util.function.ToDoubleBiFunction;

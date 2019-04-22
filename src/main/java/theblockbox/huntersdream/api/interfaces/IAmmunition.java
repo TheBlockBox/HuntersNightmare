@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.util.interfaces;
+package theblockbox.huntersdream.api.interfaces;
 
 /**
  * An interface that should be implemented by all items and bullets serving as ammunition for some weapon.

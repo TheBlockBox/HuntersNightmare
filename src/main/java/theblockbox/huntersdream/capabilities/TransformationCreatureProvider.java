@@ -8,7 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
 
 public class TransformationCreatureProvider implements ICapabilitySerializable<NBTTagCompound> {
     public static final Capability<ITransformationCreature> CAP = CapabilitiesInit.CAPABILITY_TRANSFORMATION_CREATURE;

@@ -26,7 +26,8 @@ public class ItemFlintlockGunBlunderBuss extends ItemFlintlockGun {
         // TODO: Make them go into different directions
         for (int i = 0; i < this.consumedAmmunition; i++) {
             EntityBullet bullet = new EntityBullet(world, player, ammunition, this.damage);
-            bullet.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F,
+            float rotation = (Item.itemRand.nextFloat() - 0.5F) * 90;
+            bullet.shoot(player, player.rotationPitch + rotation, player.rotationYaw + rotation, 0.0F,
                     this.getArrowVelocity(player, stack) * 3.0F, this.getInaccuracy());
             world.spawnEntity(bullet);
         }

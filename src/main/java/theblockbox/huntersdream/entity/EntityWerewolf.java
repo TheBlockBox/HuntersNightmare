@@ -32,12 +32,12 @@ import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.entity.ai.EntityAIWerewolfAttack;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
-import theblockbox.huntersdream.util.interfaces.IInfectOnNextMoon;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformation;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationCreature;
-import theblockbox.huntersdream.util.interfaces.transformation.ITransformationPlayer;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
