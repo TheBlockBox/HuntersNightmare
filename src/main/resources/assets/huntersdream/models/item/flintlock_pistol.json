@@ -6,26 +6,26 @@
     "display": {
         "thirdperson_righthand": {
             "rotation": [
-                -135,
-                90,
-                0
-            ],
-            "translation": [
-                0,
-                1.5,
-                -1.5
-            ]
-        },
-        "thirdperson_lefthand": {
-            "rotation": [
-                -135,
+                -45,
                 -90,
                 0
             ],
             "translation": [
                 0,
-                1.5,
-                -1.5
+                2,
+                -1
+            ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [
+                -45,
+                90,
+                0
+            ],
+            "translation": [
+                0,
+                2,
+                -1
             ]
         }
     }
