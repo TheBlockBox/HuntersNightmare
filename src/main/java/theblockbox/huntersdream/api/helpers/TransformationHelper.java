@@ -5,6 +5,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
@@ -18,6 +20,7 @@ import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.api.event.IsLivingInfectedEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.interfaces.IInfectInTicks;
 import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
@@ -276,5 +279,17 @@ public class TransformationHelper {
 
     public static DamageSource causeEffectivenessThornsDamage(Entity source) {
         return new EntityDamageSource(TransformationHelper.THORNS_DAMAGE_NAME, source).setIsThornsDamage().setMagicDamage();
+    }
+
+    public static Item getHunterWeaponForEntity(EntityLivingBase attacked, boolean meleeWeapon) {
+        if (meleeWeapon) {
+            return Items.IRON_SWORD;
+        } else {
+            return ItemInit.FLINTLOCK_PISTOL;
+        }
+    }
+
+    public static Item getHunterAmmunitionForEntity(EntityLivingBase attacked) {
+        return ItemInit.MUSKET_BALL;
     }
 }

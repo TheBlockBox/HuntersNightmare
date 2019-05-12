@@ -110,7 +110,7 @@ public class RegistryHandler {
         NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
         Transformation.preInit();
         Skill.preInit();
-        GameRegistry.registerTileEntity(TileEntitySilverFurnace.class, GeneralHelper.newResLoc("furnace_silver"));
+        GameRegistry.registerTileEntity(TileEntitySilverFurnace.class, GeneralHelper.newResLoc("silver_furnace"));
         GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
         RegistryHandler.directory = event.getModConfigurationDirectory();
         MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
@@ -119,7 +119,7 @@ public class RegistryHandler {
 
     public static void initCommon(FMLInitializationEvent event) {
         PacketHandler.register();
-        GameRegistry.addSmelting(BlockInit.ORE_SILVER, new ItemStack(ItemInit.INGOT_SILVER), 0.9F);
+        GameRegistry.addSmelting(BlockInit.SILVER_ORE, new ItemStack(ItemInit.SILVER_INGOT), 0.9F);
         LootTableInit.register();
         StructureInit.register();
         OreDictionaryInit.registerOres();

@@ -1,6 +1,6 @@
 package theblockbox.huntersdream.items;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +16,7 @@ public class ItemFlintlockGunBlunderBuss extends ItemFlintlockGun {
     }
 
     @Override
-    public void spawnBullet(EntityPlayer player, ItemStack stack) {
+    public void spawnBullet(EntityLivingBase player, ItemStack stack) {
         World world = player.world;
         Item ammunition = Item.getByNameOrId(GeneralHelper.getTagCompoundFromItemStack(stack).getString("huntersdream:ammunition"));
         if (ammunition == Items.AIR) {

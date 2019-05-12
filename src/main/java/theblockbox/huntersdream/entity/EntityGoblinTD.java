@@ -22,6 +22,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
@@ -42,6 +43,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
             .createKey(EntityGoblinTD.class, DataSerializers.BYTE);
     private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
             .createKey(EntityGoblinTD.class, DataSerializers.COMPOUND_TAG);
+    private static final Transformation[] TRANSFORMATIONS_NOT_IMMUNE_TO = {Transformation.WEREWOLF, Transformation.VAMPIRE};
 
     public EntityGoblinTD(World worldIn, int textureIndex, Transformation transformation) {
         super(worldIn);
@@ -148,12 +150,12 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
 
     @Override
     public Transformation[] getTransformationsNotImmuneTo() {
-        return new Transformation[]{Transformation.VAMPIRE, Transformation.WEREWOLF};
+        return EntityGoblinTD.TRANSFORMATIONS_NOT_IMMUNE_TO;
     }
 
     @Override
     public boolean notImmuneToTransformation(Transformation transformation) {
-        return (transformation == Transformation.VAMPIRE) || (transformation == Transformation.WEREWOLF);
+        return ArrayUtils.contains(this.getTransformationsNotImmuneTo(), transformation);
     }
 
     @Override

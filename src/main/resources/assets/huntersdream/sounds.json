@@ -28,5 +28,25 @@
                 "stream": true
             }
         ]
+    },
+    "gun.flintlock.fire": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.flintlock.fire",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/flintlock/fire",
+                "stream": true
+            }
+        ]
+    },
+    "gun.flintlock.reload": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.flintlock.reload",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/flintlock/reload",
+                "stream": true
+            }
+        ]
     }
 }

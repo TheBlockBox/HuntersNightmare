@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "SS",
+        " T",
+        " T"
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        },
+        "T": {
+            "type": "forge:ore_dict",
+            "ore": "stickWood"
+        }
+    },
+    "result": {
+        "item": "huntersdream:silver_hoe",
+        "count": 1
+    }
+}

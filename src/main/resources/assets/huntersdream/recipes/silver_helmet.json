@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "SSS",
+        "S S"
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        }
+    },
+    "result": {
+        "item": "huntersdream:silver_helmet",
+        "count": 1
+    }
+}

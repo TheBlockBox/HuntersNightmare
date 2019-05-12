@@ -189,11 +189,6 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
     }
 
     @Override
-    public boolean isChild() {
-        return false;
-    }
-
-    @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
         if (this.ticksExisted % 80 == 0) {
@@ -208,7 +203,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
 
     @Override
     public void setTransformation(Transformation transformation) {
-        throw new UnsupportedOperationException("This creature's transformation is already determined");
+        throw new UnsupportedOperationException("This creature's transformation has already been determined");
     }
 
     @Override

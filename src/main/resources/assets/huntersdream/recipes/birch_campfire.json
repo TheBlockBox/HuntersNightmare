@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " S ",
+        "PLP"
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "stickWood"
+        },
+        "P": {
+            "item": "minecraft:planks",
+            "data": 2
+        },
+        "L": {
+            "item": "minecraft:log",
+            "data": 2
+        }
+    },
+    "result": {
+        "item": "huntersdream:birch_campfire"
+    }
+}

@@ -4,17 +4,17 @@
 # Translated by: 
 
 # Armor
-item.huntersdream.helmet_silver.name=Silver Helmet
-item.huntersdream.chestplate_silver.name=Silver Chestplate
-item.huntersdream.leggings_silver.name=Silver Leggings
-item.huntersdream.boots_silver.name=Silver Boots
+item.huntersdream.silver_helmet.name=Silver Helmet
+item.huntersdream.silver_chestplate.name=Silver Chestplate
+item.huntersdream.silver_leggings.name=Silver Leggings
+item.huntersdream.silver_boots.name=Silver Boots
 
 # Weapons and Tools
-item.huntersdream.sword_silver.name=Silver Sword
-item.huntersdream.pickaxe_silver.name=Silver Pickaxe
-item.huntersdream.shovel_silver.name=Silver Shovel
-item.huntersdream.hoe_silver.name=Silver Hoe
-item.huntersdream.axe_silver.name=Silver Axe
+item.huntersdream.silver_sword.name=Silver Sword
+item.huntersdream.silver_pickaxe.name=Silver Pickaxe
+item.huntersdream.silver_shovel.name=Silver Shovel
+item.huntersdream.silver_hoe.name=Silver Hoe
+item.huntersdream.silver_axe.name=Silver Axe
 item.huntersdream.flintlock_musket.name=Flintlock Musket
 item.huntersdream.flintlock_pistol.name=Flintlock Pistol
 item.huntersdream.flintlock_blunderbuss.name=Blunderbuss
@@ -22,7 +22,7 @@ item.huntersdream.musket_ball.name=Musket Ball
 item.huntersdream.silver_musket_ball.name=Silver Musket Ball
 
 # Other items
-item.huntersdream.ingot_silver.name=Silver Ingot
+item.huntersdream.silver_ingot.name=Silver Ingot
 item.huntersdream.hunters_journal.name=Hunter's Journal
 item.huntersdream.hunters_journal_page.name=Hunter's Note
 item.huntersdream.bestiary.name=Bestiary
@@ -39,16 +39,16 @@ lingering_potion.effect.aconite=Aconite Lingering Potion
 tipped_arrow.effect.aconite=Aconite Arrow
 
 # Blocks
-tile.huntersdream.block_silver.name=Silver Block
-tile.huntersdream.overworld_ore_silver.name=Silver Ore
+tile.huntersdream.silver_block.name=Silver Block
+tile.huntersdream.silver_ore.name=Silver Ore
 tile.huntersdream.tent.name=Tent
-tile.huntersdream.campfire_oak.name=Oak Campfire
-tile.huntersdream.campfire_spruce.name=Spruce Campfire
-tile.huntersdream.campfire_birch.name=Birch Campfire
-tile.huntersdream.campfire_jungle.name=Jungle Campfire
-tile.huntersdream.campfire_acacia.name=Acacia Campfire
-tile.huntersdream.campfire_dark_oak.name=Dark Oak Campfire
-tile.huntersdream.furnace_silver.name=Silver Furnace
+tile.huntersdream.oak_campfire.name=Oak Campfire
+tile.huntersdream.spruce_campfire.name=Spruce Campfire
+tile.huntersdream.birch_campfire.name=Birch Campfire
+tile.huntersdream.jungle_campfire.name=Jungle Campfire
+tile.huntersdream.acacia_campfire.name=Acacia Campfire
+tile.huntersdream.dark_oak_campfire.name=Dark Oak Campfire
+tile.huntersdream.silver_furnace.name=Silver Furnace
 tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.aconite_flower.name=Aconite Flower
 tile.huntersdream.aconite_garland.name=Aconite Garland
@@ -57,20 +57,18 @@ tile.huntersdream.mountain_ash.name=Mountain Ash
 # Entities
 entity.goblintd.name=Goblin
 entity.werewolf.name=Werewolf
+entity.hunter.name=Hunter
 
 # Transformations
 huntersdream\:human=Human
 huntersdream\:werewolf=Werewolf
-huntersdream\:vampire=Vampire
-huntersdream\:witch=Witch
-huntersdream\:clockworkandroid=Clockworkandroid
-huntersdream\:hybrid=Hybrid
-huntersdream\:hunter=Hunter
 
 # Sounds (Subtitles)
 huntersdream.transformation.heartbeat=Heartbeat of a werewolf
 huntersdream.transformation.werewolf.howling=Howling werewolf
 huntersdream.transformation.vampire.gulp=Vampire drinking blood
+huntersdream.gun.flintlock.fire=Flintlock gun firing
+huntersdream.gun.flintlock.reload=Flintlock gun reloading
 
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools

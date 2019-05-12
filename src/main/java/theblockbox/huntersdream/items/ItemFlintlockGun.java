@@ -1,12 +1,16 @@
 package theblockbox.huntersdream.items;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.ItemInit;
+import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
 import java.util.Collection;
@@ -30,12 +34,17 @@ public class ItemFlintlockGun extends ItemGun {
     }
 
     @Override
+    public Item getDefaultAmmunition() {
+        return ItemInit.MUSKET_BALL;
+    }
+
+    @Override
     public float getInaccuracy() {
         return 1.5F;
     }
 
     @Override
-    public float getArrowVelocity(EntityPlayer player, ItemStack stack) {
+    public float getArrowVelocity(EntityLivingBase entity, ItemStack stack) {
         // twice as fast as normal arrows
         return 2.0F;
     }
@@ -62,9 +71,8 @@ public class ItemFlintlockGun extends ItemGun {
     public boolean removeAmmunition(EntityPlayer player, ItemStack stack) {
         if (this.hasSufficientAmmunition(player, stack)) {
             ItemStack ammunition = GeneralHelper.getAmmunitionStackForWeapon(player, stack, false);
-            ResourceLocation registryName = ammunition.getItem().getRegistryName();
-            if (registryName != null) {
-                GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:ammunition", registryName.toString());
+            if (ammunition.getItem().getRegistryName() != null) {
+                this.setAmmunition(stack, ammunition.getItem());
             }
             if (!player.capabilities.isCreativeMode) {
                 ItemStack gunpowder = Stream.of(player.inventory.offHandInventory, player.inventory.mainInventory,
@@ -89,5 +97,22 @@ public class ItemFlintlockGun extends ItemGun {
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return super.getIsRepairable(toRepair, repair) || ArrayUtils.contains(OreDictionary.getOreIDs(repair),
                 OreDictionary.getOreID("ingotIron"));
+    }
+
+    @Override
+    public void playShootSound(EntityLivingBase entity, ItemStack stack) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundInit.FLINTLOCK_FIRE, SoundCategory.PLAYERS,
+                2.0F, 1.0F);
+    }
+
+    @Override
+    public void playReloadSoundStart(EntityLivingBase entity, ItemStack stack) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundInit.FLINTLOCK_RELOAD, SoundCategory.PLAYERS,
+                2.0F, 1.0F);
+    }
+
+    @Override
+    public void playReloadSoundEnd(EntityLivingBase entity, ItemStack stack) {
+        // don't play any sound when reloading ends
     }
 }

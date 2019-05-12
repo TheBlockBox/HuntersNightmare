@@ -12,7 +12,7 @@ import theblockbox.huntersdream.container.ContainerSilverFurnace;
 public class GuiSilverFurnace extends GuiContainer {
     public static final int WIDTH = 176;
     public static final int HEIGHT = 166;
-    public static final ResourceLocation IMAGE = GeneralHelper.newResLoc("textures/gui/furnace_silver.png");
+    public static final ResourceLocation IMAGE = GeneralHelper.newResLoc("textures/gui/silver_furnace.png");
     private final ContainerSilverFurnace container;
 
     public GuiSilverFurnace(ContainerSilverFurnace inventorySlotsIn) {
@@ -57,7 +57,7 @@ public class GuiSilverFurnace extends GuiContainer {
         }
 
         GeneralHelper.drawCenteredString(this.fontRenderer,
-                I18n.format(BlockInit.FURNACE_SILVER.getTranslationKey() + ".name"), 0, this.xSize, 5, 4210752);
+                I18n.format(BlockInit.SILVER_FURNACE.getTranslationKey() + ".name"), 0, this.xSize, 5, 4210752);
         this.fontRenderer.drawString(this.container.getPlayerInventory().getDisplayName().getUnformattedText(), 8,
                 this.ySize - 96 + 4, 4210752);
     }

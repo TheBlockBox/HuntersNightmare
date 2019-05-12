@@ -11,11 +11,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.ItemInit;
+import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.entity.EntityBullet;
+
+import java.util.Objects;
 
 // TODO: Add damage tooltip
 public abstract class ItemGun extends ItemBow implements IGun {
@@ -49,6 +53,8 @@ public abstract class ItemGun extends ItemBow implements IGun {
                 <= worldIn.getTotalWorldTime() && this.hasSufficientAmmunition(playerIn, stack)) {
             // set active hand to make #onUsingTick(ItemStack, EntityLivingBase, int) get called
             playerIn.setActiveHand(handIn);
+            // play sound
+            this.playReloadSoundStart(playerIn, stack);
             // don't play reequip animation
             return new ActionResult<>(EnumActionResult.PASS, stack);
         } else {
@@ -66,8 +72,7 @@ public abstract class ItemGun extends ItemBow implements IGun {
             if (!this.isLoaded(stack) && this.hasSufficientAmmunition(player, stack) && this.hasJustBeenReloaded(player, stack, count)
                     && ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
                     <= entity.world.getTotalWorldTime())) {
-                player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.BLOCK_WOOD_BUTTON_CLICK_ON,
-                        SoundCategory.PLAYERS, 3.0F, 0.6F);
+                this.playReloadSoundEnd(entity, stack);
             }
         }
     }
@@ -87,13 +92,65 @@ public abstract class ItemGun extends ItemBow implements IGun {
 
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
-        return this.isLoaded(stack) ? EnumAction.BOW : EnumAction.NONE;
+        return EnumAction.BOW;
     }
 
     @Override
-    public boolean shouldRenderDifferently(EntityPlayer entity, ItemStack gun) {
+    public void spawnBullet(EntityLivingBase entity, ItemStack stack) {
+        World world = entity.world;
+        Item ammunition = Item.getByNameOrId(GeneralHelper.getTagCompoundFromItemStack(stack).getString("huntersdream:ammunition"));
+        if (ammunition == Items.AIR) {
+            ammunition = ItemInit.MUSKET_BALL;
+        }
+        EntityBullet bullet = new EntityBullet(world, entity, ammunition, this.damage);
+        bullet.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F,
+                this.getArrowVelocity(entity, stack) * 3.0F, this.getInaccuracy());
+        world.spawnEntity(bullet);
+    }
+
+    @Override
+    public boolean shouldRenderDifferently(EntityLivingBase entity, ItemStack gun) {
         // when the gun is loaded, render it in both hands
         return this.isLoaded(gun);
+    }
+
+    @Override
+    public Item setAmmunition(ItemStack stack, Item ammunition) {
+        Item actualAmmunition = this.getDefaultAmmunition();
+        if (ammunition instanceof IAmmunition) {
+            for (IAmmunition.AmmunitionType ammunitionType : ((IAmmunition) ammunition).getAmmunitionTypes()) {
+                if (ArrayUtils.contains(this.getAllowedAmmunitionTypes(), ammunitionType)) {
+                    actualAmmunition = ammunition;
+                    break;
+                }
+            }
+        }
+        GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:ammunition", Objects.toString(actualAmmunition.getRegistryName()));
+        return actualAmmunition;
+    }
+
+    /**
+     * Is called to play the shoot sound when ammunition is shot.
+     */
+    public void playShootSound(EntityLivingBase entity, ItemStack stack) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS,
+                1.0F, 1.0F / ((ItemGun.itemRand.nextFloat() * 0.4F) + 1.2F) + (this.getArrowVelocity(entity, stack) * 0.5F));
+    }
+
+    /**
+     * Is called to play the reload sound when the entity starts reloading. (Therefore, it's not guaranteed that it'll
+     * fully reload.)
+     */
+    public void playReloadSoundStart(EntityLivingBase entity, ItemStack stack) {
+    }
+
+    /**
+     * Is called to play the reload sound when the entity has stopped reloading and now has a loaded weapon. (Doesn't get
+     * called when the reloading wasn't successful.)
+     */
+    public void playReloadSoundEnd(EntityLivingBase entity, ItemStack stack) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.BLOCK_WOOD_BUTTON_CLICK_ON,
+                SoundCategory.PLAYERS, 3.0F, 0.6F);
     }
 
     public boolean isLoaded(ItemStack stack) {
@@ -107,24 +164,11 @@ public abstract class ItemGun extends ItemBow implements IGun {
         if (!world.isRemote) {
             this.spawnBullet(player, stack);
         }
-        world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS,
-                1.0F, 1.0F / ((ItemGun.itemRand.nextFloat() * 0.4F) + 1.2F) + (this.getArrowVelocity(player, stack) * 0.5F));
+        this.playShootSound(player, stack);
         player.addStat(StatList.getObjectUseStats(this));
     }
 
-    public void spawnBullet(EntityPlayer player, ItemStack stack) {
-        World world = player.world;
-        Item ammunition = Item.getByNameOrId(GeneralHelper.getTagCompoundFromItemStack(stack).getString("huntersdream:ammunition"));
-        if (ammunition == Items.AIR) {
-            ammunition = ItemInit.MUSKET_BALL;
-        }
-        EntityBullet bullet = new EntityBullet(world, player, ammunition, this.damage);
-        bullet.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F,
-                this.getArrowVelocity(player, stack) * 3.0F, this.getInaccuracy());
-        world.spawnEntity(bullet);
-    }
-
-    public float getArrowVelocity(EntityPlayer player, ItemStack stack) {
+    public float getArrowVelocity(EntityLivingBase entity, ItemStack stack) {
         return 1.0F;
     }
 
@@ -160,9 +204,8 @@ public abstract class ItemGun extends ItemBow implements IGun {
     public boolean removeAmmunition(EntityPlayer player, ItemStack stack) {
         if (this.hasSufficientAmmunition(player, stack)) {
             ItemStack ammunition = GeneralHelper.getAmmunitionStackForWeapon(player, stack, false);
-            ResourceLocation registryName = ammunition.getItem().getRegistryName();
-            if (registryName != null) {
-                GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:ammunition", registryName.toString());
+            if (ammunition.getItem().getRegistryName() != null) {
+                this.setAmmunition(stack, ammunition.getItem());
             }
             if (!player.capabilities.isCreativeMode) {
                 ammunition.shrink(1);

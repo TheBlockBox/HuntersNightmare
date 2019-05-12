@@ -19,11 +19,11 @@ import java.util.List;
 public class BlockInit {
     public static final List<BlockOre> ORES = new ArrayList<>();
 
-    @GameRegistry.ObjectHolder("huntersdream:furnace_silver")
-    public static final Block FURNACE_SILVER = null;
+    @GameRegistry.ObjectHolder("huntersdream:silver_furnace")
+    public static final Block SILVER_FURNACE = null;
 
-    @GameRegistry.ObjectHolder("huntersdream:overworld_ore_silver")
-    public static final Block ORE_SILVER = null;
+    @GameRegistry.ObjectHolder("huntersdream:silver_ore")
+    public static final Block SILVER_ORE = null;
 
     @GameRegistry.ObjectHolder("huntersdream:aconite_flower")
     public static final Block ACONITE_FLOWER = null;
@@ -42,15 +42,15 @@ public class BlockInit {
 
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)
-                .setHardness(5.0F), "block_silver", event);
+                .setHardness(5.0F), "silver_block", event);
         BlockInit.registerBlockWithItem(
                 new BlockOre(Dimensions.OVERWORLD, ConfigHandler.server.ores.silverMinY,
                         ConfigHandler.server.ores.silverMaxY, ConfigHandler.server.ores.silverChance, Blocks.STONE),
-                "overworld_ore_silver", event);
+                "silver_ore", event);
         BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "aconite_flower", event);
-        BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "furnace_silver", event);
+        BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "silver_furnace", event);
         for (BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
-            BlockInit.registerBlockWithItem(new BlockCampfire(type), "campfire_" + type.getName(), 1, event);
+            BlockInit.registerBlockWithItem(new BlockCampfire(type), type.getName() + "_campfire", 1, event);
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
         BlockInit.registerBlockWithItem(new BlockAconiteGarland(), "aconite_garland", event);

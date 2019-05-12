@@ -281,7 +281,7 @@ public class GeneralHelper {
         return stack -> {
             if (!stack.isEmpty()) {
                 // need to set damage to make the oredict not care about it
-                // (because some people purposely don't use OreDictionary#WILDCARD_VALUE because
+                // (since some people purposely don't use OreDictionary#WILDCARD_VALUE because
                 // of crafting)
                 int damage = stack.getItemDamage();
                 int[] ids = OreDictionary.getOreIDs(stack);

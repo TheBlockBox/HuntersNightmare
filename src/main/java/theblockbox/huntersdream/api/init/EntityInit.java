@@ -1,7 +1,9 @@
 package theblockbox.huntersdream.api.init;
 
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.biome.Biome;
@@ -14,6 +16,7 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.entity.EntityBullet;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
+import theblockbox.huntersdream.entity.EntityHunter;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.renderer.RenderBullet;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
@@ -40,6 +43,8 @@ public class EntityInit {
                                 StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
                                         .filter(b -> BiomeDictionary.hasType(b, BiomeDictionary.Type.FOREST))
                                         .collect(Collectors.toSet())).build(),
+                EntityInit.getEntityEntryBuilder("hunter", EntityHunter.class).egg(12820338, 4532224)
+                        .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
                 EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).tracker(64, 20,
                         false).build());
     }
@@ -55,6 +60,13 @@ public class EntityInit {
             @Override
             public Render<? super EntityWerewolf> createRenderFor(RenderManager manager) {
                 return new RenderWerewolf(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityHunter.class, new IRenderFactory<EntityHunter>() {
+            @Override
+            public Render<? super EntityHunter> createRenderFor(RenderManager manager) {
+                // TODO: Use hunter model
+                return (Render<EntityHunter>) ((RenderLivingBase) new RenderPlayer(manager));
             }
         });
         RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, new IRenderFactory<EntityBullet>() {

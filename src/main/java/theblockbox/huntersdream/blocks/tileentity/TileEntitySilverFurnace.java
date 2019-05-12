@@ -215,7 +215,7 @@ public class TileEntitySilverFurnace extends TileEntity implements ITickable {
 
     @Override
     public boolean shouldRefresh(World worldIn, BlockPos blockPos, IBlockState oldState, IBlockState newState) {
-        return newState.getBlock() != BlockInit.FURNACE_SILVER;
+        return newState.getBlock() != BlockInit.SILVER_FURNACE;
     }
 
     /**

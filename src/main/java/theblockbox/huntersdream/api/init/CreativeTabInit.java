@@ -14,14 +14,14 @@ public class CreativeTabInit {
             Reference.MODID + ".toolsandcombat") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ItemInit.SWORD_SILVER);
+            return new ItemStack(ItemInit.SILVER_SWORD);
         }
     };
 
     public static final CreativeTabs HUNTERSDREAM_MISC = new CreativeTabs(Reference.MODID + ".misc") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ItemInit.INGOT_SILVER);
+            return new ItemStack(ItemInit.SILVER_INGOT);
         }
     };
 }

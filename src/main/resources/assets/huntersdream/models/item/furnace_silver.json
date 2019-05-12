@@ -1,8 +1,0 @@
-{
-    "parent": "minecraft:block/orientable",
-    "textures": {
-        "top": "huntersdream:blocks/block_silver",
-        "side": "huntersdream:blocks/block_silver",
-        "front": "huntersdream:blocks/furnace_silver_off"
-    }
-}

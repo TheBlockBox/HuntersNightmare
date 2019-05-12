@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "B"
+    ],
+    "key": {
+        "B": {
+            "type": "forge:ore_dict",
+            "ore": "blockSilver"
+        }
+    },
+    "result": {
+        "item": "huntersdream:silver_ingot",
+        "count": 9
+    }
+}

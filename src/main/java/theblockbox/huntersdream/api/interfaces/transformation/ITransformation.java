@@ -7,7 +7,7 @@ import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 
 /**
- * This interface is for entites that can transform
+ * This interface is for entites that can have a transformation
  */
 public interface ITransformation {
     public Transformation getTransformation();
