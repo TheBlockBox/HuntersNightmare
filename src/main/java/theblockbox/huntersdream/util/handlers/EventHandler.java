@@ -3,13 +3,19 @@ package theblockbox.huntersdream.util.handlers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,6 +28,7 @@ import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.StructureInit;
+import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.util.Reference;
 
 import java.io.InputStreamReader;
@@ -110,6 +117,30 @@ public class EventHandler {
                 GeneralHelper.trySpawnStructure(StructureInit.HUNTERS_CAMP, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
             } else {
                 GeneralHelper.trySpawnStructure(StructureInit.WEREWOLF_CABIN, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerInteractRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        World world = event.getWorld();
+        if(!world.isRemote) {
+            BlockPos pos = event.getPos();
+            IBlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof BlockCauldron) {
+                BlockCauldron cauldron = (BlockCauldron) state.getBlock();
+                int level = state.getValue(BlockCauldron.LEVEL);
+                ItemStack stack = event.getItemStack();
+                if ((level > 0) && (stack.getItem() instanceof ItemHunterArmor)) {
+                    ItemHunterArmor armor = (ItemHunterArmor) stack.getItem();
+                    if (armor.hasColor(stack)) {
+                        armor.removeColor(stack);
+                        cauldron.setWaterLevel(world, pos, state, level - 1);
+                        event.getEntityPlayer().addStat(StatList.ARMOR_CLEANED);
+                        event.setCancellationResult(EnumActionResult.SUCCESS);
+                        event.setCanceled(true);
+                    }
+                }
             }
         }
     }

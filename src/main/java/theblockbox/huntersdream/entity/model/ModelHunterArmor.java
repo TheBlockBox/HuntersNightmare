@@ -1,23 +1,20 @@
 package theblockbox.huntersdream.entity.model;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 
 /**
  * ModelHunterArmor - VampireRedEye
  * Created using Tabula 7.0.1
  */
+// TODO: Redo hat and jacket
 public class ModelHunterArmor extends ModelBiped {
-    public static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/models/armor/hunter.png");
     public ModelRenderer jacket;
     public ModelRenderer bootr;
     public ModelRenderer bootl;
@@ -64,8 +61,7 @@ public class ModelHunterArmor extends ModelBiped {
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(ModelHunterArmor.TEXTURE);
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
         if (this.isSneak) {
             GlStateManager.translate(0.0F, 0.2F, 0.0F);
@@ -74,20 +70,20 @@ public class ModelHunterArmor extends ModelBiped {
             if (armor.getItem() instanceof ItemHunterArmor) {
                 switch (((ItemHunterArmor) armor.getItem()).armorType) {
                     case HEAD:
-                        this.bipedHead.render(f5);
+                        this.bipedHead.render(scale);
                         break;
                     case CHEST:
-                        this.bipedBody.render(f5);
-                        this.bipedLeftArm.render(f5);
-                        this.bipedRightArm.render(f5);
+                        this.bipedBody.render(scale);
+                        this.bipedLeftArm.render(scale);
+                        this.bipedRightArm.render(scale);
                         break;
                     case LEGS:
-                        this.bipedLeftLeg.render(f5);
-                        this.bipedRightLeg.render(f5);
+                        this.bipedLeftLeg.render(scale);
+                        this.bipedRightLeg.render(scale);
                         break;
                     case FEET:
-                        this.bootl.render(f5);
-                        this.bootr.render(f5);
+                        this.bootl.render(scale);
+                        this.bootr.render(scale);
                         break;
                 }
             }
@@ -109,8 +105,8 @@ public class ModelHunterArmor extends ModelBiped {
             ModelBase.copyModelAngles(modelBiped.bipedLeftLeg, this.bootl);
             ModelBase.copyModelAngles(modelBiped.bipedRightLeg, this.bootr);
         } else {
-            Main.getLogger().error("Tried copy model attributes to ModelHunterArmor from a model that isn't an " +
-                    "instance of ModelBiped ({} of type) {}", model, model.getClass().getName());
+            Main.getLogger().error("Tried to copy model attributes to ModelHunterArmor from a model that isn't an " +
+                    "instance of ModelBiped. ({} of type {}.)", model, model.getClass().getName());
         }
     }
 }

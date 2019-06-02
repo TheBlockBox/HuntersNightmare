@@ -22,6 +22,7 @@ import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.ClientHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.util.Reference;
 
@@ -275,7 +276,9 @@ public class SkillBarHandler {
      */
     public static boolean shouldShowSkillBarSlot() {
         EntityPlayer player = Minecraft.getMinecraft().player;
-        return ConfigHandler.client.showSkillBarSlot && TransformationHelper.getTransformation(player).hasSkills() && !player.isSpectator();
+        ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(player);
+        return ConfigHandler.client.showSkillBarSlot && !transformation.hasNoSkills()
+                && transformation.getTransformation().hasSkills() && !player.isSpectator();
     }
 
     /**

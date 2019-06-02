@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
 import theblockbox.huntersdream.api.event.TransformationEvent;
@@ -50,6 +51,7 @@ import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPla
 import theblockbox.huntersdream.blocks.BlockMountainAsh;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 
@@ -321,9 +323,14 @@ public class TransformationEventHandler {
     @SubscribeEvent
     public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
         if (event.getEntityLiving().ticksExisted % 101 == 0) {
-            if (!event.getEntityLiving().world.isRemote) {
-                EntityLivingBase entity = event.getEntityLiving();
+            EntityLivingBase entity = event.getEntityLiving();
 
+            // hunter armor effects
+            for (HunterArmorEffect effect : ItemHunterArmor.getEffectsFromEntity(entity)) {
+                effect.onTick(entity);
+            }
+
+            if (!entity.world.isRemote) {
                 if (entity instanceof EntityCreature) {
                     EntityCreature creature = (EntityCreature) entity;
                     Transformation transformation = TransformationHelper.getTransformation(creature);

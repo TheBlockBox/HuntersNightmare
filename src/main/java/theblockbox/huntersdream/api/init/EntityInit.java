@@ -1,9 +1,7 @@
 package theblockbox.huntersdream.api.init;
 
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.biome.Biome;
@@ -20,6 +18,7 @@ import theblockbox.huntersdream.entity.EntityHunter;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.entity.renderer.RenderBullet;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
+import theblockbox.huntersdream.entity.renderer.RenderHunter;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 
 import java.util.stream.Collectors;
@@ -65,8 +64,7 @@ public class EntityInit {
         RenderingRegistry.registerEntityRenderingHandler(EntityHunter.class, new IRenderFactory<EntityHunter>() {
             @Override
             public Render<? super EntityHunter> createRenderFor(RenderManager manager) {
-                // TODO: Use hunter model
-                return (Render<EntityHunter>) ((RenderLivingBase) new RenderPlayer(manager));
+                return new RenderHunter(manager);
             }
         });
         RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, new IRenderFactory<EntityBullet>() {

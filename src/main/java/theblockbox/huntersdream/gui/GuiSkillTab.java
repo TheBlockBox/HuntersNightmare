@@ -174,7 +174,6 @@ public class GuiSkillTab extends GuiScreen {
 
         @Override
         public void onClicked(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-            System.out.println("tesr");
             GuiSkillTab.this.setPage(this.id);
         }
 

@@ -8,6 +8,10 @@ item.huntersdream.silver_helmet.name=Silver Helmet
 item.huntersdream.silver_chestplate.name=Silver Chestplate
 item.huntersdream.silver_leggings.name=Silver Leggings
 item.huntersdream.silver_boots.name=Silver Boots
+item.huntersdream.hunter_hat.name=Hunter Hat
+item.huntersdream.hunter_trenchcoat.name=Hunter Trenchcoat
+item.huntersdream.hunter_pants.name=Hunter Pants
+item.huntersdream.hunter_boots.name=Hunter Boots
 
 # Weapons and Tools
 item.huntersdream.silver_sword.name=Silver Sword

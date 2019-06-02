@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.items;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -97,6 +98,13 @@ public class ItemFlintlockGun extends ItemGun {
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         return super.getIsRepairable(toRepair, repair) || ArrayUtils.contains(OreDictionary.getOreIDs(repair),
                 OreDictionary.getOreID("ingotIron"));
+    }
+
+    @Override
+    public void onReloadCanceled(EntityLivingBase entity, ItemStack stack) {
+        if (entity.world.isRemote) {
+            Minecraft.getMinecraft().getSoundHandler().stop(SoundInit.FLINTLOCK_RELOAD.getSoundName().toString(), SoundCategory.PLAYERS);
+        }
     }
 
     @Override

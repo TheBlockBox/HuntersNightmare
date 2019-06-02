@@ -8,30 +8,57 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.ObjectUtils;
 import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.entity.model.ModelHunterArmor;
+import theblockbox.huntersdream.util.Reference;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 // TODO: Finish
 public class ItemHunterArmor extends ItemArmor {
+    /**
+     * If not null, the value of this package-private field will be returned in {@link #getArmorMaterial()}.
+     * Used in {@link RecipeHunterArmorDyes}.
+     */
+    static ItemArmor.ArmorMaterial manipulatedMaterial = null;
+
     public ItemHunterArmor(int renderIndex, EntityEquipmentSlot equipmentSlot) {
         super(ItemInit.ARMOR_HUNTER, renderIndex, equipmentSlot);
     }
 
+    public static HunterArmorEffect[] getEffectsFromEntity(EntityLivingBase entity) {
+        List<HunterArmorEffect> effects = new ArrayList<>(4);
+        for (ItemStack armor : entity.getArmorInventoryList()) {
+            if (armor.getItem() instanceof ItemHunterArmor) {
+                // add all effects
+                effects.add(ItemHunterArmor.getEffectFromStack(armor));
+            } else {
+                // if one armor piece is not present, don't activate any effects
+                return new HunterArmorEffect[0];
+            }
+        }
+        // if less than four armor pieces are present,
+        if (effects.size() < 4) {
+            // don't activate any effects
+            return new HunterArmorEffect[0];
+        }
+        return effects.stream().distinct().filter(effect -> effect != HunterArmorEffect.NONE).toArray(HunterArmorEffect[]::new);
+    }
+
     /**
      * Returns true if the given item stack's item is an instance of ItemHunterArmor and could possibly have an effect
-     * (meaning that it either already has an effect or that you could add one). Since it is only possible to add effects
-     * to the helmet and chestplate, this will only return true for those and not for the leggings or boots.
+     * (meaning that it either already has an effect or that you could add one). By default, this will only return true
+     * when the item's equipment slot is either {@link EntityEquipmentSlot#HEAD} or {@link EntityEquipmentSlot#CHEST},
+     * although this can be different if the item overrides {@link #doesItemAcceptEffects(ItemStack)}.
      */
     public static boolean acceptsEffects(ItemStack stack) {
-        if (stack.getItem() instanceof ItemHunterArmor) {
-            ItemHunterArmor armor = (ItemHunterArmor) stack.getItem();
-            return (armor.armorType == EntityEquipmentSlot.HEAD) || (armor.armorType == EntityEquipmentSlot.CHEST);
-        }
-        return false;
+        return (stack.getItem() instanceof ItemHunterArmor) && ((ItemHunterArmor) stack.getItem()).doesItemAcceptEffects(stack);
     }
 
     /**
@@ -62,21 +89,28 @@ public class ItemHunterArmor extends ItemArmor {
         }
     }
 
-    @Nullable
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return super.getArmorTexture(stack, entity, slot, type);
+    public ItemArmor.ArmorMaterial getArmorMaterial() {
+        return ObjectUtils.defaultIfNull(ItemHunterArmor.manipulatedMaterial, super.getArmorMaterial());
     }
 
     @Nullable
     @Override
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {
-        return new ModelHunterArmor();
+        return ((armorSlot == EntityEquipmentSlot.LEGS) || (armorSlot == EntityEquipmentSlot.FEET)) ? null : new ModelHunterArmor();
+    }
+
+    @Nullable
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+        String material = this.getArmorMaterial().getName();
+        return String.format("%s:textures/models/armor/%s_layer_%s.png", Reference.MODID, material.substring(material.indexOf(':') + 1),
+                Objects.equals(type, "overlay") ? "2" : "1");
     }
 
     @Override
     public boolean hasOverlay(ItemStack stack) {
-        return super.hasOverlay(stack);
+        return true;
     }
 
     @Override
@@ -94,7 +128,7 @@ public class ItemHunterArmor extends ItemArmor {
                 return display.getInteger("color");
             }
         }
-        return 0;
+        return 7427149;
     }
 
     @Override
@@ -116,5 +150,16 @@ public class ItemHunterArmor extends ItemArmor {
             compound.setTag("display", display);
         }
         display.setInteger("color", color);
+    }
+
+    /**
+     * Returns true if effects can be put on the given item stack. The item stack's item should always be the same as this
+     * class, so it is allowed to immediately cast the item. Currently only called in {@link #acceptsEffects(ItemStack)}.
+     * The default version only returns true if the item's equipment slot is either {@link EntityEquipmentSlot#HEAD} or
+     * {@link EntityEquipmentSlot#CHEST}, though this method can be overridden for custom handling.
+     */
+    protected boolean doesItemAcceptEffects(ItemStack stack) {
+        EntityEquipmentSlot armorType = ((ItemHunterArmor) stack.getItem()).armorType;
+        return (armorType == EntityEquipmentSlot.HEAD) || (armorType == EntityEquipmentSlot.CHEST);
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -28,6 +29,7 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.init.ParticleClientInit;
 import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
@@ -247,6 +249,12 @@ public class TransformationClientEventHandler {
             // post new post event so gui rendering from other mods doesn't get canceled
             MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(event, event.getType()));
         }
+    }
+
+    @SubscribeEvent
+    public static void onColorHandlerItem(ColorHandlerEvent.Item event) {
+        event.getItemColors().registerItemColorHandler((stack, tintIndex) -> (tintIndex > 0) ? -1 : ((ItemArmor) stack.getItem()).getColor(stack),
+                ItemInit.HUNTER_HAT, ItemInit.HUNTER_TRENCHCOAT, ItemInit.HUNTER_PANTS, ItemInit.HUNTER_BOOTS);
     }
 
     public static class RenderLycanthropeArm extends RenderPlayer {

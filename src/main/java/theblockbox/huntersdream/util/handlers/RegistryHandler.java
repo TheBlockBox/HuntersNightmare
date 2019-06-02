@@ -38,6 +38,8 @@ import theblockbox.huntersdream.commands.CommandMoonphase;
 import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
 import theblockbox.huntersdream.commands.CommandTransformationTexture;
+import theblockbox.huntersdream.items.RecipeHunterArmorDyes;
+import theblockbox.huntersdream.items.RecipeHunterArmorEffects;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
 
@@ -80,6 +82,8 @@ public class RegistryHandler {
                 PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
                 new OreIngredient("wolfsbane"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
                 .setRegistryName(registryName));
+        event.getRegistry().register(new RecipeHunterArmorDyes().setRegistryName(GeneralHelper.newResLoc("hunter_armor_dyes")));
+        event.getRegistry().register(new RecipeHunterArmorEffects().setRegistryName(GeneralHelper.newResLoc("hunter_armor_effects")));
     }
 
     @SubscribeEvent

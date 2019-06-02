@@ -104,6 +104,12 @@ public interface ITransformationPlayer extends ITransformation {
         return maxLevel;
     }
 
+    /**
+     * Returns true when the player hasn't unlocked any skill at all.
+     * Convenience method for {@link #getSkills()} and {@link Set#isEmpty()}.
+     */
+    public boolean hasNoSkills();
+
     public ItemHandlerClothingTab getClothingTab();
 
     public void setClothingTab(ItemHandlerClothingTab clothingTab);
@@ -174,6 +180,11 @@ public interface ITransformationPlayer extends ITransformation {
         @Override
         public boolean hasSkill(Skill skill) {
             return this.skills.contains(skill);
+        }
+
+        @Override
+        public boolean hasNoSkills() {
+            return this.skills.isEmpty();
         }
 
         @Override

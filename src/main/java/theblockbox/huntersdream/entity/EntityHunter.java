@@ -215,4 +215,11 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
     public void setSwingingArms(boolean swingingArms) {
         // TODO: Test what this actually does
     }
+
+    /**
+     * Returns true if this hunter should be drawn with folded arms.
+     */
+    public boolean shouldFoldArms() {
+        return true;
+    }
 }

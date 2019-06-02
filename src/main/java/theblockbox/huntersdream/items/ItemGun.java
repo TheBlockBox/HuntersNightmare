@@ -81,11 +81,15 @@ public abstract class ItemGun extends ItemBow implements IGun {
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entity, int timeLeft) {
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            if (!this.isLoaded(stack) && this.canReload(player, stack, timeLeft) && this.hasSufficientAmmunition(player, stack)
-                    && ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
-                    <= worldIn.getTotalWorldTime())) {
-                // if the isn't loaded but has enough ammo, reload it
-                this.reload(player, stack);
+            if (!this.isLoaded(stack)) {
+                if (this.canReload(player, stack, timeLeft) && this.hasSufficientAmmunition(player, stack)
+                        && ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
+                        <= worldIn.getTotalWorldTime())) {
+                    // if the gun isn't loaded but has enough ammo, reload it
+                    this.reload(player, stack);
+                } else {
+                    this.onReloadCanceled(entity, stack);
+                }
             }
         }
     }
@@ -127,6 +131,13 @@ public abstract class ItemGun extends ItemBow implements IGun {
         }
         GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:ammunition", Objects.toString(actualAmmunition.getRegistryName()));
         return actualAmmunition;
+    }
+
+    /**
+     * Gets called when the given entity stops reloading this weapon. (Does NOT get called when the reload is successful
+     * but only when it isn't.) Can be used to e.g. cancel the sound played in {@link #playReloadSoundStart(EntityLivingBase, ItemStack)}.
+     */
+    public void onReloadCanceled(EntityLivingBase entity, ItemStack stack) {
     }
 
     /**

@@ -40,6 +40,18 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:musket_ball")
     public static final Item MUSKET_BALL = null;
 
+    @GameRegistry.ObjectHolder("huntersdream:hunter_hat")
+    public static final Item HUNTER_HAT = null;
+
+    @GameRegistry.ObjectHolder("huntersdream:hunter_trenchcoat")
+    public static final Item HUNTER_TRENCHCOAT = null;
+
+    @GameRegistry.ObjectHolder("huntersdream:hunter_pants")
+    public static final Item HUNTER_PANTS = null;
+
+    @GameRegistry.ObjectHolder("huntersdream:hunter_boots")
+    public static final Item HUNTER_BOOTS = null;
+
     // Materials
     public static final Item.ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,
             6.0F, 0.0F, 14);
@@ -62,11 +74,11 @@ public class ItemInit {
         ItemInit.registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerToolSet("silver", ItemInit.TOOL_SILVER, event);
         ItemInit.registerArmorSet("silver", ItemInit.ARMOR_SILVER, event);
-        ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.HEAD), "hunter_helmet",
+        ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.HEAD), "hunter_hat",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.CHEST), "hunter_chestplate",
+        ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.CHEST), "hunter_trenchcoat",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemHunterArmor(2, EntityEquipmentSlot.LEGS), "hunter_leggings",
+        ItemInit.registerItem(new ItemHunterArmor(2, EntityEquipmentSlot.LEGS), "hunter_pants",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.FEET), "hunter_boots",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
