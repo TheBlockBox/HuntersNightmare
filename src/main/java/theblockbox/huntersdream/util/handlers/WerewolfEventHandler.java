@@ -42,6 +42,9 @@ public class WerewolfEventHandler {
     private static EntityLivingBase lastBittenEntity = null;
     private static float lastBiteDamage = 0.0F;
 
+    // use LivingDamage only for removing damage and LivingHurt for damage and
+    // damaged resources
+
     // TODO: Better way to make damage not go through armor?
     @SubscribeEvent
     public static void onEntityDamaged(LivingDamageEvent event) {
@@ -55,9 +58,6 @@ public class WerewolfEventHandler {
             }
         }
     }
-
-    // use LivingDamage only for removing damage and LivingHurt for damage and
-    // damaged resources
 
     /**
      * Called from {@link TransformationEventHandler#onEntityHurt(LivingHurtEvent)}

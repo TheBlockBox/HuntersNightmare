@@ -190,5 +190,12 @@ huntersdream.hunters_journal.test.description=This is a test page and shouldn't 
 huntersdream.hunters_journal.werewolf.title=Werewolves
 huntersdream.hunters_journal.werewolf.description=W.I.P.
 
+# Hunter Armor Effects
+huntersdream.hunter_armor_effect=Has the effect "%s"
+hunter_armor_effect.huntersdream.none=None
+hunter_armor_effect.huntersdream.silver=Silver
+hunter_armor_effect.huntersdream.aconite=Aconite
+
+
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.

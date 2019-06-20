@@ -327,7 +327,7 @@ public class TransformationEventHandler {
 
             // hunter armor effects
             for (HunterArmorEffect effect : ItemHunterArmor.getEffectsFromEntity(entity)) {
-                effect.onTick(entity);
+                effect.applyEffect(entity);
             }
 
             if (!entity.world.isRemote) {

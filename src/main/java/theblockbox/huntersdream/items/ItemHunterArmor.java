@@ -1,24 +1,27 @@
 package theblockbox.huntersdream.items;
 
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ObjectUtils;
 import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.ItemInit;
-import theblockbox.huntersdream.entity.model.ModelHunterArmor;
+import theblockbox.huntersdream.entity.model.ModelHunterArmorHat;
 import theblockbox.huntersdream.util.Reference;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 // TODO: Finish
 public class ItemHunterArmor extends ItemArmor {
@@ -62,15 +65,15 @@ public class ItemHunterArmor extends ItemArmor {
     }
 
     /**
-     * Tries to get a {@link HunterArmorEffect} from the given stack. If none could be gotten,
-     * {@link HunterArmorEffect#NONE} will be returned. This is also true for items that can't have any
-     * effect in the first place.
+     * Tries to get a {@link HunterArmorEffect} from the given stack. The item of the stack should be an instance of
+     * {@link ItemHunterArmor}. Otherwise, this will return {@link HunterArmorEffect#NONE}. If the armor has no effect,
+     * this will also return {@link HunterArmorEffect#NONE}.
      */
     public static HunterArmorEffect getEffectFromStack(ItemStack stack) {
         if (ItemHunterArmor.acceptsEffects(stack)) {
             NBTTagCompound compound = stack.getTagCompound();
             if (compound != null) {
-                return HunterArmorEffect.getEffectFromItem(Item.getByNameOrId(compound.getString("huntersdream:effectItem")));
+                return HunterArmorEffect.getEffectFromRegistryName(GeneralHelper.newResLoc(compound.getString("huntersdream:hunter_armor_effect")));
             }
         }
         return HunterArmorEffect.NONE;
@@ -78,11 +81,12 @@ public class ItemHunterArmor extends ItemArmor {
 
     /**
      * Tries to set the given item stack's hunter armor effect to the passed one. If this succeeds, true will be returned.
-     * This will only work if {@link #acceptsEffects(ItemStack)} returns true.
+     * This will only work if {@link #acceptsEffects(ItemStack)} returns true. To reset the effect, pass
+     * {@link HunterArmorEffect#NONE} for "effect" here.
      */
     public static boolean setHunterArmorEffect(ItemStack stack, HunterArmorEffect effect) {
         if (ItemHunterArmor.acceptsEffects(stack)) {
-            GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:effectItem", effect.getEffectItem().getRegistryName().toString());
+            GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:hunter_armor_effect", effect.getRegistryName().toString());
             return true;
         } else {
             return false;
@@ -97,15 +101,23 @@ public class ItemHunterArmor extends ItemArmor {
     @Nullable
     @Override
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {
-        return ((armorSlot == EntityEquipmentSlot.LEGS) || (armorSlot == EntityEquipmentSlot.FEET)) ? null : new ModelHunterArmor();
+        return (armorSlot == EntityEquipmentSlot.HEAD) ? new ModelHunterArmorHat() : null;
     }
 
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        String material = this.getArmorMaterial().getName();
-        return String.format("%s:textures/models/armor/%s_layer_%s.png", Reference.MODID, material.substring(material.indexOf(':') + 1),
-                Objects.equals(type, "overlay") ? "2" : "1");
+        if (slot == EntityEquipmentSlot.HEAD) {
+            String material = this.getArmorMaterial().getName();
+            StringBuilder builder = new StringBuilder().append(Reference.MODID).append(":textures/models/armor/")
+                    .append(material.substring(material.indexOf(':') + 1)).append("_layer_3");
+            if ("overlay".equals(type)) {
+                builder.append("_overlay");
+            }
+            return builder.append(".png").toString();
+        } else {
+            return super.getArmorTexture(stack, entity, slot, type);
+        }
     }
 
     @Override
@@ -150,6 +162,15 @@ public class ItemHunterArmor extends ItemArmor {
             compound.setTag("display", display);
         }
         display.setInteger("color", color);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        HunterArmorEffect effect = ItemHunterArmor.getEffectFromStack(stack);
+        if (effect != HunterArmorEffect.NONE) {
+            tooltip.add(I18n.format("huntersdream.hunter_armor_effect", I18n.format(effect.getTranslationKey())));
+        }
     }
 
     /**

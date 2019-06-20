@@ -38,8 +38,9 @@ import theblockbox.huntersdream.commands.CommandMoonphase;
 import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
 import theblockbox.huntersdream.commands.CommandTransformationTexture;
+import theblockbox.huntersdream.items.RecipeAddHunterArmorEffects;
 import theblockbox.huntersdream.items.RecipeHunterArmorDyes;
-import theblockbox.huntersdream.items.RecipeHunterArmorEffects;
+import theblockbox.huntersdream.items.RecipeRemoveHunterArmorEffects;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
 
@@ -74,16 +75,14 @@ public class RegistryHandler {
     @SubscribeEvent
     public static void onIRecipeRegister(RegistryEvent.Register<IRecipe> event) {
         ResourceLocation registryName = GeneralHelper.newResLoc("aconite_potion");
-        event.getRegistry().register(new ShapelessOreRecipe(registryName,
-                PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
-                new OreIngredient("aconite"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
-                .setRegistryName(registryName));
-        event.getRegistry().register(new ShapelessOreRecipe(registryName,
-                PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
-                new OreIngredient("wolfsbane"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM)
-                .setRegistryName(registryName));
-        event.getRegistry().register(new RecipeHunterArmorDyes().setRegistryName(GeneralHelper.newResLoc("hunter_armor_dyes")));
-        event.getRegistry().register(new RecipeHunterArmorEffects().setRegistryName(GeneralHelper.newResLoc("hunter_armor_effects")));
+        event.getRegistry().registerAll(new ShapelessOreRecipe(registryName, PotionUtils.addPotionToItemStack(
+                new ItemStack(Items.POTIONITEM), PotionInit.ACONITE), new OreIngredient("aconite"), Items.GOLDEN_APPLE,
+                        Items.MAGMA_CREAM, Items.POTIONITEM).setRegistryName(registryName),
+                new ShapelessOreRecipe(registryName, PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
+                        new OreIngredient("wolfsbane"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM).setRegistryName(registryName),
+                new RecipeHunterArmorDyes().setRegistryName(GeneralHelper.newResLoc("hunter_armor_dyes")),
+                new RecipeAddHunterArmorEffects().setRegistryName(GeneralHelper.newResLoc("hunter_armor_effects_add")),
+                new RecipeRemoveHunterArmorEffects().setRegistryName(GeneralHelper.newResLoc("hunter_armor_effects_remove")));
     }
 
     @SubscribeEvent
