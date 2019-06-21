@@ -1,4 +1,4 @@
-# Hunter's Dream 0.2.2 Changelog
+# Hunter's Dream 1.0.0-beta1 Changelog
 
 All new features and code changes since the last build (0.2.2)  
 To see every little change, please head to our [GitHub](https://github.com/TheGamingLord/HuntersDream) and look at the changelog of all the [commits](https://github.com/TheGamingLord/HuntersDream/commits/master) since the 24th of August.//TODO different date
