@@ -187,13 +187,14 @@ public class WerewolfEventHandler {
             EntityLivingBase interactedWith = (EntityLivingBase) event.getTarget();
             ItemStack stack = event.getItemStack();
             if ((TransformationHelper.getTransformation(interactedWith) == Transformation.WEREWOLF)
-                    && (stack.getItem() == Item.getItemFromBlock(BlockInit.ACONITE_FLOWER))) {
+                    && ((stack.getItem() == Item.getItemFromBlock(BlockInit.ACONITE_FLOWER))
+                    || (stack.getItem() == Item.getItemFromBlock(BlockInit.MONKSHOOD_FLOWER)))) {
                 // we don't want to open any gui, so we say that the
                 // interaction was a success and cancel the event
                 event.setCanceled(true);
                 event.setCancellationResult(EnumActionResult.SUCCESS);
                 if (!world.isRemote) {
-                    WerewolfHelper.applyAconiteEffects(interactedWith, true);
+                    WerewolfHelper.applyWolfsbaneEffects(interactedWith, true);
                     if (!event.getEntityPlayer().isCreative()) {
                         stack.shrink(1);
                     }

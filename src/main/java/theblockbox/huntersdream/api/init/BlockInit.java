@@ -49,8 +49,8 @@ public class BlockInit {
                 new BlockOre(Dimensions.OVERWORLD, ConfigHandler.server.ores.silverMinY,
                         ConfigHandler.server.ores.silverMaxY, ConfigHandler.server.ores.silverChance, Blocks.STONE),
                 "silver_ore", event);
-        BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "aconite_flower", event);
-        BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "monkshood_flower", event);
+        BlockInit.registerBlockWithItem(new BlockWolfsbaneFlower(), "aconite_flower", event);
+        BlockInit.registerBlockWithItem(new BlockWolfsbaneFlower(), "monkshood_flower", event);
         for (BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
             BlockInit.registerBlockWithItem(new BlockCampfire(type), type.getName() + "_campfire", 1, event);
         }

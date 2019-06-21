@@ -17,8 +17,8 @@ import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
 import theblockbox.huntersdream.util.BlockStateWrapper;
 
-public class BlockAconiteFlower extends BlockFlower {
-    public BlockAconiteFlower() {
+public class BlockWolfsbaneFlower extends BlockFlower {
+    public BlockWolfsbaneFlower() {
         this.setSoundType(SoundType.PLANT);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
     }
@@ -27,7 +27,7 @@ public class BlockAconiteFlower extends BlockFlower {
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         super.onEntityCollision(worldIn, pos, state, entityIn);
         if (!worldIn.isRemote && entityIn instanceof EntityLivingBase) {
-            WerewolfHelper.applyAconiteEffects((EntityLivingBase) entityIn, false);
+            WerewolfHelper.applyWolfsbaneEffects((EntityLivingBase) entityIn, false);
         }
     }
 
@@ -45,7 +45,7 @@ public class BlockAconiteFlower extends BlockFlower {
     protected BlockStateContainer createBlockState() {
         // literally created all of this just to be able
         // to extend BlockFlower
-        return new BlockAconiteFlower.CustomBlockStateContainer(this);
+        return new BlockWolfsbaneFlower.CustomBlockStateContainer(this);
     }
 
     @Override

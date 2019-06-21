@@ -82,7 +82,7 @@ public class ItemInit {
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.FEET), "hunter_boots",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemHerbalAconiteWater(), "herbal_aconite_water", event);
+        ItemInit.registerItem(new ItemHerbalWolfsbaneWater(), "herbal_wolfsbane_water", event);
         ItemInit.registerItem(new ItemFlintlockGun(10, 3451, 1, 2),
                 "flintlock_musket", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemFlintlockGun(6, 3255, 1, 1),

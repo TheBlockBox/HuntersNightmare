@@ -4,9 +4,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 
-public class PotionAconite extends PotionBase {
-    public PotionAconite() {
-        super(false, 16769280, 0, "aconite");
+public class PotionWolfsbane extends PotionBase {
+    public PotionWolfsbane() {
+        super(false, 16769280, 0, "wolfsbane");
     }
 
     @Override

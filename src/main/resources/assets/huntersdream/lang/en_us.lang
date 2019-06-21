@@ -31,16 +31,16 @@ item.huntersdream.hunters_journal.name=Hunter's Journal
 item.huntersdream.hunters_journal_page.name=Hunter's Note
 item.huntersdream.bestiary.name=Bestiary
 item.huntersdream.tent.name=Tent
-item.huntersdream.herbal_aconite_water.name=Herbal Aconite Water
+item.huntersdream.herbal_wolfsbane_water.name=Herbal Wolfsbane Water
 
 # Potions
 effect.huntersdream.fear=Fear
 effect.huntersdream.aconite=Aconite
 effect.huntersdream.sunscreen=Sunscreen
-potion.effect.aconite=Aconite Potion
-splash_potion.effect.aconite=Aconite Splash Potion
-lingering_potion.effect.aconite=Aconite Lingering Potion
-tipped_arrow.effect.aconite=Aconite Arrow
+potion.effect.wolfsbane=Wolfsbane Potion
+splash_potion.effect.wolfsbane=Wolfsbane Splash Potion
+lingering_potion.effect.wolfsbane=Wolfsbane Lingering Potion
+tipped_arrow.effect.wolfsbane=Wolfsbane Arrow
 
 # Blocks
 tile.huntersdream.silver_block.name=Silver Block

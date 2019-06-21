@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
 
-public class ItemHerbalAconiteWater extends ItemFood {
-    public ItemHerbalAconiteWater() {
+public class ItemHerbalWolfsbaneWater extends ItemFood {
+    public ItemHerbalWolfsbaneWater() {
         super(0, 0.0F, false);
         this.setAlwaysEdible();
         this.setMaxStackSize(1);

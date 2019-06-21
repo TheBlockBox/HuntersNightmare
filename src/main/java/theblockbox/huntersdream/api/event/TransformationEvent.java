@@ -80,9 +80,9 @@ public class TransformationEvent extends LivingEvent {
          */
         BESTIARY,
         /**
-         * When an aconite potion is used to cure a werewolf
+         * When a wolfsbane potion is used to cure a werewolf
          */
-        ACONITE,
+        WOLFSBANE,
         /**
          * Other cause that doesn't fit into one of these categories
          */

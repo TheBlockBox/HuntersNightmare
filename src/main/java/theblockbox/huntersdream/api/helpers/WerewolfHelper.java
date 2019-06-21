@@ -448,10 +448,10 @@ public class WerewolfHelper {
     }
 
     /**
-     * If the given entity is a werewolf, all the aconite effects will be
+     * If the given entity is a werewolf, all the wolfsbane effects will be
      * applied and a howl sound will be played
      */
-    public static boolean applyAconiteEffects(EntityLivingBase entity, boolean playSound) {
+    public static boolean applyWolfsbaneEffects(EntityLivingBase entity, boolean playSound) {
         if (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF) {
             if (playSound) {
                 entity.world.playSound(null, entity.posX, entity.posY, entity.posZ,
@@ -474,7 +474,7 @@ public class WerewolfHelper {
             ionm.setInfectionTransformation(Transformation.HUMAN);
             return true;
         } else if (alsoCureAlreadyTransformed && (TransformationHelper.getTransformation(toCure) == Transformation.WEREWOLF)) {
-            TransformationHelper.changeTransformation(toCure, Transformation.HUMAN, TransformationEvent.TransformationEventReason.ACONITE);
+            TransformationHelper.changeTransformation(toCure, Transformation.HUMAN, TransformationEvent.TransformationEventReason.WOLFSBANE);
             return true;
         } else {
             return false;

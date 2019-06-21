@@ -72,9 +72,9 @@ public class RegistryHandler {
 
     @SubscribeEvent
     public static void onIRecipeRegister(RegistryEvent.Register<IRecipe> event) {
-        ResourceLocation registryName = GeneralHelper.newResLoc("aconite_potion");
+        ResourceLocation registryName = GeneralHelper.newResLoc("wolfsbane_potion");
         event.getRegistry().registerAll(new ShapelessOreRecipe(registryName, PotionUtils.addPotionToItemStack(
-                new ItemStack(Items.POTIONITEM), PotionInit.ACONITE), new CompoundIngredient(Arrays.asList(
+                new ItemStack(Items.POTIONITEM), PotionInit.WOLFSBANE), new CompoundIngredient(Arrays.asList(
                 new OreIngredient("aconite"), new OreIngredient("wolfsbane"), new OreIngredient("monkshood"))) {
                 }, Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM).setRegistryName(registryName),
                 new RecipeHunterArmorDyes().setRegistryName(GeneralHelper.newResLoc("hunter_armor_dyes")),
