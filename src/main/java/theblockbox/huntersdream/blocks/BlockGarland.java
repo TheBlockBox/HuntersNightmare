@@ -239,11 +239,12 @@ public class BlockGarland extends Block {
         if (!worldIn.isRemote) {
             Object2IntMap.Entry<IBlockState> returned = this.checkSides(worldIn, pos);
             IBlockState returnedState = returned.getKey();
+            if (returnedState != state)
+                // TODO: Test if this still works in 1.13/1.14 (because of the air)
+                worldIn.setBlockState(pos, this.isAllowedState(returnedState) ? returnedState : Blocks.AIR.getDefaultState());
             if (returned.getIntValue() > 0)
                 InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY() - 0.5D, pos.getZ(),
                         new ItemStack(this.getDefault(), returned.getIntValue()));
-            if (returnedState != state)
-                worldIn.setBlockState(pos, this.isAllowedState(returnedState) ? returnedState : Blocks.AIR.getDefaultState());
         }
     }
 

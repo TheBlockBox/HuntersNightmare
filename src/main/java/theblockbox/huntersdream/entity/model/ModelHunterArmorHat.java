@@ -8,14 +8,15 @@ import net.minecraft.entity.Entity;
 import theblockbox.huntersdream.Main;
 
 /**
- * ModelHunterArmor - VampireRedEye
+ * ModelHunterArmorHat - VampireRedEye
  * Created using Tabula 7.0.1
  */
 public class ModelHunterArmorHat extends ModelBiped {
+    public static final ModelHunterArmorHat INSTANCE = new ModelHunterArmorHat();
     public ModelRenderer hat;
 
     public ModelHunterArmorHat() {
-        this.textureWidth = 72;
+        this.textureWidth = 89;
         this.textureHeight = 16;
         this.hat = new ModelRenderer(this, 40, 0);
         this.hat.setRotationPoint(0.0F, 0.0F, 0.0F);

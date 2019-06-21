@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "MA"
+    ],
+    "key": {
+        "M": {
+            "type": "forge:ore_dict",
+            "ore": "monkshood"
+        },
+        "A": {
+            "type": "forge:ore_dict",
+            "ore": "aconite"
+        }
+    },
+    "result": {
+        "item": "huntersdream:wolfsbane_petals",
+        "count": 1
+    }
+}

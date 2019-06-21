@@ -47,6 +47,7 @@ import java.util.Optional;
 /**
  * A werewolf
  */
+// TODO: Make them avoid wolfsbane petals
 public class EntityWerewolf extends EntityMob implements ITransformation, IEntityAdditionalSpawnData {
     /**
      * The speed of every werewolf (exactly two times faster than a normal player)
@@ -127,13 +128,14 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
             }
         });
         this.tasks.addTask(2, new EntityAIWerewolfAttack(this, EntityWerewolf.SPEED + 0.2D, false));
-
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
+        this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
+        this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D) {
+
+        });
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
 
-        this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
         Predicate<EntityCreature> predicateMob = input -> !(TransformationHelper.isInfected(input)
                 || (TransformationHelper.getTransformation(input) == Transformation.WEREWOLF));
         Predicate<EntityPlayer> predicatePlayer = input -> {

@@ -101,7 +101,7 @@ public class ItemHunterArmor extends ItemArmor {
     @Nullable
     @Override
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {
-        return (armorSlot == EntityEquipmentSlot.HEAD) ? new ModelHunterArmorHat() : null;
+        return (armorSlot == EntityEquipmentSlot.HEAD) ? ModelHunterArmorHat.INSTANCE : null;
     }
 
     @Nullable

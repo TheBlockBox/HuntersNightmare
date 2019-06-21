@@ -56,6 +56,7 @@ tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.aconite_flower.name=Aconite Flower
 tile.huntersdream.monkshood_flower.name=Monkshood Flower
 tile.huntersdream.wolfsbane_garland.name=Wolfsbane Garland
+tile.huntersdream.wolfsbane_petals.name=Wolfsbane Petals
 
 # Entities
 entity.goblintd.name=Goblin

@@ -39,6 +39,9 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:wolfsbane_garland")
     public static final BlockWolfsbaneGarland WOLFSBANE_GARLAND = null;
 
+    @GameRegistry.ObjectHolder("huntersdream:wolfsbane_petals")
+    public static final Block WOLFSBANE_PETALS = null;
+
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)
                 .setHardness(5.0F), "silver_block", event);
@@ -53,6 +56,7 @@ public class BlockInit {
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
         BlockInit.registerBlockWithItem(new BlockWolfsbaneGarland(), "wolfsbane_garland", event);
+        BlockInit.registerBlockWithItem(new BlockWolfsbanePetals(), "wolfsbane_petals", event);
     }
 
     private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {
