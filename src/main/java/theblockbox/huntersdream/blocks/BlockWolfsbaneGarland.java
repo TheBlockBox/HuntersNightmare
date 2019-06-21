@@ -8,8 +8,8 @@ import net.minecraft.world.World;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
 
-public class BlockAconiteGarland extends BlockGarland {
-    public BlockAconiteGarland() {
+public class BlockWolfsbaneGarland extends BlockGarland {
+    public BlockWolfsbaneGarland() {
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
     }
 

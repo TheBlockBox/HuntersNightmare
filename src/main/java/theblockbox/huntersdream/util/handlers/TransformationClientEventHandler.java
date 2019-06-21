@@ -254,7 +254,7 @@ public class TransformationClientEventHandler {
     @SubscribeEvent
     public static void onColorHandlerItem(ColorHandlerEvent.Item event) {
         event.getItemColors().registerItemColorHandler((stack, tintIndex) -> (tintIndex > 0) ? -1 : ((ItemArmor) stack.getItem()).getColor(stack),
-                ItemInit.HUNTER_HAT, ItemInit.HUNTER_TRENCHCOAT, ItemInit.HUNTER_PANTS, ItemInit.HUNTER_BOOTS);
+                ItemInit.HUNTER_HAT, ItemInit.HUNTER_COAT, ItemInit.HUNTER_PANTS, ItemInit.HUNTER_BOOTS);
     }
 
     public static class RenderLycanthropeArm extends RenderPlayer {

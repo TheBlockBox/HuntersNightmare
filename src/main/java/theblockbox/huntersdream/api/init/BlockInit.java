@@ -19,26 +19,25 @@ import java.util.List;
 public class BlockInit {
     public static final List<BlockOre> ORES = new ArrayList<>();
 
-    @GameRegistry.ObjectHolder("huntersdream:silver_furnace")
-    public static final Block SILVER_FURNACE = null;
-
     @GameRegistry.ObjectHolder("huntersdream:silver_ore")
     public static final Block SILVER_ORE = null;
+
+    /**
+     * dummy field; always equals null
+     */
+    public static final Block SILVER_FURNACE = null;
 
     @GameRegistry.ObjectHolder("huntersdream:aconite_flower")
     public static final Block ACONITE_FLOWER = null;
 
+    @GameRegistry.ObjectHolder("huntersdream:monkshood_flower")
+    public static final Block MONKSHOOD_FLOWER = null;
+
     @GameRegistry.ObjectHolder("huntersdream:tile_tent")
     public static final Block TENT = null;
 
-    @GameRegistry.ObjectHolder("huntersdream:aconite_garland")
-    public static final BlockAconiteGarland ACONITE_GARLAND = null;
-
-    @GameRegistry.ObjectHolder("huntersdream:mountain_ash")
-    public static final Block MOUNTAIN_ASH = null;
-
-    @GameRegistry.ObjectHolder("huntersdream:mountain_ash_barrier")
-    public static final Block MOUNTAIN_ASH_BARRIER = null;
+    @GameRegistry.ObjectHolder("huntersdream:wolfsbane_garland")
+    public static final BlockWolfsbaneGarland WOLFSBANE_GARLAND = null;
 
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)
@@ -48,14 +47,12 @@ public class BlockInit {
                         ConfigHandler.server.ores.silverMaxY, ConfigHandler.server.ores.silverChance, Blocks.STONE),
                 "silver_ore", event);
         BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "aconite_flower", event);
-        BlockInit.registerBlockWithItem(new BlockSilverFurnace(), "silver_furnace", event);
+        BlockInit.registerBlockWithItem(new BlockAconiteFlower(), "monkshood_flower", event);
         for (BlockPlanks.EnumType type : BlockPlanks.EnumType.values()) {
             BlockInit.registerBlockWithItem(new BlockCampfire(type), type.getName() + "_campfire", 1, event);
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
-        BlockInit.registerBlockWithItem(new BlockAconiteGarland(), "aconite_garland", event);
-        BlockInit.registerBlockWithItem(new BlockMountainAsh(), "mountain_ash", event);
-        BlockInit.registerBlock(new BlockMountainAshBarrier(), "mountain_ash_barrier", event);
+        BlockInit.registerBlockWithItem(new BlockWolfsbaneGarland(), "wolfsbane_garland", event);
     }
 
     private static void registerBlock(Block block, String name, RegistryEvent.Register<Block> event) {

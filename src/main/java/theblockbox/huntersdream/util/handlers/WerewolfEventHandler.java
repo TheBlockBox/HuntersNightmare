@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.util.handlers;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
@@ -20,6 +21,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
 import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
@@ -31,6 +33,7 @@ import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.api.init.SkillInit;
 import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.util.Reference;
 
 import java.util.Random;
@@ -68,6 +71,7 @@ public class WerewolfEventHandler {
         EntityLivingBase attacked = event.getEntityLiving();
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
             EntityLivingBase attacker = (EntityLivingBase) event.getSource().getTrueSource();
+            // if the attacker is a transformed werewolf
             if (TransformationHelper.getITransformation(attacker).isPresent() && WerewolfHelper.isTransformed(attacker)) {
                 if ((attacker instanceof EntityPlayer) && WerewolfHelper.wasLastAttackBite(attacker)) {
                     if ((TransformationHelper.getITransformationPlayer((EntityPlayer) attacker).getSkillLevel(SkillInit.BITE_0) >= 2)
@@ -89,6 +93,15 @@ public class WerewolfEventHandler {
                             // infect the entity
                             WerewolfHelper.infectEntityAsWerewolf(attacked);
                         }
+                    }
+                }
+            }
+            // apply effect of hunter armor
+            if (WerewolfHelper.isTransformed(attacker) || (attacker instanceof EntityWolf)) {
+                for (HunterArmorEffect effect : ItemHunterArmor.getEffectsFromEntity(attacked)) {
+                    if ((effect == HunterArmorEffect.ACONITE) || (effect == HunterArmorEffect.MONKSHOOD)
+                            || (effect == HunterArmorEffect.WOLFSBANE)) {
+                        attacker.addPotionEffect(new PotionEffect(MobEffects.POISON, 200));
                     }
                 }
             }

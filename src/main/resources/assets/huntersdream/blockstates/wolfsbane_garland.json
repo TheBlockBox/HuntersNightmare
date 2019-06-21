@@ -1,13 +1,13 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "huntersdream:aconite_garland"
+        "model": "huntersdream:wolfsbane_garland"
     },
     "variants": {
         "north": {
             "true": {
                 "textures": {
-                    "north": "huntersdream:blocks/aconite_garland"
+                    "north": "huntersdream:blocks/wolfsbane_garland"
                 }
             },
             "false": {}
@@ -15,7 +15,7 @@
         "south": {
             "true": {
                 "textures": {
-                    "south": "huntersdream:blocks/aconite_garland"
+                    "south": "huntersdream:blocks/wolfsbane_garland"
                 }
             },
             "false": {}
@@ -23,7 +23,7 @@
         "west": {
             "true": {
                 "textures": {
-                    "west": "huntersdream:blocks/aconite_garland"
+                    "west": "huntersdream:blocks/wolfsbane_garland"
                 }
             },
             "false": {}
@@ -31,7 +31,7 @@
         "east": {
             "true": {
                 "textures": {
-                    "east": "huntersdream:blocks/aconite_garland"
+                    "east": "huntersdream:blocks/wolfsbane_garland"
                 }
             },
             "false": {}

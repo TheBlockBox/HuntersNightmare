@@ -9,6 +9,7 @@ public class OreDictionaryInit {
     public static final String[] SILVER_NAMES = {"blockSilver", "oreSilver", "ingotSilver", "helmetSilver",
             "chestplateSilver", "leggingsSilver", "bootsSilver", "axeSilver", "pickaxeSilver", "hoeSilver",
             "swordSilver", "shovelSilver"};
+    public static final String[] ACONITE_NAMES = {"aconite", "wolfsbane", "monkshood"};
 
     public static void registerOres() {
         // Silver
@@ -28,12 +29,14 @@ public class OreDictionaryInit {
         OreDictionaryInit.registerOreWithoutDamage("shovelSilver", "silver_shovel");
 
         OreDictionaryInit.registerOreWithoutDamage("hunterHat", "hunter_hat");
-        OreDictionaryInit.registerOreWithoutDamage("hunterTrenchcoat", "hunter_trenchcoat");
+        OreDictionaryInit.registerOreWithoutDamage("hunterTrenchcoat", "hunter_coat");
         OreDictionaryInit.registerOreWithoutDamage("hunterPants", "hunter_pants");
         OreDictionaryInit.registerOreWithoutDamage("hunterBoots", "hunter_boots");
 
         OreDictionary.registerOre("aconite", BlockInit.ACONITE_FLOWER);
         OreDictionary.registerOre("wolfsbane", BlockInit.ACONITE_FLOWER);
+        OreDictionary.registerOre("monkshood", BlockInit.MONKSHOOD_FLOWER);
+        OreDictionary.registerOre("wolfsbane", BlockInit.MONKSHOOD_FLOWER);
     }
 
     private static void registerOreWithoutDamage(String name, String item) {

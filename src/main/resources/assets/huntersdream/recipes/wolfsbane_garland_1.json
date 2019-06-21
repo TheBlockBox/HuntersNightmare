@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "S S",
+        "ASA",
+        "IAI"
+    ],
+    "key": {
+        "A": {
+            "type": "forge:ore_dict",
+            "ore": "aconite"
+        },
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "string"
+        },
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        }
+    },
+    "result": {
+        "item": "huntersdream:wolfsbane_garland",
+        "count": 1
+    }
+}

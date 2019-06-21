@@ -18,7 +18,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,7 +38,6 @@ import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
-import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
 import theblockbox.huntersdream.api.init.OreDictionaryInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
@@ -48,7 +46,6 @@ import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.blocks.BlockMountainAsh;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.items.ItemHunterArmor;
@@ -409,14 +406,6 @@ public class TransformationEventHandler {
         if ((event.getHurtTransformation() == Transformation.WEREWOLF)
                 && GeneralHelper.itemStackHasOreDicts(event.getItemStack(), OreDictionaryInit.SILVER_NAMES)) {
             event.setDamage(event.getDamage() * (WerewolfHelper.isTransformed(event.getEntityLiving()) ? 4.0F : 2.0F));
-        }
-    }
-
-    // TODO: Is there a better way to do this?
-    @SubscribeEvent
-    public static void onPlayerHarvestCheck(BlockEvent.BreakEvent event) {
-        if ((event.getState().getBlock() == BlockInit.MOUNTAIN_ASH) && BlockMountainAsh.canEntityNotPass(event.getPlayer())) {
-            event.setCanceled(true);
         }
     }
 

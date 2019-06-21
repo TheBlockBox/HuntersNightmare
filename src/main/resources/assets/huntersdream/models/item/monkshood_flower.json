@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "huntersdream:blocks/aconite_garland"
+        "layer0": "huntersdream:blocks/monkshood_flower"
     }
 }

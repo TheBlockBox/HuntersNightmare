@@ -16,7 +16,6 @@ import theblockbox.huntersdream.entity.EntityBullet;
 import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityHunter;
 import theblockbox.huntersdream.entity.EntityWerewolf;
-import theblockbox.huntersdream.entity.renderer.RenderBullet;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
 import theblockbox.huntersdream.entity.renderer.RenderHunter;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
@@ -44,8 +43,7 @@ public class EntityInit {
                                         .collect(Collectors.toSet())).build(),
                 EntityInit.getEntityEntryBuilder("hunter", EntityHunter.class).egg(12820338, 4532224)
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
-                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).tracker(64, 20,
-                        false).build());
+                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).build());
     }
 
     public static void registerEntityRenders() {
@@ -65,12 +63,6 @@ public class EntityInit {
             @Override
             public Render<? super EntityHunter> createRenderFor(RenderManager manager) {
                 return new RenderHunter(manager);
-            }
-        });
-        RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, new IRenderFactory<EntityBullet>() {
-            @Override
-            public Render<? super EntityBullet> createRenderFor(RenderManager manager) {
-                return new RenderBullet(manager);
             }
         });
     }

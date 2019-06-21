@@ -43,8 +43,8 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:hunter_hat")
     public static final Item HUNTER_HAT = null;
 
-    @GameRegistry.ObjectHolder("huntersdream:hunter_trenchcoat")
-    public static final Item HUNTER_TRENCHCOAT = null;
+    @GameRegistry.ObjectHolder("huntersdream:hunter_coat")
+    public static final Item HUNTER_COAT = null;
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_pants")
     public static final Item HUNTER_PANTS = null;
@@ -76,7 +76,7 @@ public class ItemInit {
         ItemInit.registerArmorSet("silver", ItemInit.ARMOR_SILVER, event);
         ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.HEAD), "hunter_hat",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.CHEST), "hunter_trenchcoat",
+        ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.CHEST), "hunter_coat",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemHunterArmor(2, EntityEquipmentSlot.LEGS), "hunter_pants",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);

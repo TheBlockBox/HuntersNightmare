@@ -9,7 +9,7 @@ item.huntersdream.silver_chestplate.name=Silver Chestplate
 item.huntersdream.silver_leggings.name=Silver Leggings
 item.huntersdream.silver_boots.name=Silver Boots
 item.huntersdream.hunter_hat.name=Hunter Hat
-item.huntersdream.hunter_trenchcoat.name=Hunter Trenchcoat
+item.huntersdream.hunter_coat.name=Hunter Coat
 item.huntersdream.hunter_pants.name=Hunter Pants
 item.huntersdream.hunter_boots.name=Hunter Boots
 
@@ -52,11 +52,10 @@ tile.huntersdream.birch_campfire.name=Birch Campfire
 tile.huntersdream.jungle_campfire.name=Jungle Campfire
 tile.huntersdream.acacia_campfire.name=Acacia Campfire
 tile.huntersdream.dark_oak_campfire.name=Dark Oak Campfire
-tile.huntersdream.silver_furnace.name=Silver Furnace
 tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.aconite_flower.name=Aconite Flower
-tile.huntersdream.aconite_garland.name=Aconite Garland
-tile.huntersdream.mountain_ash.name=Mountain Ash
+tile.huntersdream.monkshood_flower.name=Monkshood Flower
+tile.huntersdream.wolfsbane_garland.name=Wolfsbane Garland
 
 # Entities
 entity.goblintd.name=Goblin
@@ -193,8 +192,9 @@ huntersdream.hunters_journal.werewolf.description=W.I.P.
 # Hunter Armor Effects
 huntersdream.hunter_armor_effect=Has the effect "%s"
 hunter_armor_effect.huntersdream.none=None
-hunter_armor_effect.huntersdream.silver=Silver
 hunter_armor_effect.huntersdream.aconite=Aconite
+hunter_armor_effect.huntersdream.monkshood=Monkshood
+hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
 
 
 # Other stuff

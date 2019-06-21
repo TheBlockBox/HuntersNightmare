@@ -3,6 +3,7 @@ package theblockbox.huntersdream.util.handlers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,8 +95,9 @@ public class EventHandler {
             for (int y = 256; y > 0; y--) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        if (BlockInit.ACONITE_FLOWER.canPlaceBlockAt(world, pos.setPos(x + xOffset, y, z + zOffset))) {
-                            world.setBlockState(pos, BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
+                        Block block = event.getRand().nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER;
+                        if (block.canPlaceBlockAt(world, pos.setPos(x + xOffset, y, z + zOffset))) {
+                            world.setBlockState(pos, block.getDefaultState(), 2);
                             if (++currentFlowers > maxFlowers)
                                 return;
                             x = Math.min(15, x + random.nextInt(2));

@@ -5,7 +5,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
@@ -14,6 +13,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -27,13 +27,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import theblockbox.huntersdream.Main;
-import theblockbox.huntersdream.api.SilverFurnaceRecipe;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.*;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
-import theblockbox.huntersdream.blocks.tileentity.TileEntitySilverFurnace;
 import theblockbox.huntersdream.commands.CommandMoonphase;
 import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
@@ -45,7 +43,7 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.world.gen.WorldGenOres;
 
 import java.io.File;
-import java.util.Random;
+import java.util.Arrays;
 
 /**
  * In this class everythings gets registered (items, blocks, entities, biomes,
@@ -76,10 +74,9 @@ public class RegistryHandler {
     public static void onIRecipeRegister(RegistryEvent.Register<IRecipe> event) {
         ResourceLocation registryName = GeneralHelper.newResLoc("aconite_potion");
         event.getRegistry().registerAll(new ShapelessOreRecipe(registryName, PotionUtils.addPotionToItemStack(
-                new ItemStack(Items.POTIONITEM), PotionInit.ACONITE), new OreIngredient("aconite"), Items.GOLDEN_APPLE,
-                        Items.MAGMA_CREAM, Items.POTIONITEM).setRegistryName(registryName),
-                new ShapelessOreRecipe(registryName, PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionInit.ACONITE),
-                        new OreIngredient("wolfsbane"), Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM).setRegistryName(registryName),
+                new ItemStack(Items.POTIONITEM), PotionInit.ACONITE), new CompoundIngredient(Arrays.asList(
+                new OreIngredient("aconite"), new OreIngredient("wolfsbane"), new OreIngredient("monkshood"))) {
+                }, Items.GOLDEN_APPLE, Items.MAGMA_CREAM, Items.POTIONITEM).setRegistryName(registryName),
                 new RecipeHunterArmorDyes().setRegistryName(GeneralHelper.newResLoc("hunter_armor_dyes")),
                 new RecipeAddHunterArmorEffects().setRegistryName(GeneralHelper.newResLoc("hunter_armor_effects_add")),
                 new RecipeRemoveHunterArmorEffects().setRegistryName(GeneralHelper.newResLoc("hunter_armor_effects_remove")));
@@ -113,7 +110,6 @@ public class RegistryHandler {
         NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
         Transformation.preInit();
         Skill.preInit();
-        GameRegistry.registerTileEntity(TileEntitySilverFurnace.class, GeneralHelper.newResLoc("silver_furnace"));
         GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
         RegistryHandler.directory = event.getModConfigurationDirectory();
         MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
@@ -129,15 +125,9 @@ public class RegistryHandler {
         ParticleCommonInit.init();
         GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
         for (Biome biome : Biome.REGISTRY) {
-            biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 2);
+            biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 1);
+            biome.addFlower(BlockInit.MONKSHOOD_FLOWER.getDefaultState(), 1);
         }
-        SilverFurnaceRecipe.addRecipe(new SilverFurnaceRecipe(new OreIngredient("logWood"), Ingredient.EMPTY, 1,
-                0, new ItemStack(Items.COAL, 1, 1), new ItemStack(BlockInit.MOUNTAIN_ASH)) {
-            @Override
-            public ItemStack getOutput2(Random random) {
-                return random.nextBoolean() ? super.getOutput2(random) : ItemStack.EMPTY;
-            }
-        });
     }
 
     public static void postInitCommon(FMLPostInitializationEvent event) {
@@ -164,7 +154,6 @@ public class RegistryHandler {
     }
 
     public static void postInitServer() {
-        SilverFurnaceRecipe.setAndLoadFiles(RegistryHandler.directory);
     }
 
     public static void onServerStart(FMLServerStartingEvent event) {

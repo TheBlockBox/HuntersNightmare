@@ -11,7 +11,10 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents effects that can be applied to items that are instances of {@link ItemHunterArmor}.
@@ -26,10 +29,13 @@ public class HunterArmorEffect {
 
     public static final HunterArmorEffect NONE = new HunterArmorEffect(GeneralHelper.newResLoc("none"),
             Ingredient.EMPTY);
-    public static final HunterArmorEffect SILVER = new HunterArmorEffect(GeneralHelper.newResLoc("silver"),
-            new OreIngredient("ingotSilver"));
     public static final HunterArmorEffect ACONITE = new HunterArmorEffect(GeneralHelper.newResLoc("aconite"),
             new OreIngredient("aconite"));
+    public static final HunterArmorEffect MONKSHOOD = new HunterArmorEffect(GeneralHelper.newResLoc("monkshood"),
+            new OreIngredient("monkshood"));
+    public static final HunterArmorEffect WOLFSBANE = new HunterArmorEffect(GeneralHelper.newResLoc("wolfsbane"),
+            new OreIngredient("wolfsbane"));
+
 
     private final ResourceLocation registryName;
     private final Ingredient ingredient;
@@ -90,8 +96,8 @@ public class HunterArmorEffect {
 
     /**
      * Returns the string used to translate this effect. The default implementation returns the registry name with all
-     * colons replaced with dots and {@code hunter_armor_effect.}. added before it. (So {@link #SILVER} with the registry
-     * name {@code huntersdream:silver} would yield {@code hunter_armor_effect.huntersdream.silver}.)
+     * colons replaced with dots and {@code hunter_armor_effect.}. added before it. (So {@link #ACONITE} with the registry
+     * name {@code huntersdream:aconite} would yield {@code hunter_armor_effect.huntersdream.aconite}.)
      */
     public String getTranslationKey() {
         return "hunter_armor_effect." + this.getRegistryName().toString().replace(':', '.');

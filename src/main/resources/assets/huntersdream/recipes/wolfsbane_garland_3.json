@@ -2,13 +2,13 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "S S",
-        "ASA",
-        "IAI"
+        "MSM",
+        "IMI"
     ],
     "key": {
-        "A": {
+        "M": {
             "type": "forge:ore_dict",
-            "ore": "aconite"
+            "ore": "monkshood"
         },
         "S": {
             "type": "forge:ore_dict",
@@ -20,7 +20,7 @@
         }
     },
     "result": {
-        "item": "huntersdream:aconite_garland",
+        "item": "huntersdream:wolfsbane_garland",
         "count": 1
     }
 }
