@@ -109,10 +109,6 @@ public class CapabilitiesInit {
 
             if (transformationPlayer.getTransformation() == Transformation.WEREWOLF) {
                 WerewolfHelper.setTransformed(player, false);
-                long wilfulTransformationTicks = WerewolfHelper.getWilfulTransformationTicks(player);
-                if (wilfulTransformationTicks > 0) {
-                    WerewolfHelper.setWilfulTransformationTicks(player, -wilfulTransformationTicks);
-                }
             }
 
             if (transformationPlayer.getTransformation() == Transformation.VAMPIRE) {

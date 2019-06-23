@@ -98,6 +98,7 @@ public class ItemHunterArmor extends ItemArmor {
         return ObjectUtils.defaultIfNull(ItemHunterArmor.manipulatedMaterial, super.getArmorMaterial());
     }
 
+    @SideOnly(Side.CLIENT)
     @Nullable
     @Override
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {

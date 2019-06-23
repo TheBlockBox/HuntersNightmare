@@ -1,6 +1,5 @@
 package theblockbox.huntersdream.api.helpers;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -360,59 +359,6 @@ public class WerewolfHelper {
     }
 
     /**
-     * Returns the amount of ticks the given werewolf player has been transformed. If the returned value is 0, they
-     * haven't wilfully transformed yet. If the value is positive, they are currently wilfully transformed and the long
-     * is the tick (gotten from {@link World#getTotalWorldTime()}) at which they started to transform. If the value is
-     * negative, they have already been transformed and the long is the tick at which they transformed back with a minus
-     * sign in front of it.
-     * <br>
-     * Try to always prefer {@link #isPlayerWilfullyTransformed(EntityPlayer)} and {@link #hasPlayerReachedWilfulTransformationLimit(EntityPlayer)}
-     * over this method since they make the code easier to understand and make bugs because of small things (like having
-     * written the wrong number) less probable.
-     */
-    public static long getWilfulTransformationTicks(EntityPlayer player) {
-        WerewolfHelper.validateIsWerewolf(player);
-        return TransformationHelper.getTransformationData(player).getLong("wilfulTransformationTicks");
-    }
-
-    /**
-     * Sets a werewolf player's wilful transformation ticks (used for the wilful transformation).
-     * No packet is being sent to the client.
-     */
-    public static void setWilfulTransformationTicks(EntityPlayer player, long ticks) {
-        WerewolfHelper.validateIsWerewolf(player);
-        NBTTagCompound compound = TransformationHelper.getTransformationData(player);
-        compound.setLong("wilfulTransformationTicks", ticks);
-    }
-
-    /**
-     * Returns true when the given player can wilfully transform, but does NOT check if it is the correct moon phase.
-     * (The reason it is not checked is that the method only works server side, while this method is supposed to be both
-     * client and server side.)
-     */
-    public static boolean canPlayerWilfullyTransform(EntityPlayer werewolf) {
-        ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
-        if (transformation.getTransformation() == Transformation.WEREWOLF) {
-            long ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
-            // 18000 ticks = 5 minutes cooldown
-            // if the player hasn't wilfully transformed, they won't have any cooldown
-            return (werewolf.getActiveItemStack().isEmpty()
-                    && (transformation.getActiveSkill().orElse(null) == SkillInit.WILFUL_TRANSFORMATION)
-                    && !WerewolfHelper.isTransformed(werewolf) && !WerewolfHelper.isPlayerWilfullyTransformed(werewolf)
-                    && ((ticks == 0) || ((werewolf.world.getTotalWorldTime() + ticks) >= 18000)));
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean canPlayerWilfullyTransformBack(EntityPlayer werewolf) {
-        ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(werewolf);
-        return (transformation.getTransformation() == Transformation.WEREWOLF) && werewolf.getActiveItemStack().isEmpty()
-                && (transformation.getActiveSkill().orElse(null) == SkillInit.WILFUL_TRANSFORMATION)
-                && WerewolfHelper.isPlayerWilfullyTransformed(werewolf);
-    }
-
-    /**
      * Called in
      * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}
      */
@@ -608,7 +554,7 @@ public class WerewolfHelper {
      */
     public static void resetTransformationStageWhenNeeded(EntityPlayerMP werewolf, ITransformationPlayer cap) {
         // test if player has no transformation stage
-        if ((WerewolfHelper.getTransformationStage(werewolf) != 0) && !WerewolfHelper.isPlayerWilfullyTransformed(werewolf)) {
+        if ((WerewolfHelper.getTransformationStage(werewolf) != 0)) {
             WerewolfHelper.setTimeSinceTransformation(werewolf, -1);
             WerewolfHelper.setTransformationStage(werewolf, 0);
             Main.getLogger().warn(
@@ -639,40 +585,6 @@ public class WerewolfHelper {
             werewolf.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 300, 0));
             // night vision for better blindness effect
             werewolf.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, false, false));
-            // reset wilful transformation ticks if necessary
-            long wilfulTransformationTicks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
-            if (wilfulTransformationTicks > 0) {
-                WerewolfHelper.setWilfulTransformationTicks(werewolf, -wilfulTransformationTicks);
-            }
-        }
-    }
-
-    /**
-     * Returns true if the given player is wilfully transformed. Does also return true when they're not actually transformed
-     * yet. (Meaning they've started transforming but are still in a transformation stage.) This method always checks if
-     * the given player is a werewolf.
-     */
-    public static boolean isPlayerWilfullyTransformed(EntityPlayer werewolf) {
-        return WerewolfHelper.getWilfulTransformationTicks(werewolf) > 0;
-    }
-
-    /**
-     * Returns true if the given player has reached their wilful transformation limit, meaning that they've been
-     * wilfully transformed for more than 6000 ticks/5 minutes. This method always checks if the given player is a
-     * werewolf and will throw an exception if the player is over the wilful transformation limit but isn't transformed.
-     */
-    public static boolean hasPlayerReachedWilfulTransformationLimit(EntityPlayer werewolf) {
-        long ticks = WerewolfHelper.getWilfulTransformationTicks(werewolf);
-        long totalWorldTime = werewolf.world.getTotalWorldTime();
-        // 6000 ticks = 5 minutes limit for being transformed wilfully
-        if (WerewolfHelper.isPlayerWilfullyTransformed(werewolf) && (totalWorldTime > (ticks + 6000))) {
-            // check if the player is transformed to ensure nothing is going wrong
-            Preconditions.checkArgument(WerewolfHelper.isTransformed(werewolf), "Player " + werewolf +
-                    " was wilfully transformed and has reached their wilful transformation limit with " + ticks +
-                    " ticks (current tick: " + totalWorldTime + ") but wasn't transformed. Please report this!");
-            return true;
-        } else {
-            return false;
         }
     }
 

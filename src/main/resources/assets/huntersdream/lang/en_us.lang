@@ -176,8 +176,6 @@ huntersdream.natural_armor_1.description=Makes the natural armor be as strong as
 huntersdream.natural_armor_2.name=Natural Armor III
 huntersdream.natural_armor_2.description=Makes the natural armor be as strong as a full set of diamond armor.
 
-huntersdream.wilful_transformation.name=Wilful Transformation
-
 # Hunter Armor Effects
 huntersdream.hunter_armor_effect=Has the effect "%s"
 hunter_armor_effect.huntersdream.none=None

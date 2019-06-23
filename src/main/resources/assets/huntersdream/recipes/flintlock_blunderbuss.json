@@ -1,0 +1,28 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "I F",
+        "IIL",
+        "IBL"
+    ],
+    "key": {
+        "F": {
+            "item": "minecraft:flint_and_steel"
+        },
+        "L": {
+            "type": "forge:ore_dict",
+            "ore": "logWood"
+        },
+        "B": {
+            "item": "minecraft:stone_button"
+        },
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        }
+    },
+    "result": {
+        "item": "huntersdream:flintlock_blunderbuss",
+        "count": 1
+    }
+}

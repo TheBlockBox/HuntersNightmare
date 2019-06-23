@@ -24,7 +24,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.TransformationEvent;
-import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
@@ -263,24 +262,6 @@ public class WerewolfEventHandler {
                 Random random = player.getRNG();
                 event.setPitch((random.nextFloat() - random.nextFloat()) * 0.2F);
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerTransforming(WerewolfTransformingEvent.PlayerWerewolfTransformingEvent event) {
-        EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
-        WerewolfTransformingEvent.WerewolfTransformingReason reason = event.getTransformingEventReason();
-        // if the ticks are higher than 0 (meaning that the player is transformed because of wilful transformation),
-        // the player still has time until they'll get turned back, the fired event is trying to transform them back and
-        // the reason is that the full moon has "ended", cancel the event and don't turn them back
-        if (WerewolfHelper.isPlayerWilfullyTransformed(player) && !WerewolfHelper.hasPlayerReachedWilfulTransformationLimit(player)
-                && event.transformingBack() && (reason == WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END)) {
-            event.setCanceled(true);
-            // else if the player transformed back because they either were forced or did it themselves,
-        } else if ((reason == WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_ENDING)
-                || (reason == WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING)) {
-            // reset the ticks
-            WerewolfHelper.setWilfulTransformationTicks(player, -player.world.getTotalWorldTime());
         }
     }
 }

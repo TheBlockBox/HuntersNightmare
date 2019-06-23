@@ -27,7 +27,7 @@ public class SkillRegistryEvent extends Event {
 
     public SkillRegistryEvent() {
         this.registerSkills(BITE_0, BITE_1, BITE_2, SPEED_0, SPEED_1, SPEED_2, JUMP_0, JUMP_1, JUMP_2, UNARMED_0,
-                UNARMED_1, UNARMED_2, ARMOR_0, ARMOR_1, ARMOR_2, WILFUL_TRANSFORMATION);
+                UNARMED_1, UNARMED_2, ARMOR_0, ARMOR_1, ARMOR_2);
     }
 
     /**

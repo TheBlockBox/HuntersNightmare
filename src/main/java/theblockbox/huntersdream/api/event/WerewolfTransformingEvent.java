@@ -73,26 +73,6 @@ public class WerewolfTransformingEvent extends LivingEvent {
          * Works for both mobs and player.
          */
         public static final WerewolfTransformingEvent.WerewolfTransformingReason FULL_MOON_END = new WerewolfTransformingEvent.WerewolfTransformingReason();
-        /**
-         * Caused by the player wilfully transforming. Is posted after the werewolf has started transforming. (So if the
-         * event is canceled, the player won't transform, but will still gone through the whole transformation process.)
-         * Therefore, this is posted after {@link #WILFUL_TRANSFORMATION_STARTING}. Works for players only.
-         */
-        public static final WerewolfTransformingEvent.WerewolfTransformingReason WILFUL_TRANSFORMATION = new WerewolfTransformingEvent.WerewolfTransformingReason();
-        /**
-         * Caused by a player wilfully transforming. Is posted before the werewolf has started transforming. (So if the
-         * event is canceled, no signs of transformation will be shown.) Therefore, this is posted before
-         * {@link #WILFUL_TRANSFORMATION}. Works for players only.
-         */
-        public static final WerewolfTransformingEvent.WerewolfTransformingReason WILFUL_TRANSFORMATION_STARTING = new WerewolfTransformingEvent.WerewolfTransformingReason(WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON);
-        /**
-         * Caused by the player wilfully ending their transformed state that they'd started themselves. Works for players only.
-         */
-        public static final WerewolfTransformingEvent.WerewolfTransformingReason WILFUL_TRANSFORMATION_ENDING = new WerewolfTransformingEvent.WerewolfTransformingReason();
-        /**
-         * Caused by a player that has wilfully transformed going out of time and transforming back. Works for players only.
-         */
-        public static final WerewolfTransformingEvent.WerewolfTransformingReason WILFUL_TRANSFORMATION_FORCED_ENDING = new WerewolfTransformingEvent.WerewolfTransformingReason();
 
         private final WerewolfTransformingEvent.WerewolfTransformingReason actualTransformingReason;
 

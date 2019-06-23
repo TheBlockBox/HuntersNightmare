@@ -2,12 +2,8 @@ package theblockbox.huntersdream.api.init;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.RayTraceResult;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.event.WerewolfTransformingEvent;
-import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.skill.ChildSkill;
 import theblockbox.huntersdream.api.skill.ParentSkill;
@@ -60,43 +56,4 @@ public class SkillInit {
     };
     public static final ChildSkill BITE_1 = new ChildSkill(SkillInit.BITE_0, 80, 1);
     public static final ChildSkill BITE_2 = new ChildSkill(SkillInit.BITE_0, 120, 2);
-
-    public static final ParentSkill WILFUL_TRANSFORMATION = new ParentSkill(newResLoc("wilful_transformation"), -1, SkillInit.WEREWOLF_SET, false) {
-        @Override
-        public boolean shouldShowSkillInSkillBar(EntityPlayer player) {
-            return true;
-        }
-
-        @Override
-        public boolean onSkillUse(EntityPlayer player) {
-            if (player.world.isRemote) {
-                return WerewolfHelper.canPlayerWilfullyTransform(player) || WerewolfHelper.canPlayerWilfullyTransformBack(player);
-            } else {
-                EntityPlayerMP playerMP = (EntityPlayerMP) player;
-                if (WerewolfHelper.isTransformed(playerMP)) {
-                    if (WerewolfHelper.canPlayerWilfullyTransformBack(playerMP)) {
-                        WerewolfHelper.transformWerewolfBack(playerMP, TransformationHelper.getITransformationPlayer(playerMP),
-                                WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_ENDING);
-                        PacketHandler.sendTransformationMessage(playerMP);
-                        return true;
-                    } else {
-                        Main.getLogger().error("The player " + playerMP + " tried to transform back via deactivating " +
-                                "wilful transformation but wasn't allowed to");
-                    }
-                } else {
-                    if (WerewolfHelper.canPlayerWilfullyTransform(playerMP)) {
-                        if (!WerewolfHelper.isFullmoon(playerMP.world)) {
-                            WerewolfHelper.setWilfulTransformationTicks(playerMP, playerMP.world.getTotalWorldTime());
-                            PacketHandler.sendTransformationMessage(playerMP);
-                            return true;
-                        }
-                    } else {
-                        Main.getLogger().error("The player " + playerMP + " tried to activate wilful transformation but " +
-                                "wasn't allowed to");
-                    }
-                }
-                return false;
-            }
-        }
-    };
 }

@@ -13,7 +13,6 @@ To see every little change, please head to our [GitHub](https://github.com/TheGa
 - Improved animations in general
 - New werewolf model
 - Added skills (natural armor, speed, bite, unarmed etc.), skill bar and skill tab
-- Added wilful transformation for werewolves
 - Added way better werewolf animation
 - Improved silver armor
 - Changed all the textures and added new ones

@@ -24,7 +24,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
-import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
@@ -110,31 +109,6 @@ public class TransformationEventHandler {
                                     WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.FULL_MOON_END);
                                 } else {
                                     WerewolfHelper.resetTransformationStageWhenNeeded(playerMP, cap);
-                                }
-                            }
-                            if (WerewolfHelper.isPlayerWilfullyTransformed(player)) {
-                                if (WerewolfHelper.hasPlayerReachedWilfulTransformationLimit(player)) {
-                                    // if the player has reached their wilful transformation limit
-                                    if (isWerewolfTime) {
-                                        // and it is night, only reset the wilful transformation ticks and log an error
-                                        // (this shouldn't be possible except the player logged out or the time changed
-                                        long wilfulTransformationTicks = WerewolfHelper.getWilfulTransformationTicks(playerMP);
-                                        if (wilfulTransformationTicks > 0) {
-                                            WerewolfHelper.setWilfulTransformationTicks(playerMP, -wilfulTransformationTicks);
-                                            Main.getLogger().error("Did the time change or has " + player + " just logged in? "
-                                                    + "They are wilfully transformed although it is night.");
-                                        }
-                                    } else {
-                                        // and it isn't night, transform them back (wilful transformation ticks are also
-                                        // reset by this
-                                        WerewolfHelper.transformWerewolfBack(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_FORCED_ENDING);
-                                    }
-                                } else if (!isTransformed) {
-                                    // if the player is technically wilfully transformed but the transformation isn't
-                                    // done yet, advance it
-                                    WerewolfHelper.advanceWerewolfTransformation(playerMP, cap, WerewolfTransformingEvent.WerewolfTransformingReason.WILFUL_TRANSFORMATION_STARTING);
-                                } else {
-                                    WerewolfHelper.addTransformationEffects(playerMP, cap);
                                 }
                             }
                             // this piece of code syncs the player data every six minutes, so basically
