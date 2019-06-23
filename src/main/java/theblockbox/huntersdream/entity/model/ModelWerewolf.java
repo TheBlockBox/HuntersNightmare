@@ -41,8 +41,6 @@ public class ModelWerewolf extends ModelBiped {
     public ModelRenderer headfur2;
     public ModelRenderer lfacefur;
     public ModelRenderer rfacefur;
-    private boolean isSneak = false;
-    private boolean isTailGoingUp;
 
     public ModelWerewolf() {
         this.textureWidth = 96;
@@ -50,6 +48,7 @@ public class ModelWerewolf extends ModelBiped {
         this.bipedHead = new ModelRenderer(this, 0, 0);
         this.bipedHead.setRotationPoint(0.0F, -4.0F, -3.6F);
         this.bipedHead.addBox(-3.5F, -7.0F, -3.5F, 7, 7, 7, 0.0F);
+        this.bipedHead.offsetY = -0.2F;
         this.rltoe = new ModelRenderer(this, 36, 72);
         this.rltoe.setRotationPoint(-1.0F, 0.0F, -1.6F);
         this.rltoe.addBox(-0.5F, 0.0F, -1.5F, 1, 3, 1, 0.0F);
@@ -66,6 +65,7 @@ public class ModelWerewolf extends ModelBiped {
         this.bipedRightArm.mirror = true;
         this.bipedRightArm.setRotationPoint(-6.0F, 0.0F, 0.0F);
         this.bipedRightArm.addBox(-3.5F, -2.0F, -2.5F, 5, 16, 5, 0.0F);
+        this.bipedRightArm.offsetX = -0.07F;
         this.bipedBody = new ModelRenderer(this, 0, 16);
         this.bipedBody.setRotationPoint(0.0F, -5.0F, 0.0F);
         this.bipedBody.addBox(-6.0F, 0.0F, -4.0F, 12, 8, 8, 0.0F);
@@ -97,6 +97,7 @@ public class ModelWerewolf extends ModelBiped {
         this.bipedLeftArm = new ModelRenderer(this, 48, 10);
         this.bipedLeftArm.setRotationPoint(6.0F, 0.0F, 0.0F);
         this.bipedLeftArm.addBox(-1.5F, -2.0F, -2.5F, 5, 16, 5, 0.0F);
+        this.bipedLeftArm.offsetX = 0.07F;
         this.rleg2 = new ModelRenderer(this, 32, 48);
         this.rleg2.setRotationPoint(-0.5F, 2.5F, 1.2F);
         this.rleg2.addBox(-1.5F, 0.0F, -1.5F, 3, 10, 3, 0.0F);
@@ -234,7 +235,7 @@ public class ModelWerewolf extends ModelBiped {
         this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn, moveTail);
         scale *= 0.87F;
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0.0F, this.isSneak ? 0.2F : 0.15F, 0.0F); //0.19?
+        GlStateManager.translate(0.0F, this.isSneak ? 0.22F : 0.15F, 0.0F); //0.19?
         this.bipedBody.render(scale);
         GlStateManager.popMatrix();
     }
@@ -250,41 +251,32 @@ public class ModelWerewolf extends ModelBiped {
                 && ((entityIn.world.getTotalWorldTime() - WerewolfHelper.getBiteTicks((EntityPlayer) entityIn)) < 4);
         this.isSneak = isBiting || entityIn.isSneaking();
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
+
         // TODO: Does that animation even work?
         if (isBiting) {
             this.bipedRightArm.rotateAngleX = -1.0F;
             this.bipedLeftArm.rotateAngleX = -1.0F;
         }
-        this.bipedBody.rotateAngleX = 0.3F;
-        this.bipedHead.offsetY = -0.2F;
 
-        // fix arm
-        this.bipedLeftArm.offsetX = 0.07F;
-        this.bipedRightArm.offsetX = -0.07F;
+        // fix body and legs
+        this.bipedBody.rotateAngleX += this.isSneak ? 0.15F : 0.3F;
+        this.bipedRightLeg.rotateAngleX -= this.isSneak ? 0.7D : 0.3D;
+        this.bipedLeftLeg.rotateAngleX -= this.isSneak ? 0.7D : 0.3D;
+        this.bipedRightLeg.offsetY = this.isSneak ? 0.05F : -0.15F;
+        this.bipedLeftLeg.offsetY = this.isSneak ? 0.05F : -0.15F;
+        this.bipedRightLeg.offsetZ = this.isSneak ? -0.25F : 0.0F;
+        this.bipedLeftLeg.offsetZ = this.isSneak ? -0.25F : 0.0F;
 
-        // fix legs
-        this.bipedRightLeg.rotateAngleX -= this.isSneak ? 1.2D : 0.3D;
-        this.bipedLeftLeg.rotateAngleX -= this.isSneak ? 1.2D : 0.3D;
-        this.bipedRightLeg.offsetY = -0.15F;
-        this.bipedLeftLeg.offsetY = -0.15F;
-//        // fix head and arms when sneaking
-//        if (this.isSneak) {
-//            this.bipedHead.rotateAngleX -= 0.4D;
-//            this.bipedRightArm.rotateAngleX -= 0.65D;
-//            this.bipedLeftArm.rotateAngleX -= 0.65D;
-//            this.bipedRightLeg.rotationPointY = 13.2F;
-//            this.bipedLeftLeg.rotationPointY = 13.2F;
-//            this.bipedRightLeg.rotationPointZ = 2.0F;
-//            this.bipedLeftLeg.rotationPointZ = 2.0F;
-//        }
+        // fix head and arms when sneaking
+        if (this.isSneak) {
+            this.bipedRightArm.rotateAngleX -= 0.65D;
+            this.bipedLeftArm.rotateAngleX -= 0.65D;
+        }
+
         if (moveTail) {
             if (limbSwingAmount >= 0.2F) {
-                // animate
-                // if it's going up and bigger than 0.2, go down
-                // if it's going down and less than -0.6, go up
-                this.isTailGoingUp = this.tail.rotateAngleX < (this.isTailGoingUp ? 1.4F : 0.6F);
-                this.tail.rotateAngleX += this.isTailGoingUp ? 0.01F : -0.01F;
-            } else if (this.tail.rotateAngleX > 1.95F) {
+                this.tail.rotateAngleX += (this.tail.rotateAngleX < 1.7F) ? 0.01F : 0.0F;
+            } else if (this.tail.rotateAngleX > 0.5F) {
                 this.tail.rotateAngleX -= 0.01F;
             }
         }
