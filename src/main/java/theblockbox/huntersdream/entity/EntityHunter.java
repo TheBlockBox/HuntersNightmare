@@ -73,9 +73,9 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         super.initEntityAI();
         super.initEntityAI();
         this.tasks.addTask(0, new EntityAISwimming(this));
+        // TODO: Change speed
         this.tasks.addTask(2, this.usesMeleeWeapons() ? new EntityAIAttackMelee(this, EntityWerewolf.SPEED + 0.2D, false)
                 : new EntityAIAttackRanged(this, 1.0D, 20, 15.0F));
-
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLivingBase.class, 8.0F));

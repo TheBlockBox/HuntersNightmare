@@ -103,7 +103,7 @@ public abstract class ItemGun extends ItemBow implements IGun {
     public void spawnBullet(EntityLivingBase entity, ItemStack stack) {
         World world = entity.world;
         Item ammunition = Item.getByNameOrId(GeneralHelper.getTagCompoundFromItemStack(stack).getString("huntersdream:ammunition"));
-        if (ammunition == Items.AIR) {
+        if ((ammunition == Items.AIR) || (ammunition == null)) {
             ammunition = ItemInit.MUSKET_BALL;
         }
         EntityBullet bullet = new EntityBullet(world, entity, ammunition, this.damage);

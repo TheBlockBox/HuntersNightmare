@@ -21,21 +21,18 @@ item.huntersdream.silver_hoe.name=Silver Hoe
 item.huntersdream.silver_axe.name=Silver Axe
 item.huntersdream.flintlock_musket.name=Flintlock Musket
 item.huntersdream.flintlock_pistol.name=Flintlock Pistol
-item.huntersdream.flintlock_blunderbuss.name=Blunderbuss
+item.huntersdream.flintlock_blunderbuss.name=Flintlock Blunderbuss
 item.huntersdream.musket_ball.name=Musket Ball
 item.huntersdream.silver_musket_ball.name=Silver Musket Ball
 
 # Other items
 item.huntersdream.silver_ingot.name=Silver Ingot
-item.huntersdream.hunters_journal.name=Hunter's Journal
-item.huntersdream.hunters_journal_page.name=Hunter's Note
 item.huntersdream.bestiary.name=Bestiary
 item.huntersdream.tent.name=Tent
 item.huntersdream.herbal_wolfsbane_water.name=Herbal Wolfsbane Water
 
 # Potions
-effect.huntersdream.fear=Fear
-effect.huntersdream.aconite=Aconite
+effect.huntersdream.wolfsbane=Wolfsbane
 effect.huntersdream.sunscreen=Sunscreen
 potion.effect.wolfsbane=Wolfsbane Potion
 splash_potion.effect.wolfsbane=Wolfsbane Splash Potion
@@ -45,14 +42,13 @@ tipped_arrow.effect.wolfsbane=Wolfsbane Arrow
 # Blocks
 tile.huntersdream.silver_block.name=Silver Block
 tile.huntersdream.silver_ore.name=Silver Ore
-tile.huntersdream.tent.name=Tent
+tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.oak_campfire.name=Oak Campfire
 tile.huntersdream.spruce_campfire.name=Spruce Campfire
 tile.huntersdream.birch_campfire.name=Birch Campfire
 tile.huntersdream.jungle_campfire.name=Jungle Campfire
 tile.huntersdream.acacia_campfire.name=Acacia Campfire
 tile.huntersdream.dark_oak_campfire.name=Dark Oak Campfire
-tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.aconite_flower.name=Aconite Flower
 tile.huntersdream.monkshood_flower.name=Monkshood Flower
 tile.huntersdream.wolfsbane_garland.name=Wolfsbane Garland
@@ -64,8 +60,11 @@ entity.werewolf.name=Werewolf
 entity.hunter.name=Hunter
 
 # Transformations
+huntersdream\:none=None
 huntersdream\:human=Human
 huntersdream\:werewolf=Werewolf
+huntersdream\:vampire=Vampire
+huntersdream\:ghost=Ghost
 
 # Sounds (Subtitles)
 huntersdream.transformation.heartbeat=Heartbeat of a werewolf
@@ -77,10 +76,6 @@ huntersdream.gun.flintlock.reload=Flintlock gun reloading
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools
 itemGroup.huntersdream.misc=Hunter's Dream Miscellaneous
-
-# Key Bindings
-huntersdream.keyCategory=Hunter's Dream
-huntersdream.key.activateSkillBar=Activate Skill Bar
 
 # Commands
 command.huntersdream.invalid=Invalid arguments
@@ -102,9 +97,6 @@ command.huntersdream.skill.list=%s's skills are\: %s
 # Chat messages
 transformations.huntersdream.infected.werewolf=You feel a curse surrounding you...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
-item.huntersdream.hunters_journal_page.allUnlocked=You have already unlocked all pages in your Hunter's Journal
-item.huntersdream.hunters_journal_page.onPageUnlock=You have unlocked the page "%s" in your Hunter's Journal!
-item.huntersdream.hunters_journal.noPage=You haven't unlocked any page yet
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
@@ -119,28 +111,30 @@ transformations.huntersdream\:werewolf.transformingBack.0=The wolf subsides and 
 
 # Config
 huntersdream.config.title=Hunter's Dream Config
-huntersdream.config.customPlayerRender=Custom player render
-huntersdream.config.biteAnimation=Show bite animation
-huntersdream.config.showPacketMessages=Show packet messages
-huntersdream.config.veinSize=Veins of ore per chunk
-huntersdream.config.generateSilverOre=Generate silver ore
-huntersdream.config.silverMinY=Minimum height of silver
-huntersdream.config.silverMaxY=Maximum height of silver
-huntersdream.config.silverChance=Average silver ores per vein
-huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
-huntersdream.config.ores=Ore Generation Settings
-huntersdream.config.client=Client
-huntersdream.config.server=Server
+# Client and Server
 huntersdream.config.common=Client and Server
-huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
-huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
-huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
-huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
-huntersdream.config.showActiveSkill=Show active skill
+huntersdream.config.showPacketMessages=Show packet messages
+huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
+# Client
+huntersdream.config.client=Client
+huntersdream.config.biteAnimation=Show bite animation
+huntersdream.config.customPlayerRender=Custom player render
 huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
-huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
+# Server
+huntersdream.config.server=Server
+huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
+huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
+huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
+huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
 huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
-
+huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
+# Server - Ore Generation Settings
+huntersdream.config.ores=Ore Generation Settings
+huntersdream.config.generateSilverOre=Generate silver ore
+huntersdream.config.silverChance=Average silver ores per vein
+huntersdream.config.silverMaxY=Maximum height of silver
+huntersdream.config.silverMinY=Minimum height of silver
+huntersdream.config.veinSize=Veins of ore per chunk
 
 # Skills
 huntersdream.unlockSkill=Unlock with %s experience levels
@@ -184,19 +178,12 @@ huntersdream.natural_armor_2.description=Makes the natural armor be as strong as
 
 huntersdream.wilful_transformation.name=Wilful Transformation
 
-# Hunter's Journal
-huntersdream.hunters_journal.test.title=Test Page
-huntersdream.hunters_journal.test.description=This is a test page and shouldn't be visible in normal gameplay
-huntersdream.hunters_journal.werewolf.title=Werewolves
-huntersdream.hunters_journal.werewolf.description=W.I.P.
-
 # Hunter Armor Effects
 huntersdream.hunter_armor_effect=Has the effect "%s"
 hunter_armor_effect.huntersdream.none=None
 hunter_armor_effect.huntersdream.aconite=Aconite
 hunter_armor_effect.huntersdream.monkshood=Monkshood
 hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
-
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.

@@ -20,7 +20,7 @@ public class GuiSkillTab extends GuiScreen {
     public static final int TEXTURE_WIDTH = 256;
     public static final int TEXTURE_HEIGHT = 190;
     public static final int TOOLTIP_COLOR = 0;
-    public static final int MAX_TEXT_WIDTH = 110;
+    public static final int MAX_TEXT_WIDTH = 108;
     private static final ResourceLocation TEXTURE = GeneralHelper.newResLoc("textures/gui/skills/skill_window.png");
     private final GuiButton unlockButton1 = new GuiButton(0, 0, 0, "") {
         @Override
@@ -85,8 +85,8 @@ public class GuiSkillTab extends GuiScreen {
 
         // draw foreground
         super.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawSkill(this.leftPage, this.drawX + 15, this.drawY + 22, true);
-        this.drawSkill(this.rightPage, this.drawX + 2 + (GuiSkillTab.TEXTURE_WIDTH / 2), this.drawY + 22, false);
+        this.drawSkill(this.leftPage, this.drawX + 12, this.drawY + 22, true);
+        this.drawSkill(this.rightPage, this.drawX + 5 + (GuiSkillTab.TEXTURE_WIDTH / 2), this.drawY + 22, false);
     }
 
     @Override

@@ -13,10 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializer;
-import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
@@ -41,7 +37,6 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -64,29 +59,6 @@ public class GeneralHelper {
      */
     public static final NBTTagCompound EMPTY_COMPOUND = new NBTTagCompound();
     public static final IntPredicate FALSE_PREDICATE = i -> false;
-    // currently not used
-    public static final DataSerializer<byte[]> BYTE_ARRAY_DATA_SERIALIZER = new DataSerializer<byte[]>() {
-
-        @Override
-        public void write(PacketBuffer buf, @Nonnull byte[] value) {
-            buf.writeByteArray(value);
-        }
-
-        @Override
-        public byte[] read(PacketBuffer buf) {
-            return buf.readByteArray();
-        }
-
-        @Override
-        public DataParameter<byte[]> createKey(int id) {
-            return new DataParameter<>(id, this);
-        }
-
-        @Override
-        public byte[] copyValue(byte[] value) {
-            return value.clone();
-        }
-    };
     /**
      * An array of all possible hands (currently {@link EnumHand#MAIN_HAND} and {@link EnumHand#OFF_HAND}).
      */
@@ -95,10 +67,6 @@ public class GeneralHelper {
     // to test if the entity can change its size. Here so that we don't have to
     // create a new one every tick
     private static final AxisAlignedBB AABB = new AxisAlignedBB(BlockPos.ORIGIN);
-
-    static {
-        DataSerializers.registerSerializer(GeneralHelper.BYTE_ARRAY_DATA_SERIALIZER);
-    }
 
     /**
      * Returns the logical side from the given world
@@ -526,8 +494,8 @@ public class GeneralHelper {
         Template template = world.getSaveHandler().getStructureTemplateManager().getTemplate(world.getMinecraftServer(), location);
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
-        int x = (chunkX * 16) - sizeX;
-        int z = (chunkZ * 16) - sizeZ;
+        int x = (chunkX * 16) - sizeX + 15;
+        int z = (chunkZ * 16) - sizeZ + 15;
         int y = GeneralHelper.getYForStructure(world, x, z, sizeX, sizeZ);
         if (y != -1) {
             BlockPos pos = new BlockPos(x, y, z);

@@ -1,20 +1,11 @@
 {
     "forge_marker": 1,
-    "defaults": {
-        "model": "huntersdream:wolfsbane_garland",
-        "particle": "huntersdream:blocks/wolfsbane_petals"
-    },
     "variants": {
-        "on_up_side": {
-            "true": {
-                "textures": {
-                    "up": "huntersdream:blocks/wolfsbane_petals"
-                }
-            },
-            "false": {
-                "textures": {
-                    "down": "huntersdream:blocks/wolfsbane_petals"
-                }
+        "normal": {
+            "model": "huntersdream:wolfsbane_garland",
+            "particle": "huntersdream:blocks/wolfsbane_petals",
+            "textures": {
+                "down": "huntersdream:blocks/wolfsbane_petals"
             }
         }
     }

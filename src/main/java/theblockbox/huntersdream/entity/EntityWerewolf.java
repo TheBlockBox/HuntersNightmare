@@ -282,7 +282,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
     @Override
     public boolean isValidLightLevel() {
         // TODO: Test if this works
-        System.out.println("spawn");
+        // System.out.println("spawn");
         // make werewolves only spawn on full moon
         return WerewolfHelper.isWerewolfTime(this.world);
     }

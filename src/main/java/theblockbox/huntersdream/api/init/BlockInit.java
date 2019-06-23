@@ -22,11 +22,6 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:silver_ore")
     public static final Block SILVER_ORE = null;
 
-    /**
-     * dummy field; always equals null
-     */
-    public static final Block SILVER_FURNACE = null;
-
     @GameRegistry.ObjectHolder("huntersdream:aconite_flower")
     public static final Block ACONITE_FLOWER = null;
 

@@ -48,9 +48,10 @@ public class ConfigHandler {
         @Config.RequiresWorldRestart
         public boolean generateVillagerCastle = true;
 
-        @Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
-        @Config.RequiresWorldRestart
-        public boolean generateHuntersCabin = true;
+// TODO: Add structure and uncomment
+//        @Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
+//        @Config.RequiresWorldRestart
+//        public boolean generateHuntersCabin = true;
 
         @Config.LangKey(Reference.CFG_LANG + "generateHuntersCamp")
         @Config.RequiresWorldRestart

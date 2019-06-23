@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.RegistryEvent;
@@ -20,6 +21,7 @@ import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
 import theblockbox.huntersdream.entity.renderer.RenderHunter;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 
+import javax.annotation.Nullable;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,7 +45,8 @@ public class EntityInit {
                                         .collect(Collectors.toSet())).build(),
                 EntityInit.getEntityEntryBuilder("hunter", EntityHunter.class).egg(12820338, 4532224)
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
-                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).build());
+                // same tracker as arrows
+                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).tracker(64, 20, false).build());
     }
 
     public static void registerEntityRenders() {
@@ -63,6 +66,22 @@ public class EntityInit {
             @Override
             public Render<? super EntityHunter> createRenderFor(RenderManager manager) {
                 return new RenderHunter(manager);
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, new IRenderFactory<EntityBullet>() {
+            @Override
+            public Render<? super EntityBullet> createRenderFor(RenderManager manager) {
+                return new Render<EntityBullet>(manager) {
+                    @Override
+                    public void doRender(EntityBullet entity, double x, double y, double z, float entityYaw, float partialTicks) {
+                    }
+
+                    @Nullable
+                    @Override
+                    protected ResourceLocation getEntityTexture(EntityBullet entity) {
+                        return null;
+                    }
+                };
             }
         });
     }
