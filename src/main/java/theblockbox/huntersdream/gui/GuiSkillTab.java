@@ -5,7 +5,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
@@ -52,6 +54,11 @@ public class GuiSkillTab extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        if (!TransformationHelper.hasAccessToSkillTab(player)) {
+            Main.getLogger().warn("Player " + player + " tried to access the skill tab although they haven't unlocked it yet.");
+            return;
+        }
         this.drawX = (this.width - GuiSkillTab.TEXTURE_WIDTH) / 2;
         this.drawY = (this.height - GuiSkillTab.TEXTURE_HEIGHT) / 2;
         Skill.getAllSkills().stream().filter(s -> s.isParentSkill() && s.canBeBoughtWithExperience())

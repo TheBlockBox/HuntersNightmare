@@ -292,4 +292,8 @@ public class TransformationHelper {
     public static Item getHunterAmmunitionForEntity(EntityLivingBase attacked) {
         return ItemInit.MUSKET_BALL;
     }
+
+    public static boolean hasAccessToSkillTab(EntityPlayer player) {
+        return (TransformationHelper.getTransformation(player) != Transformation.WEREWOLF) || WerewolfHelper.hasUnlockedSkillTab(player);
+    }
 }

@@ -128,8 +128,11 @@ public class TransformationClientEventHandler {
             GuiContainer gui = (GuiContainer) event.getGui();
             int x = gui.getGuiLeft() + 2;
             int y = gui.getGuiTop() - 18;
-            buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, GuiSkillTab.INSTANCE.refresh(),
-                    TransformationHelper.getTransformation(Minecraft.getMinecraft().player).getIconAsSprite()));
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            if (TransformationHelper.hasAccessToSkillTab(player)) {
+                buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, GuiSkillTab.INSTANCE.refresh(),
+                        TransformationHelper.getTransformation(player).getIconAsSprite()));
+            }
         }
     }
 

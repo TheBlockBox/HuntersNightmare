@@ -71,7 +71,9 @@ public class ItemInit {
 //        ItemInit.registerItem(new ItemHuntersJournal(), "hunters_journal", event);
 //        ItemInit.registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemBestiary(), "bestiary", CreativeTabInit.HUNTERSDREAM_MISC, event);
+        ItemInit.registerItem(new ItemLycanthropyBook(), "lycanthropy_book", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);
+        ItemInit.registerItem(new Item(), "fabric", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerToolSet("silver", ItemInit.TOOL_SILVER, event);
         ItemInit.registerArmorSet("silver", ItemInit.ARMOR_SILVER, event);
         ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.HEAD), "hunter_hat",
@@ -95,8 +97,8 @@ public class ItemInit {
     }
 
     private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {
-        return ItemInit.registerItem(item, name,
-                item.getCreativeTab() == null ? CreativeTabInit.HUNTERSDREAM_MISC : item.getCreativeTab(), event);
+        return ItemInit.registerItem(item, name, (item.getCreativeTab() == null) ? CreativeTabInit.HUNTERSDREAM_MISC
+                : item.getCreativeTab(), event);
     }
 
     private static Item registerItem(Item item, String name, CreativeTabs tab, RegistryEvent.Register<Item> event) {

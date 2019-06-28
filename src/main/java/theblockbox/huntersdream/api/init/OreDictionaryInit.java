@@ -33,10 +33,14 @@ public class OreDictionaryInit {
         OreDictionaryInit.registerOreWithoutDamage("hunterPants", "hunter_pants");
         OreDictionaryInit.registerOreWithoutDamage("hunterBoots", "hunter_boots");
 
+        // wolfsbane
         OreDictionary.registerOre("aconite", BlockInit.ACONITE_FLOWER);
         OreDictionary.registerOre("wolfsbane", BlockInit.ACONITE_FLOWER);
         OreDictionary.registerOre("monkshood", BlockInit.MONKSHOOD_FLOWER);
         OreDictionary.registerOre("wolfsbane", BlockInit.MONKSHOOD_FLOWER);
+
+        // misc
+        OreDictionary.registerOre("fabric", Item.getByNameOrId(Reference.MODID + ":fabric"));
     }
 
     private static void registerOreWithoutDamage(String name, String item) {

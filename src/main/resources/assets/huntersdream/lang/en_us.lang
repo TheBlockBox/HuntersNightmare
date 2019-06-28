@@ -28,7 +28,9 @@ item.huntersdream.silver_musket_ball.name=Silver Musket Ball
 # Other items
 item.huntersdream.silver_ingot.name=Silver Ingot
 item.huntersdream.bestiary.name=Bestiary
+item.huntersdream.lycanthropy_book.name=Lycanthropy Book
 item.huntersdream.tent.name=Tent
+item.huntersdream.fabric.name=Fabric
 item.huntersdream.herbal_wolfsbane_water.name=Herbal Wolfsbane Water
 
 # Potions
@@ -100,6 +102,10 @@ huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s.
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
+item.huntersdream.lycanthropy_book.onClick.success=You now have access to the skill tab!
+item.huntersdream.lycanthropy_book.onClick.already_unlocked=You have already unlocked the skill tab.
+item.huntersdream.lycanthropy_book.onClick.wrong_transformation=You're not a werewolf.
+
 # Werewolf transformation (all the text is shown in italics and red)
 transformations.huntersdream\:werewolf.transformingInto.1=You feel weak and nauseous...
 transformations.huntersdream\:werewolf.transformingInto.2=Your bones and muscles are aching...
@@ -185,3 +191,4 @@ hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
+item.huntersdream.lycanthropy_book.tooltip=Found in village chests. Unlocks the skill tab for werewolves when right clicked.

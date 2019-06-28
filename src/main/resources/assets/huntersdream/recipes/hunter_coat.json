@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "F F",
+        "FFF",
+        "FFF"
+    ],
+    "key": {
+        "F": {
+            "type": "forge:ore_dict",
+            "ore": "fabric"
+        }
+    },
+    "result": {
+        "item": "huntersdream:hunter_coat"
+    }
+}

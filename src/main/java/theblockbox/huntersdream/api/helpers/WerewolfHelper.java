@@ -291,8 +291,7 @@ public class WerewolfHelper {
 
     public static void setTransformationStage(EntityPlayerMP player, int stage) {
         WerewolfHelper.validateIsWerewolf(player);
-        NBTTagCompound compound = TransformationHelper.getTransformationData(player);
-        compound.setInteger("transformationStage", stage);
+        TransformationHelper.getTransformationData(player).setInteger("transformationStage", stage);
     }
 
     /**
@@ -309,8 +308,7 @@ public class WerewolfHelper {
      */
     public static void setTimeSinceTransformation(EntityPlayerMP player, int time) {
         WerewolfHelper.validateIsWerewolf(player);
-        NBTTagCompound compound = TransformationHelper.getTransformationData(player);
-        compound.setInteger("timeSinceTransformation", time);
+        TransformationHelper.getTransformationData(player).setInteger("timeSinceTransformation", time);
     }
 
     public static int getSoundTicks(EntityPlayerMP player) {
@@ -324,8 +322,7 @@ public class WerewolfHelper {
      */
     public static void setSoundTicks(EntityPlayerMP player, int ticks) {
         WerewolfHelper.validateIsWerewolf(player);
-        NBTTagCompound compound = TransformationHelper.getTransformationData(player);
-        compound.setInteger("soundTicks", ticks);
+        TransformationHelper.getTransformationData(player).setInteger("soundTicks", ticks);
     }
 
     public static boolean wasLastAttackBite(EntityLivingBase entity) {
@@ -339,8 +336,7 @@ public class WerewolfHelper {
      */
     public static void setLastAttackBite(EntityLivingBase entity, boolean wasBite) {
         WerewolfHelper.validateIsWerewolf(entity);
-        NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
-        compound.setBoolean("lastAttackBite", wasBite);
+        TransformationHelper.getTransformationData(entity).setBoolean("lastAttackBite", wasBite);
     }
 
     public static long getBiteTicks(EntityLivingBase entity) {
@@ -349,13 +345,26 @@ public class WerewolfHelper {
     }
 
     /**
-     * Sets the the world tick at which the given entity used bite the last time. 0 means that it hasn't used it yet.
+     * Sets the world tick at which the given entity used bite the last time. 0 means that it hasn't used it yet.
      * No packet is being sent to the client
      */
     public static void setBiteTicks(EntityLivingBase entity, long biteTicks) {
         WerewolfHelper.validateIsWerewolf(entity);
-        NBTTagCompound compound = TransformationHelper.getTransformationData(entity);
-        compound.setLong("biteTicks", biteTicks);
+        TransformationHelper.getTransformationData(entity).setLong("biteTicks", biteTicks);
+    }
+
+    public static boolean hasUnlockedSkillTab(EntityPlayer player) {
+        WerewolfHelper.validateIsWerewolf(player);
+        return TransformationHelper.getTransformationData(player).getBoolean("hasUnlockedSkillTab");
+    }
+
+    /**
+     * Unlocks the skill tab for the given werewolf player.
+     * No packet is being sent to the client
+     */
+    public static void setHasUnlockedSkillTab(EntityPlayer player, boolean hasUnlockedSkillTab) {
+        WerewolfHelper.validateIsWerewolf(player);
+        TransformationHelper.getTransformationData(player).setBoolean("hasUnlockedSkillTab", hasUnlockedSkillTab);
     }
 
     /**
