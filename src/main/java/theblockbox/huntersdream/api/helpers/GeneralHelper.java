@@ -11,6 +11,8 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -591,5 +593,9 @@ public class GeneralHelper {
      */
     public static EnumHandSide convertEnumHand(EnumHand hand, EntityLivingBase entity) {
         return (hand == EnumHand.MAIN_HAND) ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
+    }
+
+    public static boolean isBonemeal(ItemStack stack) {
+        return (stack.getItem() instanceof ItemDye) && (EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.WHITE);
     }
 }

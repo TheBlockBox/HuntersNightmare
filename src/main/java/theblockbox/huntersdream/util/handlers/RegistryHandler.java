@@ -32,6 +32,7 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.*;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
+import theblockbox.huntersdream.blocks.tileentity.TileEntitySpinningWheel;
 import theblockbox.huntersdream.commands.CommandMoonphase;
 import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
@@ -111,6 +112,7 @@ public class RegistryHandler {
         Transformation.preInit();
         Skill.preInit();
         GameRegistry.registerTileEntity(TileEntityCampfire.class, GeneralHelper.newResLoc("campfire"));
+        GameRegistry.registerTileEntity(TileEntitySpinningWheel.class, GeneralHelper.newResLoc("spinning_wheel"));
         RegistryHandler.directory = event.getModConfigurationDirectory();
         MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
         WerewolfTransformationOverlayInit.preInit();

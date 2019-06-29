@@ -40,6 +40,7 @@ public class OreDictionaryInit {
         OreDictionary.registerOre("wolfsbane", BlockInit.MONKSHOOD_FLOWER);
 
         // misc
+        OreDictionary.registerOre("cotton", Item.getByNameOrId(Reference.MODID + ":cotton"));
         OreDictionary.registerOre("fabric", Item.getByNameOrId(Reference.MODID + ":fabric"));
     }
 

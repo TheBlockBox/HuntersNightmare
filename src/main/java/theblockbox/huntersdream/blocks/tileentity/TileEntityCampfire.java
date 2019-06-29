@@ -46,7 +46,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (!this.world.isRemote && this.ticks++ % 9 == 0) {
+        if (!this.world.isRemote && (this.ticks++ % 9 == 0)) {
             boolean wasBurning = this.isBurning();
             this.burnTime -= 9;
             while (this.burnTime < 0) {
@@ -209,7 +209,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
         @Override
         protected void onContentsChanged(int slot) {
-            if (TileEntityCampfire.this.world != null && !TileEntityCampfire.this.world.isRemote) {
+            if ((TileEntityCampfire.this.world != null) && !TileEntityCampfire.this.world.isRemote) {
                 TileEntityCampfire.this.markDirty();
             }
         }

@@ -3,7 +3,6 @@ package theblockbox.huntersdream.util.handlers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +28,7 @@ import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.StructureInit;
+import theblockbox.huntersdream.blocks.BlockCotton;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.util.Reference;
 
@@ -78,26 +78,29 @@ public class EventHandler {
         }
     }
 
+    // generate cotton, aconite and monkshood
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBiomeDecoration(DecorateBiomeEvent.Decorate event) {
         Event.Result result = event.getResult();
         Random random = event.getRand();
         if ((result == Event.Result.ALLOW || result == Event.Result.DEFAULT)
                 && event.getType() == DecorateBiomeEvent.Decorate.EventType.FLOWERS
-                && ChanceHelper.chanceOf(random, 1.0D)) {
+                && ChanceHelper.chanceOf(random, 1.5D)) {
             World world = event.getWorld();
             BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(event.getChunkPos().getBlock(15, 0, 15));
             int xOffset = pos.getX();
             int zOffset = pos.getZ();
             int currentFlowers = 0;
             int maxFlowers = random.nextInt(5);
+            boolean generateCotton = random.nextInt(3) == 0;
 
             for (int y = 256; y > 0; y--) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        Block block = event.getRand().nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER;
-                        if (block.canPlaceBlockAt(world, pos.setPos(x + xOffset, y, z + zOffset))) {
-                            world.setBlockState(pos, block.getDefaultState(), 2);
+                        IBlockState state = generateCotton ? BlockInit.COTTON.getDefaultState().withProperty(BlockCotton.AGE, 3)
+                                : (random.nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER).getDefaultState();
+                        if (state.getBlock().canPlaceBlockAt(world, pos.setPos(x + xOffset, y, z + zOffset))) {
+                            world.setBlockState(pos, state, 2);
                             if (++currentFlowers > maxFlowers)
                                 return;
                             x = Math.min(15, x + random.nextInt(2));
@@ -126,7 +129,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onPlayerInteractRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         World world = event.getWorld();
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             BlockPos pos = event.getPos();
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof BlockCauldron) {

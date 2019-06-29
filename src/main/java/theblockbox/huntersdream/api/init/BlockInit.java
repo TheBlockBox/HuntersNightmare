@@ -31,6 +31,9 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:tile_tent")
     public static final Block TENT = null;
 
+    @GameRegistry.ObjectHolder("huntersdream:cotton")
+    public static final Block COTTON = null;
+
     @GameRegistry.ObjectHolder("huntersdream:wolfsbane_garland")
     public static final BlockWolfsbaneGarland WOLFSBANE_GARLAND = null;
 
@@ -50,6 +53,8 @@ public class BlockInit {
             BlockInit.registerBlockWithItem(new BlockCampfire(type), type.getName() + "_campfire", 1, event);
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
+        BlockInit.registerBlockWithItem(new BlockCotton(), "cotton", event);
+        BlockInit.registerBlockWithItem(new BlockSpinningWheel(), "spinning_wheel", event);
         BlockInit.registerBlockWithItem(new BlockWolfsbaneGarland(), "wolfsbane_garland", event);
         BlockInit.registerBlockWithItem(new BlockWolfsbanePetals(), "wolfsbane_petals", event);
     }

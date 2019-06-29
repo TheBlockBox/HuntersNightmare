@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "  P",
+        "PPP",
+        "P P"
+    ],
+    "key": {
+        "P": {
+            "type": "forge:ore_dict",
+            "ore": "plankWood"
+        }
+    },
+    "result": {
+        "item": "huntersdream:spinning_wheel",
+        "count": 1
+    }
+}

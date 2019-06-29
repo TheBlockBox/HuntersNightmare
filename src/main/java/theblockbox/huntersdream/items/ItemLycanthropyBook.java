@@ -34,6 +34,9 @@ public class ItemLycanthropyBook extends Item {
             if (TransformationHelper.hasAccessToSkillTab(playerIn)) {
                 playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick.already_unlocked"), true);
             } else {
+                if (!playerIn.capabilities.isCreativeMode) {
+                    playerIn.getHeldItem(handIn).shrink(1);
+                }
                 WerewolfHelper.setHasUnlockedSkillTab(playerIn, true);
                 PacketHandler.sendTransformationMessage((EntityPlayerMP) playerIn);
                 playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick.success"), true);

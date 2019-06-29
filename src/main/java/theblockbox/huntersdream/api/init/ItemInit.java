@@ -34,6 +34,9 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:tent")
     public static final Item TENT = null;
 
+    @GameRegistry.ObjectHolder("huntersdream:fabric")
+    public static final Item FABRIC = null;
+
     @GameRegistry.ObjectHolder("huntersdream:flintlock_pistol")
     public static final Item FLINTLOCK_PISTOL = null;
 

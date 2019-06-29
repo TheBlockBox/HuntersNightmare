@@ -45,6 +45,8 @@ tipped_arrow.effect.wolfsbane=Wolfsbane Arrow
 tile.huntersdream.silver_block.name=Silver Block
 tile.huntersdream.silver_ore.name=Silver Ore
 tile.huntersdream.tile_tent.name=Tent
+tile.huntersdream.cotton.name=Cotton
+tile.huntersdream.spinning_wheel.name=Spinning Wheel
 tile.huntersdream.oak_campfire.name=Oak Campfire
 tile.huntersdream.spruce_campfire.name=Spruce Campfire
 tile.huntersdream.birch_campfire.name=Birch Campfire
@@ -191,4 +193,4 @@ hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
-item.huntersdream.lycanthropy_book.tooltip=Found in village chests. Unlocks the skill tab for werewolves when right clicked.
+item.huntersdream.lycanthropy_book.tooltip=Found in village chests. When right clicked, gets consumed and unlocks the skill tab for werewolves.

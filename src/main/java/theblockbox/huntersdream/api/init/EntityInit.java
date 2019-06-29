@@ -42,7 +42,7 @@ public class EntityInit {
                         .spawn(EnumCreatureType.CREATURE, 2, 5, 5,
                                 StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
                                         .filter(b -> BiomeDictionary.hasType(b, BiomeDictionary.Type.FOREST))
-                                        .collect(Collectors.toSet())).build(),
+                                        .collect(Collectors.toSet())).egg(0, 6636321).build(),
                 EntityInit.getEntityEntryBuilder("hunter", EntityHunter.class).egg(12820338, 4532224)
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
                 // same tracker as arrows

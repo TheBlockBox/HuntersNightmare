@@ -1,0 +1,30 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "crop"
+    },
+    "variants": {
+        "age": {
+            "0": {
+                "textures": {
+                    "crop": "huntersdream:blocks/cotton_stage_0"
+                }
+            },
+            "1": {
+                "textures": {
+                    "crop": "huntersdream:blocks/cotton_stage_1"
+                }
+            },
+            "2": {
+                "textures": {
+                    "crop": "huntersdream:blocks/cotton_stage_2"
+                }
+            },
+            "3": {
+                "textures": {
+                    "crop": "huntersdream:blocks/cotton_stage_3"
+                }
+            }
+        }
+    }
+}
