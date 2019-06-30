@@ -8,6 +8,7 @@ import net.minecraftforge.oredict.OreIngredient;
 import org.apache.commons.lang3.ObjectUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 
 import javax.annotation.Nonnull;
@@ -28,13 +29,33 @@ public class HunterArmorEffect {
     public static final Collection<HunterArmorEffect> EFFECTS = Collections.unmodifiableCollection(HunterArmorEffect.EFFECT_MAP.values());
 
     public static final HunterArmorEffect NONE = new HunterArmorEffect(GeneralHelper.newResLoc("none"),
-            Ingredient.EMPTY);
+            Ingredient.EMPTY) {
+        @Override
+        public void applyEffect(EntityLivingBase entity) {
+            WerewolfHelper.applyWolfsbaneEffects(entity, false);
+        }
+    };
     public static final HunterArmorEffect ACONITE = new HunterArmorEffect(GeneralHelper.newResLoc("aconite"),
-            new OreIngredient("aconite"));
+            new OreIngredient("aconite")) {
+        @Override
+        public void applyEffect(EntityLivingBase entity) {
+            WerewolfHelper.applyWolfsbaneEffects(entity, false);
+        }
+    };
     public static final HunterArmorEffect MONKSHOOD = new HunterArmorEffect(GeneralHelper.newResLoc("monkshood"),
-            new OreIngredient("monkshood"));
+            new OreIngredient("monkshood")) {
+        @Override
+        public void applyEffect(EntityLivingBase entity) {
+            WerewolfHelper.applyWolfsbaneEffects(entity, false);
+        }
+    };
     public static final HunterArmorEffect WOLFSBANE = new HunterArmorEffect(GeneralHelper.newResLoc("wolfsbane"),
-            new OreIngredient("wolfsbane"));
+            new OreIngredient("wolfsbane")) {
+        @Override
+        public void applyEffect(EntityLivingBase entity) {
+            WerewolfHelper.applyWolfsbaneEffects(entity, false);
+        }
+    };
 
 
     private final ResourceLocation registryName;

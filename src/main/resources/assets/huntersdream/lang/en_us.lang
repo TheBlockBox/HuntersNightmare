@@ -193,4 +193,4 @@ hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
-item.huntersdream.lycanthropy_book.tooltip=Found in village chests. When right clicked, gets consumed and unlocks the skill tab for werewolves.
+item.huntersdream.lycanthropy_book.tooltip=Found in chests. When right clicked, gets consumed and unlocks the skill tab for werewolves.

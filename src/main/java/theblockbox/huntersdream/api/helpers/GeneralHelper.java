@@ -598,4 +598,8 @@ public class GeneralHelper {
     public static boolean isBonemeal(ItemStack stack) {
         return (stack.getItem() instanceof ItemDye) && (EnumDyeColor.byDyeDamage(stack.getMetadata()) == EnumDyeColor.WHITE);
     }
+
+    public static boolean isCotton(ItemStack stack) {
+        return GeneralHelper.itemStackHasOreDict(stack, "cotton") || GeneralHelper.itemStackHasOreDict(stack, "cropCotton");
+    }
 }

@@ -7,18 +7,14 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import theblockbox.huntersdream.api.Transformation;
-import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
 
@@ -88,11 +84,7 @@ public class BlockWolfsbanePetals extends Block {
     @Override
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (entityIn instanceof EntityLivingBase) {
-            EntityLivingBase entity = (EntityLivingBase) entityIn;
-            if (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF) {
-                entity.addPotionEffect(new PotionEffect(new PotionEffect(WerewolfHelper.isTransformed(entity)
-                        ? MobEffects.WITHER : MobEffects.POISON, 200)));
-            }
+            WerewolfHelper.applyWolfsbaneEffects((EntityLivingBase) entityIn, false);
         }
     }
 }

@@ -277,8 +277,9 @@ public class SkillBarHandler {
     public static boolean shouldShowSkillBarSlot() {
         EntityPlayer player = Minecraft.getMinecraft().player;
         ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer(player);
-        return ConfigHandler.client.showSkillBarSlot && !transformation.hasNoSkills()
-                && transformation.getTransformation().hasSkills() && !player.isSpectator();
+        return ConfigHandler.client.showSkillBarSlot && !player.isSpectator() && transformation.getTransformation().hasSkills()
+                && !transformation.hasNoSkills() && transformation.getSkills().stream().anyMatch(skill ->
+                !skill.isAlwaysActive() && skill.shouldShowSkillInSkillBar(player));
     }
 
     /**

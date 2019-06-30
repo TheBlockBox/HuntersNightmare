@@ -412,9 +412,7 @@ public class WerewolfHelper {
                 entity.world.playSound(null, entity.posX, entity.posY, entity.posZ,
                         SoundInit.WEREWOLF_HOWLING, entity.getSoundCategory(), 100, 1);
             }
-            entity.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200));
-            entity.addPotionEffect(new PotionEffect(MobEffects.POISON, 200));
-            entity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 200, 2));
+            entity.addPotionEffect(new PotionEffect(WerewolfHelper.isTransformed(entity) ? MobEffects.WITHER : MobEffects.POISON, 200));
             return true;
         } else {
             return false;

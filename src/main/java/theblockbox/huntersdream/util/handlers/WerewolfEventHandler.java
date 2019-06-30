@@ -100,7 +100,7 @@ public class WerewolfEventHandler {
                 for (HunterArmorEffect effect : ItemHunterArmor.getEffectsFromEntity(attacked)) {
                     if ((effect == HunterArmorEffect.ACONITE) || (effect == HunterArmorEffect.MONKSHOOD)
                             || (effect == HunterArmorEffect.WOLFSBANE)) {
-                        attacker.addPotionEffect(new PotionEffect(MobEffects.POISON, 200));
+                        WerewolfHelper.applyWolfsbaneEffects(attacked, false);
                     }
                 }
             }

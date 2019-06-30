@@ -28,9 +28,6 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:silver_sword")
     public static final Item SILVER_SWORD = null;
 
-    @GameRegistry.ObjectHolder("huntersdream:hunters_journal")
-    public static final Item HUNTERS_JOURNAL = null;
-
     @GameRegistry.ObjectHolder("huntersdream:tent")
     public static final Item TENT = null;
 
@@ -70,9 +67,6 @@ public class ItemInit {
         ItemInit.TOOL_SILVER.setRepairItem(new ItemStack(silverIngot));
         ItemInit.ARMOR_SILVER.setRepairItem(new ItemStack(silverIngot));
         ItemInit.ARMOR_HUNTER.setRepairItem(new ItemStack(Items.LEATHER));
-//        TODO: Uncomment this when the hunter's journal will be worked on
-//        ItemInit.registerItem(new ItemHuntersJournal(), "hunters_journal", event);
-//        ItemInit.registerItem(new ItemHuntersJournalPage(), "hunters_journal_page", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemBestiary(), "bestiary", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemLycanthropyBook(), "lycanthropy_book", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);

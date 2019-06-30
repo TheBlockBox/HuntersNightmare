@@ -74,8 +74,8 @@ public class ContainerSpinningWheel extends Container {
                     this.tryMove(stack, 30, 39);
             } else {
                 // try to move it into the cotton or shear slots
-                if (!((GeneralHelper.itemStackHasOreDict(stack, "cotton") && this.tryMove(stack, 0, 1))
-                        || ((stack.getItem() instanceof ItemShears) && this.tryMove(stack, 1, 2)))) {
+                if (!((GeneralHelper.isCotton(stack) && this.tryMove(stack, 0, 1)) || ((stack.getItem() instanceof ItemShears)
+                        && this.tryMove(stack, 1, 2)))) {
                     // otherwise move it into the inventory
                     boolean inventory = slotIndex < 30;
                     this.tryMove(stack, inventory ? 30 : 3, inventory ? 39 : 30);

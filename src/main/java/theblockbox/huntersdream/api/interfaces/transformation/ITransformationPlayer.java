@@ -12,34 +12,16 @@ import theblockbox.huntersdream.api.skill.ChildSkill;
 import theblockbox.huntersdream.api.skill.ParentSkill;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.inventory.ItemHandlerClothingTab;
-import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.annotations.CapabilityInterface;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * ITransform for players (players can have xp)
  */
 @CapabilityInterface
 public interface ITransformationPlayer extends ITransformation {
-    public void setUnlockedPages(HuntersJournalPage[] pages);
-
-    public HuntersJournalPage[] getUnlockedPages();
-
-    public void unlockPage(HuntersJournalPage page);
-
-    public void lockPage(HuntersJournalPage page);
-
-    public boolean hasUnlockedPage(HuntersJournalPage page);
-
-    /**
-     * Returns a random not unlocked page or null if all pages are unlocked
-     */
-    @Nullable
-    public HuntersJournalPage getRandomNotUnlockedPage(Random random);
-
     /**
      * Returns an optional of the skill the player is currently using. Returns an
      * empty optional if no skill is in use.
@@ -121,7 +103,6 @@ public interface ITransformationPlayer extends ITransformation {
          * Rituals that the player has done
          */
         private Set<Skill> skills = new HashSet<>();
-        private Set<HuntersJournalPage> unlockedPages = new HashSet<>();
         private ItemHandlerClothingTab clothingTab = new ItemHandlerClothingTab();
         private NBTTagCompound transformationData = new NBTTagCompound();
         private Skill activeSkill = null;
@@ -188,48 +169,6 @@ public interface ITransformationPlayer extends ITransformation {
         }
 
         @Override
-        public void setUnlockedPages(HuntersJournalPage[] pages) {
-            this.unlockedPages = Arrays.stream(pages).collect(Collectors.toCollection(HashSet::new));
-        }
-
-        @Override
-        public HuntersJournalPage[] getUnlockedPages() {
-            Set<HuntersJournalPage> var = this.unlockedPages;
-            return var.toArray(new HuntersJournalPage[0]);
-        }
-
-        @Override
-        public void unlockPage(HuntersJournalPage page) {
-            if (!this.unlockedPages.add(page)) {
-                throw new IllegalArgumentException("The player has already unlocked this page");
-            }
-        }
-
-        @Override
-        public void lockPage(HuntersJournalPage page) {
-            if (!this.unlockedPages.remove(page)) {
-                throw new IllegalArgumentException("The player hasn't unlocked this page yet");
-            }
-        }
-
-        @Override
-        public boolean hasUnlockedPage(HuntersJournalPage page) {
-            return this.unlockedPages.contains(page);
-        }
-
-        @Override
-        @Nullable
-        public HuntersJournalPage getRandomNotUnlockedPage(Random random) {
-            int size = HuntersJournalPage.PAGES.size();
-            if (this.unlockedPages.size() >= size) {
-                return null;
-            } else {
-                HuntersJournalPage page = HuntersJournalPage.PAGES.get(random.nextInt(size));
-                return this.hasUnlockedPage(page) ? this.getRandomNotUnlockedPage(random) : page;
-            }
-        }
-
-        @Override
         public ItemHandlerClothingTab getClothingTab() {
             return this.clothingTab;
         }
@@ -254,7 +193,6 @@ public interface ITransformationPlayer extends ITransformation {
         public static final String TRANSFORMATION = "transformation";
         public static final String TEXTURE_INDEX = "textureindex";
         public static final String SKILLS = "skillsnbt";
-        public static final String PAGES = "pages";
         public static final String CLOTHING_TAB = "clothingtab";
         public static final String TRANSFORMATION_DATA = "transformationdata";
         public static final String ACTIVE_SKILL = "activeskill";
@@ -267,7 +205,6 @@ public interface ITransformationPlayer extends ITransformation {
             Set<Skill> skills = instance.getSkills();
             GeneralHelper.writeArrayToNBT(compound, skills.toArray(new Skill[0]), ITransformationPlayer.TransformationPlayerStorage.SKILLS, Skill::toString);
             compound.setString(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION, instance.getTransformation().toString());
-            GeneralHelper.writeArrayToNBT(compound, instance.getUnlockedPages(), ITransformationPlayer.TransformationPlayerStorage.PAGES, HuntersJournalPage::toString);
             compound.setTag(ITransformationPlayer.TransformationPlayerStorage.CLOTHING_TAB,
                     CapabilitiesInit.CAPABILITY_ITEM_HANDLER.writeNBT(instance.getClothingTab(), null));
             compound.setTag(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION_DATA, instance.getTransformationData());
@@ -281,8 +218,6 @@ public interface ITransformationPlayer extends ITransformation {
             NBTTagCompound compound = (NBTTagCompound) nbt;
             instance.setTextureIndex(compound.getInteger(ITransformationPlayer.TransformationPlayerStorage.TEXTURE_INDEX));
             instance.setTransformation(Transformation.fromName(compound.getString(ITransformationPlayer.TransformationPlayerStorage.TRANSFORMATION)));
-            instance.setUnlockedPages(GeneralHelper.readArrayFromNBT(compound, ITransformationPlayer.TransformationPlayerStorage.PAGES, HuntersJournalPage::fromName,
-                    HuntersJournalPage[]::new));
             instance.setSkills(Sets.newHashSet(GeneralHelper.readArrayFromNBT(compound, ITransformationPlayer.TransformationPlayerStorage.SKILLS,
                     s -> Objects.requireNonNull(Skill.fromName(s)), Skill[]::new)));
             if (compound.hasKey(ITransformationPlayer.TransformationPlayerStorage.CLOTHING_TAB))

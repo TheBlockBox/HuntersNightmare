@@ -7,8 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import theblockbox.huntersdream.gui.GuiHuntersJournal;
-import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
 public class ClientProxy implements IProxy {
@@ -40,11 +38,6 @@ public class ClientProxy implements IProxy {
     @Override
     public EntityPlayer getPlayer() {
         return Minecraft.getMinecraft().player;
-    }
-
-    @Override
-    public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
-        Minecraft.getMinecraft().displayGuiScreen(new GuiHuntersJournal(player, pages));
     }
 
     @SuppressWarnings("unchecked")

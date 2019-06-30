@@ -11,7 +11,6 @@ import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
 import theblockbox.huntersdream.api.skill.Skill;
-import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.VampireFoodStats;
 
 import javax.annotation.Nullable;
@@ -23,21 +22,18 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
     private int textureIndex;
     private int player;
     private Skill[] skills;
-    private HuntersJournalPage[] pages;
     private NBTTagCompound transformationData;
     private String activeSkill;
 
     public TransformationMessage() {
     }
 
-    public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex,
-                                 Set<Skill> skills, HuntersJournalPage[] pages, NBTTagCompound transformationData,
-                                 @Nullable Skill activeSkill) {
+    public TransformationMessage(Transformation transformation, EntityPlayer player, int textureIndex, Set<Skill> skills,
+                                 NBTTagCompound transformationData, @Nullable Skill activeSkill) {
         this.transformation = transformation;
         this.textureIndex = textureIndex;
         this.player = player.getEntityId();
         this.skills = skills.toArray(new Skill[0]);
-        this.pages = pages;
         this.transformationData = transformationData;
         this.activeSkill = Objects.toString(activeSkill, "");
     }
@@ -48,7 +44,6 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
         this.player = buf.readInt();
         this.textureIndex = buf.readInt();
         this.skills = MessageBase.readArray(buf, Skill::fromName, Skill[]::new);
-        this.pages = MessageBase.readArray(buf, HuntersJournalPage::fromName, HuntersJournalPage[]::new);
         this.transformationData = MessageBase.readTag(buf);
         this.activeSkill = MessageBase.readString(buf);
     }
@@ -59,7 +54,6 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
         buf.writeInt(this.player);
         buf.writeInt(this.textureIndex);
         MessageBase.writeArray(buf, this.skills, Skill::toString);
-        MessageBase.writeArray(buf, this.pages, HuntersJournalPage::toString);
         MessageBase.writeTag(buf, this.transformationData);
         MessageBase.writeString(buf, this.activeSkill);
     }
@@ -85,7 +79,6 @@ public class TransformationMessage extends MessageBase<TransformationMessage> {
                     cap.setTransformation(message.transformation);
                     cap.setTextureIndex(message.textureIndex);
                     cap.setSkills(Sets.newHashSet(message.skills));
-                    cap.setUnlockedPages(message.pages);
                     cap.setTransformationData(message.transformationData);
                     cap.setActiveSkill(Skill.fromName(message.activeSkill));
                     if (message.transformation == Transformation.VAMPIRE)

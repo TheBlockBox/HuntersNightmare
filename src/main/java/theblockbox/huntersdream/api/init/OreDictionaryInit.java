@@ -41,6 +41,8 @@ public class OreDictionaryInit {
 
         // misc
         OreDictionary.registerOre("cotton", Item.getByNameOrId(Reference.MODID + ":cotton"));
+        OreDictionary.registerOre("cropCotton", Item.getByNameOrId(Reference.MODID + ":cotton"));
+        OreDictionary.registerOre("seedCotton", Item.getByNameOrId(Reference.MODID + ":cotton"));
         OreDictionary.registerOre("fabric", Item.getByNameOrId(Reference.MODID + ":fabric"));
     }
 

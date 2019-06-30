@@ -63,7 +63,7 @@ public class PacketHandler {
     public static void sendTransformationMessage(EntityPlayerMP applyOn) {
         ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
         TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
-                cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData(),
+                cap.getTextureIndex(), cap.getSkills(), cap.getTransformationData(),
                 cap.getActiveSkill().orElse(null));
         PacketHandler.afterPacketSent(CLIENT, GeneralHelper.getSideFromEntity(applyOn), message,
                 () -> PacketHandler.INSTANCE.sendToDimension(message, applyOn.world.provider.getDimension()));
@@ -72,7 +72,7 @@ public class PacketHandler {
     public static void sendTransformationMessageToPlayer(EntityPlayerMP applyOn, EntityPlayerMP sendTo) {
         ITransformationPlayer cap = TransformationHelper.getITransformationPlayer(applyOn);
         TransformationMessage message = new TransformationMessage(cap.getTransformation(), applyOn,
-                cap.getTextureIndex(), cap.getSkills(), cap.getUnlockedPages(), cap.getTransformationData(),
+                cap.getTextureIndex(), cap.getSkills(), cap.getTransformationData(),
                 cap.getActiveSkill().orElse(null));
         if (cap.getTransformation() == Transformation.VAMPIRE)
             VampireFoodStats.replaceFoodStats(applyOn);

@@ -132,8 +132,7 @@ public class TileEntitySpinningWheel extends TileEntity implements ITickable {
 
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return ((slot == 0) && (GeneralHelper.itemStackHasOreDict(stack, "cotton")))
-                    || ((slot == 1) && (stack.getItem() instanceof ItemShears));
+            return ((slot == 0) && GeneralHelper.isCotton(stack)) || ((slot == 1) && (stack.getItem() instanceof ItemShears));
         }
     }
 }

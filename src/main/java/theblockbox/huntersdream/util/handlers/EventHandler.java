@@ -27,6 +27,7 @@ import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.LootTableInit;
 import theblockbox.huntersdream.api.init.StructureInit;
 import theblockbox.huntersdream.blocks.BlockCotton;
 import theblockbox.huntersdream.items.ItemHunterArmor;
@@ -69,12 +70,11 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onLootTableLoad(LootTableLoadEvent event) {
-        // add hunter's notes to chests
+        // add lycanthropy book to chests
         // for a list of all loot tables see
         // net.minecraft.world.storage.loot.LootTableList
         if (event.getName().toString().startsWith("minecraft:chests/")) {
-//            TODO: Uncomment this when the hunter's journal will be worked on
-//            event.getTable().addPool(LootTableInit.HUNTERS_JOURNAL_PAGE_POOL);
+            event.getTable().addPool(LootTableInit.LYCANTHROPY_BOOK_POOL);
         }
     }
 
@@ -91,8 +91,8 @@ public class EventHandler {
             int xOffset = pos.getX();
             int zOffset = pos.getZ();
             int currentFlowers = 0;
-            int maxFlowers = random.nextInt(5);
             boolean generateCotton = random.nextInt(3) == 0;
+            int maxFlowers = generateCotton ? 1 : random.nextInt(5);
 
             for (int y = 256; y > 0; y--) {
                 for (int x = 0; x < 16; x++) {

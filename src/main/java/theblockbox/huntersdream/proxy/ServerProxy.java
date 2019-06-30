@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.relauncher.Side;
-import theblockbox.huntersdream.util.HuntersJournalPage;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
@@ -37,10 +36,6 @@ public class ServerProxy implements IProxy {
     @Override
     public EntityPlayer getPlayer() {
         return null;
-    }
-
-    @Override
-    public void openHuntersJournal(EntityPlayer player, HuntersJournalPage[] pages) {
     }
 
     @Override
