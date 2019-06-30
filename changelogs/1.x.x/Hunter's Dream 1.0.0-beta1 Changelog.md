@@ -22,7 +22,9 @@ To see every little change, please head to our [GitHub](https://github.com/TheGa
 - Added wolfsbane related things (potions, garlands, petals, etc.)
 - Added flintlock guns (musket, pistol and blunderbuss)
 - Added base for hunters
-- Added hunter armor that can be dyed and have herbs (currently only aconite/monkshood) applied on them
+- Added hunter armor that can be dyed and have herbs (currently only aconite/monkshood) applied
+- Added cotton, spinning wheel and fabric for crafting the hunter armor
+- Added lycanthropy book for accessing the skill bar as a werewolf
 
 
 ## Removed things
