@@ -91,7 +91,7 @@ public class EventHandler {
             int xOffset = pos.getX();
             int zOffset = pos.getZ();
             int currentFlowers = 0;
-            boolean generateCotton = random.nextInt(3) == 0;
+            boolean generateCotton = random.nextInt(2) == 0;
             int maxFlowers = generateCotton ? 1 : random.nextInt(5);
 
             for (int y = 256; y > 0; y--) {
