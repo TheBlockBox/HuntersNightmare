@@ -252,7 +252,6 @@ public class ModelWerewolf extends ModelBiped {
         this.isSneak = isBiting || entityIn.isSneaking();
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
 
-        // TODO: Does that animation even work?
         if (isBiting) {
             this.bipedRightArm.rotateAngleX = -1.0F;
             this.bipedLeftArm.rotateAngleX = -1.0F;

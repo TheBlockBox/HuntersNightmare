@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Finish
 public class ItemHunterArmor extends ItemArmor {
     /**
      * If not null, the value of this package-private field will be returned in {@link #getArmorMaterial()}.

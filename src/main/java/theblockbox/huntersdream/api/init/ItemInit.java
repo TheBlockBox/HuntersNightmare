@@ -57,9 +57,8 @@ public class ItemInit {
             6.0F, 0.0F, 14);
     public static final ItemArmor.ArmorMaterial ARMOR_SILVER = EnumHelper.addArmorMaterial(Reference.MODID + ":armor_silver",
             Reference.MODID + ":silver", 6, new int[]{1, 3, 5, 2}, 14, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.2F);
-    // TODO: Same durability as chainmail
     public static final ItemArmor.ArmorMaterial ARMOR_HUNTER = EnumHelper.addArmorMaterial(Reference.MODID + ":armor_hunter",
-            Reference.MODID + ":hunter", 6, new int[]{1, 4, 5, 2}, 12, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
+            Reference.MODID + ":hunter", 15, new int[]{1, 4, 5, 2}, 12, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
 
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         ItemInit.ITEMS.forEach(item -> ItemInit.registerItemBlock(item, event));

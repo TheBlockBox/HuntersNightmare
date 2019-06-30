@@ -1,0 +1,196 @@
+#PARSE_ESCAPES
+# Language: German
+# Region: Germany, Austria, Switzerland, Liechtenstein, Luxembourg and Belgium
+# Translated by: RedstoneTim
+
+# Armor
+item.huntersdream.silver_helmet.name=Silberhelm
+item.huntersdream.silver_chestplate.name=Silberharnisch
+item.huntersdream.silver_leggings.name=Silberhose
+item.huntersdream.silver_boots.name=Silberstiefel
+item.huntersdream.hunter_hat.name=Jägerhut
+item.huntersdream.hunter_coat.name=Jägermantel
+item.huntersdream.hunter_pants.name=Jägerhose
+item.huntersdream.hunter_boots.name=Jägerstiefel
+
+# Weapons and Tools
+item.huntersdream.silver_sword.name=Silberschwert
+item.huntersdream.silver_pickaxe.name=Silberspitzhacke
+item.huntersdream.silver_shovel.name=Silberschaufel
+item.huntersdream.silver_hoe.name=Silberhacke
+item.huntersdream.silver_axe.name=Silberaxt
+item.huntersdream.flintlock_musket.name=Steinschlossmuskete
+item.huntersdream.flintlock_pistol.name=Steinschlosspistole
+item.huntersdream.flintlock_blunderbuss.name=Steinschlossdonnerbüchse
+item.huntersdream.musket_ball.name=Musketenkugel
+item.huntersdream.silver_musket_ball.name=Silberne Musketenkugel
+
+# Other items
+item.huntersdream.silver_ingot.name=Silberbarren
+item.huntersdream.bestiary.name=Bestiarium
+item.huntersdream.lycanthropy_book.name=Werwolfsbuch
+item.huntersdream.tent.name=Zelt
+item.huntersdream.fabric.name=Stoff
+item.huntersdream.herbal_wolfsbane_water.name=Pflanzliches Wolfswurzwasser
+
+# Potions
+effect.huntersdream.wolfsbane=Wolfswurz
+effect.huntersdream.sunscreen=Sonnencreme
+potion.effect.wolfsbane=Trank des Wolfswurzes
+splash_potion.effect.wolfsbane=Wurftrank des Wolfswurzes
+lingering_potion.effect.wolfsbane=Verweiltrank des Wolfswurzes
+tipped_arrow.effect.wolfsbane=Pfeil des Wolfswurzes
+
+# Blocks
+tile.huntersdream.silver_block.name=Silberblock
+tile.huntersdream.silver_ore.name=Silbererz
+tile.huntersdream.tile_tent.name=Zelt
+tile.huntersdream.cotton.name=Baumwolle
+tile.huntersdream.spinning_wheel.name=Spinnrad
+tile.huntersdream.oak_campfire.name=Eichenholzlagerfeuer
+tile.huntersdream.spruce_campfire.name=Fichtenholzlagerfeuer
+tile.huntersdream.birch_campfire.name=Birkenholzlagerfeuer
+tile.huntersdream.jungle_campfire.name=Tropenholzlagerfeuer
+tile.huntersdream.acacia_campfire.name=Akazienholzlagerfeuer
+tile.huntersdream.dark_oak_campfire.name=Schwarzeichenholzlagerfeuer
+tile.huntersdream.aconite_flower.name=Aconitum
+tile.huntersdream.monkshood_flower.name=Eisenhut
+tile.huntersdream.wolfsbane_garland.name=Wolfswurzgirlande
+tile.huntersdream.wolfsbane_petals.name=Wolfswurzblüten
+
+# Entities
+entity.goblintd.name=Goblin
+entity.werewolf.name=Werwolf
+entity.hunter.name=Jäger
+
+# Transformations
+huntersdream\:none=Keine
+huntersdream\:human=Mensch
+huntersdream\:werewolf=Werwolf
+huntersdream\:vampire=Vampir
+huntersdream\:ghost=Geist
+
+# Sounds (Subtitles)
+huntersdream.transformation.heartbeat=Herzschlag eines Werwolfs
+huntersdream.transformation.werewolf.howling=Heulen eines Werwolfs
+huntersdream.transformation.vampire.gulp=Bluttrinkender Vampir
+huntersdream.gun.flintlock.fire=Steinschlosswaffe schießt
+huntersdream.gun.flintlock.reload=Steinschlosswaffe lädt nach
+
+# Creative Tabs
+itemGroup.huntersdream.toolsandcombat=Hunter's Dream Waffen und Werkzeuge
+itemGroup.huntersdream.misc=Hunter's Dream Sonstiges
+
+# Commands
+command.huntersdream.invalid=Unerlaubte Argumente
+command.huntersdream.moonphase.usage=hdmoonphase <get|add> <ID der Welt> <Anzahl der zu überspringenden Mondphasen>
+command.huntersdream.moonphase.getCurrent=Die momentane Mondphase ist %s
+command.huntersdream.moonphase.getSet=Die momentane Mondphase ist nun %s
+command.huntersdream.transformation.usage=hdtransformation <Verwandlung|get> <Spieler>
+command.huntersdream.transformation.transformationSet=%ss Verwandlung ist nun %s
+command.huntersdream.transformation.transformationGet=%ss Verwandlung ist %s
+command.huntersdream.transformationtexture.usage=hdtransformationtexture <Texturenindex|get> <Spieler>
+command.huntersdream.transformationtexture.get=%ss Texturenindex ist %s
+command.huntersdream.transformationtexture.set=%ss Textur wurde zu %s gesetzt
+command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <Spieler> <Fähigkeit>
+command.huntersdream.skill.add=Die Fähigkeit %s wurde zu %s hinzugefügt
+command.huntersdream.skill.remove=Die Fähigkeit %s wurde von %s entfernt
+command.huntersdream.skill.clear=%ss Fähigkeiten wurden entfernt
+command.huntersdream.skill.list=%ss Fähigkeiten sind\: %s
+
+# Chat messages
+transformations.huntersdream.infected.werewolf=Du fühlst, dass ein Fluch dich umgibt...
+huntersdream.versionNotSupported=Hunter's Dream unterstützt die Minecraftversion %s, die du gerade benutzt, nicht mehr. Bitte beschwere dich nicht über Fehler oder Abstürze und versuche bald eine neuere, unterstützte Version zu benutzen.
+huntersdream.werewolfNotAllowedToSleep=Du kannst nicht schlafen, wenn du verwandelt bist
+death.attack.vampireDrankBlood=%s wurde von einem Vampir leer getrunken
+item.huntersdream.bestiary.onClick=Du bist nun %s
+item.huntersdream.lycanthropy_book.onClick.success=Du hast ab jetzt Zugang zum Fähigkeitenreiter!
+item.huntersdream.lycanthropy_book.onClick.already_unlocked=Du hast den Fähigkeitenreiter bereits freigeschalten.
+item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Du bist kein Werwolf.
+
+# Werewolf transformation (all the text is shown in italics and red)
+transformations.huntersdream\:werewolf.transformingInto.1=Du fühlst dich schwach und dir ist übel...
+transformations.huntersdream\:werewolf.transformingInto.2=Deine Knochen und Muskeln schmerzen...
+transformations.huntersdream\:werewolf.transformingInto.3=Du beginnst, wütend zu werden und denkst ans Töten...
+transformations.huntersdream\:werewolf.transformingInto.4=Du fühlst, dass dein ganzer Körper schmerzt und sich langsam verändert...
+transformations.huntersdream\:werewolf.transformingInto.5=Dein Körper beginnt, einem Wolf zu ähneln...
+transformations.huntersdream\:werewolf.transformingInto.6=Der Wolf hat die Kontrolle übernommen...
+transformations.huntersdream\:werewolf.transformingBack.0=Der Wolf verschwindet und du wirst bewusstlos
+
+# Config
+huntersdream.config.title=Hunter's Dream Config
+# Client and Server
+huntersdream.config.common=Client und Server
+huntersdream.config.showPacketMessages=Zeige Datenpacketnachrichten
+huntersdream.config.showFullStackTrace=Zeige komplette Stapelspeicherzurückverfolgung in der Logdatei (fortgeschritten)
+# Client
+huntersdream.config.client=Client
+huntersdream.config.biteAnimation=Zeige Bissanimation
+huntersdream.config.customPlayerRender=Benutze veränderten Spielerrenderer
+huntersdream.config.showSkillBarSlot=Zeige den Slot zum Öffnen der Fähigkeitenleiste
+# Server
+huntersdream.config.server=Server
+huntersdream.config.generateHuntersCabin=Generiere Jägerhütten in Dörfern
+huntersdream.config.generateHuntersCamp=Generiere Jägerlager in der Welt
+huntersdream.config.generateVillagerCastle=Generiere Dorfbewohnerburgen in Dörfern
+huntersdream.config.generateWerewolfCabin=Generiere Werwolfhütten in der Welt
+huntersdream.config.logStructureSpawns=Logge ein Nachricht für jede generierte Struktur mit ihrer Position
+huntersdream.config.werewolvesBreakDoors=Lasse Werwölfe Holztüren zerstören
+# Server - Ore Generation Settings
+huntersdream.config.ores=Erzgenerationseinstellungen
+huntersdream.config.generateSilverOre=Generiere Silbererz
+huntersdream.config.silverChance=Durchschnittliche Silbererze pro Erzader
+huntersdream.config.silverMaxY=Maximalhöhe von Silber
+huntersdream.config.silverMinY=Minimalhöhe von Silber
+huntersdream.config.veinSize=Erzadern pro Chunk
+
+# Skills
+huntersdream.unlockSkill=Schalte mit %s Erfahrungsleveln frei
+huntersdream.permissionUnlockSkill=Willst du die Fähigkeit %s wirklich für %s Erfahrungslevel freischalten?
+huntersdream.unlockedSkill=Du hast die Fähigkeit %s erfolgreich für %s Erfahrungslevel freigeschalten!
+
+huntersdream.bite.name=Biss I
+huntersdream.bite.description=Infectious Teeth\: Infiziert Spieler mit einer 25%%igen Wahrscheinlichkeit, hat jedoch eine Abklingzeit von fünf Sekunden.
+huntersdream.bite_1.name=Biss II
+huntersdream.bite_1.description=Eiserne Zähne\: Der Biss ignoriert Rüstung und verursacht 5 Schaden mehr.
+huntersdream.bite_2.name=Biss III
+huntersdream.bite_2.description=Giftige Zähne\: Untote Monster und Spieler haben nun eine Wahrscheinlichkeit von 25%%, 5 Sekunden lang Ausdörrung zu erhalten.
+
+huntersdream.speed.name=Schnelligkeit I
+huntersdream.speed.description=Erhöht die Geschwindigkeit (1 zu 2).
+huntersdream.speed_1.name=Schnelligkeit II
+huntersdream.speed_1.description=Erhöht die Geschwindigkeit (2 zu 3).
+huntersdream.speed_2.name=Schnelligkeit III
+huntersdream.speed_2.description=Erhöht die Geschwindigkeit (3 zu 4).
+
+huntersdream.jump.name=Sprungkraft I
+huntersdream.jump.description=Erhöht die Sprungkraft (1 zu 2).
+huntersdream.jump_1.name=Sprungkraft II
+huntersdream.jump_1.description=Erhöht die Sprungkraft (2 zu 3).
+huntersdream.jump_2.name=Sprungkraft III
+huntersdream.jump_2.description=Erhöht die Sprungkraft (3 zu 4).
+
+huntersdream.unarmed.name=Unbewaffnet I
+huntersdream.unarmed.description=Erhöht den Schaden von 6 auf 7.
+huntersdream.unarmed_1.name=Unbewaffnet II
+huntersdream.unarmed_1.description=Erhöht den Schaden von 7 auf 8.
+huntersdream.unarmed_2.name=Unbewaffnet III
+huntersdream.unarmed_2.description=Erhöht den Schaden von 8 auf 9.
+
+huntersdream.natural_armor.name=Natürliche Rüstung I
+huntersdream.natural_armor.description=Macht die natürliche Rüstung so stark wie eine Kettenrüstung.
+huntersdream.natural_armor_1.name=Natürliche Rüstung II
+huntersdream.natural_armor_1.description=Macht die natürliche Rüstung so stark wie eine Eisenrüstung.
+huntersdream.natural_armor_2.name=Natürliche Rüstung III
+huntersdream.natural_armor_2.description=Macht die natürliche Rüstung so stark wie eine Diamantrüstung.
+
+# Hunter Armor Effects
+huntersdream.hunter_armor_effect=Besitzt den Effekt "%s"
+hunter_armor_effect.huntersdream.none=Nichts
+hunter_armor_effect.huntersdream.aconite=Aconitum
+hunter_armor_effect.huntersdream.monkshood=Eisenhut
+hunter_armor_effect.huntersdream.wolfsbane=Wolfswurz
+
+# Other stuff
+item.huntersdream.bestiary.tooltip=Nicht herstellbar. Verändert die Verwandlung des Spielers durch Rechtsklicken.
+item.huntersdream.lycanthropy_book.tooltip=Kann in Kisten gefunden werden. Wird durch Rechtsklicken verbraucht und schaltet dadurch den Fähigkeitenreiter für Werwölfe frei.

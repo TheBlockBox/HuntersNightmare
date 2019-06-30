@@ -27,7 +27,7 @@ public class BlockSpinningWheel extends BlockContainer {
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     public BlockSpinningWheel() {
-        super(Material.WOOD); // TODO: Correct material?
+        super(Material.WOOD);
         this.setHardness(2.0F);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
         this.setHarvestLevel("axe", 0);

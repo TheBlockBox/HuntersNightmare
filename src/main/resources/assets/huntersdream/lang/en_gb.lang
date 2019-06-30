@@ -1,7 +1,7 @@
 #PARSE_ESCAPES
-# Language: American English
-# Region: USA
-# Translated by: 
+# Language: British English
+# Region: Great Britain, India, Singapore, Ireland
+# Translated by: VampireRedEye
 
 # Armor
 item.huntersdream.silver_helmet.name=Silver Helmet
@@ -10,7 +10,7 @@ item.huntersdream.silver_leggings.name=Silver Leggings
 item.huntersdream.silver_boots.name=Silver Boots
 item.huntersdream.hunter_hat.name=Hunter Hat
 item.huntersdream.hunter_coat.name=Hunter Coat
-item.huntersdream.hunter_pants.name=Hunter Pants
+item.huntersdream.hunter_pants.name=Hunter Trousers
 item.huntersdream.hunter_boots.name=Hunter Boots
 
 # Weapons and Tools
