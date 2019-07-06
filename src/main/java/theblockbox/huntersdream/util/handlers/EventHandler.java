@@ -19,7 +19,6 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -101,7 +100,7 @@ public class EventHandler {
                     for (int z = 0; z < 16; z++) {
                         IBlockState state = generateCotton ? BlockInit.COTTON.getDefaultState().withProperty(BlockCotton.AGE, 3)
                                 : (random.nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER).getDefaultState();
-                        if (!(world.getBlockState(pos.setPos(x + xOffset, y, z + zOffset)).getBlock() instanceof IFluidBlock)
+                        if (!world.getBlockState(pos.setPos(x + xOffset, y, z + zOffset)).getMaterial().isLiquid()
                                 && state.getBlock().canPlaceBlockAt(world, pos)) {
                             world.setBlockState(pos, state, 2);
                             if (++currentFlowers > maxFlowers)

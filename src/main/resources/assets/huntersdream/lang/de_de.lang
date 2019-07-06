@@ -99,7 +99,7 @@ command.huntersdream.skill.clear=%ss Fähigkeiten wurden entfernt
 command.huntersdream.skill.list=%ss Fähigkeiten sind\: %s
 
 # Chat messages
-transformations.huntersdream.infected.werewolf=Du fühlst, dass ein Fluch dich umgibt...
+transformations.huntersdream.infected.werewolf=Du fühlst, dass dich ein Fluch umgibt...
 huntersdream.versionNotSupported=Hunter's Dream unterstützt die Minecraftversion %s, die du gerade benutzt, nicht mehr. Bitte beschwere dich nicht über Fehler oder Abstürze und versuche bald eine neuere, unterstützte Version zu benutzen.
 huntersdream.werewolfNotAllowedToSleep=Du kannst nicht schlafen, wenn du verwandelt bist
 death.attack.vampireDrankBlood=%s wurde von einem Vampir leer getrunken

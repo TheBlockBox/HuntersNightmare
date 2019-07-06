@@ -39,7 +39,7 @@ public class EntityInit {
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
                 EntityInit.getEntityEntryBuilder("werewolf", EntityWerewolf.class)
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES)
-                        .spawn(EnumCreatureType.CREATURE, 2, 5, 5,
+                        .spawn(EnumCreatureType.CREATURE, 5, 1, 1,
                                 StreamSupport.stream(Biome.REGISTRY.spliterator(), false)
                                         .filter(b -> BiomeDictionary.hasType(b, BiomeDictionary.Type.FOREST))
                                         .collect(Collectors.toSet())).egg(0, 6636321).build(),
