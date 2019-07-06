@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -18,6 +19,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -99,7 +101,8 @@ public class EventHandler {
                     for (int z = 0; z < 16; z++) {
                         IBlockState state = generateCotton ? BlockInit.COTTON.getDefaultState().withProperty(BlockCotton.AGE, 3)
                                 : (random.nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER).getDefaultState();
-                        if (state.getBlock().canPlaceBlockAt(world, pos.setPos(x + xOffset, y, z + zOffset))) {
+                        if (!(world.getBlockState(pos.setPos(x + xOffset, y, z + zOffset)).getBlock() instanceof IFluidBlock)
+                                && state.getBlock().canPlaceBlockAt(world, pos)) {
                             world.setBlockState(pos, state, 2);
                             if (++currentFlowers > maxFlowers)
                                 return;
@@ -118,10 +121,10 @@ public class EventHandler {
         if (BiomeDictionary.hasType(world.getBiome(new BlockPos(event.getChunkX() * 16, 60, event.getChunkZ() * 16)),
                 BiomeDictionary.Type.FOREST)) {
             Random random = event.getRand();
-            if (ChanceHelper.chanceOf(random, 50)) {
-                GeneralHelper.trySpawnStructure(StructureInit.HUNTERS_CAMP, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
-            } else {
-                GeneralHelper.trySpawnStructure(StructureInit.WEREWOLF_CABIN, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
+            ResourceLocation structure = ChanceHelper.chanceOf(random, 50) ? (ConfigHandler.server.generateHuntersCamp
+                    ? StructureInit.HUNTERS_CAMP : null) : (ConfigHandler.server.generateWerewolfCabin ? StructureInit.WEREWOLF_CABIN : null);
+            if (structure != null) {
+                GeneralHelper.trySpawnStructure(structure, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
             }
         }
     }

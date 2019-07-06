@@ -122,7 +122,7 @@ huntersdream.config.title=Hunter's Dream Config
 # Client and Server
 huntersdream.config.common=Client und Server
 huntersdream.config.showPacketMessages=Zeige Datenpacketnachrichten
-huntersdream.config.showFullStackTrace=Zeige komplette Stapelspeicherzurückverfolgung in der Logdatei (fortgeschritten)
+huntersdream.config.showFullStackTrace=Logge Stapelzurückverfolgung (fortgeschritten)
 # Client
 huntersdream.config.client=Client
 huntersdream.config.biteAnimation=Zeige Bissanimation
@@ -134,7 +134,7 @@ huntersdream.config.generateHuntersCabin=Generiere Jägerhütten in Dörfern
 huntersdream.config.generateHuntersCamp=Generiere Jägerlager in der Welt
 huntersdream.config.generateVillagerCastle=Generiere Dorfbewohnerburgen in Dörfern
 huntersdream.config.generateWerewolfCabin=Generiere Werwolfhütten in der Welt
-huntersdream.config.logStructureSpawns=Logge ein Nachricht für jede generierte Struktur mit ihrer Position
+huntersdream.config.logStructureSpawns=Logge eine Nachricht für jede generierte Struktur
 huntersdream.config.werewolvesBreakDoors=Lasse Werwölfe Holztüren zerstören
 # Server - Ore Generation Settings
 huntersdream.config.ores=Erzgenerationseinstellungen

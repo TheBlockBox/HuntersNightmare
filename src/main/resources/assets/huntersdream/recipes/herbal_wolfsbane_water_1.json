@@ -10,7 +10,8 @@
             "ore": "aconite"
         },
         {
-            "item": "minecraft:potion"
+            "item": "minecraft:potion",
+            "data": 32767
         }
     ],
     "result": {
