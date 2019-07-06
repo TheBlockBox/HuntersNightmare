@@ -29,8 +29,8 @@ import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.LootTableInit;
+import theblockbox.huntersdream.api.init.PropertyInit;
 import theblockbox.huntersdream.api.init.StructureInit;
-import theblockbox.huntersdream.blocks.BlockCotton;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.util.Reference;
 
@@ -98,7 +98,7 @@ public class EventHandler {
             for (int y = 256; y > 0; y--) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
-                        IBlockState state = generateCotton ? BlockInit.COTTON.getDefaultState().withProperty(BlockCotton.AGE, 3)
+                        IBlockState state = generateCotton ? BlockInit.COTTON.getDefaultState().withProperty(PropertyInit.COTTON_AGE, 3)
                                 : (random.nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER).getDefaultState();
                         if (!world.getBlockState(pos.setPos(x + xOffset, y, z + zOffset)).getMaterial().isLiquid()
                                 && state.getBlock().canPlaceBlockAt(world, pos)) {

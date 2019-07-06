@@ -1,9 +1,7 @@
 package theblockbox.huntersdream.blocks;
 
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,19 +17,18 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
+import theblockbox.huntersdream.api.init.PropertyInit;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySpinningWheel;
 
 import javax.annotation.Nullable;
 
 public class BlockSpinningWheel extends BlockContainer {
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
-
     public BlockSpinningWheel() {
         super(Material.WOOD);
         this.setHardness(2.0F);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
         this.setHarvestLevel("axe", 0);
-        this.setDefaultState(this.getDefaultState().withProperty(BlockSpinningWheel.FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.getDefaultState().withProperty(PropertyInit.FACING, EnumFacing.NORTH));
     }
 
     @Nullable
@@ -48,22 +45,22 @@ public class BlockSpinningWheel extends BlockContainer {
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY,
                                             float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return this.getDefaultState().withProperty(BlockSpinningWheel.FACING, placer.getHorizontalFacing().getOpposite());
+        return this.getDefaultState().withProperty(PropertyInit.FACING, placer.getHorizontalFacing().getOpposite());
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, BlockSpinningWheel.FACING);
+        return new BlockStateContainer(this, PropertyInit.FACING);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(BlockSpinningWheel.FACING, EnumFacing.byHorizontalIndex(meta));
+        return this.getDefaultState().withProperty(PropertyInit.FACING, EnumFacing.byHorizontalIndex(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(BlockSpinningWheel.FACING).getHorizontalIndex();
+        return state.getValue(PropertyInit.FACING).getHorizontalIndex();
     }
 
     @Override

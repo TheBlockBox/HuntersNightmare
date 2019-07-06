@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.api.init.BlockInit;
+import theblockbox.huntersdream.api.init.PropertyInit;
 import theblockbox.huntersdream.blocks.BlockTent;
 
 public class ItemTent extends Item {
@@ -52,9 +53,10 @@ public class ItemTent extends Item {
                 boolean flag3 = flag1 || worldIn.isAirBlock(blockpos);
 
                 if (flag2 && flag3 && worldIn.getBlockState(pos.down()).isTopSolid() && worldIn.getBlockState(blockpos.down()).isTopSolid()) {
-                    IBlockState iblockstate2 = BlockInit.TENT.getDefaultState().withProperty(BlockTent.OCCUPIED, Boolean.FALSE).withProperty(BlockHorizontal.FACING, enumfacing).withProperty(BlockTent.PART, BlockTent.EnumPartType.FOOT);
+                    IBlockState iblockstate2 = BlockInit.TENT.getDefaultState().withProperty(PropertyInit.TENT_OCCUPIED, Boolean.FALSE)
+                            .withProperty(BlockHorizontal.FACING, enumfacing).withProperty(PropertyInit.TENT_PART, BlockTent.EnumPartType.FOOT);
                     worldIn.setBlockState(pos, iblockstate2, 10);
-                    worldIn.setBlockState(blockpos, iblockstate2.withProperty(BlockTent.PART, BlockTent.EnumPartType.HEAD), 10);
+                    worldIn.setBlockState(blockpos, iblockstate2.withProperty(PropertyInit.TENT_PART, BlockTent.EnumPartType.HEAD), 10);
                     SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, player);
                     worldIn.playSound(null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 

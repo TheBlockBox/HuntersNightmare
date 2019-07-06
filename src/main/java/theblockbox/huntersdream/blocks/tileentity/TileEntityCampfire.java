@@ -17,6 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.PropertyInit;
 import theblockbox.huntersdream.blocks.BlockCampfire;
 import theblockbox.huntersdream.inventory.SideItemHandler;
 
@@ -83,7 +84,7 @@ public class TileEntityCampfire extends TileEntity implements ITickable {
 
             if (wasBurning != this.isBurning())
                 this.world.setBlockState(this.pos,
-                        this.world.getBlockState(this.pos).withProperty(BlockCampfire.BURNING, this.isBurning()));
+                        this.world.getBlockState(this.pos).withProperty(PropertyInit.CAMPFIRE_BURNING, this.isBurning()));
         }
     }
 

@@ -16,41 +16,46 @@ import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemInit {
     public static final List<Item> ITEMS = new ArrayList<>();
+    // this items is used as a placeholder for uninitialized items
+    // it's annotated with non null to make ides not complain about final fields that equal null
+    @Nonnull
+    private static final Item NULL_ITEM = null;
 
     @GameRegistry.ObjectHolder("huntersdream:silver_ingot")
-    public static final Item SILVER_INGOT = null;
+    public static final Item SILVER_INGOT = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:silver_sword")
-    public static final Item SILVER_SWORD = null;
+    public static final Item SILVER_SWORD = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:tent")
-    public static final Item TENT = null;
+    public static final Item TENT = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:fabric")
-    public static final Item FABRIC = null;
+    public static final Item FABRIC = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:flintlock_pistol")
-    public static final Item FLINTLOCK_PISTOL = null;
+    public static final Item FLINTLOCK_PISTOL = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:musket_ball")
-    public static final Item MUSKET_BALL = null;
+    public static final Item MUSKET_BALL = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_hat")
-    public static final Item HUNTER_HAT = null;
+    public static final Item HUNTER_HAT = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_coat")
-    public static final Item HUNTER_COAT = null;
+    public static final Item HUNTER_COAT = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_pants")
-    public static final Item HUNTER_PANTS = null;
+    public static final Item HUNTER_PANTS = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_boots")
-    public static final Item HUNTER_BOOTS = null;
+    public static final Item HUNTER_BOOTS = ItemInit.NULL_ITEM;
 
     // Materials
     public static final Item.ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,

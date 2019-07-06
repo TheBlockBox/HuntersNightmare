@@ -13,32 +13,37 @@ import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 import theblockbox.huntersdream.world.dimension.Dimensions;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlockInit {
     public static final List<BlockOre> ORES = new ArrayList<>();
+    // this block is used as a placeholder for uninitialized blocks
+    // it's annotated with non null to make ides not complain about final fields that equal null
+    @Nonnull
+    private static final Block NULL_BLOCK = null;
 
     @GameRegistry.ObjectHolder("huntersdream:silver_ore")
-    public static final Block SILVER_ORE = null;
+    public static final Block SILVER_ORE = BlockInit.NULL_BLOCK;
 
     @GameRegistry.ObjectHolder("huntersdream:aconite_flower")
-    public static final Block ACONITE_FLOWER = null;
+    public static final Block ACONITE_FLOWER = BlockInit.NULL_BLOCK;
 
     @GameRegistry.ObjectHolder("huntersdream:monkshood_flower")
-    public static final Block MONKSHOOD_FLOWER = null;
+    public static final Block MONKSHOOD_FLOWER = BlockInit.NULL_BLOCK;
 
     @GameRegistry.ObjectHolder("huntersdream:tile_tent")
-    public static final Block TENT = null;
+    public static final Block TENT = BlockInit.NULL_BLOCK;
 
     @GameRegistry.ObjectHolder("huntersdream:cotton")
-    public static final Block COTTON = null;
+    public static final Block COTTON = BlockInit.NULL_BLOCK;
 
     @GameRegistry.ObjectHolder("huntersdream:wolfsbane_garland")
-    public static final BlockWolfsbaneGarland WOLFSBANE_GARLAND = null;
+    public static final BlockWolfsbaneGarland WOLFSBANE_GARLAND = (BlockWolfsbaneGarland) BlockInit.NULL_BLOCK;
 
     @GameRegistry.ObjectHolder("huntersdream:wolfsbane_petals")
-    public static final Block WOLFSBANE_PETALS = null;
+    public static final Block WOLFSBANE_PETALS = BlockInit.NULL_BLOCK;
 
     public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         BlockInit.registerBlockWithItem(new Block(Material.IRON).setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC)

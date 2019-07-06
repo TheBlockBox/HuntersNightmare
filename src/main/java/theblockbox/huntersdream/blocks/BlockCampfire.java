@@ -3,7 +3,6 @@ package theblockbox.huntersdream.blocks;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,12 +19,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
+import theblockbox.huntersdream.api.init.PropertyInit;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 
 import java.util.Random;
 
 public class BlockCampfire extends BlockContainer {
-    public static final PropertyBool BURNING = PropertyBool.create("burning");
     public static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 3 / 8.0D, 1);
     private final BlockPlanks.EnumType plankType;
 
@@ -35,7 +34,7 @@ public class BlockCampfire extends BlockContainer {
         this.setHardness(2.0F);
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
         this.setHarvestLevel("axe", 0);
-        this.setDefaultState(this.getDefaultState().withProperty(BlockCampfire.BURNING, false));
+        this.setDefaultState(this.getDefaultState().withProperty(PropertyInit.CAMPFIRE_BURNING, false));
     }
 
     public BlockPlanks.EnumType getPlankType() {
@@ -54,22 +53,22 @@ public class BlockCampfire extends BlockContainer {
 
     @Override
     public int getLightValue(IBlockState state) {
-        return state.getValue(BlockCampfire.BURNING) ? 13 : 0;
+        return state.getValue(PropertyInit.CAMPFIRE_BURNING) ? 13 : 0;
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, BlockCampfire.BURNING);
+        return new BlockStateContainer(this, PropertyInit.CAMPFIRE_BURNING);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(BlockCampfire.BURNING, meta != 0);
+        return this.getDefaultState().withProperty(PropertyInit.CAMPFIRE_BURNING, meta != 0);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(BlockCampfire.BURNING) ? 1 : 0;
+        return state.getValue(PropertyInit.CAMPFIRE_BURNING) ? 1 : 0;
     }
 
     @Override
@@ -124,13 +123,13 @@ public class BlockCampfire extends BlockContainer {
 
     @Override
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random random) {
-        if (stateIn.getValue(BlockCampfire.BURNING)) {
+        if (stateIn.getValue(PropertyInit.CAMPFIRE_BURNING)) {
             Blocks.FIRE.randomDisplayTick(stateIn, worldIn, pos, random);
         }
     }
 
     @Override
     public boolean isBurning(IBlockAccess world, BlockPos pos) {
-        return world.getBlockState(pos).getValue(BlockCampfire.BURNING);
+        return world.getBlockState(pos).getValue(PropertyInit.CAMPFIRE_BURNING);
     }
 }

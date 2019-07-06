@@ -3,8 +3,6 @@ package theblockbox.huntersdream.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -23,20 +21,18 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.api.init.CreativeTabInit;
 import theblockbox.huntersdream.api.init.ItemInit;
+import theblockbox.huntersdream.api.init.PropertyInit;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockTent extends BlockHorizontal {
-
-    public static final PropertyEnum<BlockTent.EnumPartType> PART = PropertyEnum.create("part", BlockTent.EnumPartType.class);
-    public static final PropertyBool OCCUPIED = PropertyBool.create("occupied");
     protected static final AxisAlignedBB TENT_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.9D, 1.0D);
 
     public BlockTent() {
         super(Material.WOOD);
         this.setHardness(1.0f);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(BlockTent.PART, BlockTent.EnumPartType.FOOT).withProperty(BlockTent.OCCUPIED, Boolean.FALSE));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(PropertyInit.TENT_PART, BlockTent.EnumPartType.FOOT).withProperty(PropertyInit.TENT_OCCUPIED, Boolean.FALSE));
         this.setCreativeTab(CreativeTabInit.HUNTERSDREAM_MISC);
     }
 
@@ -45,7 +41,7 @@ public class BlockTent extends BlockHorizontal {
         if (worldIn.isRemote) {
             return true;
         } else {
-            if (state.getValue(BlockTent.PART) != BlockTent.EnumPartType.HEAD) {
+            if (state.getValue(PropertyInit.TENT_PART) != BlockTent.EnumPartType.HEAD) {
                 pos = pos.offset(state.getValue(BlockHorizontal.FACING));
                 state = worldIn.getBlockState(pos);
 
@@ -55,7 +51,7 @@ public class BlockTent extends BlockHorizontal {
             }
 
             if (worldIn.provider.canRespawnHere() && worldIn.getBiome(pos) != Biomes.HELL) {
-                if (state.getValue(BlockTent.OCCUPIED)) {
+                if (state.getValue(PropertyInit.TENT_OCCUPIED)) {
                     EntityPlayer entityplayer = this.getPlayerInTent(worldIn, pos);
 
                     if (entityplayer != null) {
@@ -63,14 +59,14 @@ public class BlockTent extends BlockHorizontal {
                         return true;
                     }
 
-                    state = state.withProperty(BlockTent.OCCUPIED, Boolean.FALSE);
+                    state = state.withProperty(PropertyInit.TENT_OCCUPIED, Boolean.FALSE);
                     worldIn.setBlockState(pos, state, 4);
                 }
 
                 EntityPlayer.SleepResult sleepResult = playerIn.trySleep(pos);
 
                 if (sleepResult == EntityPlayer.SleepResult.OK) {
-                    state = state.withProperty(BlockTent.OCCUPIED, Boolean.TRUE);
+                    state = state.withProperty(PropertyInit.TENT_OCCUPIED, Boolean.TRUE);
                     worldIn.setBlockState(pos, state, 4);
                 } else {
                     if (sleepResult == EntityPlayer.SleepResult.NOT_POSSIBLE_NOW) {
@@ -112,7 +108,7 @@ public class BlockTent extends BlockHorizontal {
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         EnumFacing enumfacing = state.getValue(BlockHorizontal.FACING);
 
-        if (state.getValue(BlockTent.PART) == BlockTent.EnumPartType.FOOT) {
+        if (state.getValue(PropertyInit.TENT_PART) == BlockTent.EnumPartType.FOOT) {
             if (worldIn.getBlockState(pos.offset(enumfacing)).getBlock() != this) {
                 worldIn.setBlockToAir(pos);
             }
@@ -127,7 +123,7 @@ public class BlockTent extends BlockHorizontal {
 
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return state.getValue(BlockTent.PART) == BlockTent.EnumPartType.FOOT ? Items.AIR : ItemInit.TENT;
+        return state.getValue(PropertyInit.TENT_PART) == BlockTent.EnumPartType.FOOT ? Items.AIR : ItemInit.TENT;
     }
 
     @Override
@@ -177,7 +173,7 @@ public class BlockTent extends BlockHorizontal {
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
-        if (player.capabilities.isCreativeMode && state.getValue(BlockTent.PART) == BlockTent.EnumPartType.FOOT) {
+        if (player.capabilities.isCreativeMode && state.getValue(PropertyInit.TENT_PART) == BlockTent.EnumPartType.FOOT) {
             BlockPos blockpos = pos.offset(state.getValue(BlockHorizontal.FACING));
 
             if (worldIn.getBlockState(blockpos).getBlock() == this) {
@@ -188,7 +184,7 @@ public class BlockTent extends BlockHorizontal {
 
     @Override
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack) {
-        if (state.getValue(BlockTent.PART) == BlockTent.EnumPartType.HEAD) {
+        if (state.getValue(PropertyInit.TENT_PART) == BlockTent.EnumPartType.HEAD) {
             Block.spawnAsEntity(worldIn, pos, this.getItem(worldIn, pos, state));
         } else {
             super.harvestBlock(worldIn, player, pos, state, null, stack);
@@ -198,16 +194,16 @@ public class BlockTent extends BlockHorizontal {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         EnumFacing enumfacing = EnumFacing.byHorizontalIndex(meta);
-        return (meta & 8) > 0 ? this.getDefaultState().withProperty(BlockTent.PART, BlockTent.EnumPartType.HEAD).withProperty(BlockHorizontal.FACING, enumfacing).withProperty(BlockTent.OCCUPIED, (meta & 4) > 0) : this.getDefaultState().withProperty(BlockTent.PART, BlockTent.EnumPartType.FOOT).withProperty(BlockHorizontal.FACING, enumfacing);
+        return (meta & 8) > 0 ? this.getDefaultState().withProperty(PropertyInit.TENT_PART, BlockTent.EnumPartType.HEAD).withProperty(BlockHorizontal.FACING, enumfacing).withProperty(PropertyInit.TENT_OCCUPIED, (meta & 4) > 0) : this.getDefaultState().withProperty(PropertyInit.TENT_PART, BlockTent.EnumPartType.FOOT).withProperty(BlockHorizontal.FACING, enumfacing);
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        if (state.getValue(BlockTent.PART) == BlockTent.EnumPartType.FOOT) {
+        if (state.getValue(PropertyInit.TENT_PART) == BlockTent.EnumPartType.FOOT) {
             IBlockState iblockstate = worldIn.getBlockState(pos.offset(state.getValue(BlockHorizontal.FACING)));
 
             if (iblockstate.getBlock() == this) {
-                state = state.withProperty(BlockTent.OCCUPIED, iblockstate.getValue(BlockTent.OCCUPIED));
+                state = state.withProperty(PropertyInit.TENT_OCCUPIED, iblockstate.getValue(PropertyInit.TENT_OCCUPIED));
             }
         }
 
@@ -229,10 +225,10 @@ public class BlockTent extends BlockHorizontal {
         int i = 0;
         i |= state.getValue(BlockHorizontal.FACING).getHorizontalIndex();
 
-        if (state.getValue(BlockTent.PART) == BlockTent.EnumPartType.HEAD) {
+        if (state.getValue(PropertyInit.TENT_PART) == BlockTent.EnumPartType.HEAD) {
             i |= 8;
 
-            if (state.getValue(BlockTent.OCCUPIED)) {
+            if (state.getValue(PropertyInit.TENT_OCCUPIED)) {
                 i |= 4;
             }
         }
@@ -252,7 +248,7 @@ public class BlockTent extends BlockHorizontal {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, BlockHorizontal.FACING, BlockTent.PART, BlockTent.OCCUPIED);
+        return new BlockStateContainer(this, BlockHorizontal.FACING, PropertyInit.TENT_PART, PropertyInit.TENT_OCCUPIED);
     }
 
     @Override

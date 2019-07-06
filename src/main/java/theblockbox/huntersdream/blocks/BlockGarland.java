@@ -24,27 +24,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.Main;
+import theblockbox.huntersdream.api.init.PropertyInit;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Random;
 
 public class BlockGarland extends Block {
-    public static final PropertyBool NORTH = PropertyBool.create("north");
-    public static final PropertyBool SOUTH = PropertyBool.create("south");
-    public static final PropertyBool WEST = PropertyBool.create("west");
-    public static final PropertyBool EAST = PropertyBool.create("east");
-    public static final PropertyBool[] PROPERTIES = {BlockGarland.NORTH, BlockGarland.SOUTH, BlockGarland.WEST, BlockGarland.EAST};
     public static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.05D, 1.0D, 1.0D, 0.05D);
     public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.95D, 1.0D, 1.0D, 0.95D);
     public static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.05D, 0.0D, 0.0D, 0.05D, 1.0D, 1.0D);
     public static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.95D, 0.0D, 0.0D, 0.95D, 1.0D, 1.0D);
 
     static {
-        for (int i = 0; i < BlockGarland.PROPERTIES.length; i++) {
-            if (!BlockGarland.PROPERTIES[i].getName().equals(EnumFacing.byIndex(i + 2).toString())) {
+        for (int i = 0; i < PropertyInit.GARLAND_PROPERTIES.length; i++) {
+            if (!PropertyInit.GARLAND_PROPERTIES[i].getName().equals(EnumFacing.byIndex(i + 2).toString())) {
                 Main.getLogger().warn("The array BlockGarland.PROPERTIES is in the order "
-                        + Arrays.toString(BlockGarland.PROPERTIES) + ", while the array EnumFacing.VALUES is in the order "
+                        + Arrays.toString(PropertyInit.GARLAND_PROPERTIES) + ", while the array EnumFacing.VALUES is in the order "
                         + Arrays.toString(EnumFacing.VALUES) + ". This is a bug and could lead to problems with " +
                         "Hunter's Dream's garlands. If you see this message, please open a new issue on our issue tracker!");
                 break;
@@ -56,7 +52,7 @@ public class BlockGarland extends Block {
         super(Material.PLANTS);
         this.setSoundType(SoundType.PLANT);
         IBlockState defaultState = this.getDefaultState();
-        for (PropertyBool property : BlockGarland.PROPERTIES) {
+        for (PropertyBool property : PropertyInit.GARLAND_PROPERTIES) {
             defaultState = defaultState.withProperty(property, false);
         }
         this.setDefaultState(defaultState);
@@ -81,7 +77,7 @@ public class BlockGarland extends Block {
 
     public boolean isAllowedState(IBlockState state) {
         if ((state.getBlock() instanceof BlockGarland) && this.isTheSameAs((BlockGarland) state.getBlock())) {
-            for (PropertyBool property : BlockGarland.PROPERTIES) {
+            for (PropertyBool property : PropertyInit.GARLAND_PROPERTIES) {
                 if (state.getValue(property)) {
                     return true;
                 }
@@ -97,7 +93,7 @@ public class BlockGarland extends Block {
         int removedGarlands = 0;
 
         IBlockState stateToReturn = this.getDefaultState();
-        for (PropertyBool property : BlockGarland.PROPERTIES) {
+        for (PropertyBool property : PropertyInit.GARLAND_PROPERTIES) {
             if (state.getValue(property)) {
                 EnumFacing facing = BlockGarland.getFacingFromProperty(property);
                 if (facing != null) {
@@ -127,7 +123,7 @@ public class BlockGarland extends Block {
     @Override
     public int quantityDropped(IBlockState state, int fortune, Random random) {
         int toReturn = 0;
-        for (PropertyBool property : BlockGarland.PROPERTIES)
+        for (PropertyBool property : PropertyInit.GARLAND_PROPERTIES)
             if (state.getValue(property))
                 toReturn++;
         return toReturn;
@@ -135,14 +131,14 @@ public class BlockGarland extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, BlockGarland.PROPERTIES);
+        return new BlockStateContainer(this, PropertyInit.GARLAND_PROPERTIES);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState toReturn = this.getDefaultState();
-        for (int i = 0; i < BlockGarland.PROPERTIES.length; i++) {
-            toReturn = toReturn.withProperty(BlockGarland.PROPERTIES[i], (meta & (1 << i)) != 0);
+        for (int i = 0; i < PropertyInit.GARLAND_PROPERTIES.length; i++) {
+            toReturn = toReturn.withProperty(PropertyInit.GARLAND_PROPERTIES[i], (meta & (1 << i)) != 0);
         }
         return toReturn;
     }
@@ -150,16 +146,16 @@ public class BlockGarland extends Block {
     @Override
     public final int getMetaFromState(IBlockState state) {
         int toReturn = 0;
-        for (int i = 0; i < BlockGarland.PROPERTIES.length; i++) {
-            toReturn |= (state.getValue(BlockGarland.PROPERTIES[i]) ? 1 : 0) << i;
+        for (int i = 0; i < PropertyInit.GARLAND_PROPERTIES.length; i++) {
+            toReturn |= (state.getValue(PropertyInit.GARLAND_PROPERTIES[i]) ? 1 : 0) << i;
         }
         return toReturn;
     }
 
     @Nullable
     public static EnumFacing getFacingFromProperty(PropertyBool property) {
-        for (int i = 0; i < BlockGarland.PROPERTIES.length; i++) {
-            if (BlockGarland.PROPERTIES[i] == property) {
+        for (int i = 0; i < PropertyInit.GARLAND_PROPERTIES.length; i++) {
+            if (PropertyInit.GARLAND_PROPERTIES[i] == property) {
                 return EnumFacing.byIndex(i + 2);
             }
         }
@@ -170,20 +166,20 @@ public class BlockGarland extends Block {
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         switch (rot) {
             case CLOCKWISE_90:
-                return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.EAST))
-                        .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.SOUTH))
-                        .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.WEST))
-                        .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.NORTH));
+                return state.withProperty(PropertyInit.GARLAND_NORTH, state.getValue(PropertyInit.GARLAND_EAST))
+                        .withProperty(PropertyInit.GARLAND_EAST, state.getValue(PropertyInit.GARLAND_SOUTH))
+                        .withProperty(PropertyInit.GARLAND_SOUTH, state.getValue(PropertyInit.GARLAND_WEST))
+                        .withProperty(PropertyInit.GARLAND_WEST, state.getValue(PropertyInit.GARLAND_NORTH));
             case CLOCKWISE_180:
-                return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.SOUTH))
-                        .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.WEST))
-                        .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.NORTH))
-                        .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.EAST));
+                return state.withProperty(PropertyInit.GARLAND_NORTH, state.getValue(PropertyInit.GARLAND_SOUTH))
+                        .withProperty(PropertyInit.GARLAND_EAST, state.getValue(PropertyInit.GARLAND_WEST))
+                        .withProperty(PropertyInit.GARLAND_SOUTH, state.getValue(PropertyInit.GARLAND_NORTH))
+                        .withProperty(PropertyInit.GARLAND_WEST, state.getValue(PropertyInit.GARLAND_EAST));
             case COUNTERCLOCKWISE_90:
-                return state.withProperty(BlockGarland.NORTH, state.getValue(BlockGarland.WEST))
-                        .withProperty(BlockGarland.EAST, state.getValue(BlockGarland.NORTH))
-                        .withProperty(BlockGarland.SOUTH, state.getValue(BlockGarland.EAST))
-                        .withProperty(BlockGarland.WEST, state.getValue(BlockGarland.SOUTH));
+                return state.withProperty(PropertyInit.GARLAND_NORTH, state.getValue(PropertyInit.GARLAND_WEST))
+                        .withProperty(PropertyInit.GARLAND_EAST, state.getValue(PropertyInit.GARLAND_NORTH))
+                        .withProperty(PropertyInit.GARLAND_SOUTH, state.getValue(PropertyInit.GARLAND_EAST))
+                        .withProperty(PropertyInit.GARLAND_WEST, state.getValue(PropertyInit.GARLAND_SOUTH));
             default:
                 return state;
         }
@@ -196,7 +192,7 @@ public class BlockGarland extends Block {
         IBlockState oldState = world.getBlockState(pos);
         return (((oldState.getBlock() instanceof BlockGarland) && this.isTheSameAs((BlockGarland) oldState.getBlock()))
                 ? oldState : this.getDefault().getDefaultState()).withProperty(
-                BlockGarland.PROPERTIES[facing.getOpposite().getIndex() - 2], true);
+                PropertyInit.GARLAND_PROPERTIES[facing.getOpposite().getIndex() - 2], true);
     }
 
 
@@ -210,19 +206,19 @@ public class BlockGarland extends Block {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         AxisAlignedBB toReturn = Block.FULL_BLOCK_AABB;
         int properties = 0;
-        if (state.getValue(BlockGarland.NORTH)) {
+        if (state.getValue(PropertyInit.GARLAND_NORTH)) {
             toReturn = BlockGarland.NORTH_AABB;
             properties++;
         }
-        if (state.getValue(BlockGarland.SOUTH)) {
+        if (state.getValue(PropertyInit.GARLAND_SOUTH)) {
             toReturn = BlockGarland.SOUTH_AABB;
             properties++;
         }
-        if (state.getValue(BlockGarland.WEST)) {
+        if (state.getValue(PropertyInit.GARLAND_WEST)) {
             toReturn = BlockGarland.WEST_AABB;
             properties++;
         }
-        if (state.getValue(BlockGarland.EAST)) {
+        if (state.getValue(PropertyInit.GARLAND_EAST)) {
             toReturn = BlockGarland.EAST_AABB;
             properties++;
         }
@@ -278,7 +274,7 @@ public class BlockGarland extends Block {
                 if (state.getBlock() instanceof BlockGarland) {
                     return this.isTheSameAs((BlockGarland) state.getBlock())
                             && !((side == EnumFacing.UP) || (side == EnumFacing.DOWN))
-                            && !state.getValue(BlockGarland.PROPERTIES[side.getOpposite().getIndex() - 2]);
+                            && !state.getValue(PropertyInit.GARLAND_PROPERTIES[side.getOpposite().getIndex() - 2]);
                 }
             }
         }
