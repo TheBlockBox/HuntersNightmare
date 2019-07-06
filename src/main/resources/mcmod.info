@@ -10,11 +10,12 @@
         "authorList": [
             "VampireRedEye",
             "RedstoneTim",
+            "TheGamingLord",
             "Ms. Random",
             "Novacraft",
             "SteveBeeblebrox"
         ],
-        "credits": "\nDirector: VampireRedEye, Code: RedstoneTim, Ms. Random and SteveBeeblebrox, Models: VampireRedEye and Novacraft, Textures: VampireRedEye and Novacraft, Help for the code: Snakefangox and Ms. Random\nPatreons: DoctorFlash (Knights!), Augustin Heitman (Guards!)\nOther help through voting and giving ideas: Members of the Hunter's Dream discord server",
+        "credits": "\nDirector: VampireRedEye, Code: RedstoneTim, TheGamingLord, Ms. Random and SteveBeeblebrox, Models: VampireRedEye and Novacraft, Textures: VampireRedEye and Novacraft, Help for the code: Snakefangox and Ms. Random\nPatreons: DoctorFlash (Knights!), Augustin Heitman (Guards!)\nOther help through voting and giving ideas: Members of the Hunter's Dream discord server",
         "logoFile": "assets/huntersdream/hunters_dream_logo.png",
         "screenshots": [],
         "dependencies": []
