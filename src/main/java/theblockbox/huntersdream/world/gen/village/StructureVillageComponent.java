@@ -1,6 +1,9 @@
 package theblockbox.huntersdream.world.gen.village;
 
+import net.minecraft.block.BlockChest;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -16,6 +19,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraft.world.storage.loot.LootTableList;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -25,6 +29,13 @@ public class StructureVillageComponent extends StructureVillagePieces.House1 {
         if (blockInfo.blockState.getBlock() == Blocks.COBBLESTONE) {
             return blockInfo;
         }
+        if (blockInfo.blockState.getBlock() instanceof BlockChest) {
+            TileEntityChest tileEntity = new TileEntityChest();
+            world.rand.setSeed(world.rand.nextLong());
+            tileEntity.setLootTable(LootTableList.CHESTS_VILLAGE_BLACKSMITH, world.rand.nextLong());
+            return new Template.BlockInfo(pos, blockInfo.blockState, tileEntity.writeToNBT(new NBTTagCompound()));
+        }
+
         Biome biome = world.getBiome(pos);
         if (biome instanceof BiomeDesert) {
             this.setStructureType(1);

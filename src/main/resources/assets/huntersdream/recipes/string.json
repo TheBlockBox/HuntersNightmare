@@ -1,0 +1,13 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "type": "forge:ore_dict",
+            "ore": "fabric"
+        }
+    ],
+    "result": {
+        "item": "minecraft:string",
+        "count": 2
+    }
+}

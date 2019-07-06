@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "MMM",
+        "MSM",
+        "MMM"
+    ],
+    "key": {
+        "M": {
+            "item": "huntersdream:musket_ball"
+        },
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        }
+    },
+    "result": {
+        "item": "huntersdream:silver_musket_ball",
+        "count": 8
+    }
+}

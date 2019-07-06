@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.api.helpers;
 
 import com.google.common.base.CaseFormat;
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.EnumParticleTypes;
@@ -24,8 +26,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
@@ -65,6 +69,16 @@ public class GeneralHelper {
      * An array of all possible hands (currently {@link EnumHand#MAIN_HAND} and {@link EnumHand#OFF_HAND}).
      */
     public static final EnumHand[] HANDS = {EnumHand.MAIN_HAND, EnumHand.OFF_HAND};
+    public static final ITemplateProcessor CHEST_TEMPLATE_PROCESSOR = (world, pos, blockInfo) -> {
+        if (blockInfo.blockState.getBlock() instanceof BlockChest) {
+            TileEntityChest tileEntity = new TileEntityChest();
+            world.rand.setSeed(world.rand.nextLong());
+            tileEntity.setLootTable(LootTableList.CHESTS_VILLAGE_BLACKSMITH, world.rand.nextLong());
+            return new Template.BlockInfo(pos, blockInfo.blockState, tileEntity.writeToNBT(new NBTTagCompound()));
+        } else {
+            return blockInfo;
+        }
+    };
     // A mutable AxisAlignedBB that is used in #canEntityExpandHeight(Entity, float)
     // to test if the entity can change its size. Here so that we don't have to
     // create a new one every tick
@@ -509,7 +523,7 @@ public class GeneralHelper {
                 werewolf.setPosition(pos.getX() + (sizeX / 2), pos.getY() + 1, pos.getZ() + (sizeZ / 2));
                 world.spawnEntity(werewolf);
             }
-            template.addBlocksToWorldChunk(world, pos, new PlacementSettings());
+            template.addBlocksToWorld(world, pos, GeneralHelper.CHEST_TEMPLATE_PROCESSOR, new PlacementSettings(), 2);
             return true;
         } else {
             return false;

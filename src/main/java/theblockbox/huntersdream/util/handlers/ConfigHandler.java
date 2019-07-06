@@ -72,7 +72,7 @@ public class ConfigHandler {
             @Config.LangKey(Reference.CFG_LANG + "veinSize")
             @Config.RequiresWorldRestart
             @Config.RangeInt(min = 0, max = 20)
-            public int veinSize = 4;
+            public int veinSize = 6;
 
             @Config.LangKey(Reference.CFG_LANG + "generateSilverOre")
             @Config.RequiresWorldRestart
