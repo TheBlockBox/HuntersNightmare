@@ -23,4 +23,6 @@ public interface IProxy {
     public EntityPlayer getPlayer();
 
     public <T extends Entity> T getEntityFromID(int id);
+
+    public void openSkillTab(EntityPlayer player);
 }

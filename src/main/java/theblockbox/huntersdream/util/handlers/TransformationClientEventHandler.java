@@ -4,9 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -35,12 +32,9 @@ import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
-import theblockbox.huntersdream.gui.GuiButtonSurvivalTab;
-import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.util.Reference;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -117,21 +111,6 @@ public class TransformationClientEventHandler {
 
                     skinMap.put(skinType, normalRender);
                 }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onGuiDraw(GuiScreenEvent.InitGuiEvent.Post event) {
-        if ((event.getGui() instanceof GuiInventory) && TransformationHelper.getTransformation(Minecraft.getMinecraft().player).hasSkills()) {
-            List<GuiButton> buttonList = event.getButtonList();
-            GuiContainer gui = (GuiContainer) event.getGui();
-            int x = gui.getGuiLeft() + 2;
-            int y = gui.getGuiTop() - 18;
-            EntityPlayer player = Minecraft.getMinecraft().player;
-            if (TransformationHelper.hasAccessToSkillTab(player)) {
-                buttonList.add(new GuiButtonSurvivalTab(buttonList.size(), x, y, GuiSkillTab.INSTANCE.refresh(),
-                        TransformationHelper.getTransformation(player).getIconAsSprite()));
             }
         }
     }

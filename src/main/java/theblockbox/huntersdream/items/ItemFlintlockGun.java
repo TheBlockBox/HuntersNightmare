@@ -1,12 +1,17 @@
 package theblockbox.huntersdream.items;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
@@ -14,7 +19,9 @@ import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ItemFlintlockGun extends ItemGun {
@@ -122,5 +129,11 @@ public class ItemFlintlockGun extends ItemGun {
     @Override
     public void playReloadSoundEnd(EntityLivingBase entity, ItemStack stack) {
         // don't play any sound when reloading ends
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(I18n.format("item.huntersdream.gun." + (this.isLoaded(stack) ? "loaded" : "unloaded") + ".tooltip"));
     }
 }

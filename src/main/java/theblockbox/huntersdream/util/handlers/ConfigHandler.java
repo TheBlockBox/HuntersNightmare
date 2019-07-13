@@ -53,13 +53,15 @@ public class ConfigHandler {
 //        @Config.RequiresWorldRestart
 //        public boolean generateHuntersCabin = true;
 
-        @Config.LangKey(Reference.CFG_LANG + "generateHuntersCamp")
+        @Config.LangKey(Reference.CFG_LANG + "huntersCampSpawnChance")
+        @Config.RangeInt(min = 0, max = 100)
         @Config.RequiresWorldRestart
-        public boolean generateHuntersCamp = true;
+        public int huntersCampSpawnChance = 20;
 
-        @Config.LangKey(Reference.CFG_LANG + "generateWerewolfCabin")
+        @Config.LangKey(Reference.CFG_LANG + "werewolfCabinSpawnChance")
+        @Config.RangeInt(min = 0, max = 100)
         @Config.RequiresWorldRestart
-        public boolean generateWerewolfCabin = true;
+        public int werewolfCabinSpawnChance = 20;
 
         @Config.LangKey(Reference.CFG_LANG + "werewolvesBreakDoors")
         @Config.RequiresWorldRestart

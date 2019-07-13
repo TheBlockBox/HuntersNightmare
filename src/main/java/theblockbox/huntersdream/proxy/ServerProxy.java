@@ -42,4 +42,8 @@ public class ServerProxy implements IProxy {
     public <T extends Entity> T getEntityFromID(int id) {
         throw new UnsupportedOperationException("Can't get entity from server");
     }
+
+    @Override
+    public void openSkillTab(EntityPlayer player) {
+    }
 }

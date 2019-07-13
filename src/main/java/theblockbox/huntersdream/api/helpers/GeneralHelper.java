@@ -72,8 +72,7 @@ public class GeneralHelper {
     public static final ITemplateProcessor CHEST_TEMPLATE_PROCESSOR = (world, pos, blockInfo) -> {
         if (blockInfo.blockState.getBlock() instanceof BlockChest) {
             TileEntityChest tileEntity = new TileEntityChest();
-            world.rand.setSeed(world.rand.nextLong());
-            tileEntity.setLootTable(LootTableList.CHESTS_VILLAGE_BLACKSMITH, world.rand.nextLong());
+            tileEntity.setLootTable(LootTableList.CHESTS_VILLAGE_BLACKSMITH, ChanceHelper.RANDOM.nextLong());
             return new Template.BlockInfo(pos, blockInfo.blockState, tileEntity.writeToNBT(new NBTTagCompound()));
         } else {
             return blockInfo;

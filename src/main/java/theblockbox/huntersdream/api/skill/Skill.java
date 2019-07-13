@@ -207,12 +207,12 @@ public abstract class Skill {
 
     /**
      * Returns true if the given player can unlock this skill. If the player's transformation allows no skills or
-     * {@link TransformationHelper#hasAccessToSkillTab(EntityPlayer)} returns true, this will always return false.
+     * {@link Transformation#hasAccessToSkillTab(EntityPlayer)} returns true, this will always return false.
      * Otherwise it'll delegate the call to the internal, overridable method {@link #canBeUnlockedByPlayer(EntityPlayer)}.
      */
     public final boolean canPlayerUnlockSkill(EntityPlayer player) {
-        return TransformationHelper.getTransformation(player).hasSkills() && TransformationHelper.hasAccessToSkillTab(player)
-                && this.canBeUnlockedByPlayer(player);
+        Transformation transformation = TransformationHelper.getTransformation(player);
+        return transformation.hasSkills() && transformation.hasAccessToSkillTab(player) && this.canBeUnlockedByPlayer(player);
     }
 
     /**

@@ -120,8 +120,9 @@ public class EventHandler {
         if (BiomeDictionary.hasType(world.getBiome(new BlockPos(event.getChunkX() * 16, 60, event.getChunkZ() * 16)),
                 BiomeDictionary.Type.FOREST)) {
             Random random = event.getRand();
-            ResourceLocation structure = ChanceHelper.chanceOf(random, 50) ? (ConfigHandler.server.generateHuntersCamp
-                    ? StructureInit.HUNTERS_CAMP : null) : (ConfigHandler.server.generateWerewolfCabin ? StructureInit.WEREWOLF_CABIN : null);
+            ResourceLocation structure = ChanceHelper.chanceOf(random, 50) ?
+                    (ChanceHelper.chanceOf(random, ConfigHandler.server.huntersCampSpawnChance) ? StructureInit.HUNTERS_CAMP : null)
+                    : (ChanceHelper.chanceOf(random, ConfigHandler.server.werewolfCabinSpawnChance) ? StructureInit.WEREWOLF_CABIN : null);
             if (structure != null) {
                 GeneralHelper.trySpawnStructure(structure, event.getWorld(), event.getChunkX(), event.getChunkZ(), event.getRand());
             }

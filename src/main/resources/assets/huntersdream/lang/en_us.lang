@@ -104,8 +104,6 @@ huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s.
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
-item.huntersdream.lycanthropy_book.onClick.success=You now have access to the skill tab!
-item.huntersdream.lycanthropy_book.onClick.already_unlocked=You have already unlocked the skill tab.
 item.huntersdream.lycanthropy_book.onClick.wrong_transformation=You're not a werewolf.
 
 # Werewolf transformation (all the text is shown in italics and red)
@@ -131,9 +129,9 @@ huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
 # Server
 huntersdream.config.server=Server
 huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
-huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
+huntersdream.config.huntersCampSpawnChance=Hunter's Camp spawn chance
 huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
-huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
+huntersdream.config.werewolfCabinSpawnChance=Werewolf Cabin spawn chance
 huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
 huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
 # Server - Ore Generation Settings
@@ -193,4 +191,6 @@ hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
-item.huntersdream.lycanthropy_book.tooltip=Found in chests. When right clicked, gets consumed and unlocks the skill tab for werewolves.
+item.huntersdream.lycanthropy_book.tooltip=Found in chests. When right clicked by a werewolf, opens the skill tab.
+item.huntersdream.gun.loaded.tooltip=Loaded
+item.huntersdream.gun.unloaded.tooltip=Unloaded

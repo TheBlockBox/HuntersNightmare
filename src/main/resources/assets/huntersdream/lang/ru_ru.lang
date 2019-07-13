@@ -1,0 +1,198 @@
+#PARSE_ESCAPES
+# Language: Russian
+# Region: Russia
+# Translated by: Naoki
+
+# Armor
+item.huntersdream.silver_helmet.name=Серебряный Шлем
+item.huntersdream.silver_chestplate.name=Серебряный Нагрудик
+item.huntersdream.silver_leggings.name=Серебряные Поножи
+item.huntersdream.silver_boots.name=Серебряные Ботинки
+item.huntersdream.hunter_hat.name=Охотничья Шляпа
+item.huntersdream.hunter_coat.name=Охотничье Пальто
+item.huntersdream.hunter_pants.name=Охотничьи Поножи
+item.huntersdream.hunter_boots.name=Охотничьи Ботинки
+
+# Weapons and Tools
+item.huntersdream.silver_sword.name=Серебряный Меч
+item.huntersdream.silver_pickaxe.name=Серебряная Кирка
+item.huntersdream.silver_shovel.name=Серебряная Лопата
+item.huntersdream.silver_hoe.name=Серебряная Мотыга
+item.huntersdream.silver_axe.name=Серебряный Топор
+item.huntersdream.flintlock_musket.name=Кремневый Мушкет
+item.huntersdream.flintlock_pistol.name=Кремневый Пистолет
+item.huntersdream.flintlock_blunderbuss.name=Кремневый Мушкетон
+item.huntersdream.musket_ball.name=Мушкетная Пуля
+item.huntersdream.silver_musket_ball.name=Серебряная Мушкетная Пуля
+
+# Other items
+item.huntersdream.silver_ingot.name=Серебряный Слиток
+item.huntersdream.bestiary.name=Бестиарий
+item.huntersdream.lycanthropy_book.name=Книга Ликантропии
+item.huntersdream.tent.name=Палатка
+item.huntersdream.fabric.name=Ткань
+item.huntersdream.herbal_wolfsbane_water.name=Растворенная Волчья Отрава
+
+# Potions
+effect.huntersdream.wolfsbane=Волчья Отрава
+effect.huntersdream.sunscreen=Солнцезащитный Крем
+potion.effect.wolfsbane=Волчий Яд
+splash_potion.effect.wolfsbane=Взрывной Волчий Яд
+lingering_potion.effect.wolfsbane=Туманный Волчий Яд
+tipped_arrow.effect.wolfsbane=Стрела Волчего Яда
+
+# Blocks
+tile.huntersdream.silver_block.name=Серебряный Блок
+tile.huntersdream.silver_ore.name=Серебряная Руда
+tile.huntersdream.tile_tent.name=Палатка
+tile.huntersdream.cotton.name=Хлопок
+tile.huntersdream.spinning_wheel.name=Прялка
+tile.huntersdream.oak_campfire.name=Дубовый Костер
+tile.huntersdream.spruce_campfire.name=Еловый Костер
+tile.huntersdream.birch_campfire.name=Березовый Костер
+tile.huntersdream.jungle_campfire.name=Тропический Костер
+tile.huntersdream.acacia_campfire.name=Костер из Акация
+tile.huntersdream.dark_oak_campfire.name=Костер из Темного Дуба
+tile.huntersdream.aconite_flower.name=Аконитовый Цветок
+tile.huntersdream.monkshood_flower.name=Борец
+tile.huntersdream.wolfsbane_garland.name=Гирлянда Волчьей Отравы
+tile.huntersdream.wolfsbane_petals.name=Лепестки Волчьей Отравы
+
+# Entities
+entity.goblintd.name=Гоблин
+entity.werewolf.name=Оборотень
+entity.hunter.name=Охотник
+
+# Transformations
+huntersdream\:none=Никто
+huntersdream\:human=Человек
+huntersdream\:werewolf=Оборотень
+huntersdream\:vampire=Вампир
+huntersdream\:ghost=Призрак
+
+# Sounds (Subtitles)
+huntersdream.transformation.heartbeat=Сердцебиение Оборотня
+huntersdream.transformation.werewolf.howling=Вой Оборотня
+huntersdream.transformation.vampire.gulp=Вампир Пьет Кровь
+huntersdream.gun.flintlock.fire=Стрельба из Кремневого Ружья
+huntersdream.gun.flintlock.reload=Перезарядка Кремневого Ружья
+
+# Creative Tabs
+itemGroup.huntersdream.toolsandcombat=Мечта Охотника Бой и Разное
+itemGroup.huntersdream.misc=Мечта Охотника Разное
+
+# Commands
+command.huntersdream.invalid=Недопустимый аргумент
+command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
+command.huntersdream.moonphase.getCurrent=Текущая Фаза Луны %s
+command.huntersdream.moonphase.getSet=Фаза Луны Теперь %s
+command.huntersdream.transformation.usage=hdtransformation <transformation|get> <player>
+command.huntersdream.transformation.transformationSet=%s сейчас %s
+command.huntersdream.transformation.transformationGet=%s's Трансформация %s
+command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
+command.huntersdream.transformationtexture.get=%s's Индекс Текстуры %s
+command.huntersdream.transformationtexture.set=%s's Текстура Была Установлена На %s
+command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill>
+command.huntersdream.skill.add=The skill %s Добавлено %s
+command.huntersdream.skill.remove=The skill %s Был Удален Из %s
+command.huntersdream.skill.clear=%s's Навыки Были Очищены
+command.huntersdream.skill.list=%s's Навыки\: %s
+
+# Chat messages
+transformations.huntersdream.infected.werewolf=Вы чувствуете проклятие, окружающее вас..
+huntersdream.versionNotSupported=Hunter's Dream больше не поддерживает minecraft %s. Пожалуйста, не жалуйтесь на какие-либо ошибки или сбои и обновления более неподдерживаемой версии.
+huntersdream.werewolfNotAllowedToSleep=Ты не можешь уснуть, пока ты трансформирован
+death.attack.vampireDrankBlood=%s Вампир выпил досуха
+item.huntersdream.bestiary.onClick=Теперь ты %s
+item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Вы не оборотень
+
+# Werewolf transformation (all the text is shown in italics and red)
+transformations.huntersdream\:werewolf.transformingInto.1=Вы чувствуете слабость и тошноту...
+transformations.huntersdream\:werewolf.transformingInto.2=Ваши кости и мышцы болят...
+transformations.huntersdream\:werewolf.transformingInto.3=Вы начинаете злиться и думать об убийстве...
+transformations.huntersdream\:werewolf.transformingInto.4=Вы испытываете огромную боль и чувствуете, как меняется ваше тело...
+transformations.huntersdream\:werewolf.transformingInto.5=Ваше тело теперь начинает больше походить на волка...
+transformations.huntersdream\:werewolf.transformingInto.6=Волк теперь контролирует ситуацию...
+transformations.huntersdream\:werewolf.transformingBack.0=Волк утихает, и ты теряешь сознание.
+
+# Config
+huntersdream.config.title=Hunter's Dream Конфигурация
+# Client and Server
+huntersdream.config.common=Клиент и Сервер
+huntersdream.config.showPacketMessages=Показать пакетные сообщения
+huntersdream.config.showFullStackTrace=Показать полную трассировку стека в журналах (дополнительно)
+# Client
+huntersdream.config.client=Клиент
+huntersdream.config.biteAnimation=Показать анимацию укуса
+huntersdream.config.customPlayerRender=Пользовательский рендер игрока
+huntersdream.config.showSkillBarSlot=Показать слот для открытия панели навыков
+# Server
+huntersdream.config.server=Сервер
+huntersdream.config.generateHuntersCabin=Генерация хижины охотника в деревнях
+huntersdream.config.huntersCampSpawnChance=
+huntersdream.config.generateVillagerCastle=Генерация Крепости Жителей в деревнях
+huntersdream.config.werewolfCabinSpawnChance=
+huntersdream.config.logStructureSpawns=Запишите сообщение для каждой созданной структуры с ее положением
+huntersdream.config.werewolvesBreakDoors=Оборотни разрушают деревянные двери
+# Server - Ore Generation Settings
+huntersdream.config.ores=Настройки генерации руды
+huntersdream.config.generateSilverOre=Генерация серебряной руды
+huntersdream.config.silverChance=Средняя жила серебряной руды
+huntersdream.config.silverMaxY=Максимальная высота спавна серебряной руды
+huntersdream.config.silverMinY=Минимальная высота спавна серебряной руды
+huntersdream.config.veinSize=Жила руды на чанк
+
+# Skills
+huntersdream.unlockSkill=Разблокировать с помощью %s уровней опыта
+huntersdream.permissionUnlockSkill=Вы действительно хотите разблокировать навык %s для уровней опыта %s?
+huntersdream.unlockedSkill=Вы успешно разблокировали навык %s для %s уровней опыта!
+
+huntersdream.bite.name=Укус I
+huntersdream.bite.description=Инфекционные Зубы\: Можно заразить игроков с 25%% шансом, но имеет перезарядку 5 секунд.
+
+huntersdream.bite_1.name=Укус II
+huntersdream.bite_1.description=Стальные Зубы\: Укус наносит больше урона (+5) и игнорирует броню.
+huntersdream.bite_2.name=Укус III
+huntersdream.bite_2.description=Ядовитый Укус\: Мобы и игроки теперь будут иметь 25%% шанс получить иссушение в течение 5 секунд.
+
+
+huntersdream.speed.name=Скорость I
+huntersdream.speed.description=Увеличивает скорость (1 к 2).
+huntersdream.speed_1.name=Скорость II
+huntersdream.speed_1.description=Увеличивает скорость (2 к 3).
+huntersdream.speed_2.name=Скорость III
+huntersdream.speed_2.description=Увеличивает скорость (3 к 4).
+
+huntersdream.jump.name=Прыгучесть I
+huntersdream.jump.description=Увеличивает прыжок (1 к 2).
+huntersdream.jump_1.name=Jump II
+huntersdream.jump_1.description=Увеличивает прыжок (2 к 3).
+huntersdream.jump_2.name=Jump III
+huntersdream.jump_2.description=Увеличивает прыжок (3 к 4).
+
+huntersdream.unarmed.name=Безоружный I
+huntersdream.unarmed.description=Увеличивает урон с 6 до 7.
+huntersdream.unarmed_1.name=Безоружный II
+huntersdream.unarmed_1.description=Увеличивает урон с 7 до 8.
+huntersdream.unarmed_2.name=Безоружный III
+huntersdream.unarmed_2.description=Увеличивает урон с 8 до 9.
+
+huntersdream.natural_armor.name=Природная Броня I
+huntersdream.natural_armor.description=Делает естественную броню такой же прочной, как полный комплект кольчуги.
+huntersdream.natural_armor_1.name=Природная Броня II
+huntersdream.natural_armor_1.description=Делает естественную броню такой же прочной, как полный набор железных доспехов.
+huntersdream.natural_armor_2.name=Природная Броня III
+huntersdream.natural_armor_2.description=Делает естественную броню такой же сильной, как полный набор алмазной брони.
+
+# Hunter Armor Effects
+huntersdream.hunter_armor_effect=Имеет эффект "%s"
+hunter_armor_effect.huntersdream.none=Ничего
+hunter_armor_effect.huntersdream.aconite=Аконит
+hunter_armor_effect.huntersdream.monkshood=Борец
+hunter_armor_effect.huntersdream.wolfsbane=Волчья Отрава
+
+# Other stuff
+item.huntersdream.bestiary.tooltip=Не поддается крафту. Изменение трансформации игрока при щелчке правой кнопкой мыши.
+item.huntersdream.lycanthropy_book.tooltip=
+item.huntersdream.gun.loaded.tooltip=
+item.huntersdream.gun.unloaded.tooltip=

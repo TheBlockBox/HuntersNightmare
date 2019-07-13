@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
 public class ClientProxy implements IProxy {
@@ -50,5 +52,12 @@ public class ClientProxy implements IProxy {
                     + world.getProviderName() + " (Side: CLIENT)");
         }
         return (T) entity;
+    }
+
+    @Override
+    public void openSkillTab(EntityPlayer player) {
+        if (TransformationHelper.getTransformation(player).hasAccessToSkillTab(player)) {
+            Minecraft.getMinecraft().displayGuiScreen(GuiSkillTab.INSTANCE.refresh());
+        }
     }
 }

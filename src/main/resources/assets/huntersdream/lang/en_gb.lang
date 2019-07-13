@@ -104,8 +104,6 @@ huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s.
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
-item.huntersdream.lycanthropy_book.onClick.success=You now have access to the skill tab!
-item.huntersdream.lycanthropy_book.onClick.already_unlocked=You have already unlocked the skill tab.
 item.huntersdream.lycanthropy_book.onClick.wrong_transformation=You're not a werewolf.
 
 # Werewolf transformation (all the text is shown in italics and red)
@@ -131,9 +129,9 @@ huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
 # Server
 huntersdream.config.server=Server
 huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
-huntersdream.config.generateHuntersCamp=Generate Hunter's Camp in the world
+huntersdream.config.huntersCampSpawnChance=Hunter's Camp spawn chance
 huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
-huntersdream.config.generateWerewolfCabin=Generate Werewolf Cabin in the world
+huntersdream.config.werewolfCabinSpawnChance=Werewolf Cabin spawn chance
 huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
 huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
 # Server - Ore Generation Settings
@@ -152,7 +150,7 @@ huntersdream.unlockedSkill=You've successfully unlocked the skill %s for %s expe
 huntersdream.bite.name=Bite I
 huntersdream.bite.description=Infectious Teeth\: Can infect players with 25%% chance but has a cooldown of 5 seconds.
 huntersdream.bite_1.name=Bite II
-huntersdream.bite_1.description=Steel Teeth\: Biting does more damage (+5) and ignores armor.
+huntersdream.bite_1.description=Steel Teeth\: Biting does more damage (+5) and ignores armour.
 huntersdream.bite_2.name=Bite III
 huntersdream.bite_2.description=Venomous Bite\: Undead mobs and players will now have a 25%% chance of receiving wither for 5 seconds.
 
@@ -178,11 +176,11 @@ huntersdream.unarmed_2.name=Unarmed III
 huntersdream.unarmed_2.description=Increases damage from 8 to 9.
 
 huntersdream.natural_armor.name=Natural Armor I
-huntersdream.natural_armor.description=Makes the natural armor be as strong as a full set of chainmail armor.
+huntersdream.natural_armor.description=Makes the natural armour be as strong as a full set of chainmail armour.
 huntersdream.natural_armor_1.name=Natural Armor II
-huntersdream.natural_armor_1.description=Makes the natural armor be as strong as a full set of iron armor.
+huntersdream.natural_armor_1.description=Makes the natural armour be as strong as a full set of iron armour.
 huntersdream.natural_armor_2.name=Natural Armor III
-huntersdream.natural_armor_2.description=Makes the natural armor be as strong as a full set of diamond armor.
+huntersdream.natural_armor_2.description=Makes the natural armour be as strong as a full set of diamond armour.
 
 # Hunter Armor Effects
 huntersdream.hunter_armor_effect=Has the effect "%s"
@@ -193,4 +191,6 @@ hunter_armor_effect.huntersdream.wolfsbane=Wolfsbane
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
-item.huntersdream.lycanthropy_book.tooltip=Found in chests. When right clicked, gets consumed and unlocks the skill tab for werewolves.
+item.huntersdream.lycanthropy_book.tooltip=Found in chests. When right clicked by a werewolf, opens the skill tab.
+item.huntersdream.gun.loaded.tooltip=Loaded
+item.huntersdream.gun.unloaded.tooltip=Unloaded

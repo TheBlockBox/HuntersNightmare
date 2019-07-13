@@ -104,8 +104,6 @@ huntersdream.versionNotSupported=Hunter's Dream unterstützt die Minecraftversio
 huntersdream.werewolfNotAllowedToSleep=Du kannst nicht schlafen, wenn du verwandelt bist
 death.attack.vampireDrankBlood=%s wurde von einem Vampir leer getrunken
 item.huntersdream.bestiary.onClick=Du bist nun %s
-item.huntersdream.lycanthropy_book.onClick.success=Du hast ab jetzt Zugang zum Fähigkeitenreiter!
-item.huntersdream.lycanthropy_book.onClick.already_unlocked=Du hast den Fähigkeitenreiter bereits freigeschalten.
 item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Du bist kein Werwolf.
 
 # Werewolf transformation (all the text is shown in italics and red)
@@ -131,9 +129,9 @@ huntersdream.config.showSkillBarSlot=Zeige den Slot zum Öffnen der Fähigkeiten
 # Server
 huntersdream.config.server=Server
 huntersdream.config.generateHuntersCabin=Generiere Jägerhütten in Dörfern
-huntersdream.config.generateHuntersCamp=Generiere Jägerlager in der Welt
+huntersdream.config.huntersCampSpawnChance=Wahrscheinlichkeit, Jägerlager zu generieren
 huntersdream.config.generateVillagerCastle=Generiere Dorfbewohnerburgen in Dörfern
-huntersdream.config.generateWerewolfCabin=Generiere Werwolfhütten in der Welt
+huntersdream.config.werewolfCabinSpawnChance=Wahrscheinlichkeit, Werwolfhütten zu generieren
 huntersdream.config.logStructureSpawns=Logge eine Nachricht für jede generierte Struktur
 huntersdream.config.werewolvesBreakDoors=Lasse Werwölfe Holztüren zerstören
 # Server - Ore Generation Settings
@@ -150,11 +148,11 @@ huntersdream.permissionUnlockSkill=Willst du die Fähigkeit %s wirklich für %s 
 huntersdream.unlockedSkill=Du hast die Fähigkeit %s erfolgreich für %s Erfahrungslevel freigeschalten!
 
 huntersdream.bite.name=Biss I
-huntersdream.bite.description=Infectious Teeth\: Infiziert Spieler mit einer 25%%igen Wahrscheinlichkeit, hat jedoch eine Abklingzeit von fünf Sekunden.
+huntersdream.bite.description=Infektiöse Zähne\: Infiziert Spieler mit einer 25%%igen Wahrscheinlichkeit, hat jedoch eine Abklingzeit von fünf Sekunden.
 huntersdream.bite_1.name=Biss II
-huntersdream.bite_1.description=Eiserne Zähne\: Der Biss ignoriert Rüstung und verursacht 5 Schaden mehr.
+huntersdream.bite_1.description=Eisenzähne\: Der Biss ignoriert Rüstung und verursacht 5 Schaden mehr.
 huntersdream.bite_2.name=Biss III
-huntersdream.bite_2.description=Giftige Zähne\: Untote Monster und Spieler haben nun eine Wahrscheinlichkeit von 25%%, 5 Sekunden lang Ausdörrung zu erhalten.
+huntersdream.bite_2.description=Giftbiss\: Untote Monster und Spieler haben nun eine Wahrscheinlichkeit von 25%%, 5 Sekunden lang Ausdörrung zu erhalten.
 
 huntersdream.speed.name=Schnelligkeit I
 huntersdream.speed.description=Erhöht die Geschwindigkeit (1 zu 2).
@@ -193,4 +191,6 @@ hunter_armor_effect.huntersdream.wolfsbane=Wolfswurz
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Nicht herstellbar. Verändert die Verwandlung des Spielers durch Rechtsklicken.
-item.huntersdream.lycanthropy_book.tooltip=Kann in Kisten gefunden werden. Wird durch Rechtsklicken verbraucht und schaltet dadurch den Fähigkeitenreiter für Werwölfe frei.
+item.huntersdream.lycanthropy_book.tooltip=Kann in Kisten gefunden werden. Bei Rechtsklicken durch einen Werwolf wird dessen Fähigkeitenreiter geöffnet.
+item.huntersdream.gun.loaded.tooltip=Geladen
+item.huntersdream.gun.unloaded.tooltip=Ungeladen

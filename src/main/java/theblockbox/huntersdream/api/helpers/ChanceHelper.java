@@ -8,6 +8,11 @@ import java.util.Random;
 
 public class ChanceHelper {
     /**
+     * An instance of {@link Random}. Should only be used if no other correctly functioning random is available.
+     */
+    public static final Random RANDOM = new Random();
+
+    /**
      * Returns a random byte. If the given bound is 0, 0 is returned. If the given
      * byte is negative, an exception is thrown
      */

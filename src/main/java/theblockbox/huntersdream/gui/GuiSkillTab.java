@@ -55,8 +55,8 @@ public class GuiSkillTab extends GuiScreen {
     public void initGui() {
         super.initGui();
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (!TransformationHelper.hasAccessToSkillTab(player)) {
-            Main.getLogger().warn("Player " + player + " tried to access the skill tab although they haven't unlocked it yet.");
+        if (!this.tp.getTransformation().hasAccessToSkillTab(player)) {
+            Main.getLogger().warn("Player " + player + " tried to access the skill tab although they weren't allowed to");
             return;
         }
         this.drawX = (this.width - GuiSkillTab.TEXTURE_WIDTH) / 2;

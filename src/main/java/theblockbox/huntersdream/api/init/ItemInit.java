@@ -30,6 +30,9 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:silver_ingot")
     public static final Item SILVER_INGOT = ItemInit.NULL_ITEM;
 
+    @GameRegistry.ObjectHolder("huntersdream:lycanthropy_book")
+    public static final Item LYCANTHROPY_BOOK = ItemInit.NULL_ITEM;
+
     @GameRegistry.ObjectHolder("huntersdream:silver_sword")
     public static final Item SILVER_SWORD = ItemInit.NULL_ITEM;
 

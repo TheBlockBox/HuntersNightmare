@@ -353,20 +353,6 @@ public class WerewolfHelper {
         TransformationHelper.getTransformationData(entity).setLong("biteTicks", biteTicks);
     }
 
-    public static boolean hasUnlockedSkillTab(EntityPlayer player) {
-        WerewolfHelper.validateIsWerewolf(player);
-        return TransformationHelper.getTransformationData(player).getBoolean("hasUnlockedSkillTab");
-    }
-
-    /**
-     * Unlocks the skill tab for the given werewolf player.
-     * No packet is being sent to the client
-     */
-    public static void setHasUnlockedSkillTab(EntityPlayer player, boolean hasUnlockedSkillTab) {
-        WerewolfHelper.validateIsWerewolf(player);
-        TransformationHelper.getTransformationData(player).setBoolean("hasUnlockedSkillTab", hasUnlockedSkillTab);
-    }
-
     /**
      * Called in
      * {@link TransformationEventHandler#onEntityTick(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent)}

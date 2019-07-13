@@ -1,7 +1,9 @@
 package theblockbox.huntersdream.api;
 
+import com.google.common.base.Predicates;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,6 +14,7 @@ import theblockbox.huntersdream.api.event.TransformationRegistryEvent;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.VampireHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.interfaces.functional.ToFloatObjFloatFunction;
 import theblockbox.huntersdream.util.ExecutionPath;
 import theblockbox.huntersdream.util.Reference;
@@ -21,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.ObjDoubleConsumer;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import static theblockbox.huntersdream.api.Transformation.TransformationEntry.of;
@@ -51,6 +55,8 @@ public class Transformation {
     public static final Transformation WEREWOLF = of("werewolf")
             .setCalculateDamage(WerewolfHelper::calculateUnarmedDamage)
             .setCalculateReducedDamage(WerewolfHelper::calculateReducedDamage)
+            .setHasAccessToSkillTab(player -> (player.getHeldItemOffhand().getItem() == ItemInit.LYCANTHROPY_BOOK)
+                    || (player.getHeldItemMainhand().getItem() == ItemInit.LYCANTHROPY_BOOK))
             .setTexturesHD("werewolf/werewolf", "werewolf/werewolf_whitetail").create();
     /**
      * The transformation for vampires
@@ -285,6 +291,14 @@ public class Transformation {
     }
 
     /**
+     * Returns true if the given player has access to the skill tab.
+     * The returned value of this method is not constant, so it might change over time.
+     */
+    public boolean hasAccessToSkillTab(EntityPlayer player) {
+        return this.entry.hasAccessToSkillTab.test(player);
+    }
+
+    /**
      * Returns true when this transformation is considered to be undead
      */
     public boolean isUndead() {
@@ -395,6 +409,7 @@ public class Transformation {
         private ToFloatObjFloatFunction<EntityLivingBase> calculateDamage = (e, f) -> f;
         private ToFloatObjFloatFunction<EntityLivingBase> calculateReducedDamage = (e, f) -> f;
         private ToIntFunction<EntityLivingBase> getTextureIndex = e -> 0;
+        private Predicate<EntityPlayer> hasAccessToSkillTab = Predicates.alwaysTrue();
         private boolean isUndead = false;
         private ResourceLocation icon;
         private boolean hasSkills = true;
@@ -486,6 +501,15 @@ public class Transformation {
          */
         public Transformation.TransformationEntry setGetTextureIndex(ToIntFunction<EntityLivingBase> getTextureIndex) {
             this.getTextureIndex = getTextureIndex;
+            return this;
+        }
+
+        /**
+         * Sets the method that checks whether a player has access to the skill tab to the given predicate.
+         * The default implementation always returns true.
+         */
+        public Transformation.TransformationEntry setHasAccessToSkillTab(Predicate<EntityPlayer> hasAccessToSkillTab) {
+            this.hasAccessToSkillTab = hasAccessToSkillTab;
             return this;
         }
 

@@ -20,6 +20,7 @@ import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.storage.loot.LootTableList;
+import theblockbox.huntersdream.api.helpers.ChanceHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -31,8 +32,7 @@ public class StructureVillageComponent extends StructureVillagePieces.House1 {
         }
         if (blockInfo.blockState.getBlock() instanceof BlockChest) {
             TileEntityChest tileEntity = new TileEntityChest();
-            world.rand.setSeed(world.rand.nextLong());
-            tileEntity.setLootTable(LootTableList.CHESTS_VILLAGE_BLACKSMITH, world.rand.nextLong());
+            tileEntity.setLootTable(LootTableList.CHESTS_VILLAGE_BLACKSMITH, ChanceHelper.RANDOM.nextLong());
             return new Template.BlockInfo(pos, blockInfo.blockState, tileEntity.writeToNBT(new NBTTagCompound()));
         }
 
