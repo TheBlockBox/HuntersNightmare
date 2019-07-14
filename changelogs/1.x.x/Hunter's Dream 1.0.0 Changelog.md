@@ -1,6 +1,6 @@
 # Hunter's Dream 1.0.0 Changelog
 
-All new features and code changes since the last stable build (0.2.2)  
+All new features and code changes since the last stable build (0.2.2).  
 To see every little change, please head to our [GitHub](https://github.com/TheGamingLord/HuntersDream) and look at the changelog of all the [commits](https://github.com/TheGamingLord/HuntersDream/commits/master) since the 24th of August.
 
 ## New features
@@ -17,7 +17,7 @@ To see every little change, please head to our [GitHub](https://github.com/TheGa
 - Improved silver armor
 - Changed all the textures and added new ones
 - Changed and added commands
-- Added new translations
+- Added new translations (British English, Russian (by Naoki) and Standard German)
 - Added aconite and monkshood flowers
 - Added wolfsbane related things (potions, garlands, petals, etc.)
 - Added flintlock guns (musket, pistol and blunderbuss)

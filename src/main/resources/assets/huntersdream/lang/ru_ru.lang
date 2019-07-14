@@ -129,9 +129,9 @@ huntersdream.config.showSkillBarSlot=Показать слот для откры
 # Server
 huntersdream.config.server=Сервер
 huntersdream.config.generateHuntersCabin=Генерация хижины охотника в деревнях
-huntersdream.config.huntersCampSpawnChance=
+huntersdream.config.huntersCampSpawnChance=Шанс спавна лагерей охотников
 huntersdream.config.generateVillagerCastle=Генерация Крепости Жителей в деревнях
-huntersdream.config.werewolfCabinSpawnChance=
+huntersdream.config.werewolfCabinSpawnChance=Шанс спавна хижины оборотня
 huntersdream.config.logStructureSpawns=Запишите сообщение для каждой созданной структуры с ее положением
 huntersdream.config.werewolvesBreakDoors=Оборотни разрушают деревянные двери
 # Server - Ore Generation Settings
@@ -193,6 +193,6 @@ hunter_armor_effect.huntersdream.wolfsbane=Волчья Отрава
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Не поддается крафту. Изменение трансформации игрока при щелчке правой кнопкой мыши.
-item.huntersdream.lycanthropy_book.tooltip=
-item.huntersdream.gun.loaded.tooltip=
-item.huntersdream.gun.unloaded.tooltip=
+item.huntersdream.lycanthropy_book.tooltip=Найдено в сундуках. При щелчке правой кнопкой мыши оборотень откроет вкладку умения.
+item.huntersdream.gun.loaded.tooltip=Заряжено
+item.huntersdream.gun.unloaded.tooltip=Не заряженно
