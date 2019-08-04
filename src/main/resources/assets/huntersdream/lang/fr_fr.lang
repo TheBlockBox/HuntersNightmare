@@ -1,0 +1,196 @@
+#PARSE_ESCAPES
+# Language: French
+# Region: France
+# Translated by: MatLeJPP
+
+# Armor
+item.huntersdream.silver_helmet.name=Casque en argent
+item.huntersdream.silver_chestplate.name=Plastron en argent
+item.huntersdream.silver_leggings.name=Jambières en argent
+item.huntersdream.silver_boots.name=Bottes en argent
+item.huntersdream.hunter_hat.name=Chapeau de chasseur
+item.huntersdream.hunter_coat.name=Veste de chasseur
+item.huntersdream.hunter_pants.name=Pantalon de chasseur
+item.huntersdream.hunter_boots.name=Bottes de chasseur
+
+# Weapons and Tools
+item.huntersdream.silver_sword.name=épée en argent
+item.huntersdream.silver_pickaxe.name=Pioche en argent
+item.huntersdream.silver_shovel.name=Pelle en argent
+item.huntersdream.silver_hoe.name=Houe en argent
+item.huntersdream.silver_axe.name=Hache en argent
+item.huntersdream.flintlock_musket.name=Mousquet
+item.huntersdream.flintlock_pistol.name=Pistolet
+item.huntersdream.flintlock_blunderbuss.name=Tromblon
+item.huntersdream.musket_ball.name=Balle de mousquet
+item.huntersdream.silver_musket_ball.name=Balle de mousquet en argent
+
+# Other items
+item.huntersdream.silver_ingot.name=Lingot d'argent
+item.huntersdream.bestiary.name=Bestiaire
+item.huntersdream.lycanthropy_book.name=Livre de Lycanthropie
+item.huntersdream.tent.name=Tente
+item.huntersdream.fabric.name=Tissus
+item.huntersdream.herbal_wolfsbane_water.name=Eau d'Aconit
+
+# Potions
+effect.huntersdream.wolfsbane=Poison pour Loup
+effect.huntersdream.sunscreen=Crème solaire
+potion.effect.wolfsbane=Potion de poison pour Loup
+splash_potion.effect.wolfsbane=Potion de poison pour Loup jetable
+lingering_potion.effect.wolfsbane=Potion de poison pour Loup persistante
+tipped_arrow.effect.wolfsbane=Flèche de poison pour Loup
+
+# Blocks
+tile.huntersdream.silver_block.name=Bloc d'Argent
+tile.huntersdream.silver_ore.name=Minerais d'Argent
+tile.huntersdream.tile_tent.name=Tente
+tile.huntersdream.cotton.name=Coton
+tile.huntersdream.spinning_wheel.name=Rouet
+tile.huntersdream.oak_campfire.name=Feu de camp en chêne
+tile.huntersdream.spruce_campfire.name=Feu de camp en sapin
+tile.huntersdream.birch_campfire.name=Feu de camp en bouleau
+tile.huntersdream.jungle_campfire.name=Feu de camp en acajou
+tile.huntersdream.acacia_campfire.name=Feu de camp en acacia
+tile.huntersdream.dark_oak_campfire.name=Feu de camp en chêne noir
+tile.huntersdream.aconite_flower.name=Aconit d'hiver
+tile.huntersdream.monkshood_flower.name=Aconit
+tile.huntersdream.wolfsbane_garland.name=Guirlande d'aconit
+tile.huntersdream.wolfsbane_petals.name=Pétales d'aconit
+
+# Entities
+entity.goblintd.name=Goblin
+entity.werewolf.name=Loup-Garou
+entity.hunter.name=Chasseur
+
+# Transformations
+huntersdream\:none=Aucune
+huntersdream\:human=Humain
+huntersdream\:werewolf=Loup-Garou
+huntersdream\:vampire=Vampire
+huntersdream\:ghost=Fantôme
+
+# Sounds (Subtitles)
+huntersdream.transformation.heartbeat=Battement de coeur d'un loup-garou
+huntersdream.transformation.werewolf.howling=Hurlement de loup-garou
+huntersdream.transformation.vampire.gulp=Vampire buvant du sang
+huntersdream.gun.flintlock.fire=Arme à silex qui ouvre le feu
+huntersdream.gun.flintlock.reload=Arme à silex qui recharge
+
+# Creative Tabs
+itemGroup.huntersdream.toolsandcombat=Outils et Armes d'Hunter's Dream 
+itemGroup.huntersdream.misc=Divers d'Hunter's Dream 
+
+# Commands
+command.huntersdream.invalid=Arguments invalides
+command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
+command.huntersdream.moonphase.getCurrent=La phase actuelle de la lune est %s
+command.huntersdream.moonphase.getSet=La phase de la lune est maintenant %s
+command.huntersdream.transformation.usage=hdtransformation <transformation|get> <player>
+command.huntersdream.transformation.transformationSet=%s est maintenant un %s
+command.huntersdream.transformation.transformationGet=La transformation de %s's est %s
+command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
+command.huntersdream.transformationtexture.get=l'indice de texture de %s's est %s
+command.huntersdream.transformationtexture.set=la texture de %s's a été réglée sur %s
+command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill>
+command.huntersdream.skill.add=La compétence %s a bien été ajoutée à %s
+command.huntersdream.skill.remove=La compétence %s a bien été supprimée de %s
+command.huntersdream.skill.clear=Les compétences de %s's ont bien été effacées
+command.huntersdream.skill.list=Les compétences de %s's sont\: %s
+
+# Chat messages
+transformations.huntersdream.infected.werewolf=Vous sentez un mal en vous...
+huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
+huntersdream.werewolfNotAllowedToSleep=Vous ne pouvez pas dormir quand vous êtes transformé
+death.attack.vampireDrankBlood=%s s'est fait boire à sec par un vampire
+item.huntersdream.bestiary.onClick=Vous etes maintenant un %s
+item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Vous n'êtes pas un Lycanthrope.
+
+# Werewolf transformation (all the text is shown in italics and red)
+transformations.huntersdream\:werewolf.transformingInto.1=Vous vous sentez faible et nauséeux...
+transformations.huntersdream\:werewolf.transformingInto.2=Vos os et vos muscles vous font mal...
+transformations.huntersdream\:werewolf.transformingInto.3=Vous entrez en rage et pensez à tuer...
+transformations.huntersdream\:werewolf.transformingInto.4=Vous ressentez une douleur intense et votre corps change...
+transformations.huntersdream\:werewolf.transformingInto.5=Votre corps commence maintenant à ressembler à celui d'un loup...
+transformations.huntersdream\:werewolf.transformingInto.6=Le loup est maintenant en contrôle...
+transformations.huntersdream\:werewolf.transformingBack.0=Le loup se calme et vous vous évanouissez...
+
+# Config
+huntersdream.config.title=Hunter's Dream Config
+# Client and Server
+huntersdream.config.common=Client and Server
+huntersdream.config.showPacketMessages=Show packet messages
+huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
+# Client
+huntersdream.config.client=Client
+huntersdream.config.biteAnimation=Show bite animation
+huntersdream.config.customPlayerRender=Custom player render
+huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
+# Server
+huntersdream.config.server=Server
+huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
+huntersdream.config.huntersCampSpawnChance=Hunter's Camp spawn chance
+huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
+huntersdream.config.werewolfCabinSpawnChance=Werewolf Cabin spawn chance
+huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
+huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
+# Server - Ore Generation Settings
+huntersdream.config.ores=Ore Generation Settings
+huntersdream.config.generateSilverOre=Generate silver ore
+huntersdream.config.silverChance=Average silver ores per vein
+huntersdream.config.silverMaxY=Maximum height of silver
+huntersdream.config.silverMinY=Minimum height of silver
+huntersdream.config.veinSize=Veins of ore per chunk
+
+# Skills
+huntersdream.unlockSkill=Débloquer avec %s niveaux d'expérience
+huntersdream.permissionUnlockSkill=Voulez vous vraiment débloquer %s pour %s niveaux d'expérience ?
+huntersdream.unlockedSkill=Vous avez déverrouillé la compétence %s avec succés avec %s niveaux d'expérience !
+
+huntersdream.bite.name=Morsure I
+huntersdream.bite.description=Dents Infectieuses\: Peut transmettre la Lycanthropie aux joueurs avec 25%% de chance mais avec un temps de recharge de 5 secondes.
+huntersdream.bite_1.name=Morsure II
+huntersdream.bite_1.description=Dents d'Acier\: Mordre inflige plus de dommages (+5) et ignore l'armure.
+huntersdream.bite_2.name=Morsure III
+huntersdream.bite_2.description=Morsure venimeuse\: Les morts vivants et les joueurs ont 25%% de chance de recevoir l'effet wither pendant 5 secondes.
+
+huntersdream.speed.name=Vitesse I
+huntersdream.speed.description=Augmente la vitesse de course (de 1 à 2).
+huntersdream.speed_1.name=Vitesse II
+huntersdream.speed_1.description=Augmente la vitesse de course (de 2 à 3).
+huntersdream.speed_2.name=Vitesse III
+huntersdream.speed_2.description=Augmente la vitesse de course (de 3 à 4).
+
+huntersdream.jump.name=Saut I
+huntersdream.jump.description=Hauteur de saut améliorée (de 1 à 2).
+huntersdream.jump_1.name=Saut II
+huntersdream.jump_1.description=Hauteur de saut améliorée (de 2 à 3).
+huntersdream.jump_2.name=Saut III
+huntersdream.jump_2.description=Hauteur de saut améliorée (de 3 à 4).
+
+huntersdream.unarmed.name=Sans armes I
+huntersdream.unarmed.description=Les dommages infligés sans armes passent de 6 à 7.
+huntersdream.unarmed_1.name=Sans armes II
+huntersdream.unarmed_1.description=Les dommages infligés sans armes passent de 7 à 8.
+huntersdream.unarmed_2.name=Sans armes III
+huntersdream.unarmed_2.description=les dommages infligés sans armes passent de 8 à 9.
+
+huntersdream.natural_armor.name=Armure Naturelle I
+huntersdream.natural_armor.description=Votre fourrure devient aussi forte qu'une armure de mailles complète.
+huntersdream.natural_armor_1.name=Armure Naturelle II
+huntersdream.natural_armor_1.description=Votre fourrure devient aussi forte qu'une armure de fer complète.
+huntersdream.natural_armor_2.name=Armure Naturelle III
+huntersdream.natural_armor_2.description=Votre fourrure devient aussi forte qu'une armure de diamant complète.
+
+# Hunter Armor Effects
+huntersdream.hunter_armor_effect=a l'effet "%s"
+hunter_armor_effect.huntersdream.none=Aucune
+hunter_armor_effect.huntersdream.aconite=Aconit d'hiver
+hunter_armor_effect.huntersdream.monkshood=Aconit
+hunter_armor_effect.huntersdream.wolfsbane=Poison pour Loup
+
+# Other stuff
+item.huntersdream.bestiary.tooltip=Non craftable. Change la transformation du joueur en cliquant droit.
+item.huntersdream.lycanthropy_book.tooltip=Trouvable dans les coffres. Quand un Lycanthrope clic droit dessus, ouvre le menu des compétences.
+item.huntersdream.gun.loaded.tooltip=Chargé
+item.huntersdream.gun.unloaded.tooltip=Déchargé

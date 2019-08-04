@@ -1,0 +1,196 @@
+﻿#PARSE_ESCAPES
+# Language: brazilian portuguese
+# Region: Brazil
+# Translated by: ガーラート
+
+# Armor
+item.huntersdream.silver_helmet.name=Capacete de Prata
+item.huntersdream.silver_chestplate.name=Peitora de Prata
+item.huntersdream.silver_leggings.name=Calça de Prata
+item.huntersdream.silver_boots.name=Bota de Prata
+item.huntersdream.hunter_hat.name=Chapéu de Caçador
+item.huntersdream.hunter_coat.name=Casaco de Caçador
+item.huntersdream.hunter_pants.name=Calça de Caçador
+item.huntersdream.hunter_boots.name=Bota de Caçador
+
+# Weapons and Tools
+item.huntersdream.silver_sword.name=Espada de Prata
+item.huntersdream.silver_pickaxe.name=Picareta de Prata
+item.huntersdream.silver_shovel.name=Pá de Prata
+item.huntersdream.silver_hoe.name=Enxada de Prata
+item.huntersdream.silver_axe.name=Machado de Prata
+item.huntersdream.flintlock_musket.name=Mosquete de Pederneira
+item.huntersdream.flintlock_pistol.name=Pistola de Pederneira
+item.huntersdream.flintlock_blunderbuss.name=Perderneira Blunderbuss
+item.huntersdream.musket_ball.name=Bola de Mosquete
+item.huntersdream.silver_musket_ball.name=Bola de Mosquete de Prata
+
+# Other items
+item.huntersdream.silver_ingot.name=Barra de Prata
+item.huntersdream.bestiary.name=Bestiáriorio 
+item.huntersdream.lycanthropy_book.name=Livro de Licantropia
+item.huntersdream.tent.name=Barraca
+item.huntersdream.fabric.name=Tecido
+item.huntersdream.herbal_wolfsbane_water.name=Água herbácea de Acônito
+
+# Potions
+effect.huntersdream.wolfsbane=Veneno de Lobo
+effect.huntersdream.sunscreen=Protetor Solar
+potion.effect.wolfsbane=Poção de Veneno de Lobo
+splash_potion.effect.wolfsbane=Poção Arremessável de Veneno de Lobo
+lingering_potion.effect.wolfsbane=Poção Prolongade de Veneno de Lobo
+tipped_arrow.effect.wolfsbane=Flecha com Veneno de Lobo
+
+# Blocks
+tile.huntersdream.silver_block.name=Bloco de Prata
+tile.huntersdream.silver_ore.name=Minério de Prata
+tile.huntersdream.tile_tent.name=Barraca
+tile.huntersdream.cotton.name=Algodão
+tile.huntersdream.spinning_wheel.name=roda de fiar
+tile.huntersdream.oak_campfire.name=Fogueira de madeira de Carvalho
+tile.huntersdream.spruce_campfire.name=Fogueira de Madeira de Pinhero
+tile.huntersdream.birch_campfire.name=Fogueira de Madeira de Eucalipto
+tile.huntersdream.jungle_campfire.name=Fogueira de Madeira de Selva
+tile.huntersdream.acacia_campfire.name=Fogueira de Madeira de Acácia
+tile.huntersdream.dark_oak_campfire.name=Fogueira de Madeira de Carvalho Escuro
+tile.huntersdream.aconite_flower.name=Flor de Acônito
+tile.huntersdream.monkshood_flower.name=Aconitum napellus
+tile.huntersdream.wolfsbane_garland.name=Girlanda de Acônito
+tile.huntersdream.wolfsbane_petals.name=Pétalas de Acônito
+ 
+# Entities
+entity.goblintd.name=Goblin
+entity.werewolf.name=Lobisomem
+entity.hunter.name=Caçador
+
+# Transformations
+huntersdream\:none=Ninguém
+huntersdream\:human=Humano
+huntersdream\:werewolf=Lobisomem
+huntersdream\:vampire=Vampiro
+huntersdream\:ghost=Fantasma
+
+# Sounds (Subtitles)
+huntersdream.transformation.heartbeat=Batimento cardíaco de um lobisomem
+huntersdream.transformation.werewolf.howling=Lobisomem Uivando
+huntersdream.transformation.vampire.gulp=Vampiro bebendo sangue
+huntersdream.gun.flintlock.fire=Arma de Perdeneira Atirando
+huntersdream.gun.flintlock.reload=Arma de Perdeneira Carregando
+
+# Creative Tabs
+itemGroup.huntersdream.toolsandcombat=Hunter's Dream Ferramenta e combate
+itemGroup.huntersdream.misc=Hunter's Dream Diversos
+
+# Commands
+command.huntersdream.invalid=Invalid arguments
+command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
+command.huntersdream.moonphase.getCurrent=Current moonphase is %s
+command.huntersdream.moonphase.getSet=A Fase da Lua está %s agora
+command.huntersdream.transformation.usage=hdtransformation <transformation|get> <player>
+command.huntersdream.transformation.transformationSet=%s agora é um %s
+command.huntersdream.transformation.transformationGet=%s's transformation is %s
+command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
+command.huntersdream.transformationtexture.get=%s's texture index is %s
+command.huntersdream.transformationtexture.set=%s's texture was set to %s
+command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill>
+command.huntersdream.skill.add=The skill %s foi adicionado a %s
+command.huntersdream.skill.remove=The skill %s foi removido de %s
+command.huntersdream.skill.clear=%s's skills have been cleared
+command.huntersdream.skill.list=%s's skills are\: %s
+
+# Chat messages
+transformations.huntersdream.infected.werewolf=Você sente uma maldição ao seu redor ...
+huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
+huntersdream.werewolfNotAllowedToSleep=Você não consegue dormir quando esta transforma
+death.attack.vampireDrankBlood=%s teve seu sangue sugado por um vampiro
+item.huntersdream.bestiary.onClick=Você agora é um %s
+item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Você não é um lobisomem
+
+# Werewolf transformation (all the text is shown in italics and red)
+transformations.huntersdream\:werewolf.transformingInto.1=Você se sente fraco e enjoado ...
+transformations.huntersdream\:werewolf.transformingInto.2=Seus ossos e músculos estão doendo ...
+transformations.huntersdream\:werewolf.transformingInto.3=Você começa a se enfurecer e pensar em matar ...
+transformations.huntersdream\:werewolf.transformingInto.4=Você está com muita dor e sente seu corpo mudando ...
+transformations.huntersdream\:werewolf.transformingInto.5=Seu corpo agora começa a se parecer mais com um lobo ...
+transformations.huntersdream\:werewolf.transformingInto.6=O lobo está agora no controle ...
+transformations.huntersdream\:werewolf.transformingBack.0=O lobo desaparece e você desmaia
+
+# Config
+huntersdream.config.title=Hunter's Dream Config
+# Client and Server
+huntersdream.config.common=Client and Server
+huntersdream.config.showPacketMessages=Show packet messages
+huntersdream.config.showFullStackTrace=Show full stack trace in logs (advanced)
+# Client
+huntersdream.config.client=Client
+huntersdream.config.biteAnimation=Show bite animation
+huntersdream.config.customPlayerRender=Custom player render
+huntersdream.config.showSkillBarSlot=Show slot for opening the skill bar
+# Server
+huntersdream.config.server=Server
+huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
+huntersdream.config.huntersCampSpawnChance=Hunter's Camp spawn chance
+huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
+huntersdream.config.werewolfCabinSpawnChance=Werewolf Cabin spawn chance
+huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
+huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
+# Server - Ore Generation Settings
+huntersdream.config.ores=Ore Generation Settings
+huntersdream.config.generateSilverOre=Generate silver ore
+huntersdream.config.silverChance=Average silver ores per vein
+huntersdream.config.silverMaxY=Maximum height of silver
+huntersdream.config.silverMinY=Minimum height of silver
+huntersdream.config.veinSize=Veins of ore per chunk
+
+# Skills
+huntersdream.unlockSkill=Desbloquear com %s níveis de experiência
+huntersdream.permissionUnlockSkill=Você realmente quer desbloquear a habilidade %s por %s níveis de experiência?
+huntersdream.unlockedSkill=Você desbloqueou com sucesso a habilidade %s por %s níveis de experiência!
+
+huntersdream.bite.name=Mordida I
+huntersdream.bite.description=Dentes Infecciosos\: Pode infectar jogadores com 25%% chance mas tem um cooldown de 5 segundos.
+huntersdream.bite_1.name=Mordida II
+huntersdream.bite_1.description=Dentes de Aço\: Morder causa mais dano (+5) e ignora armadura.
+huntersdream.bite_2.name=Mordida III
+huntersdream.bite_2.description=Mordida venenosa\: Mobs e jogadores mortos-vivos agora terão 25%% de chance de causar decomposição por 5 segundos.
+
+huntersdream.speed.name=Velocidade I
+huntersdream.speed.description=Aumenta a Velocidade (1 para 2).
+huntersdream.speed_1.name=Velocidade II
+huntersdream.speed_1.description=Aumenta a Velocidade (2 para 3).
+huntersdream.speed_2.name=Velocidade III
+huntersdream.speed_2.description=Aumenta a Velocidade (3 para 4).
+
+huntersdream.jump.name=Pulo I
+huntersdream.jump.description=Aumenta o pulo (1 para 2).
+huntersdream.jump_1.name=Pulo II
+huntersdream.jump_1.description=Aumenta o pulo (2 para 3).
+huntersdream.jump_2.name=Pulo III
+huntersdream.jump_2.description=Aumenta o pulo (3 para 4).
+
+huntersdream.unarmed.name=Unarmed I
+huntersdream.unarmed.description=Aumenta o dano de 6 para 7.
+huntersdream.unarmed_1.name=Unarmed II
+huntersdream.unarmed_1.description=Aumenta o dano de 7 para 8.
+huntersdream.unarmed_2.name=Unarmed III
+huntersdream.unarmed_2.description=Aumenta o dano de 8 para 9.
+
+huntersdream.natural_armor.name=Armadura Natural I
+huntersdream.natural_armor.description=Faz com que a armadura natural seja tão forte quanto um conjunto completo de armaduras de cota de malha.
+huntersdream.natural_armor_1.name=Armadura Natural II
+huntersdream.natural_armor_1.description=Faz com que a armadura natural seja tão forte quanto um conjunto completo de armadura de ferro.
+huntersdream.natural_armor_2.name=Armadura Natural III
+huntersdream.natural_armor_2.description=Faz com que a armadura natural seja tão forte quanto um conjunto completo de armadura de diamante.
+
+# Hunter Armor Effects
+huntersdream.hunter_armor_effect=Has the effect "%s"
+hunter_armor_effect.huntersdream.none=nenhum
+hunter_armor_effect.huntersdream.aconite=Acônito
+hunter_armor_effect.huntersdream.monkshood=Aconitum
+hunter_armor_effect.huntersdream.wolfsbane=Acônito
+
+# Other stuff
+item.huntersdream.bestiary.tooltip=Não é fabricável. Altera a transformação do jogador quando clica com o botão direito.
+item.huntersdream.lycanthropy_book.tooltip=Encontrado em baús. Quando clicado com o botão direito por um lobisomem, abre a aba de habilidade.
+item.huntersdream.gun.loaded.tooltip=Carregado
+item.huntersdream.gun.unloaded.tooltip=Descarregado
