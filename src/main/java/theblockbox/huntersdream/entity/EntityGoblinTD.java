@@ -63,6 +63,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
     public EntityGoblinTD(World worldIn) {
         // texture index of 0 because humans don't have special textures
         this(worldIn, 0, Transformation.HUMAN);
+        this.enablePersistence();
     }
 
     @Override
@@ -288,5 +289,10 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
             this.dataManager.set(EntityGoblinTD.TRANSFORMATION_NAME, compound.getString("transformationName"));
         if (compound.hasKey("transformationData"))
             this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
+    }
+
+    @Override
+    protected void despawnEntity() {
+        super.despawnEntity();
     }
 }

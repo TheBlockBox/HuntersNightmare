@@ -1,6 +1,8 @@
 package theblockbox.huntersdream.entity;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -16,6 +18,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigateGround;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -80,6 +83,7 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
         this.untransformedEntityName = entityName;
         this.usesAlexSkin = this.rand.nextBoolean();
         this.setSize(0.6F, 1.85F);
+        this.enablePersistence();
         this.setExtraData(extraData);
         Validate.notNull(extraData, "Can't spawn werewolf with null extra data");
     }
@@ -277,6 +281,19 @@ public class EntityWerewolf extends EntityMob implements ITransformation, IEntit
             this.setUseAlexSkin(compound.getBoolean("useAlexSkin"));
         if (compound.hasKey("transformationData"))
             this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
+    }
+
+    @Override
+    public boolean getCanSpawnHere() {
+        if (super.getCanSpawnHere()) {
+            for (ClassInheritanceMultiMap<Entity> map : this.world.getChunk(this.getPosition()).getEntityLists()) {
+               if (Iterables.size(map.getByClass(this.getClass())) > 0) {
+                   return false;
+               }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

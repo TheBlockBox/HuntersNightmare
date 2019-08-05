@@ -43,6 +43,7 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
 
     public EntityHunter(World world) {
         super(world);
+        this.enablePersistence();
         if (this.rand.nextBoolean()) {
             this.usesMeleeWeapons = true;
             this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
