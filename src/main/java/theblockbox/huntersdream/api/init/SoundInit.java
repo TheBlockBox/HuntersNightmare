@@ -29,9 +29,9 @@ public class SoundInit {
         FLINTLOCK_FIRE = new SoundInit.SoundEventBase("gun.flintlock.fire");
         FLINTLOCK_RELOAD = new SoundInit.SoundEventBase("gun.flintlock.reload");
         REVOLVER_FIRE = new SoundInit.SoundEventBase("gun.revolver.fire");
-        RIFLE_FIRE = new SoundInit.SoundEventBase("gun.revolver.reload");
-        RIFLE_RELOAD = new SoundInit.SoundEventBase("gun.rifle.fire");
-        REVOLVER_RELOAD = new SoundInit.SoundEventBase("gun.rifle.reload");
+        REVOLVER_RELOAD = new SoundInit.SoundEventBase("gun.revolver.reload");
+        RIFLE_FIRE = new SoundInit.SoundEventBase("gun.rifle.fire");
+        RIFLE_RELOAD = new SoundInit.SoundEventBase("gun.rifle.reload");
         SHOTGUN_FIRE = new SoundInit.SoundEventBase("gun.shotgun.fire");
         SHOTGUN_RELOAD = new SoundInit.SoundEventBase("gun.shotgun.reload");
         BULLET_HIT = new SoundInit.SoundEventBase("gun.bullet_hit");
