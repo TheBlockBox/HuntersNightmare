@@ -1,5 +1,6 @@
 package theblockbox.huntersdream.items;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -7,12 +8,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
 import javax.annotation.Nullable;
@@ -25,6 +29,8 @@ public class ItemPercussionGun extends ItemGun {
     private final int maximumAmmunitionStorage;
     private final int ticksShotCooldown;
     private final float inaccuracy;
+    protected SoundEvent fireSound = SoundInit.REVOLVER_FIRE;
+    protected SoundEvent reloadSound = SoundInit.REVOLVER_RELOAD;
 
     public ItemPercussionGun(double damage, int durability, int ticksShotCooldown, Supplier<Item> defaultAmmunition,
                              int maximumAmmunitionStorage, float inaccuracy, IAmmunition.AmmunitionType... ammunitionTypes) {
@@ -134,6 +140,30 @@ public class ItemPercussionGun extends ItemGun {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onReloadCanceled(EntityLivingBase entity, ItemStack stack) {
+        if (entity.world.isRemote) {
+            Minecraft.getMinecraft().getSoundHandler().stop(this.reloadSound.getSoundName().toString(), SoundCategory.PLAYERS);
+        }
+    }
+
+    @Override
+    public void playShootSound(EntityLivingBase entity, ItemStack stack) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, this.fireSound, SoundCategory.PLAYERS,
+                2.0F, 1.0F);
+    }
+
+    @Override
+    public void playReloadSoundStart(EntityLivingBase entity, ItemStack stack) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, this.reloadSound, SoundCategory.PLAYERS,
+                2.0F, 1.0F);
+    }
+
+    @Override
+    public void playReloadSoundEnd(EntityLivingBase entity, ItemStack stack) {
+        // don't play any sound when reloading ends
     }
 
     @Override

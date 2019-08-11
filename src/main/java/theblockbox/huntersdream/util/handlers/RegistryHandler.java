@@ -64,6 +64,9 @@ public class RegistryHandler {
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         ItemInit.onItemRegister(event);
+        GameRegistry.addSmelting(BlockInit.SILVER_ORE, new ItemStack(ItemInit.SILVER_INGOT), 0.9F);
+        LootTableInit.register();
+        OreDictionaryInit.registerOres();
     }
 
     @SubscribeEvent
@@ -116,16 +119,13 @@ public class RegistryHandler {
         RegistryHandler.directory = event.getModConfigurationDirectory();
         MinecraftForge.TERRAIN_GEN_BUS.register(EventHandler.class);
         WerewolfTransformationOverlayInit.preInit();
-        PacketHandler.register();
-        GameRegistry.addSmelting(BlockInit.SILVER_ORE, new ItemStack(ItemInit.SILVER_INGOT), 0.9F);
-        LootTableInit.register();
-        StructureInit.register();
-        OreDictionaryInit.registerOres();
-        ParticleCommonInit.init();
     }
 
     public static void initCommon(FMLInitializationEvent event) {
         GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
+        PacketHandler.register();
+        StructureInit.register();
+        ParticleCommonInit.init();
         for (Biome biome : Biome.REGISTRY) {
             biome.addFlower(BlockInit.ACONITE_FLOWER.getDefaultState(), 1);
             biome.addFlower(BlockInit.MONKSHOOD_FLOWER.getDefaultState(), 1);

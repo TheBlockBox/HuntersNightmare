@@ -52,7 +52,9 @@ public interface IGun {
 
     /**
      * Returns the reticle as a 16x16 {@link TextureAtlasSprite} that should replace the vanilla crosshairs.
-     * If they shouldn't be replaced, null should be returned here.
+     * If they shouldn't be replaced, null should be returned here. You may also draw your own overlays or different
+     * reticle here, though then, an empty texture (like {@link theblockbox.huntersdream.util.handlers.TransformationClientEventHandler#transparent16x16Texture})
+     * should be returned so that the normal crosshairs won't show up.
      */
     @Nullable
     @SideOnly(Side.CLIENT)

@@ -14,6 +14,12 @@ public class SoundInit {
     public static final SoundEvent VAMPIRE_GULP;
     public static final SoundEvent FLINTLOCK_FIRE;
     public static final SoundEvent FLINTLOCK_RELOAD;
+    public static final SoundEvent REVOLVER_FIRE;
+    public static final SoundEvent REVOLVER_RELOAD;
+    public static final SoundEvent RIFLE_FIRE;
+    public static final SoundEvent RIFLE_RELOAD;
+    public static final SoundEvent SHOTGUN_FIRE;
+    public static final SoundEvent SHOTGUN_RELOAD;
     public static final SoundEvent BULLET_HIT;
 
     static {
@@ -22,6 +28,12 @@ public class SoundInit {
         VAMPIRE_GULP = new SoundInit.SoundEventBase("transformation.vampire.gulp");
         FLINTLOCK_FIRE = new SoundInit.SoundEventBase("gun.flintlock.fire");
         FLINTLOCK_RELOAD = new SoundInit.SoundEventBase("gun.flintlock.reload");
+        REVOLVER_FIRE = new SoundInit.SoundEventBase("gun.revolver.fire");
+        RIFLE_FIRE = new SoundInit.SoundEventBase("gun.revolver.reload");
+        RIFLE_RELOAD = new SoundInit.SoundEventBase("gun.rifle.fire");
+        REVOLVER_RELOAD = new SoundInit.SoundEventBase("gun.rifle.reload");
+        SHOTGUN_FIRE = new SoundInit.SoundEventBase("gun.shotgun.fire");
+        SHOTGUN_RELOAD = new SoundInit.SoundEventBase("gun.shotgun.reload");
         BULLET_HIT = new SoundInit.SoundEventBase("gun.bullet_hit");
     }
 

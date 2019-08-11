@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
+import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.entity.EntityBullet;
 
@@ -16,10 +17,12 @@ import java.util.function.Supplier;
 
 public class ItemShotgun extends ItemPercussionGun {
     @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite reticleShotgun = null;
+    public static TextureAtlasSprite reticleNormalShotgun = null;
 
     public ItemShotgun(double damage, int durability, int ticksShotCooldown, Supplier<Item> defaultAmmunition, int maximumAmmunitionStorage) {
         super(damage, durability, ticksShotCooldown, defaultAmmunition, maximumAmmunitionStorage, 1.5F, IAmmunition.AmmunitionType.SHOTGUN_SHELL);
+        this.fireSound = SoundInit.SHOTGUN_FIRE;
+        this.reloadSound = SoundInit.SHOTGUN_RELOAD;
     }
 
     @Override
@@ -42,6 +45,6 @@ public class ItemShotgun extends ItemPercussionGun {
     @SideOnly(Side.CLIENT)
     @Override
     public TextureAtlasSprite getReticle(EntityLivingBase entity, ItemStack stack) {
-        return ItemShotgun.reticleShotgun;
+        return this.isLoaded(stack) ? ItemShotgun.reticleNormalShotgun : ItemGun.reticleReload;
     }
 }

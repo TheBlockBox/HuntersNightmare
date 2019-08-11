@@ -48,6 +48,7 @@ import java.util.Map;
 public class TransformationClientEventHandler {
     public static final ResourceLocation BLOOD_BAR = GeneralHelper.newResLoc("textures/gui/blood_bar.png");
     public static final ResourceLocation WEREWOLF_HEALTH = GeneralHelper.newResLoc("textures/gui/werewolf_health.png");
+    public static TextureAtlasSprite transparent16x16Texture = null;
     private static final ResourceLocation WEREWOLF_HAND = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms.png");
     private static RenderLycanthropePlayer renderLycantrophePlayer = null;
     private static RenderPlayer renderPlayerHand = null;
@@ -139,14 +140,14 @@ public class TransformationClientEventHandler {
                 collection.forEach(overlay -> overlay.stitchTexture(map));
             }
         }
+        TransformationClientEventHandler.transparent16x16Texture = map.registerSprite(GeneralHelper.newResLoc("nothing"));
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
         ParticleClientInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
                 + ParticleCommonInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
         ItemGun.reticleNormal = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal"));
         ItemGun.reticleReload = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_reload"));
-        ItemShotgun.reticleShotgun = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_shotgun"));
-        ItemRifle.rifleScopeNormal = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope_normal"));
-        ItemRifle.rifleScopeTargetted = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope_targetted"));
+        ItemShotgun.reticleNormalShotgun = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal_shotgun"));
+        ItemRifle.rifleScope = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope"));
     }
 
     @SubscribeEvent
@@ -249,16 +250,14 @@ public class TransformationClientEventHandler {
             if (stack.getItem() instanceof IGun) {
                 TextureAtlasSprite reticle = ((IGun) stack.getItem()).getReticle(player, stack);
                 if (reticle != null) {
-                    int width = reticle.getIconWidth();
-                    int height = reticle.getIconHeight();
                     // cancel event
                     event.setCanceled(true);
                     // bind texture, enable alpha and blend and draw reticle
                     GlStateManager.enableAlpha();
                     GlStateManager.enableBlend();
                     mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    mc.ingameGUI.drawTexturedModalRect((event.getResolution().getScaledWidth() - width) / 2,
-                            (event.getResolution().getScaledHeight() - height) / 2, reticle, width, height);
+                    mc.ingameGUI.drawTexturedModalRect(event.getResolution().getScaledWidth() / 2 - 7,
+                            event.getResolution().getScaledHeight() / 2 - 7, reticle, 16, 16);
                     // return so that no two reticles will be drawn
                     return;
                 }

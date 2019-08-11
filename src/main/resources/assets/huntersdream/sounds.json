@@ -49,6 +49,66 @@
             }
         ]
     },
+    "gun.revolver.fire": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.revolver.fire",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/revolver/fire",
+                "stream": true
+            }
+        ]
+    },
+    "gun.revolver.reload": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.revolver.reload",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/revolver/reload",
+                "stream": true
+            }
+        ]
+    },
+    "gun.rifle.fire": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.rifle.fire",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/rifle/fire",
+                "stream": true
+            }
+        ]
+    },
+    "gun.rifle.reload": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.rifle.reload",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/rifle/reload",
+                "stream": true
+            }
+        ]
+    },
+    "gun.shotgun.fire": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.shotgun.fire",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/shotgun/fire",
+                "stream": true
+            }
+        ]
+    },
+    "gun.shotgun.reload": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.shotgun.reload",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/shotgun/reload",
+                "stream": true
+            }
+        ]
+    },
     "gun.bullet_hit": {
         "category": "gun",
         "subtitle": "huntersdream.gun.bullet_hit",

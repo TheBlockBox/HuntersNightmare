@@ -11,18 +11,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
+import theblockbox.huntersdream.util.handlers.TransformationClientEventHandler;
 
 import java.util.function.Supplier;
 
 public class ItemRifle extends ItemPercussionGun {
     @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite rifleScopeNormal = null;
-    @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite rifleScopeTargetted = null;
+    public static TextureAtlasSprite rifleScope = null;
 
     public ItemRifle(double damage, int durability, int ticksShotCooldown, Supplier<Item> defaultAmmunition, int maximumAmmunitionStorage) {
         super(damage, durability, ticksShotCooldown, defaultAmmunition, maximumAmmunitionStorage, 0.1F, IAmmunition.AmmunitionType.RIFLE_BULLET);
+        this.fireSound = SoundInit.RIFLE_FIRE;
+        this.reloadSound = SoundInit.RIFLE_RELOAD;
     }
 
     @SideOnly(Side.CLIENT)
@@ -32,7 +34,7 @@ public class ItemRifle extends ItemPercussionGun {
         if ((sprite != null) && this.isLoaded(stack)) {
             Minecraft mc = Minecraft.getMinecraft();
             // when no entity is targetted, use normal scope, otherwise the targetted one
-            TextureAtlasSprite scope = (mc.pointedEntity == null) ? ItemRifle.rifleScopeNormal : ItemRifle.rifleScopeTargetted;
+            TextureAtlasSprite scope = ItemRifle.rifleScope;
             ScaledResolution res = ((GuiIngameForge) mc.ingameGUI).getResolution();
             // draw rifle scope
             GlStateManager.enableAlpha();
@@ -45,6 +47,6 @@ public class ItemRifle extends ItemPercussionGun {
             mc.ingameGUI.drawTexturedModalRect(0, 0, scope, overlayWidth, overlayHeight);
             GlStateManager.popMatrix();
         }
-        return sprite;
+        return this.isLoaded(stack) ? TransformationClientEventHandler.transparent16x16Texture : sprite;
     }
 }
