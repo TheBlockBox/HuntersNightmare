@@ -4,12 +4,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.init.ItemInit;
+import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
 public class EntityBullet extends EntityArrow implements IAmmunition {
@@ -46,6 +49,14 @@ public class EntityBullet extends EntityArrow implements IAmmunition {
     @Override
     public IAmmunition.AmmunitionType[] getAmmunitionTypes() {
         return this.ammunition.getAmmunitionTypes();
+    }
+
+    @Override
+    public void playSound(SoundEvent soundIn, float volume, float pitch) {
+        if (soundIn == SoundEvents.ENTITY_ARROW_HIT) {
+            soundIn = SoundInit.BULLET_HIT;
+        }
+        super.playSound(soundIn, volume, pitch);
     }
 
     @Override

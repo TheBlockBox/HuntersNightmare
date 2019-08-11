@@ -22,8 +22,18 @@ item.huntersdream.silver_axe.name=Silver Axe
 item.huntersdream.flintlock_musket.name=Flintlock Musket
 item.huntersdream.flintlock_pistol.name=Flintlock Pistol
 item.huntersdream.flintlock_blunderbuss.name=Flintlock Blunderbuss
+item.huntersdream.revolver.name=Revolver
+item.huntersdream.hunting_rifle.name=Hunting Rifle
+item.huntersdream.pump_shotgun.name=Pump Shotgun
 item.huntersdream.musket_ball.name=Musket Ball
 item.huntersdream.silver_musket_ball.name=Silver Musket Ball
+item.huntersdream.revolver_bullet.name=Revolver Bullet
+item.huntersdream.silver_revolver_bullet.name=Silver Revolver Bullet
+item.huntersdream.rifle_bullet.name=Rifle Bullet
+item.huntersdream.silver_rifle_bullet.name=Silver Rifle Bullet
+item.huntersdream.shotgun_shell.name=Shotgun Shell
+item.huntersdream.silver_shotgun_shell.name=Silver Shotgun Shell
+
 
 # Other items
 item.huntersdream.silver_ingot.name=Silver Ingot
@@ -76,6 +86,7 @@ huntersdream.transformation.werewolf.howling=Howling werewolf
 huntersdream.transformation.vampire.gulp=Vampire drinking blood
 huntersdream.gun.flintlock.fire=Flintlock gun firing
 huntersdream.gun.flintlock.reload=Flintlock gun reloading
+huntersdream.gun.bullet_hit=Bullet hits
 
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools
@@ -194,3 +205,5 @@ item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transform
 item.huntersdream.lycanthropy_book.tooltip=Found in chests. When right clicked by a werewolf, opens the skill tab.
 item.huntersdream.gun.loaded.tooltip=Loaded
 item.huntersdream.gun.unloaded.tooltip=Unloaded
+item.huntersdream.gun.loaded_and_ammunition.tooltip=Loaded %s/%s
+item.huntersdream.gun.unloaded_and_ammunition.tooltip=Unloaded %s/%s

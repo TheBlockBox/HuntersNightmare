@@ -139,9 +139,7 @@ public class BoolArray implements Cloneable {
     }
 
     public void clear() {
-        for (int i = 0; i < this.backingLongs.length; i++) {
-            this.backingLongs[i] = 0L;
-        }
+        Arrays.fill(this.backingLongs, 0L);
     }
 
     @Override

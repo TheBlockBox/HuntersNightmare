@@ -48,5 +48,15 @@
                 "stream": true
             }
         ]
+    },
+    "gun.bullet_hit": {
+        "category": "gun",
+        "subtitle": "huntersdream.gun.bullet_hit",
+        "sounds": [
+            {
+                "name": "huntersdream:gun/bullet_hit",
+                "stream": true
+            }
+        ]
     }
 }

@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "SSS",
+        "SWS",
+        "IGI"
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        },
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotGold"
+        },
+        "G": {
+            "item": "minecraft:gunpowder"
+        },
+        "W": {
+            "item": "minecraft:wool",
+            "data": 14
+        }
+    },
+    "result": {
+        "item": "huntersdream:silver_shotgun_shell",
+        "count": 3
+    }
+}

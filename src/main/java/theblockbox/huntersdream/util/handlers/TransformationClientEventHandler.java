@@ -6,6 +6,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -32,6 +33,9 @@ import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
+import theblockbox.huntersdream.items.ItemGun;
+import theblockbox.huntersdream.items.ItemRifle;
+import theblockbox.huntersdream.items.ItemShotgun;
 import theblockbox.huntersdream.util.Reference;
 
 import java.util.Collection;
@@ -138,6 +142,11 @@ public class TransformationClientEventHandler {
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
         ParticleClientInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
                 + ParticleCommonInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
+        ItemGun.reticleNormal = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal"));
+        ItemGun.reticleReload = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_reload"));
+        ItemShotgun.reticleShotgun = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_shotgun"));
+        ItemRifle.rifleScopeNormal = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope_normal"));
+        ItemRifle.rifleScopeTargetted = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope_targetted"));
     }
 
     @SubscribeEvent
@@ -153,6 +162,8 @@ public class TransformationClientEventHandler {
                     && ((WerewolfHelper.getTransformationStage(player) >= 5) || WerewolfHelper.isTransformed(player))) {
                 mc.getTextureManager().bindTexture(TransformationClientEventHandler.WEREWOLF_HEALTH);
             }
+        } else if (type == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
+            TransformationClientEventHandler.onCrosshairsRendered(event, player, mc);
         }
     }
 
@@ -230,6 +241,28 @@ public class TransformationClientEventHandler {
 
             // post new post event so gui rendering from other mods doesn't get canceled
             MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(event, event.getType()));
+        }
+    }
+
+    public static void onCrosshairsRendered(RenderGameOverlayEvent.Pre event, EntityPlayerSP player, Minecraft mc) {
+        for (ItemStack stack : new ItemStack[]{player.getHeldItemMainhand(), player.getHeldItemOffhand()}) {
+            if (stack.getItem() instanceof IGun) {
+                TextureAtlasSprite reticle = ((IGun) stack.getItem()).getReticle(player, stack);
+                if (reticle != null) {
+                    int width = reticle.getIconWidth();
+                    int height = reticle.getIconHeight();
+                    // cancel event
+                    event.setCanceled(true);
+                    // bind texture, enable alpha and blend and draw reticle
+                    GlStateManager.enableAlpha();
+                    GlStateManager.enableBlend();
+                    mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                    mc.ingameGUI.drawTexturedModalRect((event.getResolution().getScaledWidth() - width) / 2,
+                            (event.getResolution().getScaledHeight() - height) / 2, reticle, width, height);
+                    // return so that no two reticles will be drawn
+                    return;
+                }
+            }
         }
     }
 

@@ -1,5 +1,8 @@
 package theblockbox.huntersdream.items;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -11,24 +14,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
-import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.entity.EntityBullet;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
 
 // TODO: Add damage tooltip
 public abstract class ItemGun extends ItemBow implements IGun {
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite reticleNormal = null;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite reticleReload = null;
     protected final double damage;
-    protected final int cooldown;
+    protected final int reloadCooldown;
 
-    public ItemGun(double damage, int ticksCooldown) {
+    public ItemGun(double damage, int ticksReloadCooldown) {
         this.damage = damage;
-        this.cooldown = ticksCooldown;
+        this.reloadCooldown = ticksReloadCooldown;
         this.addPropertyOverride(new ResourceLocation("is_loaded"), ((stack, worldIn, entityIn) ->
                 BooleanUtils.toInteger((entityIn != null) && this.isLoaded(stack))));
         this.setFull3D();
@@ -43,13 +53,16 @@ public abstract class ItemGun extends ItemBow implements IGun {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (this.isLoaded(stack)) {
-            // if the gun has already been loaded shoot the bullet
-            playerIn.setActiveHand(handIn);
-            GeneralHelper.getTagCompoundFromItemStack(stack).setLong("huntersdream:last_shot", worldIn.getTotalWorldTime());
-            this.shoot(playerIn, stack);
-            playerIn.resetActiveHand();
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-        } else if ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
+            // if the gun has already been loaded
+            if (this.canShoot(playerIn, stack)) {
+                // and it is allowed to fire, shoot the bullet
+                playerIn.setActiveHand(handIn);
+                GeneralHelper.getTagCompoundFromItemStack(stack).setLong("huntersdream:last_shot", worldIn.getTotalWorldTime());
+                this.shoot(playerIn, stack);
+                playerIn.resetActiveHand();
+                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            }
+        } else if ((this.reloadCooldown + this.getTimeLastShot(stack))
                 <= worldIn.getTotalWorldTime() && this.hasSufficientAmmunition(playerIn, stack)) {
             // set active hand to make #onUsingTick(ItemStack, EntityLivingBase, int) get called
             playerIn.setActiveHand(handIn);
@@ -57,10 +70,9 @@ public abstract class ItemGun extends ItemBow implements IGun {
             this.playReloadSoundStart(playerIn, stack);
             // don't play reequip animation
             return new ActionResult<>(EnumActionResult.PASS, stack);
-        } else {
-            // don't play reequip animation
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
         }
+        // don't play reequip animation
+        return new ActionResult<>(EnumActionResult.FAIL, stack);
     }
 
     @Override
@@ -70,7 +82,7 @@ public abstract class ItemGun extends ItemBow implements IGun {
             // if the gun has been used for long enough, play a sound to indicate that the gun is ready to reload/that it'll
             // reload when stopped being used
             if (!this.isLoaded(stack) && this.hasSufficientAmmunition(player, stack) && this.hasJustBeenReloaded(player, stack, count)
-                    && ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
+                    && ((this.reloadCooldown + this.getTimeLastShot(stack))
                     <= entity.world.getTotalWorldTime())) {
                 this.playReloadSoundEnd(entity, stack);
             }
@@ -83,7 +95,7 @@ public abstract class ItemGun extends ItemBow implements IGun {
             EntityPlayer player = (EntityPlayer) entity;
             if (!this.isLoaded(stack)) {
                 if (this.canReload(player, stack, timeLeft) && this.hasSufficientAmmunition(player, stack)
-                        && ((this.cooldown + GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot"))
+                        && ((this.reloadCooldown + this.getTimeLastShot(stack))
                         <= worldIn.getTotalWorldTime())) {
                     // if the gun isn't loaded but has enough ammo, reload it
                     this.reload(player, stack);
@@ -104,7 +116,7 @@ public abstract class ItemGun extends ItemBow implements IGun {
         World world = entity.world;
         Item ammunition = Item.getByNameOrId(GeneralHelper.getTagCompoundFromItemStack(stack).getString("huntersdream:ammunition"));
         if ((ammunition == Items.AIR) || (ammunition == null)) {
-            ammunition = ItemInit.MUSKET_BALL;
+            ammunition = this.getDefaultAmmunition();
         }
         EntityBullet bullet = new EntityBullet(world, entity, ammunition, this.damage);
         bullet.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F,
@@ -119,18 +131,35 @@ public abstract class ItemGun extends ItemBow implements IGun {
     }
 
     @Override
-    public Item setAmmunition(ItemStack stack, Item ammunition) {
+    public Item setAmmunition(ItemStack stack, ItemStack ammunition, boolean infiniteAmmunition) {
+        Item ammunitionItem = ammunition.getItem();
         Item actualAmmunition = this.getDefaultAmmunition();
-        if (ammunition instanceof IAmmunition) {
-            for (IAmmunition.AmmunitionType ammunitionType : ((IAmmunition) ammunition).getAmmunitionTypes()) {
+        if (ammunitionItem instanceof IAmmunition) {
+            for (IAmmunition.AmmunitionType ammunitionType : ((IAmmunition) ammunitionItem).getAmmunitionTypes()) {
                 if (ArrayUtils.contains(this.getAllowedAmmunitionTypes(), ammunitionType)) {
-                    actualAmmunition = ammunition;
+                    actualAmmunition = ammunitionItem;
                     break;
                 }
             }
         }
         GeneralHelper.getTagCompoundFromItemStack(stack).setString("huntersdream:ammunition", Objects.toString(actualAmmunition.getRegistryName()));
         return actualAmmunition;
+    }
+
+    @Override
+    public boolean isLoaded(ItemStack stack) {
+        return GeneralHelper.getTagCompoundFromItemStack(stack).getBoolean("huntersdream:loaded");
+    }
+
+    @Override
+    public TextureAtlasSprite getReticle(EntityLivingBase entity, ItemStack stack) {
+        return this.isLoaded(stack) ? ItemGun.reticleNormal : ItemGun.reticleReload;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(I18n.format("item.huntersdream.gun." + (this.isLoaded(stack) ? "loaded" : "unloaded") + ".tooltip"));
     }
 
     /**
@@ -164,12 +193,35 @@ public abstract class ItemGun extends ItemBow implements IGun {
                 SoundCategory.PLAYERS, 3.0F, 0.6F);
     }
 
-    public boolean isLoaded(ItemStack stack) {
-        return GeneralHelper.getTagCompoundFromItemStack(stack).getBoolean("huntersdream:loaded");
+    /**
+     * Returns true if the entity is allowed to shoot the next bullet and gets called to decide whether to shoot the
+     * bullet when the gun is loaded. Therefore, the returned boolean does not depend on whether the gun is loaded or not.<br>
+     * The standard implementation always returns true and should be overridden for e.g. adding a cooldown between multiple
+     * shots.
+     */
+    public boolean canShoot(EntityLivingBase entity, ItemStack stack) {
+        return true;
     }
 
+    /**
+     * Sets the given gun to either loaded or unloaded, depending on the boolean.
+     */
+    public void setLoaded(ItemStack stack, boolean loaded) {
+        GeneralHelper.getTagCompoundFromItemStack(stack).setBoolean("huntersdream:loaded", loaded);
+    }
+
+    /**
+     * Returns the long that was retrieved from {@link World#getTotalWorldTime()} when the last shot was fired.
+     */
+    public long getTimeLastShot(ItemStack stack) {
+        return GeneralHelper.getTagCompoundFromItemStack(stack).getLong("huntersdream:last_shot");
+    }
+
+    /**
+     * Unloads and damages the weapon, shoots a bullet and plays the shoot sound.
+     */
     public void shoot(EntityPlayer player, ItemStack stack) {
-        GeneralHelper.getTagCompoundFromItemStack(stack).setBoolean("huntersdream:loaded", false);
+        this.setLoaded(stack, false);
         stack.damageItem(1, player);
         World world = player.world;
         if (!world.isRemote) {
@@ -191,6 +243,10 @@ public abstract class ItemGun extends ItemBow implements IGun {
         return 20.0F;
     }
 
+    /**
+     * Returns true if the player has successfully reloaded, meaning that the time they've been reloading was either
+     * the same or higher than the cooldown of their weapon.
+     */
     public boolean canReload(EntityPlayer player, ItemStack stack, int timeLeft) {
         return (this.getMaxItemUseDuration(stack) - timeLeft) >= this.getTimeForReload(player, stack);
     }
@@ -203,20 +259,32 @@ public abstract class ItemGun extends ItemBow implements IGun {
         return (this.getMaxItemUseDuration(stack) - timeLeft) == this.getTimeForReload(player, stack);
     }
 
+    /**
+     * Reloads the gun by removing ammunition and, if the former succeeded, setting "loaded" to true.
+     */
     public void reload(EntityPlayer player, ItemStack stack) {
-        this.removeAmmunition(player, stack);
-        GeneralHelper.getTagCompoundFromItemStack(stack).setBoolean("huntersdream:loaded", true);
+        if (this.removeAmmunition(player, stack)) {
+            this.setLoaded(stack, true);
+        }
     }
 
+    /**
+     * Returns true if the player either is in creative mode or has fitting ammunition in their inventory.
+     * This is used to determine whether a player has sufficient ammunition to reload or not.
+     */
     public boolean hasSufficientAmmunition(EntityPlayer player, ItemStack stack) {
-        return player.capabilities.isCreativeMode || !GeneralHelper.getAmmunitionStackForWeapon(player, stack, false).isEmpty();
+        return player.capabilities.isCreativeMode || !GeneralHelper.getAmmunitionStackForWeapon(player, stack, false, null).isEmpty();
     }
 
+    /**
+     * Tries to remove ammunition from the given player holding the given gun item stack.
+     * If this succeeds, true will be returned, otherwise, if nothing happened, false will be returned.
+     */
     public boolean removeAmmunition(EntityPlayer player, ItemStack stack) {
         if (this.hasSufficientAmmunition(player, stack)) {
-            ItemStack ammunition = GeneralHelper.getAmmunitionStackForWeapon(player, stack, false);
+            ItemStack ammunition = GeneralHelper.getAmmunitionStackForWeapon(player, stack, false, null);
             if (ammunition.getItem().getRegistryName() != null) {
-                this.setAmmunition(stack, ammunition.getItem());
+                this.setAmmunition(stack, ammunition, player.capabilities.isCreativeMode);
             }
             if (!player.capabilities.isCreativeMode) {
                 ammunition.shrink(1);

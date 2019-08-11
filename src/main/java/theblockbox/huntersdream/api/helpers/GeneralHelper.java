@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.api.helpers;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Predicates;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.FontRenderer;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.init.StructureInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
@@ -44,6 +46,7 @@ import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -362,9 +365,7 @@ public class GeneralHelper {
 
     public static ItemStack[] newEmptyItemStackArray(int length) {
         ItemStack[] stacks = new ItemStack[length];
-        for (int i = 0; i < stacks.length; i++) {
-            stacks[i] = ItemStack.EMPTY;
-        }
+        Arrays.fill(stacks, ItemStack.EMPTY);
         return stacks;
     }
 
@@ -562,11 +563,12 @@ public class GeneralHelper {
      * right, the first inventory row, the second one, the third one and finally the armor slots until any working
      * ammunition is found. If so, the (uncopied) stack is returned, otherwise, {@link ItemStack#EMPTY} will be returned.
      */
-    public static ItemStack getAmmunitionStackForWeapon(EntityPlayer player, ItemStack gun, boolean allowsArrows) {
+    public static ItemStack getAmmunitionStackForWeapon(EntityPlayer player, ItemStack gun, boolean allowsArrows, @Nullable Predicate<ItemStack> isAllowedAmmunition) {
         if (gun.getItem() instanceof IGun) {
+            isAllowedAmmunition = ObjectUtils.defaultIfNull(isAllowedAmmunition, Predicates.alwaysTrue());
             IAmmunition.AmmunitionType[] ammunitionTypes = ((IGun) gun.getItem()).getAllowedAmmunitionTypes();
             return Stream.of(player.inventory.offHandInventory, player.inventory.mainInventory, player.inventory.armorInventory)
-                    .flatMap(Collection::stream).filter(stack -> {
+                    .flatMap(Collection::stream).filter(isAllowedAmmunition).filter(stack -> {
                         if (allowsArrows && (GeneralHelper.equalsAny(stack.getItem(), Items.ARROW, Items.TIPPED_ARROW, Items.SPECTRAL_ARROW)))
                             return true;
                         if (stack.getItem() instanceof IAmmunition)

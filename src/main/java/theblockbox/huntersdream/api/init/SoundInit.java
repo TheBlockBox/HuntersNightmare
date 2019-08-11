@@ -14,6 +14,7 @@ public class SoundInit {
     public static final SoundEvent VAMPIRE_GULP;
     public static final SoundEvent FLINTLOCK_FIRE;
     public static final SoundEvent FLINTLOCK_RELOAD;
+    public static final SoundEvent BULLET_HIT;
 
     static {
         HEART_BEAT = new SoundInit.SoundEventBase("transformation.heartbeat");
@@ -21,6 +22,7 @@ public class SoundInit {
         VAMPIRE_GULP = new SoundInit.SoundEventBase("transformation.vampire.gulp");
         FLINTLOCK_FIRE = new SoundInit.SoundEventBase("gun.flintlock.fire");
         FLINTLOCK_RELOAD = new SoundInit.SoundEventBase("gun.flintlock.reload");
+        BULLET_HIT = new SoundInit.SoundEventBase("gun.bullet_hit");
     }
 
     public static class SoundEventBase extends SoundEvent {

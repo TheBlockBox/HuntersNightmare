@@ -10,8 +10,10 @@ import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketParticles;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +40,7 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.init.OreDictionaryInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.api.interfaces.IInfectInTicks;
@@ -77,6 +80,10 @@ public class TransformationEventHandler {
 
                 if (player.ticksExisted % 20 == 0) {
                     EntityPlayerMP playerMP = (EntityPlayerMP) player;
+
+                    if ((player.getHeldItemMainhand().getItem() == ItemInit.HUNTING_RIFLE) || (player.getHeldItemOffhand().getItem() == ItemInit.HUNTING_RIFLE)) {
+                        player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 22, 1, false, false));
+                    }
 
                     if (isWerewolf) {
                         for (ItemStack stack : player.getEquipmentAndArmor()) {

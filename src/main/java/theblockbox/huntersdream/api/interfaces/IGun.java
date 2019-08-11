@@ -1,8 +1,13 @@
 package theblockbox.huntersdream.api.interfaces;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public interface IGun {
     /**
@@ -35,6 +40,21 @@ public interface IGun {
      * shoots a bullet with that ammunition. If this succeedes, the passed ammunition will be returned. If the given
      * ammunition isn't allowed, the method will revert to the default ammunition gotten from {@link #getDefaultAmmunition()}
      * which will then be set and returned. The given ammunition should always be an instance of {@link IAmmunition}.
+     * If infiniteAmmunition is set to true, more ammunition may be added that the player actually has. (Like bows not
+     * consuming arrows when used in creative.) This method does NOT decrease the stack size of the given ammunition.
      */
-    public Item setAmmunition(ItemStack stack, Item ammunition);
+    public Item setAmmunition(ItemStack stack, ItemStack ammunition, boolean infiniteAmmunition);
+
+    /**
+     * Returns true if the given gun is loaded by checking the item stack nbt.
+     */
+    public boolean isLoaded(ItemStack stack);
+
+    /**
+     * Returns the reticle as a 16x16 {@link TextureAtlasSprite} that should replace the vanilla crosshairs.
+     * If they shouldn't be replaced, null should be returned here.
+     */
+    @Nullable
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getReticle(EntityLivingBase entity, ItemStack stack);
 }

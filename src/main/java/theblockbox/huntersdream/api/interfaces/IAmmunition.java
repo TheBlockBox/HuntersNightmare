@@ -15,9 +15,21 @@ public interface IAmmunition {
      */
     public enum AmmunitionType {
         /**
-         * For flintlock weapons.
+         * For flintlock guns.
          */
         MUSKET_BALL,
+        /**
+         * For revolvers.
+         */
+        REVOLVER_BULLET,
+        /**
+         * For rifles.
+         */
+        RIFLE_BULLET,
+        /**
+         * For shotguns.
+         */
+        SHOTGUN_SHELL,
         /**
          * Does twice as much damage to transformed werewolves and undead. (Goes through the natural armor of the former.)
          */

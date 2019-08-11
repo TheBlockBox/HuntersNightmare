@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "NNN",
+        "NWN",
+        "IGI"
+    ],
+    "key": {
+        "N": {
+            "type": "forge:ore_dict",
+            "ore": "nuggetIron"
+        },
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotGold"
+        },
+        "G": {
+            "item": "minecraft:gunpowder"
+        },
+        "W": {
+            "item": "minecraft:wool",
+            "data": 14
+        }
+    },
+    "result": {
+        "item": "huntersdream:shotgun_shell",
+        "count": 3
+    }
+}

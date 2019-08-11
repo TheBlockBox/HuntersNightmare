@@ -8,7 +8,6 @@ import net.minecraft.item.*;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.apache.commons.lang3.ArrayUtils;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.items.*;
@@ -45,8 +44,21 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:flintlock_pistol")
     public static final Item FLINTLOCK_PISTOL = ItemInit.NULL_ITEM;
 
+    @GameRegistry.ObjectHolder("huntersdream:hunting_rifle")
+    public static final Item HUNTING_RIFLE = ItemInit.NULL_ITEM;
+
+
     @GameRegistry.ObjectHolder("huntersdream:musket_ball")
     public static final Item MUSKET_BALL = ItemInit.NULL_ITEM;
+
+    @GameRegistry.ObjectHolder("huntersdream:revolver_bullet")
+    public static final Item REVOLVER_BULLET = ItemInit.NULL_ITEM;
+
+    @GameRegistry.ObjectHolder("huntersdream:rifle_bullet")
+    public static final Item RIFLE_BULLET = ItemInit.NULL_ITEM;
+
+    @GameRegistry.ObjectHolder("huntersdream:shotgun_shell")
+    public static final Item SHOTGUN_SHELL = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_hat")
     public static final Item HUNTER_HAT = ItemInit.NULL_ITEM;
@@ -95,9 +107,29 @@ public class ItemInit {
                 "flintlock_pistol", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemFlintlockGunBlunderBuss(6, 3465, 5, 6),
                 "flintlock_blunderbuss", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemMusketBall(), "musket_ball", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemMusketBall(ArrayUtils.add(ItemMusketBall.AMMUNITION_TYPES,
-                IAmmunition.AmmunitionType.SILVER)), "silver_musket_ball", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemPercussionGun(8, 4781, 10,
+                        () -> ItemInit.REVOLVER_BULLET, 6, 1.0F, IAmmunition.AmmunitionType.REVOLVER_BULLET),
+                "revolver", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemRifle(20, 5721, 40, () -> ItemInit.RIFLE_BULLET, 5),
+                "hunting_rifle", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemShotgun(8, 5751, 20, () -> ItemInit.SHOTGUN_SHELL, 5),
+                "pump_shotgun", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.MUSKET_BALL), "musket_ball",
+                CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.MUSKET_BALL, IAmmunition.AmmunitionType.SILVER),
+                "silver_musket_ball", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.REVOLVER_BULLET), "revolver_bullet",
+                CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.REVOLVER_BULLET, IAmmunition.AmmunitionType.SILVER),
+                "silver_revolver_bullet", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.RIFLE_BULLET), "rifle_bullet",
+                CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.RIFLE_BULLET, IAmmunition.AmmunitionType.SILVER),
+                "silver_rifle_bullet", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.SHOTGUN_SHELL), "shotgun_shell",
+                CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.SHOTGUN_SHELL, IAmmunition.AmmunitionType.SILVER),
+                "silver_shotgun_shell", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
     }
 
     private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {

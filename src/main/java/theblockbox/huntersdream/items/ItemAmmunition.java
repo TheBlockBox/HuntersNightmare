@@ -3,15 +3,14 @@ package theblockbox.huntersdream.items;
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
-public class ItemMusketBall extends Item implements IAmmunition {
-    public static final IAmmunition.AmmunitionType[] AMMUNITION_TYPES = {IAmmunition.AmmunitionType.MUSKET_BALL};
+public class ItemAmmunition extends Item implements IAmmunition {
     private final IAmmunition.AmmunitionType[] ammunitionTypes;
 
-    public ItemMusketBall() {
-        this(ItemMusketBall.AMMUNITION_TYPES);
+    public ItemAmmunition() {
+        this(IAmmunition.AmmunitionType.MUSKET_BALL);
     }
 
-    public ItemMusketBall(IAmmunition.AmmunitionType[] ammunitionTypes) {
+    public ItemAmmunition(IAmmunition.AmmunitionType... ammunitionTypes) {
         this.ammunitionTypes = ammunitionTypes;
     }
 
