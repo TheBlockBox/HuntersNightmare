@@ -74,6 +74,12 @@ public class WerewolfTransformingEvent extends LivingEvent {
          */
         public static final WerewolfTransformingEvent.WerewolfTransformingReason FULL_MOON_END = new WerewolfTransformingEvent.WerewolfTransformingReason();
 
+        /**
+         * Caused by the wolfsbane effect ending. If canceled, prevents the werewolf from being turned back and cured.
+         * Works only for transformed werewolf mobs.
+         */
+        public static final WerewolfTransformingEvent.WerewolfTransformingReason WOLFSBANE = new WerewolfTransformingEvent.WerewolfTransformingReason();
+
         private final WerewolfTransformingEvent.WerewolfTransformingReason actualTransformingReason;
 
         public WerewolfTransformingReason() {
