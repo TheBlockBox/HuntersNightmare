@@ -9,16 +9,6 @@
             }
         ]
     },
-    "transformation.werewolf.howling": {
-        "category": "transformation",
-        "subtitle": "huntersdream.transformation.werewolf.howling",
-        "sounds": [
-            {
-                "name": "huntersdream:transformation/werewolf/howl",
-                "stream": true
-            }
-        ]
-    },
     "transformation.vampire.gulp": {
         "category": "transformation",
         "subtitle": "huntersdream.transformation.vampire.gulp",

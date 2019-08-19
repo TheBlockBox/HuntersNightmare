@@ -82,11 +82,16 @@ huntersdream\:ghost=Ghost
 
 # Sounds (Subtitles)
 huntersdream.transformation.heartbeat=Heartbeat of a werewolf
-huntersdream.transformation.werewolf.howling=Howling werewolf
 huntersdream.transformation.vampire.gulp=Vampire drinking blood
 huntersdream.gun.flintlock.fire=Flintlock gun firing
 huntersdream.gun.flintlock.reload=Flintlock gun reloading
 huntersdream.gun.bullet_hit=Bullet hits
+huntersdream.gun.revolver.fire=Revolver firing
+huntersdream.gun.revolver.reload=Revolver reloading
+huntersdream.gun.rifle.fire=Rifle firing
+huntersdream.gun.rifle.reload=Rifle reloading
+huntersdream.gun.shotgun.fire=Shotgun firing
+huntersdream.gun.shotgun.reload=Shotgun reloading
 
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Combat and Tools

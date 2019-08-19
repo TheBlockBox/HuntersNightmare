@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.potion.PotionEffect;
@@ -395,8 +396,7 @@ public class WerewolfHelper {
     public static boolean applyWolfsbaneEffects(EntityLivingBase entity, boolean playSound) {
         if (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF) {
             if (playSound) {
-                entity.world.playSound(null, entity.posX, entity.posY, entity.posZ,
-                        SoundInit.WEREWOLF_HOWLING, entity.getSoundCategory(), 100, 1);
+                WerewolfHelper.playHowlSound(entity);
             }
             entity.addPotionEffect(new PotionEffect(WerewolfHelper.isTransformed(entity) ? MobEffects.WITHER : MobEffects.POISON, 200));
             return true;
@@ -413,6 +413,12 @@ public class WerewolfHelper {
             ionm.setInfectionTransformation(Transformation.HUMAN);
             return true;
         } else if (alsoCureAlreadyTransformed && (TransformationHelper.getTransformation(toCure) == Transformation.WEREWOLF)) {
+            if(toCure instanceof EntityWerewolf) {
+                toCure = ((EntityWerewolf) toCure).forceTransformBack(WerewolfTransformingEvent.WerewolfTransformingReason.WOLFSBANE);
+                if (toCure == null) {
+                    return false;
+                }
+            }
             TransformationHelper.changeTransformation(toCure, Transformation.HUMAN, TransformationEvent.TransformationEventReason.WOLFSBANE);
             return true;
         } else {
@@ -524,8 +530,7 @@ public class WerewolfHelper {
                 player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0));
                 break;
             case 6:
-                player.world.playSound(null, player.getPosition(), SoundInit.WEREWOLF_HOWLING, SoundCategory.PLAYERS, 100,
-                        1);
+                WerewolfHelper.playHowlSound(player);
                 WerewolfHelper.setTimeSinceTransformation(player, -1);
                 WerewolfHelper.setTransformationStage(player, 0);
                 WerewolfHelper.transformPlayer(player, true, reasonForEvent);
@@ -597,5 +602,10 @@ public class WerewolfHelper {
      */
     public static boolean canPlayerBiteAgain(EntityPlayer player) {
         return WerewolfHelper.hasBiteCooldownEnded(player) && WerewolfHelper.isTransformed(player);
+    }
+
+    public static void playHowlSound(EntityLivingBase entity) {
+        entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_WOLF_HOWL,
+                entity.getSoundCategory(), 100.0F, (entity.getRNG().nextFloat() - entity.getRNG().nextFloat()) * 0.2F);
     }
 }
