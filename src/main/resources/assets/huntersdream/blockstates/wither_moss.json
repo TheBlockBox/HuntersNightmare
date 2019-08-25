@@ -3,14 +3,20 @@
     "defaults": {
         "model": "huntersdream:garland",
         "textures": {
-            "particle": "huntersdream:blocks/wolfsbane_garland"
+            "particle": "huntersdream:blocks/wither_moss"
         }
     },
     "variants": {
+        "up": {
+            "true": {
+                "up": "huntersdream:blocks/wither_moss"
+            },
+            "false": {}
+        },
         "north": {
             "true": {
                 "textures": {
-                    "north": "huntersdream:blocks/wolfsbane_garland"
+                    "north": "huntersdream:blocks/wither_moss"
                 }
             },
             "false": {}
@@ -18,7 +24,7 @@
         "south": {
             "true": {
                 "textures": {
-                    "south": "huntersdream:blocks/wolfsbane_garland"
+                    "south": "huntersdream:blocks/wither_moss"
                 }
             },
             "false": {}
@@ -26,7 +32,7 @@
         "west": {
             "true": {
                 "textures": {
-                    "west": "huntersdream:blocks/wolfsbane_garland"
+                    "west": "huntersdream:blocks/wither_moss"
                 }
             },
             "false": {}
@@ -34,7 +40,7 @@
         "east": {
             "true": {
                 "textures": {
-                    "east": "huntersdream:blocks/wolfsbane_garland"
+                    "east": "huntersdream:blocks/wither_moss"
                 }
             },
             "false": {}

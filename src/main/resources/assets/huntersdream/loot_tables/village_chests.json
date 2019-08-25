@@ -14,6 +14,17 @@
                             "chance": 0.25
                         }
                     ]
+                },
+                {
+                    "name": "huntersdream:healing_herb",
+                    "type": "item",
+                    "weight": 12,
+                    "conditions": [
+                        {
+                            "condition": "random_chance",
+                            "chance": 0.25
+                        }
+                    ]
                 }
             ]
         }

@@ -44,6 +44,11 @@ public class OreDictionaryInit {
         OreDictionary.registerOre("cropCotton", Item.getByNameOrId(Reference.MODID + ":cotton"));
         OreDictionary.registerOre("seedCotton", Item.getByNameOrId(Reference.MODID + ":cotton"));
         OreDictionary.registerOre("fabric", Item.getByNameOrId(Reference.MODID + ":fabric"));
+        OreDictionary.registerOre("herbHealing", Item.getByNameOrId(Reference.MODID + ":healing_herb"));
+        OreDictionary.registerOre("glowfern", Item.getByNameOrId(Reference.MODID + ":glow_fern"));
+        OreDictionary.registerOre("flowerMagma", Item.getByNameOrId(Reference.MODID + ":magma_flower"));
+        OreDictionary.registerOre("ivyPoison", Item.getByNameOrId(Reference.MODID + ":poison_ivy"));
+        OreDictionary.registerOre("mossWither", Item.getByNameOrId(Reference.MODID + ":wither_moss"));
     }
 
     private static void registerOreWithoutDamage(String name, String item) {

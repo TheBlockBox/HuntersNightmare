@@ -30,6 +30,7 @@ import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.util.ExecutionPath;
 
+// TODO: Make goblins not extend villagers
 public class EntityGoblinTD extends EntityVillager implements ITransformationCreature, IMob {
     /**
      * The amount of textures available for the goblins
@@ -43,7 +44,7 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
             .createKey(EntityGoblinTD.class, DataSerializers.BYTE);
     private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
             .createKey(EntityGoblinTD.class, DataSerializers.COMPOUND_TAG);
-    private static final Transformation[] TRANSFORMATIONS_NOT_IMMUNE_TO = {Transformation.WEREWOLF, Transformation.VAMPIRE};
+    private static final Transformation[] TRANSFORMATIONS_NOT_IMMUNE_TO = {};
 
     public EntityGoblinTD(World worldIn, int textureIndex, Transformation transformation) {
         super(worldIn);
@@ -289,10 +290,5 @@ public class EntityGoblinTD extends EntityVillager implements ITransformationCre
             this.dataManager.set(EntityGoblinTD.TRANSFORMATION_NAME, compound.getString("transformationName"));
         if (compound.hasKey("transformationData"))
             this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
-    }
-
-    @Override
-    protected void despawnEntity() {
-        super.despawnEntity();
     }
 }

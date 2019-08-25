@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.items;
+package theblockbox.huntersdream.items.gun;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: Add damage tooltip
 public abstract class ItemGun extends ItemBow implements IGun {
     @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite reticleNormal = null;

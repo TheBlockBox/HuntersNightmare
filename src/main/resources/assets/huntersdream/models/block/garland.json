@@ -6,8 +6,7 @@
         "north": "huntersdream:nothing",
         "south": "huntersdream:nothing",
         "west": "huntersdream:nothing",
-        "east": "huntersdream:nothing",
-        "particle": "huntersdream:blocks/wolfsbane_garland"
+        "east": "huntersdream:nothing"
     },
     "elements": [
         {

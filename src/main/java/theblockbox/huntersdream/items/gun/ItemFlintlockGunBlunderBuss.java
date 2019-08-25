@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.items;
+package theblockbox.huntersdream.items.gun;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;

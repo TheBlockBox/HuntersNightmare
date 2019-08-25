@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityGolem;
+import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,10 +15,12 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
+import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.HunterArmorEffect;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.event.CanLivingBeInfectedEvent;
@@ -40,7 +44,6 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
-import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.init.OreDictionaryInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.api.interfaces.IInfectInTicks;
@@ -48,12 +51,13 @@ import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
-import theblockbox.huntersdream.entity.EntityGoblinTD;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.items.ItemHunterArmor;
+import theblockbox.huntersdream.items.gun.ItemRifle;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.exceptions.UnexpectedBehaviorException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = Reference.MODID)
@@ -81,8 +85,12 @@ public class TransformationEventHandler {
                 if (player.ticksExisted % 20 == 0) {
                     EntityPlayerMP playerMP = (EntityPlayerMP) player;
 
-                    if ((player.getHeldItemMainhand().getItem() == ItemInit.HUNTING_RIFLE) || (player.getHeldItemOffhand().getItem() == ItemInit.HUNTING_RIFLE)) {
-                        player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 22, 1, false, false));
+                    for (EnumHand hand : GeneralHelper.HANDS) {
+                        ItemStack stack = player.getHeldItem(hand);
+                        if ((stack.getItem() instanceof ItemRifle) && ((ItemRifle) stack.getItem()).isAiming(player, stack)) {
+                            player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 22, 1, false, false));
+                            break;
+                        }
                     }
 
                     if (isWerewolf) {
@@ -269,13 +277,12 @@ public class TransformationEventHandler {
                             new EntityAINearestAttackableTarget<>(entity, EntityWerewolf.class, true));
                     entity.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(entity, EntityPlayer.class, 10,
                             true, false, WerewolfHelper::isTransformed));
-                } else if (creature instanceof EntityGoblinTD) {
-                    if (ChanceHelper.chanceOf(creature, 1.5F)
-                            && (tc.get().getTransformation() == Transformation.HUMAN)) {
+                } else if (creature instanceof EntityVillager) {
+                    if (ChanceHelper.chanceOf(creature, 5) && (tc.get().getTransformation() == Transformation.HUMAN)) {
                         TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
                                 TransformationEvent.TransformationEventReason.SPAWN);
                     }
-                } else if (creature instanceof EntityVillager) {
+                } else if (creature instanceof EntityWitch) {
                     if (ChanceHelper.chanceOf(creature, 5) && (tc.get().getTransformation() == Transformation.HUMAN)) {
                         TransformationHelper.changeTransformationWhenPossible(creature, Transformation.WEREWOLF,
                                 TransformationEvent.TransformationEventReason.SPAWN);
@@ -342,6 +349,32 @@ public class TransformationEventHandler {
                     }
                 }
                 WerewolfEventHandler.handleWerewolfInfection(entity);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityStruckByLightning(EntityStruckByLightningEvent event) {
+        if (event.getEntity() instanceof EntityVillager) {
+            EntityVillager villager = (EntityVillager) event.getEntity();
+            Transformation transformation = TransformationHelper.getTransformation(villager);
+            if (transformation.isTransformation()) {
+                event.setCanceled(true);
+                List<Entity> entities = villager.world.loadedEntityList;
+                int entityAmount = entities.size();
+                villager.onStruckByLightning(event.getLightning());
+                if (entities.size() == (entityAmount + 1)) {
+                    Entity witch = entities.get(entityAmount);
+                    if (witch instanceof EntityWitch) {
+                        TransformationHelper.changeTransformation((EntityWitch) witch, transformation,
+                                TransformationEvent.TransformationEventReason.ENTITY_CHANGE);
+                    } else {
+                        Main.getLogger().warn("Villager " + villager + " was hit by lightning but became " + witch
+                                + " instead of a normal witch");
+                    }
+                } else {
+                    Main.getLogger().warn("Villager " + villager + " was hit by lightning but didn't become a witch");
+                }
             }
         }
     }

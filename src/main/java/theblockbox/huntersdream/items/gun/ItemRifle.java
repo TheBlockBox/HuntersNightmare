@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.items;
+package theblockbox.huntersdream.items.gun;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -31,9 +31,9 @@ public class ItemRifle extends ItemPercussionGun {
     @Override
     public TextureAtlasSprite getReticle(EntityLivingBase entity, ItemStack stack) {
         TextureAtlasSprite sprite = super.getReticle(entity, stack);
-        if ((sprite != null) && this.isLoaded(stack)) {
+        boolean showScope = this.isAiming(entity, stack);
+        if ((sprite != null) && showScope) {
             Minecraft mc = Minecraft.getMinecraft();
-            // when no entity is targetted, use normal scope, otherwise the targetted one
             TextureAtlasSprite scope = ItemRifle.rifleScope;
             ScaledResolution res = ((GuiIngameForge) mc.ingameGUI).getResolution();
             // draw rifle scope
@@ -48,5 +48,9 @@ public class ItemRifle extends ItemPercussionGun {
             GlStateManager.popMatrix();
         }
         return this.isLoaded(stack) ? TransformationClientEventHandler.transparent16x16Texture : sprite;
+    }
+
+    public boolean isAiming(EntityLivingBase entity, ItemStack stack) {
+        return this.isLoaded(stack) && entity.isSneaking();
     }
 }

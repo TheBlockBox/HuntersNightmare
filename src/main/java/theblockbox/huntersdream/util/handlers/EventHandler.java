@@ -20,17 +20,15 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import theblockbox.huntersdream.Main;
 import theblockbox.huntersdream.api.helpers.ChanceHelper;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
-import theblockbox.huntersdream.api.init.BlockInit;
 import theblockbox.huntersdream.api.init.LootTableInit;
-import theblockbox.huntersdream.api.init.PropertyInit;
 import theblockbox.huntersdream.api.init.StructureInit;
+import theblockbox.huntersdream.api.init.WorldGenInit;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.util.Reference;
 
@@ -74,44 +72,14 @@ public class EventHandler {
         // add lycanthropy book to chests
         // for a list of all loot tables see
         // net.minecraft.world.storage.loot.LootTableList
-        if (event.getName().toString().startsWith("minecraft:chests/")) {
-            event.getTable().addPool(LootTableInit.LYCANTHROPY_BOOK_POOL);
+        if (event.getName().toString().startsWith("minecraft:chests/village")) {
+            event.getTable().addPool(LootTableInit.VILLAGE_CHESTS_POOL);
         }
     }
 
-    // generate cotton, aconite and monkshood
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBiomeDecoration(DecorateBiomeEvent.Decorate event) {
-        Event.Result result = event.getResult();
-        Random random = event.getRand();
-        if ((result == Event.Result.ALLOW || result == Event.Result.DEFAULT)
-                && event.getType() == DecorateBiomeEvent.Decorate.EventType.FLOWERS
-                && ChanceHelper.chanceOf(random, 1.5D)) {
-            World world = event.getWorld();
-            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(event.getChunkPos().getBlock(15, 0, 15));
-            int xOffset = pos.getX();
-            int zOffset = pos.getZ();
-            int currentFlowers = 0;
-            boolean generateCotton = random.nextInt(2) == 0;
-            int maxFlowers = generateCotton ? 1 : random.nextInt(5);
-
-            for (int y = 256; y > 0; y--) {
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        IBlockState state = generateCotton ? BlockInit.COTTON.getDefaultState().withProperty(PropertyInit.COTTON_AGE, 3)
-                                : (random.nextBoolean() ? BlockInit.ACONITE_FLOWER : BlockInit.MONKSHOOD_FLOWER).getDefaultState();
-                        if (!world.getBlockState(pos.setPos(x + xOffset, y, z + zOffset)).getMaterial().isLiquid()
-                                && state.getBlock().canPlaceBlockAt(world, pos)) {
-                            world.setBlockState(pos, state, 2);
-                            if (++currentFlowers > maxFlowers)
-                                return;
-                            x = Math.min(15, x + random.nextInt(2));
-                            z = Math.min(15, z + random.nextInt(2));
-                        }
-                    }
-                }
-            }
-        }
+        WorldGenInit.generate(event);
     }
 
     @SubscribeEvent

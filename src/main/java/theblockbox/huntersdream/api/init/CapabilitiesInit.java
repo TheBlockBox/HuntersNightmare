@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.api.init;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -65,13 +66,13 @@ public class CapabilitiesInit {
         if (entity instanceof EntityPlayer) {
             event.addCapability(CapabilitiesInit.TRANSFORMATION_PLAYER_CAPABILITIY,
                     new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_TRANSFORMATION_PLAYER));
-        } else if (entity instanceof EntityVillager) {
+        } else if (entity instanceof EntityVillager || entity instanceof EntityWitch) {
             event.addCapability(CapabilitiesInit.TRANSFORMATION_CREATURE_CAPABILITY,
                     new TransformationCreatureProvider(Transformation.WEREWOLF, Transformation.VAMPIRE));
         }
 
         if (entity instanceof EntityVillager || entity instanceof EntityPlayer
-                || entity instanceof ITransformationCreature) {
+                || entity instanceof EntityWitch || entity instanceof ITransformationCreature) {
             event.addCapability(CapabilitiesInit.INFECT_IN_TICKS_CAPABILITY,
                     new CapabilityProvider<>(CapabilitiesInit.CAPABILITY_INFECT_IN_TICKS));
             event.addCapability(CapabilitiesInit.INFECT_ON_NEXT_MOON,

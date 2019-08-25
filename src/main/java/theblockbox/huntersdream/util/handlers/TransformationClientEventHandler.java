@@ -33,9 +33,9 @@ import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
-import theblockbox.huntersdream.items.ItemGun;
-import theblockbox.huntersdream.items.ItemRifle;
-import theblockbox.huntersdream.items.ItemShotgun;
+import theblockbox.huntersdream.items.gun.ItemGun;
+import theblockbox.huntersdream.items.gun.ItemRifle;
+import theblockbox.huntersdream.items.gun.ItemShotgun;
 import theblockbox.huntersdream.util.Reference;
 
 import java.util.Collection;
@@ -246,7 +246,8 @@ public class TransformationClientEventHandler {
     }
 
     public static void onCrosshairsRendered(RenderGameOverlayEvent.Pre event, EntityPlayerSP player, Minecraft mc) {
-        for (ItemStack stack : new ItemStack[]{player.getHeldItemMainhand(), player.getHeldItemOffhand()}) {
+        for (EnumHand hand : GeneralHelper.HANDS) {
+            ItemStack stack = player.getHeldItem(hand);
             if (stack.getItem() instanceof IGun) {
                 TextureAtlasSprite reticle = ((IGun) stack.getItem()).getReticle(player, stack);
                 if (reticle != null) {
@@ -269,6 +270,18 @@ public class TransformationClientEventHandler {
     public static void onColorHandlerItem(ColorHandlerEvent.Item event) {
         event.getItemColors().registerItemColorHandler((stack, tintIndex) -> (tintIndex > 0) ? -1 : ((ItemArmor) stack.getItem()).getColor(stack),
                 ItemInit.HUNTER_HAT, ItemInit.HUNTER_COAT, ItemInit.HUNTER_PANTS, ItemInit.HUNTER_BOOTS);
+    }
+
+    @SubscribeEvent
+    public static void onFOVUpdate(FOVUpdateEvent event) {
+        for (EnumHand hand : GeneralHelper.HANDS) {
+            EntityPlayer player = event.getEntity();
+            ItemStack stack = player.getHeldItem(hand);
+            if ((stack.getItem() instanceof ItemRifle) && ((ItemRifle) stack.getItem()).isAiming(player, stack)) {
+                event.setNewfov(event.getNewfov() / 2.0F);
+                break;
+            }
+        }
     }
 
     public static class RenderLycanthropeArm extends RenderPlayer {

@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.items;
+package theblockbox.huntersdream.items.gun;
 
 import net.minecraft.item.Item;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;

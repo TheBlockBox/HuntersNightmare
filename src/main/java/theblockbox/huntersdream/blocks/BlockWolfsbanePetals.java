@@ -84,7 +84,7 @@ public class BlockWolfsbanePetals extends Block {
     @Override
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (entityIn instanceof EntityLivingBase) {
-            WerewolfHelper.applyWolfsbaneEffects((EntityLivingBase) entityIn, false);
+            WerewolfHelper.applyWolfsbaneEffects((EntityLivingBase) entityIn, false, false);
         }
     }
 }

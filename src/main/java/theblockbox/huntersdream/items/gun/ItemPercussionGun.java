@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.items;
+package theblockbox.huntersdream.items.gun;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;

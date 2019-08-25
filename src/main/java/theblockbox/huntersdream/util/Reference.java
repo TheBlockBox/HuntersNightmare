@@ -3,7 +3,7 @@ package theblockbox.huntersdream.util;
 public class Reference {
     public static final String MODID = "huntersdream";
     public static final String NAME = "Hunter's Dream";
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.1.0";
     public static final String CLIENT = "theblockbox." + Reference.MODID + ".proxy.ClientProxy";
     public static final String SERVER = "theblockbox." + Reference.MODID + ".proxy.ServerProxy";
     public static final String ENTITY_TEXTURE_PATH = Reference.MODID + ":textures/entity/";

@@ -7,15 +7,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Provides utilities for client-side only things like localization and rendering
  */
-// TODO: When porting to 1.13, change all GL11 calls to the version vanilla uses
 public class ClientHelper {
-    public static final int GL_LINES = GL11.GL_LINES;
-
     /**
      * Draws a rectangle onto the screen between the given coordinates (from x, y to secondX, secondY).
      * Alpha is disabled, so there will be no transperancy.

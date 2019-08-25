@@ -7,14 +7,14 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.Reference;
 
 public class LootTableInit {
-    public static final ResourceLocation LYCANTHROPY_BOOK = GeneralHelper.newResLoc("lycanthropy_book");
-    public static final LootEntry LYCANTHROPY_BOOK_ENTRY = new LootEntryTable(LootTableInit.LYCANTHROPY_BOOK, 1, 0,
+    public static final ResourceLocation VILLAGE_CHESTS = GeneralHelper.newResLoc("village_chests");
+    public static final LootEntry VILLAGE_CHESTS_ENTRY = new LootEntryTable(LootTableInit.VILLAGE_CHESTS, 1, 0,
             new LootCondition[0], Reference.MODID + "_inject_entry");
-    public static final LootPool LYCANTHROPY_BOOK_POOL = new LootPool(
-            new LootEntry[]{LootTableInit.LYCANTHROPY_BOOK_ENTRY}, new LootCondition[0], new RandomValueRange(1.0F),
+    public static final LootPool VILLAGE_CHESTS_POOL = new LootPool(
+            new LootEntry[]{LootTableInit.VILLAGE_CHESTS_ENTRY}, new LootCondition[0], new RandomValueRange(1.0F),
             new RandomValueRange(0), Reference.MODID + "_inject_pool");
 
     public static void register() {
-        LootTableList.register(LootTableInit.LYCANTHROPY_BOOK);
+        LootTableList.register(LootTableInit.VILLAGE_CHESTS);
     }
 }

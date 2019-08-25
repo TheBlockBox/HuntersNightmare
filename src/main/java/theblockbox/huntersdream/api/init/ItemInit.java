@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.items.*;
+import theblockbox.huntersdream.items.gun.*;
 import theblockbox.huntersdream.items.tools.ToolAxe;
 import theblockbox.huntersdream.items.tools.ToolPickaxe;
 import theblockbox.huntersdream.util.Reference;
@@ -41,12 +42,11 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:fabric")
     public static final Item FABRIC = ItemInit.NULL_ITEM;
 
+    @GameRegistry.ObjectHolder("huntersdream:healing_herb")
+    public static final Item HEALING_HERB = ItemInit.NULL_ITEM;
+
     @GameRegistry.ObjectHolder("huntersdream:flintlock_pistol")
     public static final Item FLINTLOCK_PISTOL = ItemInit.NULL_ITEM;
-
-    @GameRegistry.ObjectHolder("huntersdream:hunting_rifle")
-    public static final Item HUNTING_RIFLE = ItemInit.NULL_ITEM;
-
 
     @GameRegistry.ObjectHolder("huntersdream:musket_ball")
     public static final Item MUSKET_BALL = ItemInit.NULL_ITEM;
@@ -90,6 +90,7 @@ public class ItemInit {
         ItemInit.registerItem(new ItemLycanthropyBook(), "lycanthropy_book", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new ItemTent(), "tent", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerItem(new Item(), "fabric", CreativeTabInit.HUNTERSDREAM_MISC, event);
+        ItemInit.registerItem(new ItemHealingHerb(), "healing_herb", CreativeTabInit.HUNTERSDREAM_MISC, event);
         ItemInit.registerToolSet("silver", ItemInit.TOOL_SILVER, event);
         ItemInit.registerArmorSet("silver", ItemInit.ARMOR_SILVER, event);
         ItemInit.registerItem(new ItemHunterArmor(1, EntityEquipmentSlot.HEAD), "hunter_hat",
@@ -107,12 +108,12 @@ public class ItemInit {
                 "flintlock_pistol", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemFlintlockGunBlunderBuss(6, 3465, 5, 6),
                 "flintlock_blunderbuss", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemPercussionGun(8, 4781, 10,
+        ItemInit.registerItem(new ItemPercussionGun(12, 4781, 10,
                         () -> ItemInit.REVOLVER_BULLET, 6, 1.0F, IAmmunition.AmmunitionType.REVOLVER_BULLET),
                 "revolver", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemRifle(20, 5721, 40, () -> ItemInit.RIFLE_BULLET, 5),
+        ItemInit.registerItem(new ItemRifle(25, 5721, 40, () -> ItemInit.RIFLE_BULLET, 5),
                 "hunting_rifle", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
-        ItemInit.registerItem(new ItemShotgun(8, 5751, 20, () -> ItemInit.SHOTGUN_SHELL, 5),
+        ItemInit.registerItem(new ItemShotgun(16, 5751, 20, () -> ItemInit.SHOTGUN_SHELL, 5),
                 "pump_shotgun", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.MUSKET_BALL), "musket_ball",
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);

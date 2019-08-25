@@ -84,6 +84,12 @@ public class TransformationEvent extends LivingEvent {
          */
         WOLFSBANE,
         /**
+         * When an entity becomes another entity and the new entities transformation needs to
+         * be set to the old one's transformation (for example when a villager is hit by
+         * lightning and becomes a witch).
+         */
+        ENTITY_CHANGE,
+        /**
          * Other cause that doesn't fit into one of these categories
          */
         OTHER

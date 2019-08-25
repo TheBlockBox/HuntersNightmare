@@ -16,7 +16,7 @@ public class BlockWolfsbaneGarland extends BlockGarland {
     @Override
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (entityIn instanceof EntityLivingBase) {
-            if (WerewolfHelper.applyWolfsbaneEffects((EntityLivingBase) entityIn, false)) {
+            if (WerewolfHelper.applyWolfsbaneEffects((EntityLivingBase) entityIn, false, false)) {
                 entityIn.motionX = Math.ceil(entityIn.posX) - Math.round(entityIn.posX) - 0.5D;
                 entityIn.motionY = 0.5D;
                 entityIn.motionZ = Math.ceil(entityIn.posZ) - Math.round(entityIn.posZ) - 0.5D;

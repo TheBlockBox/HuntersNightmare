@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.items;
+package theblockbox.huntersdream.items.gun;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,6 +15,7 @@ import theblockbox.huntersdream.entity.EntityBullet;
 
 import java.util.function.Supplier;
 
+// TODO: Ten block range
 public class ItemShotgun extends ItemPercussionGun {
     @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite reticleNormalShotgun = null;

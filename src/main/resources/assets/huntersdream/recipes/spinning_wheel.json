@@ -1,14 +1,18 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "  P",
-        "PPP",
-        "P P"
+        " PP",
+        "FPF",
+        "PPP"
     ],
     "key": {
         "P": {
             "type": "forge:ore_dict",
             "ore": "plankWood"
+        },
+        "F": {
+            "type": "forge:ore_dict",
+            "ore": "fenceWood"
         }
     },
     "result": {

@@ -1,7 +1,9 @@
 package theblockbox.huntersdream.api.init;
 
+import net.minecraft.init.PotionTypes;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionHelper;
 import net.minecraft.potion.PotionType;
 import net.minecraftforge.event.RegistryEvent;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
@@ -22,5 +24,6 @@ public class PotionInit {
 
     public static void registerPotionTypes(RegistryEvent.Register<PotionType> event) {
         event.getRegistry().register(PotionInit.WOLFSBANE);
+        PotionHelper.addMix(PotionTypes.AWKWARD, ItemInit.HEALING_HERB, PotionTypes.HEALING);
     }
 }

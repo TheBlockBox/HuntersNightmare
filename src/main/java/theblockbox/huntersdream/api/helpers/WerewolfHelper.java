@@ -2,6 +2,7 @@ package theblockbox.huntersdream.api.helpers;
 
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
@@ -393,12 +394,15 @@ public class WerewolfHelper {
      * If the given entity is a werewolf, all the wolfsbane effects will be
      * applied and a howl sound will be played
      */
-    public static boolean applyWolfsbaneEffects(EntityLivingBase entity, boolean playSound) {
-        if (TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF) {
-            if (playSound) {
-                WerewolfHelper.playHowlSound(entity);
+    public static boolean applyWolfsbaneEffects(EntityLivingBase entity, boolean playSound, boolean affectWolves) {
+        if ((TransformationHelper.getTransformation(entity) == Transformation.WEREWOLF)
+                || (affectWolves && (entity instanceof EntityWolf))) {
+            if (!entity.world.isRemote) {
+                if (playSound) {
+                    WerewolfHelper.playHowlSound(entity);
+                }
+                entity.addPotionEffect(new PotionEffect(WerewolfHelper.isTransformed(entity) ? MobEffects.WITHER : MobEffects.POISON, 200));
             }
-            entity.addPotionEffect(new PotionEffect(WerewolfHelper.isTransformed(entity) ? MobEffects.WITHER : MobEffects.POISON, 200));
             return true;
         } else {
             return false;

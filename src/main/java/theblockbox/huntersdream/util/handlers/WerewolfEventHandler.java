@@ -96,12 +96,15 @@ public class WerewolfEventHandler {
                 }
             }
             // apply effect of hunter armor
-            if (WerewolfHelper.isTransformed(attacker) || (attacker instanceof EntityWolf)) {
-                for (HunterArmorEffect effect : ItemHunterArmor.getEffectsFromEntity(attacked)) {
-                    if ((effect == HunterArmorEffect.ACONITE) || (effect == HunterArmorEffect.MONKSHOOD)
-                            || (effect == HunterArmorEffect.WOLFSBANE)) {
-                        WerewolfHelper.applyWolfsbaneEffects(attacked, false);
+            for (HunterArmorEffect effect : ItemHunterArmor.getEffectsFromEntity(attacked)) {
+                if ((effect == HunterArmorEffect.ACONITE) || (effect == HunterArmorEffect.MONKSHOOD) || (effect == HunterArmorEffect.WOLFSBANE)) {
+                    if (WerewolfHelper.isTransformed(attacker) || (attacker instanceof EntityWolf)) {
+                        WerewolfHelper.applyWolfsbaneEffects(attacker, false, true);
                     }
+                } else if (effect == HunterArmorEffect.POISON_IVY) {
+                    attacker.addPotionEffect(new PotionEffect(MobEffects.POISON, 240));
+                } else if (effect == HunterArmorEffect.WITHER_MOSS) {
+                    attacker.addPotionEffect(new PotionEffect(MobEffects.WITHER, 240));
                 }
             }
         }
@@ -193,7 +196,7 @@ public class WerewolfEventHandler {
                 event.setCanceled(true);
                 event.setCancellationResult(EnumActionResult.SUCCESS);
                 if (!world.isRemote) {
-                    WerewolfHelper.applyWolfsbaneEffects(interactedWith, true);
+                    WerewolfHelper.applyWolfsbaneEffects(interactedWith, true, false);
                     if (!event.getEntityPlayer().isCreative()) {
                         stack.shrink(1);
                     }
