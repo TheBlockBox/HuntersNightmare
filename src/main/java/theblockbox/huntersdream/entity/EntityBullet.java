@@ -2,12 +2,14 @@ package theblockbox.huntersdream.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,6 +20,8 @@ import theblockbox.huntersdream.api.interfaces.IAmmunition;
 public class EntityBullet extends EntityArrow implements IAmmunition {
     private final Item item;
     private final IAmmunition ammunition;
+    private int maxRange = -1;
+    private BlockPos initialPosForRange = null;
 
     public EntityBullet(World worldIn) {
         super(worldIn);
@@ -61,6 +65,11 @@ public class EntityBullet extends EntityArrow implements IAmmunition {
 
     @Override
     protected void onHit(RayTraceResult raytraceResultIn) {
+        if ((this.maxRange > 0) && (this.initialPosForRange != null) && (this.initialPosForRange.distanceSq(this.getPosition()) > this.maxRange)) {
+            // if max range is reached, don't hurt hit entity but remove bullet
+            this.setDead();
+            return;
+        }
         // if the bullet is made out of silver and the entity is undead, give twice as much damage
         Entity entity = raytraceResultIn.entityHit;
         boolean flag = ArrayUtils.contains(this.getAmmunitionTypes(), IAmmunition.AmmunitionType.SILVER)
@@ -75,7 +84,17 @@ public class EntityBullet extends EntityArrow implements IAmmunition {
     public void onCollideWithPlayer(EntityPlayer entityIn) {
     }
 
+    @Override
+    public void move(MoverType type, double x, double y, double z) {
+        super.move(type, x, y, z);
+    }
+
     public Item getItem() {
         return this.item;
+    }
+
+    public void setMaxRange(int maxRange, BlockPos currentBulletPos) {
+        this.maxRange = maxRange;
+        this.initialPosForRange = currentBulletPos;
     }
 }

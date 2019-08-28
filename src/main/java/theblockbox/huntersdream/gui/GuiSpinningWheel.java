@@ -35,12 +35,13 @@ public class GuiSpinningWheel extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(GuiSpinningWheel.IMAGE);
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        this.drawTexturedModalRect(this.guiLeft + 79, this.guiTop + 34, 176, 14, 5 + (int) ((this.container.getTicks()
+                - this.container.getWorkingSince()) * 15.0F / this.container.tileEntity.getNeededProcessingTime()), 17);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         this.mc.getTextureManager().bindTexture(GuiSpinningWheel.IMAGE);
-        // TODO: Add progress bar here
         GeneralHelper.drawCenteredString(this.fontRenderer,
                 I18n.format(this.translationKey), 0, this.xSize, 5, 4210752);
         this.fontRenderer.drawString(this.container.getPlayerInventory().getDisplayName().getUnformattedText(), 8,
