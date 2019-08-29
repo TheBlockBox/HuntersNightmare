@@ -15,7 +15,8 @@
             "ore": "wool"
         },
         "B": {
-            "item": "minecraft:bed"
+            "item": "minecraft:bed",
+            "data": 32767
         }
     },
     "result": {
