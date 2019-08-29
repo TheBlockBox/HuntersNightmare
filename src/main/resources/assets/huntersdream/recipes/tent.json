@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " W ",
+        "W W",
+        "SBS"
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "stickWood"
+        },
+        "W": {
+            "type": "forge:ore_dict",
+            "ore": "wool"
+        },
+        "B": {
+            "item": "minecraft:bed"
+        }
+    },
+    "result": {
+        "item": "huntersdream:tent",
+        "count": 1
+    }
+}
