@@ -33,7 +33,7 @@ item.huntersdream.rifle_bullet.name=Rifle Bullet
 item.huntersdream.silver_rifle_bullet.name=Silver Rifle Bullet
 item.huntersdream.shotgun_shell.name=Shotgun Shell
 item.huntersdream.silver_shotgun_shell.name=Silver Shotgun Shell
-
+item.huntersdream.silver_arrow.name=Silver Arrow
 
 # Other items
 item.huntersdream.silver_ingot.name=Silver Ingot
@@ -69,6 +69,7 @@ tile.huntersdream.acacia_campfire.name=Acacia Campfire
 tile.huntersdream.dark_oak_campfire.name=Dark Oak Campfire
 tile.huntersdream.tile_tent.name=Tent
 tile.huntersdream.cotton.name=Cotton
+tile.huntersdream.healing_herb.name=Healing Herb
 tile.huntersdream.spinning_wheel.name=Spinning Wheel
 tile.huntersdream.wolfsbane_garland.name=Wolfsbane Garland
 tile.huntersdream.wolfsbane_petals.name=Wolfsbane Petals
@@ -77,6 +78,8 @@ tile.huntersdream.wolfsbane_petals.name=Wolfsbane Petals
 entity.goblintd.name=Goblin
 entity.werewolf.name=Werewolf
 entity.hunter.name=Hunter
+entity.bullet.name=Bullet
+entity.silver_arrow.name=Silver Arrow
 
 # Transformations
 huntersdream\:none=None
@@ -152,6 +155,7 @@ huntersdream.config.server=Server
 huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
 huntersdream.config.huntersCampSpawnChance=Hunter's Camp spawn chance
 huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
+huntersdream.config.generateHealingHerb=Generate Healing Herbs in fields in villages
 huntersdream.config.werewolfCabinSpawnChance=Werewolf Cabin spawn chance
 huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
 huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
@@ -218,7 +222,7 @@ hunter_armor_effect.huntersdream.wither_moss=Wither Moss
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
 item.huntersdream.lycanthropy_book.tooltip=Found in village chests. When right clicked by a werewolf, opens the skill tab.
-item.huntersdream.healing_herb.tooltip=Found in village chests. Can be eaten to restore two hearts, creates healing potions when combined with an Awkward Potion and can also be combined with Hunter's Armor.
+item.huntersdream.healing_herb.tooltip=Found in villages. Can be eaten to restore two hearts, creates healing potions when combined with an Awkward Potion and can also be combined with Hunter's Armor.
 item.huntersdream.gun.loaded.tooltip=Loaded
 item.huntersdream.gun.unloaded.tooltip=Unloaded
 item.huntersdream.gun.loaded_and_ammunition.tooltip=Loaded %s/%s

@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.util.Reference;
 import theblockbox.huntersdream.util.handlers.ConfigHandler;
+import theblockbox.huntersdream.world.gen.village.StructureVillageModifiedField;
 import theblockbox.huntersdream.world.gen.village.StructureVillageVillagerCastle;
 
 public class StructureInit {
@@ -21,6 +22,11 @@ public class StructureInit {
             VillagerRegistry.instance().registerVillageCreationHandler(new StructureVillageVillagerCastle.VillageVillagerCastleHandler());
             MapGenStructureIO.registerStructureComponent(StructureVillageVillagerCastle.class,
                     Reference.MODID + ":villager_castle");
+        }
+        if (ConfigHandler.server.generateHealingHerb) {
+            VillagerRegistry.instance().registerVillageCreationHandler(new StructureVillageModifiedField.VillageModifiedFieldHandler());
+            MapGenStructureIO.registerStructureComponent(StructureVillageModifiedField.class,
+                    Reference.MODID + ":modified_field");
         }
         // TODO: Add structure and uncomment
 //		if (ConfigHandler.server.generateHuntersCabin) {

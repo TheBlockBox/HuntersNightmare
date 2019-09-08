@@ -520,10 +520,10 @@ public class GeneralHelper {
             }
             if (location == StructureInit.WEREWOLF_CABIN) {
                 EntityWerewolf werewolf = new EntityWerewolf(world);
-                werewolf.setPosition(pos.getX() + (sizeX / 2), pos.getY() + 1, pos.getZ() + (sizeZ / 2));
+                werewolf.setPosition(pos.getX() + (sizeX / 2F), pos.getY() + 1, pos.getZ() + (sizeZ / 2F));
                 world.spawnEntity(werewolf);
             }
-            template.addBlocksToWorld(world, pos, GeneralHelper.CHEST_TEMPLATE_PROCESSOR, new PlacementSettings(), 2);
+            template.addBlocksToWorld(world, (location == StructureInit.HUNTERS_CAMP) ? pos.down() : pos, GeneralHelper.CHEST_TEMPLATE_PROCESSOR, new PlacementSettings(), 2);
             return true;
         } else {
             return false;

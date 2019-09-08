@@ -48,6 +48,10 @@ public class ConfigHandler {
         @Config.RequiresWorldRestart
         public boolean generateVillagerCastle = true;
 
+        @Config.LangKey(Reference.CFG_LANG + "generateHealingHerb")
+        @Config.RequiresWorldRestart
+        public boolean generateHealingHerb = true;
+
 // TODO: Add structure and uncomment
 //        @Config.LangKey(Reference.CFG_LANG + "generateHuntersCabin")
 //        @Config.RequiresWorldRestart

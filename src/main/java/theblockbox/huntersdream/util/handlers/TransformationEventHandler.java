@@ -1,9 +1,6 @@
 package theblockbox.huntersdream.util.handlers;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityGolem;
@@ -51,6 +48,7 @@ import theblockbox.huntersdream.api.interfaces.IInfectOnNextMoon;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationCreature;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformationPlayer;
+import theblockbox.huntersdream.entity.EntitySilverArrow;
 import theblockbox.huntersdream.entity.EntityWerewolf;
 import theblockbox.huntersdream.items.ItemHunterArmor;
 import theblockbox.huntersdream.items.gun.ItemRifle;
@@ -405,12 +403,17 @@ public class TransformationEventHandler {
             event.setThorns(event.getDamage() * thorns);
             event.setArmorDamage(4);
         }
+        if ((event.getHurtTransformation() == Transformation.WEREWOLF) && (event.getAttacker() instanceof IProjectile)) {
+            event.setDamage(event.getDamage() / 10F);
+        }
     }
 
     @SubscribeEvent
     public static void onEntityEffectiveness(EntityEffectivenessEvent event) {
-        if (WerewolfHelper.isTransformed(event.getEntityLiving()) && (event.getAttacker() instanceof IAmmunition)
-                && ArrayUtils.contains(((IAmmunition) event.getAttacker()).getAmmunitionTypes(), IAmmunition.AmmunitionType.SILVER)) {
+        Entity attacker = event.getAttacker();
+        if (WerewolfHelper.isTransformed(event.getEntityLiving()) &&
+                (((attacker instanceof IAmmunition) && ArrayUtils.contains(((IAmmunition) attacker).getAmmunitionTypes(), IAmmunition.AmmunitionType.SILVER))
+                        || (attacker instanceof EntitySilverArrow))) {
             event.setDamage(event.getDamage() * 2.0F);
         }
     }

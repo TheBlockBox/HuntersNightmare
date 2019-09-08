@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "W",
+        "S",
+        "F"
+    ],
+    "key": {
+        "W": {
+            "type": "forge:ore_dict",
+            "ore": "stickWood"
+        },
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSilver"
+        },
+        "F": {
+            "type": "forge:ore_dict",
+            "ore": "feather"
+        }
+    },
+    "result": {
+        "item": "huntersdream:silver_arrow",
+        "count": 4
+    }
+}

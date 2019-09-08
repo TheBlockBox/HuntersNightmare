@@ -13,12 +13,10 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
-import theblockbox.huntersdream.entity.EntityBullet;
-import theblockbox.huntersdream.entity.EntityGoblinTD;
-import theblockbox.huntersdream.entity.EntityHunter;
-import theblockbox.huntersdream.entity.EntityWerewolf;
+import theblockbox.huntersdream.entity.*;
 import theblockbox.huntersdream.entity.renderer.RenderGoblinTD;
 import theblockbox.huntersdream.entity.renderer.RenderHunter;
+import theblockbox.huntersdream.entity.renderer.RenderSilverArrow;
 import theblockbox.huntersdream.entity.renderer.RenderWerewolf;
 
 import javax.annotation.Nullable;
@@ -46,7 +44,9 @@ public class EntityInit {
                 EntityInit.getEntityEntryBuilder("hunter", EntityHunter.class).egg(12820338, 4532224)
                         .tracker(EntityInit.TRACKING_RANGE, EntityInit.UPDATE_FREQ, EntityInit.VEL_UPDATES).build(),
                 // same tracker as arrows
-                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).tracker(64, 20, false).build());
+                EntityInit.getEntityEntryBuilder("bullet", EntityBullet.class).tracker(64, 20, false).build(),
+                // TODO: Should "sendVelocityUpdates" be set to true?
+                EntityInit.getEntityEntryBuilder("silver_arrow", EntitySilverArrow.class).tracker(64, 20, true).build());
     }
 
     public static void registerEntityRenders() {
@@ -82,6 +82,12 @@ public class EntityInit {
                         return null;
                     }
                 };
+            }
+        });
+        RenderingRegistry.registerEntityRenderingHandler(EntitySilverArrow.class, new IRenderFactory<EntitySilverArrow>() {
+            @Override
+            public Render<? super EntitySilverArrow> createRenderFor(RenderManager manager) {
+                return new RenderSilverArrow(manager);
             }
         });
     }

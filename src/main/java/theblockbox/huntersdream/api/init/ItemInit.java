@@ -1,15 +1,19 @@
 package theblockbox.huntersdream.api.init;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
+import theblockbox.huntersdream.entity.EntitySilverArrow;
 import theblockbox.huntersdream.items.*;
 import theblockbox.huntersdream.items.gun.*;
 import theblockbox.huntersdream.items.tools.ToolAxe;
@@ -51,6 +55,9 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:musket_ball")
     public static final Item MUSKET_BALL = ItemInit.NULL_ITEM;
 
+    @GameRegistry.ObjectHolder("huntersdream:silver_musket_ball")
+    public static final Item SILVER_MUSKET_BALL = ItemInit.NULL_ITEM;
+
     @GameRegistry.ObjectHolder("huntersdream:revolver_bullet")
     public static final Item REVOLVER_BULLET = ItemInit.NULL_ITEM;
 
@@ -71,6 +78,9 @@ public class ItemInit {
 
     @GameRegistry.ObjectHolder("huntersdream:hunter_boots")
     public static final Item HUNTER_BOOTS = ItemInit.NULL_ITEM;
+
+    @GameRegistry.ObjectHolder("huntersdream:silver_arrow")
+    public static final Item SILVER_ARROW = ItemInit.NULL_ITEM;
 
     // Materials
     public static final Item.ToolMaterial TOOL_SILVER = EnumHelper.addToolMaterial(Reference.MODID + ":tool_silver", 3, 60,
@@ -131,6 +141,12 @@ public class ItemInit {
                 CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
         ItemInit.registerItem(new ItemAmmunition(IAmmunition.AmmunitionType.SHOTGUN_SHELL, IAmmunition.AmmunitionType.SILVER),
                 "silver_shotgun_shell", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        ItemInit.registerItem(new ItemArrow() {
+            @Override
+            public EntityArrow createArrow(World worldIn, ItemStack stack, EntityLivingBase shooter) {
+                return new EntitySilverArrow(worldIn, shooter);
+            }
+        }, "silver_arrow", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
     }
 
     private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {

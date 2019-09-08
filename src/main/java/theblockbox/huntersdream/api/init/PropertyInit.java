@@ -52,6 +52,11 @@ public class PropertyInit {
     public static final PropertyBool[] GARLAND_PROPERTIES = {PropertyInit.GARLAND_NORTH, PropertyInit.GARLAND_SOUTH, PropertyInit.GARLAND_WEST, PropertyInit.GARLAND_EAST};
 
     /**
+     * Used in {@link theblockbox.huntersdream.blocks.BlockHealingHerb}
+     */
+    public static final PropertyInteger HEALING_HERB_AGE = PropertyInteger.create("age", 0, 3);
+
+    /**
      * Used in {@link BlockTent}
      */
     public static final PropertyBool TENT_OCCUPIED = PropertyBool.create("occupied");

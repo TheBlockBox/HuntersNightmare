@@ -53,6 +53,9 @@ public class BlockInit {
     @GameRegistry.ObjectHolder("huntersdream:cotton")
     public static final Block COTTON = BlockInit.NULL_BLOCK;
 
+    @GameRegistry.ObjectHolder("huntersdream:healing_herb")
+    public static final Block HEALING_HERB = BlockInit.NULL_BLOCK;
+
     @GameRegistry.ObjectHolder("huntersdream:wolfsbane_garland")
     public static final BlockWolfsbaneGarland WOLFSBANE_GARLAND = (BlockWolfsbaneGarland) BlockInit.NULL_BLOCK;
 
@@ -79,6 +82,7 @@ public class BlockInit {
         }
         BlockInit.registerBlock(new BlockTent(), "tile_tent", event);
         BlockInit.registerBlockWithItem(new BlockCotton(), "cotton", event);
+        BlockInit.registerBlock(new BlockHealingHerb(), "healing_herb", event);
         BlockInit.registerBlockWithItem(new BlockSpinningWheel(), "spinning_wheel", event);
         BlockInit.registerBlockWithItem(new BlockWolfsbaneGarland(), "wolfsbane_garland", event);
         BlockInit.registerBlockWithItem(new BlockWolfsbanePetals(), "wolfsbane_petals", event);

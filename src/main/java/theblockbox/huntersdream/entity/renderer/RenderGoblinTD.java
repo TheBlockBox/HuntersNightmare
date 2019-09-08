@@ -13,7 +13,7 @@ public class RenderGoblinTD extends RenderLiving<EntityGoblinTD> {
 
     static {
         for (int i = 0; i < EntityGoblinTD.TEXTURES; i++) {
-            RenderGoblinTD.TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin" + i + ".png");
+            RenderGoblinTD.TEXTURES[i] = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "goblin/goblin_" + i + ".png");
         }
     }
 
