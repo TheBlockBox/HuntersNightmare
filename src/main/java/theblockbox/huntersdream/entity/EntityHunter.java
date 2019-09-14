@@ -1,7 +1,5 @@
 package theblockbox.huntersdream.entity;
 
-import com.google.common.base.Predicate;
-import com.sun.istack.internal.Nullable;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
@@ -32,6 +30,7 @@ import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransformation, IEntityAdditionalSpawnData {
@@ -43,21 +42,20 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
 
     private boolean usesMeleeWeapons;
     private Item rangedWeapon = Items.AIR;
+    private EntityAIBase attackAi;
 
     public EntityHunter(World world) {
         super(world);
         this.enablePersistence();
-        if (!(this.usesMeleeWeapons = this.rand.nextBoolean())) {
-            this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
-        }
+        this.setUsesMeleeWeapons(this.rand.nextBoolean());
+        if(!this.usesMeleeWeapons()) this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
         this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(null, this.usesMeleeWeapons())));
     }
 
     public EntityHunter(World world, boolean usesMeleeWeapons) {
-        super(world);
-        if (!(this.usesMeleeWeapons = this.rand.nextBoolean())) {
-            this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
-        }
+        this(world);
+        this.setUsesMeleeWeapons(usesMeleeWeapons);
+        if(!this.usesMeleeWeapons()) this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
         this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(null, this.usesMeleeWeapons())));
     }
 
@@ -75,9 +73,6 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         // TODO: Finish ai
         super.initEntityAI();
         this.tasks.addTask(0, new EntityAISwimming(this));
-        // TODO: Change speed
-        this.tasks.addTask(2, this.usesMeleeWeapons() ? new EntityAIAttackMelee(this, EntityHunter.SPEED + 0.2D, false)
-                : new EntityAIAttackRanged(this, EntityHunter.SPEED + 0.2D, 20, 15.0F));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, EntityHunter.SPEED));
         this.tasks.addTask(7, new EntityAIWander(this, EntityHunter.SPEED));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLivingBase.class, 8.0F));
@@ -85,9 +80,7 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
 
         this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-        Predicate<EntityLivingBase> predicate = input -> !((input instanceof EntityPlayer) || (input instanceof EntityAnimal));
-        this.targetTasks.addTask(3,
-                new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class, 10, true, false, predicate));
+        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class, 10, true, false, input -> !((input instanceof EntityPlayer) || (input instanceof EntityAnimal))));
     }
 
     @Override
@@ -184,7 +177,7 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         if (compound.hasKey("foldedHands"))
             this.setSwingingArms(!compound.getBoolean("foldedHands"));
         if (compound.hasKey("usesMeleeWeapons"))
-            this.usesMeleeWeapons = compound.getBoolean("usesMeleeWeapons");
+            this.setUsesMeleeWeapons(compound.getBoolean("usesMeleeWeapons"));
         if (compound.hasKey("rangedWeapon"))
             this.rangedWeapon = Item.getByNameOrId(compound.getString("rangedWeapon"));
     }
@@ -197,7 +190,7 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
 
     @Override
     public void readSpawnData(ByteBuf additionalData) {
-        this.usesMeleeWeapons = additionalData.readBoolean();
+        this.setUsesMeleeWeapons(additionalData.readBoolean());
         this.rangedWeapon = Item.getByNameOrId(ByteBufUtils.readUTF8String(additionalData));
     }
 
@@ -206,6 +199,16 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
      */
     public boolean usesMeleeWeapons() {
         return this.usesMeleeWeapons;
+    }
+
+    public void setUsesMeleeWeapons(boolean value) {
+        this.usesMeleeWeapons = value;
+        if(attackAi == null) {
+            // Moved here so it's called after the the usesMeleeWeapons is defined
+            // TODO: Change speed
+            attackAi = this.usesMeleeWeapons() ? new EntityAIAttackMelee(this, EntityHunter.SPEED + 0.2D, false) : new EntityAIAttackRanged(this, EntityHunter.SPEED + 0.2D, 20, 15.0F);
+            this.tasks.addTask(2, attackAi);
+        }
     }
 
     @Override
