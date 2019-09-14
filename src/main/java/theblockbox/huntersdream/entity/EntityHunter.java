@@ -204,7 +204,7 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
     public void setUsesMeleeWeapons(boolean value) {
         this.usesMeleeWeapons = value;
         if(attackAi == null) {
-            // Moved here so it's called after the the usesMeleeWeapons is defined
+            // Moved here so it's called after the usesMeleeWeapons is defined
             // TODO: Change speed
             attackAi = this.usesMeleeWeapons() ? new EntityAIAttackMelee(this, EntityHunter.SPEED + 0.2D, false) : new EntityAIAttackRanged(this, EntityHunter.SPEED + 0.2D, 20, 15.0F);
             this.tasks.addTask(2, attackAi);
