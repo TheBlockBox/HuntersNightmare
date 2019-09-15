@@ -1,17 +1,12 @@
 package theblockbox.huntersdream.entity;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -22,41 +17,24 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
-import theblockbox.huntersdream.api.init.ItemInit;
+import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
-public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransformation, IEntityAdditionalSpawnData {
-    public static final double SPEED = 0.1D;
+public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransformation {
+    public static final double SPEED = 0.4D;
     public static final Transformation TRANSFORMATION = Transformation.HUMAN;
     private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
             .createKey(EntityHunter.class, DataSerializers.COMPOUND_TAG);
-    private static final DataParameter<Boolean> FOLDED_HANDS = EntityDataManager.createKey(EntityHunter.class, DataSerializers.BOOLEAN);
-
-    private boolean usesMeleeWeapons;
-    private Item rangedWeapon = Items.AIR;
-    private EntityAIBase attackAi;
 
     public EntityHunter(World world) {
         super(world);
         this.enablePersistence();
-        this.setUsesMeleeWeapons(this.rand.nextBoolean());
-        if(!this.usesMeleeWeapons()) this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
-        this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(null, this.usesMeleeWeapons())));
-    }
-
-    public EntityHunter(World world, boolean usesMeleeWeapons) {
-        this(world);
-        this.setUsesMeleeWeapons(usesMeleeWeapons);
-        if(!this.usesMeleeWeapons()) this.rangedWeapon = ItemInit.FLINTLOCK_PISTOL;
-        this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(null, this.usesMeleeWeapons())));
+        this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(null)));
     }
 
     @Override
@@ -65,28 +43,28 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         NBTTagCompound transformationData = new NBTTagCompound();
         transformationData.setString("transformation", EntityHunter.TRANSFORMATION.toString());
         this.dataManager.register(EntityHunter.TRANSFORMATION_DATA, transformationData);
-        this.dataManager.register(EntityHunter.FOLDED_HANDS, true);
     }
 
     @Override
     protected void initEntityAI() {
-        // TODO: Finish ai
         super.initEntityAI();
         this.tasks.addTask(0, new EntityAISwimming(this));
+        // TODO: Change speed
+        this.tasks.addTask(2, new EntityAIAttackRanged(this, EntityHunter.SPEED + 0.2D, 20, 15.0F));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, EntityHunter.SPEED));
+        this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
         this.tasks.addTask(7, new EntityAIWander(this, EntityHunter.SPEED));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLivingBase.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
-
-        this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class, 10, true, false, input -> !((input instanceof EntityPlayer) || (input instanceof EntityAnimal))));
+        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+                10, true, false, input -> (input instanceof EntityMob) || WerewolfHelper.isTransformed(input)));
     }
 
     @Override
     public void setAttackTarget(@Nullable EntityLivingBase entity) {
         super.setAttackTarget(entity);
-        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(entity, this.usesMeleeWeapons())));
+        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(TransformationHelper.getHunterWeaponForEntity(entity)));
     }
 
     @Override
@@ -164,9 +142,6 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
         compound.setTag("transformationData", this.dataManager.get(EntityHunter.TRANSFORMATION_DATA));
-        compound.setBoolean("foldedHands", this.dataManager.get(EntityHunter.FOLDED_HANDS));
-        compound.setBoolean("usesMeleeWeapons", this.usesMeleeWeapons());
-        compound.setString("rangedWeapon", Objects.toString(this.rangedWeapon.getRegistryName(), ""));
     }
 
     @Override
@@ -174,41 +149,6 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         super.readEntityFromNBT(compound);
         if (compound.hasKey("transformationData"))
             this.setTransformationData((NBTTagCompound) compound.getTag("transformationData"));
-        if (compound.hasKey("foldedHands"))
-            this.setSwingingArms(!compound.getBoolean("foldedHands"));
-        if (compound.hasKey("usesMeleeWeapons"))
-            this.setUsesMeleeWeapons(compound.getBoolean("usesMeleeWeapons"));
-        if (compound.hasKey("rangedWeapon"))
-            this.rangedWeapon = Item.getByNameOrId(compound.getString("rangedWeapon"));
-    }
-
-    @Override
-    public void writeSpawnData(ByteBuf buffer) {
-        buffer.writeBoolean(this.usesMeleeWeapons());
-        ByteBufUtils.writeUTF8String(buffer, Objects.toString(this.rangedWeapon.getRegistryName(), ""));
-    }
-
-    @Override
-    public void readSpawnData(ByteBuf additionalData) {
-        this.setUsesMeleeWeapons(additionalData.readBoolean());
-        this.rangedWeapon = Item.getByNameOrId(ByteBufUtils.readUTF8String(additionalData));
-    }
-
-    /**
-     * Returns true if this hunter uses melee weapons (swords, stakes, etc.), otherwise ranged weapons (guns).
-     */
-    public boolean usesMeleeWeapons() {
-        return this.usesMeleeWeapons;
-    }
-
-    public void setUsesMeleeWeapons(boolean value) {
-        this.usesMeleeWeapons = value;
-        if(attackAi == null) {
-            // Moved here so it's called after the usesMeleeWeapons is defined
-            // TODO: Change speed
-            attackAi = this.usesMeleeWeapons() ? new EntityAIAttackMelee(this, EntityHunter.SPEED + 0.2D, false) : new EntityAIAttackRanged(this, EntityHunter.SPEED + 0.2D, 20, 15.0F);
-            this.tasks.addTask(2, attackAi);
-        }
     }
 
     @Override
@@ -222,20 +162,7 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
     }
 
     @Override
-    public void swingArm(EnumHand hand) {
-        this.setSwingingArms(true);
-        super.swingArm(hand);
-    }
-
-    @Override
     public void setSwingingArms(boolean swingingArms) {
-        this.dataManager.set(EntityHunter.FOLDED_HANDS, !swingingArms);
-    }
-
-    /**
-     * Returns true if this hunter should be drawn with folded arms.
-     */
-    public boolean shouldFoldArms() {
-        return this.dataManager.get(EntityHunter.FOLDED_HANDS);
+        this.swingArm(EnumHand.MAIN_HAND);
     }
 }

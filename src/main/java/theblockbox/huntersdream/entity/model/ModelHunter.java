@@ -3,7 +3,6 @@ package theblockbox.huntersdream.entity.model;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import theblockbox.huntersdream.entity.EntityHunter;
 
 /**
  * ModelHunter - VampireRedEye
@@ -12,10 +11,7 @@ import theblockbox.huntersdream.entity.EntityHunter;
 public class ModelHunter extends ModelBiped {
     public ModelRenderer jacket;
     public ModelRenderer hat;
-    public ModelRenderer armmr;
     public ModelRenderer nose;
-    public ModelRenderer armml;
-    public ModelRenderer armm;
     public ModelRenderer hat2;
 
     public ModelHunter() {
@@ -34,14 +30,10 @@ public class ModelHunter extends ModelBiped {
         this.bipedHead = new ModelRenderer(this, 0, 0);
         this.bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.bipedHead.addBox(-4.0F, -10.0F, -4.0F, 8, 10, 8, 0.0F);
-        this.bipedLeftArm = new ModelRenderer(this, 48, 46);
-        this.bipedLeftArm.mirror = true;
-        this.bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
-        this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
-        this.armmr = new ModelRenderer(this, 44, 22);
-        this.armmr.setRotationPoint(0.0F, 3.0F, -1.0F);
-        this.armmr.addBox(-8.0F, -2.0F, -2.0F, 4, 8, 4, 0.0F);
-        ModelHunter.setRotateAngle(this.armmr, -0.7499679795819634F, 0.0F, 0.0F);
+        this.bipedRightArm = new ModelRenderer(this, 44, 22);
+        this.bipedRightArm.setRotationPoint(0.0F, 3.0F, -1.0F);
+        this.bipedRightArm.addBox(-8.0F, -2.0F, -2.0F, 4, 8, 4, 0.0F);
+        ModelHunter.setRotateAngle(this.bipedRightArm, -0.7499679795819634F, 0.0F, 0.0F);
         this.hat2 = new ModelRenderer(this, 48, 0);
         this.hat2.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.hat2.addBox(-8.0F, -6.1F, -8.0F, 16, 0, 16, 0.0F);
@@ -54,36 +46,23 @@ public class ModelHunter extends ModelBiped {
         this.bipedRightLeg = new ModelRenderer(this, 0, 22);
         this.bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
         this.bipedRightLeg.addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, 0.0F);
-        this.armm = new ModelRenderer(this, 40, 38);
-        this.armm.setRotationPoint(0.0F, 3.0F, -1.0F);
-        this.armm.addBox(-4.0F, -1.0F, -1.0F, 8, 4, 4, 0.0F);
-        this.bipedRightArm = new ModelRenderer(this, 48, 46);
-        this.bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        this.bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
-        this.armml = new ModelRenderer(this, 44, 22);
-        this.armml.mirror = true;
-        this.armml.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.armml.addBox(4.0F, -2.0F, -2.0F, 4, 8, 4, 0.0F);
+        this.bipedLeftArm = new ModelRenderer(this, 44, 22);
+        this.bipedLeftArm.mirror = true;
+        this.bipedLeftArm.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.bipedLeftArm.addBox(4.0F, -2.0F, -2.0F, 4, 8, 4, 0.0F);
         this.bipedBody.addChild(this.bipedLeftLeg);
         this.bipedHead.addChild(this.nose);
         this.bipedHead.addChild(this.hat);
         this.bipedBody.addChild(this.bipedHead);
         this.bipedBody.addChild(this.bipedLeftArm);
-        this.bipedBody.addChild(this.armmr);
         this.hat.addChild(this.hat2);
         this.bipedBody.addChild(this.bipedRightLeg);
-        this.armmr.addChild(this.armm);
         this.bipedBody.addChild(this.bipedRightArm);
-        this.armmr.addChild(this.armml);
         this.bipedBody.addChild(this.jacket);
     }
 
     @Override
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        boolean foldedArms = ((entity instanceof EntityHunter) && ((EntityHunter) entity).shouldFoldArms());
-        this.armmr.isHidden = !foldedArms;
-        this.bipedLeftArm.isHidden = foldedArms;
-        this.bipedRightArm.isHidden = foldedArms;
         this.bipedBody.render(f5);
     }
 

@@ -11,6 +11,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -55,7 +56,7 @@ public class EventHandler {
                     for (JsonElement jsonElement : jsonObject.get("supportedmcversions").getAsJsonArray())
                         if (jsonElement.getAsString().equals(Reference.MC_VERSION))
                             return;
-                    TextComponentTranslation tct = new TextComponentTranslation(
+                    ITextComponent tct = new TextComponentTranslation(
                             Reference.MODID + ".versionNotSupported", Reference.MC_VERSION);
                     tct.getStyle().setColor(TextFormatting.DARK_RED);
                     player.getServer().addScheduledTask(() -> player.sendMessage(tct));

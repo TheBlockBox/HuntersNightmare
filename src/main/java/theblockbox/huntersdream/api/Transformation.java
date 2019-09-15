@@ -62,12 +62,12 @@ public class Transformation {
      * The transformation for vampires
      */
     public static final Transformation VAMPIRE = of("vampire").setCalculateDamage(VampireHelper::calculateDamage)
-            .setCalculateReducedDamage(VampireHelper::calculateReducedDamage).setUndead().create();
+            .setCalculateReducedDamage(VampireHelper::calculateReducedDamage).setUndead().setWIP().create();
     /**
      * The transformation for ghosts
      */
     public static final Transformation GHOST = of("ghost").setTransformationType(Transformation.TransformationType.UNPHYSICAL_SUPERNATURAL)
-            .setHasNoSkills().create();
+            .setHasNoSkills().setWIP().create();
 
     private static Transformation[] transformations = null;
     private final Transformation.TransformationEntry entry;
@@ -148,10 +148,11 @@ public class Transformation {
      * {@link theblockbox.huntersdream.api.Transformation#NONE}). Doesn't allow
      * {@link Transformation#NONE}
      */
-    public static Transformation cycle(Transformation transformation) {
+    public static Transformation cycle(Transformation transformation, boolean includeWIP) {
         transformation.validateIsTransformation();
-        int id = transformation.getTemporaryID();
-        return Transformation.fromTemporaryID((Transformation.getRegisteredTransformations() > id) ? id + 1 : 1);
+        int id = transformation.getTemporaryID() + 1;
+        Transformation toReturn = Transformation.fromTemporaryID((Transformation.getRegisteredTransformations() > id) ? id : 1);
+        return (!includeWIP && toReturn.isWIP()) ? Transformation.cycle(toReturn, false) : toReturn;
     }
 
     /**
@@ -191,9 +192,8 @@ public class Transformation {
      * if this temporary id is the highest one (0 is always
      * {@link Transformation#NONE}, so that won't be used)
      */
-    public Transformation cycle() {
-        int newID = this.temporaryID + 1;
-        return Transformation.fromTemporaryID((Transformation.getRegisteredTransformations() > newID) ? newID : 1);
+    public Transformation cycle(boolean includeWIP) {
+        return Transformation.cycle(this, includeWIP);
     }
 
     /**
@@ -312,6 +312,14 @@ public class Transformation {
         return this.entry.hasSkills;
     }
 
+    /**
+     * Returns true if this transformation is work in progress, meaning that you can't transform into it using the bestiary
+     * and that a message stating that this transformation is not finished yet will be sent when you transform into this transformation.
+     */
+    public boolean isWIP() {
+        return this.entry.isWIP;
+    }
+
     public Consumer<EntityLivingBase> getInfect() {
         return this.entry.infect;
     }
@@ -413,6 +421,7 @@ public class Transformation {
         private boolean isUndead = false;
         private ResourceLocation icon;
         private boolean hasSkills = true;
+        private boolean isWIP = false;
 
         private TransformationEntry(ResourceLocation registryName) {
             this.registryName = registryName;
@@ -539,6 +548,15 @@ public class Transformation {
          */
         public Transformation.TransformationEntry setHasNoSkills() {
             this.hasSkills = false;
+            return this;
+        }
+
+        /**
+         * Marks this transformation as being work in progress, meaning that you can't transform into it using the bestiary
+         * and that a message stating that this transformation is not finished yet will be sent when you transform into this transformation.
+         */
+        public Transformation.TransformationEntry setWIP() {
+            this.isWIP = true;
             return this;
         }
 

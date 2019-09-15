@@ -30,7 +30,7 @@ public class ItemBestiary extends Item {
             return new ActionResult<>(EnumActionResult.PASS, heldStack);
         } else {
             if (playerIn.isCreative()) {
-                Transformation transformation = TransformationHelper.getTransformation(playerIn).cycle();
+                Transformation transformation = TransformationHelper.getTransformation(playerIn).cycle(false);
                 TransformationHelper.changeTransformation(playerIn, transformation, TransformationEvent.TransformationEventReason.BESTIARY);
                 playerIn.sendStatusMessage(new TextComponentTranslation(this.getTranslationKey() + ".onClick",
                         transformation.getTranslation()), true);

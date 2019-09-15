@@ -5,12 +5,14 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -60,8 +62,7 @@ public class TransformationHelper {
     }
 
     /**
-     * Changes the player's transformation also resets xp and transformed and sends
-     * the data to the client (this method is only to be called server side!)
+     * Changes the player's transformation and sends the data to the client (this method is only to be called server side!)
      */
     private static void changeTransformation(EntityPlayerMP player, Transformation transformation) {
         transformation.validateIsTransformation();
@@ -80,6 +81,11 @@ public class TransformationHelper {
         if (ConfigHandler.common.showPacketMessages)
             Main.getLogger()
                     .info("Transformation of player " + player.getName() + " changed to " + transformation);
+        if (transformation.isWIP()) {
+            ITextComponent textComponent = new TextComponentTranslation("huntersdream.transformation.wip", transformation.toString());
+            textComponent.getStyle().setColor(TextFormatting.RED);
+            player.sendMessage(textComponent);
+        }
         PacketHandler.sendTransformationMessage(player); // sync data with client
     }
 
@@ -284,13 +290,8 @@ public class TransformationHelper {
         return new EntityDamageSource(TransformationHelper.THORNS_DAMAGE_NAME, source).setIsThornsDamage().setMagicDamage();
     }
 
-    public static Item getHunterWeaponForEntity(@Nullable EntityLivingBase attacked, boolean meleeWeapon) {
-        boolean isTransformedWerewolf = WerewolfHelper.isTransformed(attacked);
-        if (meleeWeapon) {
-            return isTransformedWerewolf ? ItemInit.SILVER_SWORD : Items.IRON_SWORD;
-        } else {
-            return ItemInit.FLINTLOCK_PISTOL;
-        }
+    public static Item getHunterWeaponForEntity(@Nullable EntityLivingBase attacked) {
+        return ItemInit.FLINTLOCK_MUSKET;
     }
 
     public static ItemStack getHunterAmmunitionForEntity(@Nullable EntityLivingBase attacked, IGun gun) {

@@ -126,6 +126,7 @@ command.huntersdream.skill.list=%s's skills are\: %s
 transformations.huntersdream.infected.werewolf=You feel a curse surrounding you...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
+huntersdream.transformation.wip=The transformation %s that you have transformed into is currently work in progress. Some things may not have been fully added or might be incomplete. Use at your own risk.
 death.attack.vampireDrankBlood=%s got drank dry by a vampire
 item.huntersdream.bestiary.onClick=You are now a %s
 item.huntersdream.lycanthropy_book.onClick.wrong_transformation=You're not a werewolf.

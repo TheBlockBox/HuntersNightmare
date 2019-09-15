@@ -49,8 +49,8 @@ public class ItemInit {
     @GameRegistry.ObjectHolder("huntersdream:healing_herb")
     public static final Item HEALING_HERB = ItemInit.NULL_ITEM;
 
-    @GameRegistry.ObjectHolder("huntersdream:flintlock_pistol")
-    public static final Item FLINTLOCK_PISTOL = ItemInit.NULL_ITEM;
+    @GameRegistry.ObjectHolder("huntersdream:flintlock_musket")
+    public static final Item FLINTLOCK_MUSKET = ItemInit.NULL_ITEM;
 
     @GameRegistry.ObjectHolder("huntersdream:musket_ball")
     public static final Item MUSKET_BALL = ItemInit.NULL_ITEM;
