@@ -1,6 +1,7 @@
 package theblockbox.huntersdream.entity;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -16,17 +17,18 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import theblockbox.huntersdream.api.Transformation;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
+import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.interfaces.transformation.ITransformation;
 
 import javax.annotation.Nullable;
 
 public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransformation {
-    public static final double SPEED = 0.4D;
     public static final Transformation TRANSFORMATION = Transformation.HUMAN;
     private static final DataParameter<NBTTagCompound> TRANSFORMATION_DATA = EntityDataManager
             .createKey(EntityHunter.class, DataSerializers.COMPOUND_TAG);
@@ -50,15 +52,15 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         super.initEntityAI();
         this.tasks.addTask(0, new EntityAISwimming(this));
         // TODO: Change speed
-        this.tasks.addTask(2, new EntityAIAttackRanged(this, EntityHunter.SPEED + 0.2D, 20, 15.0F));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, EntityHunter.SPEED));
+        this.tasks.addTask(2, new EntityAIAttackRanged(this, 1.0D, 20, 15.0F));
+        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-        this.tasks.addTask(7, new EntityAIWander(this, EntityHunter.SPEED));
+        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLivingBase.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
-                10, true, false, input -> (input instanceof EntityMob) || WerewolfHelper.isTransformed(input)));
+                10, true, false, input -> ((input instanceof EntityMob) || WerewolfHelper.isTransformed(input)) && !(input instanceof EntityHunter)));
     }
 
     @Override
@@ -73,7 +75,17 @@ public class EntityHunter extends EntityMob implements IRangedAttackMob, ITransf
         // same damage and speed as players
         this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(EntityHunter.SPEED);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
+    }
+
+    @Nullable
+    @Override
+    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+        this.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ItemInit.HUNTER_HAT));
+        this.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemInit.HUNTER_COAT));
+        this.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemInit.HUNTER_PANTS));
+        this.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ItemInit.HUNTER_BOOTS));
+        return super.onInitialSpawn(difficulty, livingdata);
     }
 
     @Override

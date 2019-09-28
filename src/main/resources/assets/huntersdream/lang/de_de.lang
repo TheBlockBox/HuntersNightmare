@@ -22,8 +22,18 @@ item.huntersdream.silver_axe.name=Silberaxt
 item.huntersdream.flintlock_musket.name=Steinschlossmuskete
 item.huntersdream.flintlock_pistol.name=Steinschlosspistole
 item.huntersdream.flintlock_blunderbuss.name=Steinschlossdonnerbüchse
+item.huntersdream.revolver.name=Revolver
+item.huntersdream.hunting_rifle.name=Jagdgewehr
+item.huntersdream.pump_shotgun.name=Vorderschaftrepetierflinte
 item.huntersdream.musket_ball.name=Musketenkugel
 item.huntersdream.silver_musket_ball.name=Silberne Musketenkugel
+item.huntersdream.revolver_bullet.name=Revolverkugel
+item.huntersdream.silver_revolver_bullet.name=Silberne Revolverkugel
+item.huntersdream.rifle_bullet.name=Gewehrkugel
+item.huntersdream.silver_rifle_bullet.name=Silberne Gewehrkugel
+item.huntersdream.shotgun_shell.name=Schrotpatrone
+item.huntersdream.silver_shotgun_shell.name=Silberne Schrotpatrone
+item.huntersdream.silver_arrow.name=Silberpfeil
 
 # Other items
 item.huntersdream.silver_ingot.name=Silberbarren
@@ -32,6 +42,7 @@ item.huntersdream.lycanthropy_book.name=Werwolfsbuch
 item.huntersdream.tent.name=Zelt
 item.huntersdream.fabric.name=Stoff
 item.huntersdream.herbal_wolfsbane_water.name=Pflanzliches Wolfswurzwasser
+item.huntersdream.healing_herb.name=Heilkraut
 
 # Potions
 effect.huntersdream.wolfsbane=Wolfswurz
@@ -44,17 +55,22 @@ tipped_arrow.effect.wolfsbane=Pfeil des Wolfswurzes
 # Blocks
 tile.huntersdream.silver_block.name=Silberblock
 tile.huntersdream.silver_ore.name=Silbererz
-tile.huntersdream.tile_tent.name=Zelt
-tile.huntersdream.cotton.name=Baumwolle
-tile.huntersdream.spinning_wheel.name=Spinnrad
+tile.huntersdream.aconite_flower.name=Aconitum
+tile.huntersdream.monkshood_flower.name=Eisenhut
+tile.huntersdream.glow_fern.name=Glühfarn
+tile.huntersdream.magma_flower.name=Magmablume
+tile.huntersdream.poison_ivy.name=Giftefeu
+tile.huntersdream.wither_moss.name=Withermoos
 tile.huntersdream.oak_campfire.name=Eichenholzlagerfeuer
 tile.huntersdream.spruce_campfire.name=Fichtenholzlagerfeuer
 tile.huntersdream.birch_campfire.name=Birkenholzlagerfeuer
 tile.huntersdream.jungle_campfire.name=Tropenholzlagerfeuer
 tile.huntersdream.acacia_campfire.name=Akazienholzlagerfeuer
 tile.huntersdream.dark_oak_campfire.name=Schwarzeichenholzlagerfeuer
-tile.huntersdream.aconite_flower.name=Aconitum
-tile.huntersdream.monkshood_flower.name=Eisenhut
+tile.huntersdream.tile_tent.name=Zelt
+tile.huntersdream.cotton.name=Baumwolle
+tile.huntersdream.healing_herb.name=Heilkraut
+tile.huntersdream.spinning_wheel.name=Spinnrad
 tile.huntersdream.wolfsbane_garland.name=Wolfswurzgirlande
 tile.huntersdream.wolfsbane_petals.name=Wolfswurzblüten
 
@@ -62,6 +78,8 @@ tile.huntersdream.wolfsbane_petals.name=Wolfswurzblüten
 entity.goblintd.name=Goblin
 entity.werewolf.name=Werwolf
 entity.hunter.name=Jäger
+entity.bullet.name=Kugel
+entity.silver_arrow.name=Silberpfeil
 
 # Transformations
 huntersdream\:none=Keine
@@ -72,10 +90,16 @@ huntersdream\:ghost=Geist
 
 # Sounds (Subtitles)
 huntersdream.transformation.heartbeat=Herzschlag eines Werwolfs
-huntersdream.transformation.werewolf.howling=Heulen eines Werwolfs
 huntersdream.transformation.vampire.gulp=Bluttrinkender Vampir
 huntersdream.gun.flintlock.fire=Steinschlosswaffe schießt
 huntersdream.gun.flintlock.reload=Steinschlosswaffe lädt nach
+huntersdream.gun.bullet_hit=Kugel trifft
+huntersdream.gun.revolver.fire=Revolver schießt
+huntersdream.gun.revolver.reload=Revolver lädt nach
+huntersdream.gun.rifle.fire=Gewehr schießt
+huntersdream.gun.rifle.reload=Gewehr lädt nach
+huntersdream.gun.shotgun.fire=Schrotflinte schießt
+huntersdream.gun.shotgun.reload=Schrotflinte lädt nach
 
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Waffen und Werkzeuge
@@ -100,8 +124,9 @@ command.huntersdream.skill.list=%ss Fähigkeiten sind\: %s
 
 # Chat messages
 transformations.huntersdream.infected.werewolf=Du fühlst, dass dich ein Fluch umgibt...
-huntersdream.versionNotSupported=Hunter's Dream unterstützt die Minecraftversion %s, die du gerade benutzt, nicht mehr. Bitte beschwere dich nicht über Fehler oder Abstürze und versuche bald eine neuere, unterstützte Version zu benutzen.
+huntersdream.versionNotSupported=Hunter's Dream unterstützt die Minecraftversion %s, die du gerade benutzt, nicht mehr. Bitte beschwere dich nicht über Fehler oder Abstürze und versuche bald eine neuere unterstützte Version zu benutzen.
 huntersdream.werewolfNotAllowedToSleep=Du kannst nicht schlafen, wenn du verwandelt bist
+huntersdream.transformation.wip=Die Verwandlung %s, in die du dich gerade transformiert hast, ist momentan noch in Arbeit. Einige Funktionen könnten noch fehlen oder unvollständig sein. Benutzung auf eigene Gefahr.
 death.attack.vampireDrankBlood=%s wurde von einem Vampir leer getrunken
 item.huntersdream.bestiary.onClick=Du bist nun %s
 item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Du bist kein Werwolf.
@@ -131,6 +156,7 @@ huntersdream.config.server=Server
 huntersdream.config.generateHuntersCabin=Generiere Jägerhütten in Dörfern
 huntersdream.config.huntersCampSpawnChance=Wahrscheinlichkeit, Jägerlager zu generieren
 huntersdream.config.generateVillagerCastle=Generiere Dorfbewohnerburgen in Dörfern
+huntersdream.config.generateHealingHerb=Generiere Felder mit Heilkraut in Dörfern
 huntersdream.config.werewolfCabinSpawnChance=Wahrscheinlichkeit, Werwolfhütten zu generieren
 huntersdream.config.logStructureSpawns=Logge eine Nachricht für jede generierte Struktur
 huntersdream.config.werewolvesBreakDoors=Lasse Werwölfe Holztüren zerstören
@@ -152,7 +178,7 @@ huntersdream.bite.description=Infektiöse Zähne\: Infiziert Spieler mit einer 2
 huntersdream.bite_1.name=Biss II
 huntersdream.bite_1.description=Eisenzähne\: Der Biss ignoriert Rüstung und verursacht 5 Schaden mehr.
 huntersdream.bite_2.name=Biss III
-huntersdream.bite_2.description=Giftbiss\: Untote Monster und Spieler haben nun eine Wahrscheinlichkeit von 25%%, 5 Sekunden lang Ausdörrung zu erhalten.
+huntersdream.bite_2.description=Giftbiss\: Untote Monster und Spieler haben nun eine Wahrscheinlichkeit von 25%% 5 Sekunden lang Ausdörrung zu erhalten.
 
 huntersdream.speed.name=Schnelligkeit I
 huntersdream.speed.description=Erhöht die Geschwindigkeit (1 zu 2).
@@ -188,9 +214,17 @@ hunter_armor_effect.huntersdream.none=Nichts
 hunter_armor_effect.huntersdream.aconite=Aconitum
 hunter_armor_effect.huntersdream.monkshood=Eisenhut
 hunter_armor_effect.huntersdream.wolfsbane=Wolfswurz
+hunter_armor_effect.huntersdream.healing=Heilung
+hunter_armor_effect.huntersdream.glow_fern=Glühfarn
+hunter_armor_effect.huntersdream.poison_ivy=Giftefeu
+hunter_armor_effect.huntersdream.magma_flower=Magmablume
+hunter_armor_effect.huntersdream.wither_moss=Withermoos
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Nicht herstellbar. Verändert die Verwandlung des Spielers durch Rechtsklicken.
-item.huntersdream.lycanthropy_book.tooltip=Kann in Kisten gefunden werden. Bei Rechtsklicken durch einen Werwolf wird dessen Fähigkeitenreiter geöffnet.
+item.huntersdream.lycanthropy_book.tooltip=Kann in Kisten in Dörfern gefunden werden. Bei Rechtsklicken durch einen Werwolf wird dessen Fähigkeitenreiter geöffnet.
+item.huntersdream.healing_herb.tooltip=In Dörfern auffindbar. Regeneriert zwei Herzen und stellt Heilungstränke durch Vermischen mit einem seltsamen Trank im Braustand her. Kann außerdem auch mit der Jägerrüstung kombiniert werden.
 item.huntersdream.gun.loaded.tooltip=Geladen
 item.huntersdream.gun.unloaded.tooltip=Ungeladen
+item.huntersdream.gun.loaded_and_ammunition.tooltip=Geladen %s/%s
+item.huntersdream.gun.unloaded_and_ammunition.tooltip=Ungeladen %s/%s

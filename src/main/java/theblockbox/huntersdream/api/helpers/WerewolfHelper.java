@@ -235,6 +235,8 @@ public class WerewolfHelper {
             } else {
                 WerewolfHelper.setTransformed(player, transformed);
                 PacketHandler.sendTransformationMessage(player);
+                // get off what you're currently riding
+                player.dismountRidingEntity();
                 return true;
             }
         }

@@ -9,7 +9,6 @@ import theblockbox.huntersdream.api.init.BlockInit;
 import java.util.List;
 import java.util.Random;
 
-// TODO: fix
 public class StructureVillageModifiedField extends StructureVillagePieces.Field1 {
     public StructureVillageModifiedField() {
     }
@@ -18,10 +17,10 @@ public class StructureVillageModifiedField extends StructureVillagePieces.Field1
         super(start, type, rand, boundingBox, facing);
         this.setCoordBaseMode(facing);
         this.boundingBox = boundingBox;
-        if (rand.nextInt(4) == 0)
+        if (rand.nextInt(5) == 0) {
             this.cropTypeA = BlockInit.HEALING_HERB;
-        if (rand.nextInt(4) == 0)
             this.cropTypeB = BlockInit.HEALING_HERB;
+        }
     }
 
     public static class VillageModifiedFieldHandler extends VillageCreationHandler {

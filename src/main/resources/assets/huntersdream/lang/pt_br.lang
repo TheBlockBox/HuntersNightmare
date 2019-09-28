@@ -1,81 +1,105 @@
 ﻿#PARSE_ESCAPES
 # Language: brazilian portuguese
 # Region: Brazil
-# Translated by: ガーラート
+# Translated by: Nick Irregular
 
 # Armor
-item.huntersdream.silver_helmet.name=Capacete de Prata
-item.huntersdream.silver_chestplate.name=Peitora de Prata
-item.huntersdream.silver_leggings.name=Calça de Prata
-item.huntersdream.silver_boots.name=Bota de Prata
-item.huntersdream.hunter_hat.name=Chapéu de Caçador
-item.huntersdream.hunter_coat.name=Casaco de Caçador
-item.huntersdream.hunter_pants.name=Calça de Caçador
-item.huntersdream.hunter_boots.name=Bota de Caçador
+item.huntersdream.silver_helmet.name=Capacete de prata
+item.huntersdream.silver_chestplate.name=Peitora de prata
+item.huntersdream.silver_leggings.name=Calça de prata
+item.huntersdream.silver_boots.name=Bota de prata
+item.huntersdream.hunter_hat.name=Chapéu de caçador
+item.huntersdream.hunter_coat.name=Casaco de caçador
+item.huntersdream.hunter_pants.name=Calça de caçador
+item.huntersdream.hunter_boots.name=Bota de caçador
 
 # Weapons and Tools
-item.huntersdream.silver_sword.name=Espada de Prata
-item.huntersdream.silver_pickaxe.name=Picareta de Prata
-item.huntersdream.silver_shovel.name=Pá de Prata
-item.huntersdream.silver_hoe.name=Enxada de Prata
-item.huntersdream.silver_axe.name=Machado de Prata
-item.huntersdream.flintlock_musket.name=Mosquete de Pederneira
-item.huntersdream.flintlock_pistol.name=Pistola de Pederneira
-item.huntersdream.flintlock_blunderbuss.name=Perderneira Blunderbuss
-item.huntersdream.musket_ball.name=Bola de Mosquete
-item.huntersdream.silver_musket_ball.name=Bola de Mosquete de Prata
+item.huntersdream.silver_sword.name=Espada de prata
+item.huntersdream.silver_pickaxe.name=Picareta de prata
+item.huntersdream.silver_shovel.name=Pá de prata
+item.huntersdream.silver_hoe.name=Enxada de prata
+item.huntersdream.silver_axe.name=Machado de prata
+item.huntersdream.flintlock_musket.name=Mosquete de pederneira
+item.huntersdream.flintlock_pistol.name=Pistola de pederneira
+item.huntersdream.flintlock_blunderbuss.name=Blunderbuss de perdeneira
+item.huntersdream.revolver.name=Revólver
+item.huntersdream.hunting_rifle.name=Rifle de caça
+item.huntersdream.pump_shotgun.name=Espingarda
+item.huntersdream.musket_ball.name=Bola de mosquete
+item.huntersdream.silver_musket_ball.name=Bola de mosquete de prata
+item.huntersdream.revolver_bullet.name=Bala de revólver
+item.huntersdream.silver_revolver_bullet.name=Bala de revólver de prata
+item.huntersdream.rifle_bullet.name=Bala de rifle
+item.huntersdream.silver_rifle_bullet.name=Bala de rifle de prata
+item.huntersdream.shotgun_shell.name=Casca de espingarda
+item.huntersdream.silver_shotgun_shell.name=Casca de espingarda de prata
+item.huntersdream.silver_arrow.name=Flecha de prata
 
 # Other items
-item.huntersdream.silver_ingot.name=Barra de Prata
+item.huntersdream.silver_ingot.name=Barra de prata
 item.huntersdream.bestiary.name=Bestiáriorio 
-item.huntersdream.lycanthropy_book.name=Livro de Licantropia
+item.huntersdream.lycanthropy_book.name=Livro de licantropia
 item.huntersdream.tent.name=Barraca
 item.huntersdream.fabric.name=Tecido
-item.huntersdream.herbal_wolfsbane_water.name=Água herbácea de Acônito
+item.huntersdream.herbal_wolfsbane_water.name=Água herval de acônito
+item.huntersdream.healing_herb.name=Erva de cura
 
 # Potions
-effect.huntersdream.wolfsbane=Veneno de Lobo
-effect.huntersdream.sunscreen=Protetor Solar
-potion.effect.wolfsbane=Poção de Veneno de Lobo
-splash_potion.effect.wolfsbane=Poção Arremessável de Veneno de Lobo
-lingering_potion.effect.wolfsbane=Poção Prolongade de Veneno de Lobo
-tipped_arrow.effect.wolfsbane=Flecha com Veneno de Lobo
+effect.huntersdream.wolfsbane=Veneno de lobo
+effect.huntersdream.sunscreen=Protetor solar
+potion.effect.wolfsbane=Poção de Veneno de lobo
+splash_potion.effect.wolfsbane=Poção arremessável de veneno de lobo
+lingering_potion.effect.wolfsbane=Poção prolongada de veneno de lobo
+tipped_arrow.effect.wolfsbane=Flecha com veneno de lobo
 
 # Blocks
-tile.huntersdream.silver_block.name=Bloco de Prata
-tile.huntersdream.silver_ore.name=Minério de Prata
+tile.huntersdream.silver_block.name=Bloco de prata
+tile.huntersdream.silver_ore.name=Minério de prata
+tile.huntersdream.aconite_flower.name=Flor de acônito
+tile.huntersdream.monkshood_flower.name=Flor monkshood
+tile.huntersdream.glow_fern.name=Samambaia brilhante
+tile.huntersdream.magma_flower.name=Flor de magma
+tile.huntersdream.poison_ivy.name=Hera venenosa
+tile.huntersdream.wither_moss.name=Musgo murcho
+tile.huntersdream.oak_campfire.name=Fogueira de madeira de carvalho
+tile.huntersdream.spruce_campfire.name=Fogueira de madeira de pinheiro
+tile.huntersdream.birch_campfire.name=Fogueira de madeira de eucalipto
+tile.huntersdream.jungle_campfire.name=Fogueira de madeira da selva
+tile.huntersdream.acacia_campfire.name=Fogueira de madeira de acácia
+tile.huntersdream.dark_oak_campfire.name=Fogueira de madeira de carvalho escuro
 tile.huntersdream.tile_tent.name=Barraca
 tile.huntersdream.cotton.name=Algodão
-tile.huntersdream.spinning_wheel.name=roda de fiar
-tile.huntersdream.oak_campfire.name=Fogueira de madeira de Carvalho
-tile.huntersdream.spruce_campfire.name=Fogueira de Madeira de Pinhero
-tile.huntersdream.birch_campfire.name=Fogueira de Madeira de Eucalipto
-tile.huntersdream.jungle_campfire.name=Fogueira de Madeira de Selva
-tile.huntersdream.acacia_campfire.name=Fogueira de Madeira de Acácia
-tile.huntersdream.dark_oak_campfire.name=Fogueira de Madeira de Carvalho Escuro
-tile.huntersdream.aconite_flower.name=Flor de Acônito
-tile.huntersdream.monkshood_flower.name=Aconitum napellus
-tile.huntersdream.wolfsbane_garland.name=Girlanda de Acônito
-tile.huntersdream.wolfsbane_petals.name=Pétalas de Acônito
-
+tile.huntersdream.healing_herb.name=Erve de cura
+tile.huntersdream.spinning_wheel.name=Roda de fiar
+tile.huntersdream.wolfsbane_garland.name=Guirlanda de acônito
+tile.huntersdream.wolfsbane_petals.name=Pétalas de acônito
+ 
 # Entities
 entity.goblintd.name=Goblin
 entity.werewolf.name=Lobisomem
 entity.hunter.name=Caçador
+entity.bullet.name=Bala
+entity.silver_arrow.name=Flecha de prata
 
 # Transformations
-huntersdream\:none=Ninguém
+huntersdream\:none=Nenhum
 huntersdream\:human=Humano
 huntersdream\:werewolf=Lobisomem
 huntersdream\:vampire=Vampiro
 huntersdream\:ghost=Fantasma
 
 # Sounds (Subtitles)
-huntersdream.transformation.heartbeat=Batimento cardíaco de um lobisomem
-huntersdream.transformation.werewolf.howling=Lobisomem Uivando
-huntersdream.transformation.vampire.gulp=Vampiro bebendo sangue
-huntersdream.gun.flintlock.fire=Arma de Perdeneira Atirando
-huntersdream.gun.flintlock.reload=Arma de Perdeneira Carregando
+huntersdream.transformation.heartbeat=Heartbeat of a werewolf
+huntersdream.transformation.vampire.gulp=Vampire drinking blood
+huntersdream.gun.flintlock.fire=Flintlock gun firing
+huntersdream.gun.flintlock.reload=Flintlock gun reloading
+huntersdream.gun.bullet_hit=Bullet hits
+huntersdream.gun.revolver.fire=Revolver firing
+huntersdream.gun.revolver.reload=Revolver reloading
+huntersdream.gun.rifle.fire=Rifle firing
+huntersdream.gun.rifle.reload=Rifle reloading
+huntersdream.gun.shotgun.fire=Shotgun firing
+huntersdream.gun.shotgun.reload=Shotgun reloading
 
 # Creative Tabs
 itemGroup.huntersdream.toolsandcombat=Hunter's Dream Ferramenta e combate
@@ -85,23 +109,24 @@ itemGroup.huntersdream.misc=Hunter's Dream Diversos
 command.huntersdream.invalid=Invalid arguments
 command.huntersdream.moonphase.usage=hdmoonphase <get|add> <worldid> <moon phases to skip>
 command.huntersdream.moonphase.getCurrent=Current moonphase is %s
-command.huntersdream.moonphase.getSet=A Fase da Lua está %s agora
+command.huntersdream.moonphase.getSet=Agora a Fase da Lua esta %s
 command.huntersdream.transformation.usage=hdtransformation <transformation|get> <player>
-command.huntersdream.transformation.transformationSet=%s agora é um %s
-command.huntersdream.transformation.transformationGet=%s's transformation is %s
+command.huntersdream.transformation.transformationSet=%s é agora um %s
+command.huntersdream.transformation.transformationGet=%s transformação é %s
 command.huntersdream.transformationtexture.usage=hdtransformationtexture <texture index|get> <player>
 command.huntersdream.transformationtexture.get=%s's texture index is %s
 command.huntersdream.transformationtexture.set=%s's texture was set to %s
 command.huntersdream.skill.usage=hdskill <clear|add|remove|list> <player> <skill>
-command.huntersdream.skill.add=The skill %s foi adicionado a %s
-command.huntersdream.skill.remove=The skill %s foi removido de %s
-command.huntersdream.skill.clear=%s's skills have been cleared
-command.huntersdream.skill.list=%s's skills are\: %s
+command.huntersdream.skill.add=A habilidade %s foi adicionada a %s
+command.huntersdream.skill.remove=A habilidade %s foi removido de %s
+command.huntersdream.skill.clear=%s teve suas habilidades limpas
+command.huntersdream.skill.list=As habilidades de %s são\: %s
 
 # Chat messages
 transformations.huntersdream.infected.werewolf=Você sente uma maldição ao seu redor ...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
-huntersdream.werewolfNotAllowedToSleep=Você não consegue dormir quando esta transforma
+huntersdream.werewolfNotAllowedToSleep=Você não consegue dormir quando esta transformado
+huntersdream.transformation.wip=The transformation %s that you have transformed into is currently work in progress. Some things may not have been fully added or might be incomplete. Use at your own risk.
 death.attack.vampireDrankBlood=%s teve seu sangue sugado por um vampiro
 item.huntersdream.bestiary.onClick=Você agora é um %s
 item.huntersdream.lycanthropy_book.onClick.wrong_transformation=Você não é um lobisomem
@@ -131,6 +156,7 @@ huntersdream.config.server=Server
 huntersdream.config.generateHuntersCabin=Generate Hunter's Cabin in villages
 huntersdream.config.huntersCampSpawnChance=Hunter's Camp spawn chance
 huntersdream.config.generateVillagerCastle=Generate Villager Castle in villages
+huntersdream.config.generateHealingHerb=Generate Healing Herbs in fields in villages
 huntersdream.config.werewolfCabinSpawnChance=Werewolf Cabin spawn chance
 huntersdream.config.logStructureSpawns=Log a message for each spawned structure with its position
 huntersdream.config.werewolvesBreakDoors=Werewolves destroy wooden doors
@@ -152,14 +178,14 @@ huntersdream.bite.description=Dentes Infecciosos\: Pode infectar jogadores com 2
 huntersdream.bite_1.name=Mordida II
 huntersdream.bite_1.description=Dentes de Aço\: Morder causa mais dano (+5) e ignora armadura.
 huntersdream.bite_2.name=Mordida III
-huntersdream.bite_2.description=Mordida venenosa\: Mobs e jogadores mortos-vivos agora terão 25%% de chance de causar decomposição por 5 segundos.
+huntersdream.bite_2.description=Mordida Venenosa\: Mobs e jogadores mortos-vivos agora terão 25%% de chance de causar decomposição por 5 segundos.
 
 huntersdream.speed.name=Velocidade I
-huntersdream.speed.description=Aumenta a Velocidade (1 para 2).
+huntersdream.speed.description=Aumenta a velocidade (1 para 2).
 huntersdream.speed_1.name=Velocidade II
-huntersdream.speed_1.description=Aumenta a Velocidade (2 para 3).
+huntersdream.speed_1.description=Aumenta a velocidade (2 para 3).
 huntersdream.speed_2.name=Velocidade III
-huntersdream.speed_2.description=Aumenta a Velocidade (3 para 4).
+huntersdream.speed_2.description=Aumenta a velocidade (3 para 4).
 
 huntersdream.jump.name=Pulo I
 huntersdream.jump.description=Aumenta o pulo (1 para 2).
@@ -168,11 +194,11 @@ huntersdream.jump_1.description=Aumenta o pulo (2 para 3).
 huntersdream.jump_2.name=Pulo III
 huntersdream.jump_2.description=Aumenta o pulo (3 para 4).
 
-huntersdream.unarmed.name=Unarmed I
+huntersdream.unarmed.name=Desarmado I
 huntersdream.unarmed.description=Aumenta o dano de 6 para 7.
-huntersdream.unarmed_1.name=Unarmed II
+huntersdream.unarmed_1.name=Desamado II
 huntersdream.unarmed_1.description=Aumenta o dano de 7 para 8.
-huntersdream.unarmed_2.name=Unarmed III
+huntersdream.unarmed_2.name=Desaemado III
 huntersdream.unarmed_2.description=Aumenta o dano de 8 para 9.
 
 huntersdream.natural_armor.name=Armadura Natural I
@@ -183,14 +209,22 @@ huntersdream.natural_armor_2.name=Armadura Natural III
 huntersdream.natural_armor_2.description=Faz com que a armadura natural seja tão forte quanto um conjunto completo de armadura de diamante.
 
 # Hunter Armor Effects
-huntersdream.hunter_armor_effect=Has the effect "%s"
+huntersdream.hunter_armor_effect=Tem o efeito "%s"
 hunter_armor_effect.huntersdream.none=nenhum
-hunter_armor_effect.huntersdream.aconite=Acônito
-hunter_armor_effect.huntersdream.monkshood=Aconitum
-hunter_armor_effect.huntersdream.wolfsbane=Acônito
+hunter_armor_effect.huntersdream.aconite=Aconito
+hunter_armor_effect.huntersdream.monkshood=Monkshood
+hunter_armor_effect.huntersdream.wolfsbane=Veneno de lobo
+hunter_armor_effect.huntersdream.healing=cura
+hunter_armor_effect.huntersdream.glow_fern=Samambaia brilhante
+hunter_armor_effect.huntersdream.poison_ivy=Hera venenosa
+hunter_armor_effect.huntersdream.magma_flower=Flor de magma
+hunter_armor_effect.huntersdream.wither_moss=Musgo murcho
 
 # Other stuff
 item.huntersdream.bestiary.tooltip=Não é fabricável. Altera a transformação do jogador quando clica com o botão direito.
-item.huntersdream.lycanthropy_book.tooltip=Encontrado em baús. Quando clicado com o botão direito por um lobisomem, abre a aba de habilidade.
+item.huntersdream.lycanthropy_book.tooltip=Encontrado em baús de aldeias. Quando clicado com o botão direito por um lobisomem, abre a aba de habilidades.
+item.huntersdream.healing_herb.tooltip=Encontrado em aldeias. Pode ser comido para restaurar dois corações, cria poções de cura quando combinado com uma Poção Estranha e também pode ser combinado com a Armadura do Caçador.
 item.huntersdream.gun.loaded.tooltip=Carregado
 item.huntersdream.gun.unloaded.tooltip=Descarregado
+item.huntersdream.gun.loaded_and_ammunition.tooltip=Carregado %s/%s
+item.huntersdream.gun.unloaded_and_ammunition.tooltip=Descarregado %s/%s
