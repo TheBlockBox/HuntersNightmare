@@ -201,12 +201,12 @@ huntersdream.unarmed_1.description=Increases damage from 7 to 8.
 huntersdream.unarmed_2.name=Unarmed III
 huntersdream.unarmed_2.description=Increases damage from 8 to 9.
 
-huntersdream.natural_armor.name=Natural Armor I
-huntersdream.natural_armor.description=Makes the natural armor be as strong as a full set of chainmail armor.
-huntersdream.natural_armor_1.name=Natural Armor II
-huntersdream.natural_armor_1.description=Makes the natural armor be as strong as a full set of iron armor.
-huntersdream.natural_armor_2.name=Natural Armor III
-huntersdream.natural_armor_2.description=Makes the natural armor be as strong as a full set of diamond armor.
+huntersdream.natural_armor.name=Natural Armour I
+huntersdream.natural_armor.description=Makes the natural armour be as strong as a full set of chainmail armour.
+huntersdream.natural_armor_1.name=Natural Armour II
+huntersdream.natural_armor_1.description=Makes the natural armour be as strong as a full set of iron armour.
+huntersdream.natural_armor_2.name=Natural Armour III
+huntersdream.natural_armor_2.description=Makes the natural armour be as strong as a full set of diamond armour.
 
 # Hunter Armor Effects
 huntersdream.hunter_armor_effect=Has the effect "%s"
@@ -223,7 +223,7 @@ hunter_armor_effect.huntersdream.wither_moss=Wither Moss
 # Other stuff
 item.huntersdream.bestiary.tooltip=Not craftable. Changes the player's transformation when right clicked.
 item.huntersdream.lycanthropy_book.tooltip=Found in village chests. When right clicked by a werewolf, opens the skill tab.
-item.huntersdream.healing_herb.tooltip=Found in villages. Can be eaten to restore two hearts, creates healing potions when combined with an Awkward Potion and can also be combined with Hunter's Armor.
+item.huntersdream.healing_herb.tooltip=Found in villages. Can be eaten to restore two hearts, creates healing potions when combined with an Awkward Potion and can also be combined with Hunter's Armour.
 item.huntersdream.gun.loaded.tooltip=Loaded
 item.huntersdream.gun.unloaded.tooltip=Unloaded
 item.huntersdream.gun.loaded_and_ammunition.tooltip=Loaded %s/%s
