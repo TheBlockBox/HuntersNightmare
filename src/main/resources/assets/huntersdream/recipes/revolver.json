@@ -1,0 +1,28 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " F",
+        "IB",
+        " S"
+    ],
+    "key": {
+        "F": {
+            "item": "minecraft:flint_and_steel"
+        },
+        "B": {
+            "type": "forge:ore_dict",
+            "ore": "blockIron"
+        },
+        "S": {
+            "item": "minecraft:stone_button"
+        },
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotIron"
+        }
+    },
+    "result": {
+        "item": "huntersdream:revolver",
+        "count": 1
+    }
+}

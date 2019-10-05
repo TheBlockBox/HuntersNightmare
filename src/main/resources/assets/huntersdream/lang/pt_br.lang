@@ -45,12 +45,12 @@ item.huntersdream.herbal_wolfsbane_water.name=Água herval de acônito
 item.huntersdream.healing_herb.name=Erva de cura
 
 # Potions
-effect.huntersdream.wolfsbane=Veneno de lobo
+effect.huntersdream.wolfsbane=Acônito
 effect.huntersdream.sunscreen=Protetor solar
-potion.effect.wolfsbane=Poção de Veneno de lobo
-splash_potion.effect.wolfsbane=Poção arremessável de veneno de lobo
-lingering_potion.effect.wolfsbane=Poção prolongada de veneno de lobo
-tipped_arrow.effect.wolfsbane=Flecha com veneno de lobo
+potion.effect.wolfsbane=Poção de acônito
+splash_potion.effect.wolfsbane=Poção arremessável de acônito
+lingering_potion.effect.wolfsbane=Poção prolongada de acônito
+tipped_arrow.effect.wolfsbane=Flecha com acônito
 
 # Blocks
 tile.huntersdream.silver_block.name=Bloco de prata
@@ -196,9 +196,9 @@ huntersdream.jump_2.description=Aumenta o pulo (3 para 4).
 
 huntersdream.unarmed.name=Desarmado I
 huntersdream.unarmed.description=Aumenta o dano de 6 para 7.
-huntersdream.unarmed_1.name=Desamado II
+huntersdream.unarmed_1.name=Desarmado II
 huntersdream.unarmed_1.description=Aumenta o dano de 7 para 8.
-huntersdream.unarmed_2.name=Desaemado III
+huntersdream.unarmed_2.name=Desarmado III
 huntersdream.unarmed_2.description=Aumenta o dano de 8 para 9.
 
 huntersdream.natural_armor.name=Armadura Natural I
