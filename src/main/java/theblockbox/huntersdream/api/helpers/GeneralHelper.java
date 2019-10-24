@@ -535,7 +535,7 @@ public class GeneralHelper {
      * but not night. Only returns true if the world time is greater than 12540 and less than 23459.
      */
     public static boolean isNight(World world) {
-        long worldTime = world.getWorldTime();
+        long worldTime = world.getWorldTime() % 24000L;
         // 23459 and 12540 are the exact times between which it is day (according to World#isDaytime)
         return WerewolfHelper.isFullmoon(world) && ((worldTime > 12540L) && (worldTime < 23459L));
     }
