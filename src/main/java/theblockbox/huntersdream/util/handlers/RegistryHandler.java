@@ -15,7 +15,6 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -35,7 +34,6 @@ import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityCampfire;
 import theblockbox.huntersdream.blocks.tileentity.TileEntitySpinningWheel;
 import theblockbox.huntersdream.blocks.tileentity.TileEntityTent;
-import theblockbox.huntersdream.client.render.TileEntityTentRenderer;
 import theblockbox.huntersdream.commands.CommandMoonphase;
 import theblockbox.huntersdream.commands.CommandSkill;
 import theblockbox.huntersdream.commands.CommandTransformation;
@@ -106,8 +104,8 @@ public class RegistryHandler {
 
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) {
+        Main.proxy.onRegisterModels(event);
         ItemInit.ITEMS.forEach(item -> Main.proxy.registerItemRenderer(item, 0, "inventory"));
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTent.class, new TileEntityTentRenderer());
         EntityInit.registerEntityRenders();
     }
 

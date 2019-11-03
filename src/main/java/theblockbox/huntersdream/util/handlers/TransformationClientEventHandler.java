@@ -33,9 +33,7 @@ import theblockbox.huntersdream.api.init.ParticleCommonInit;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.api.skill.Skill;
 import theblockbox.huntersdream.entity.renderer.RenderLycanthropePlayer;
-import theblockbox.huntersdream.items.gun.ItemGun;
 import theblockbox.huntersdream.items.gun.ItemRifle;
-import theblockbox.huntersdream.items.gun.ItemShotgun;
 import theblockbox.huntersdream.util.Reference;
 
 import java.util.Collection;
@@ -50,6 +48,10 @@ public class TransformationClientEventHandler {
     public static final ResourceLocation WEREWOLF_HEALTH = GeneralHelper.newResLoc("textures/gui/werewolf_health.png");
     public static TextureAtlasSprite transparent16x16Texture = null;
     private static final ResourceLocation WEREWOLF_HAND = GeneralHelper.newResLoc(Reference.ENTITY_TEXTURE_PATH + "werewolf/werewolf_arms.png");
+    public static TextureAtlasSprite reticleNormal = null;
+    public static TextureAtlasSprite reticleReload = null;
+    public static TextureAtlasSprite reticleNormalShotgun = null;
+    public static TextureAtlasSprite rifleScope = null;
     private static RenderLycanthropePlayer renderLycantrophePlayer = null;
     private static RenderPlayer renderPlayerHand = null;
     private static int oldActiveStackUseCount = 0;
@@ -144,10 +146,10 @@ public class TransformationClientEventHandler {
         SkillBarHandler.crossSprite = map.registerSprite(SkillBarHandler.CROSS);
         ParticleClientInit.bloodParticleTexture = map.registerSprite(GeneralHelper.newResLoc("particles/"
                 + ParticleCommonInit.BLOOD_PARTICLE.getParticleName().split(":", 2)[1]));
-        ItemGun.reticleNormal = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal"));
-        ItemGun.reticleReload = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_reload"));
-        ItemShotgun.reticleNormalShotgun = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal_shotgun"));
-        ItemRifle.rifleScope = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope"));
+        TransformationClientEventHandler.reticleNormal = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal"));
+        TransformationClientEventHandler.reticleReload = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_reload"));
+        TransformationClientEventHandler.reticleNormalShotgun = map.registerSprite(GeneralHelper.newResLoc("gui/gun/reticle_normal_shotgun"));
+        TransformationClientEventHandler.rifleScope = map.registerSprite(GeneralHelper.newResLoc("gui/gun/rifle_scope"));
     }
 
     @SubscribeEvent

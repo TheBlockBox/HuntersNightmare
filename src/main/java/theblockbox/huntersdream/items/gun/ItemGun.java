@@ -22,16 +22,13 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.api.interfaces.IGun;
 import theblockbox.huntersdream.entity.EntityBullet;
+import theblockbox.huntersdream.util.handlers.TransformationClientEventHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class ItemGun extends ItemBow implements IGun {
-    @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite reticleNormal = null;
-    @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite reticleReload = null;
     protected final double damage;
     protected final int reloadCooldown;
 
@@ -150,9 +147,10 @@ public abstract class ItemGun extends ItemBow implements IGun {
         return GeneralHelper.getTagCompoundFromItemStack(stack).getBoolean("huntersdream:loaded");
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public TextureAtlasSprite getReticle(EntityLivingBase entity, ItemStack stack) {
-        return this.isLoaded(stack) ? ItemGun.reticleNormal : ItemGun.reticleReload;
+        return this.isLoaded(stack) ? TransformationClientEventHandler.reticleNormal : TransformationClientEventHandler.reticleReload;
     }
 
     @SideOnly(Side.CLIENT)

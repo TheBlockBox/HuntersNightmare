@@ -18,9 +18,6 @@ import theblockbox.huntersdream.util.handlers.TransformationClientEventHandler;
 import java.util.function.Supplier;
 
 public class ItemRifle extends ItemPercussionGun {
-    @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite rifleScope = null;
-
     public ItemRifle(double damage, int durability, int ticksShotCooldown, Supplier<Item> defaultAmmunition, int maximumAmmunitionStorage) {
         super(damage, durability, ticksShotCooldown, defaultAmmunition, maximumAmmunitionStorage, 0.1F, IAmmunition.AmmunitionType.RIFLE_BULLET);
         this.fireSound = SoundInit.RIFLE_FIRE;
@@ -34,7 +31,7 @@ public class ItemRifle extends ItemPercussionGun {
         boolean showScope = this.isAiming(entity, stack);
         if ((sprite != null) && showScope) {
             Minecraft mc = Minecraft.getMinecraft();
-            TextureAtlasSprite scope = ItemRifle.rifleScope;
+            TextureAtlasSprite scope = TransformationClientEventHandler.rifleScope;
             ScaledResolution res = ((GuiIngameForge) mc.ingameGUI).getResolution();
             // draw rifle scope
             GlStateManager.enableAlpha();

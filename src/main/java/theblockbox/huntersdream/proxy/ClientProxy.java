@@ -6,8 +6,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
+import theblockbox.huntersdream.blocks.tileentity.TileEntityTent;
+import theblockbox.huntersdream.client.render.TileEntityTentRenderer;
 import theblockbox.huntersdream.gui.GuiSkillTab;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
 
@@ -30,6 +34,11 @@ public class ClientProxy implements IProxy {
     @Override
     public void postInit() {
         RegistryHandler.postInitClient();
+    }
+
+    @Override
+    public void onRegisterModels(ModelRegistryEvent event) {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTent.class, new TileEntityTentRenderer());
     }
 
     @Override

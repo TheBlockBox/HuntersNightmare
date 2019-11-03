@@ -3,6 +3,7 @@ package theblockbox.huntersdream.proxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.handlers.RegistryHandler;
@@ -26,6 +27,10 @@ public class ServerProxy implements IProxy {
     @Override
     public void postInit() {
         RegistryHandler.postInitServer();
+    }
+
+    @Override
+    public void onRegisterModels(ModelRegistryEvent event) {
     }
 
     @Override
