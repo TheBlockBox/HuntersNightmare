@@ -35,7 +35,7 @@ public class WorldGenInit {
             public int getAmountOfBlocks(Random random) {
                 return random.nextInt(5);
             }
-        };
+        }.add();
         new WorldGenInit.WorldGenEntry(BlockInit.COTTON.getDefaultState().withProperty(PropertyInit.COTTON_AGE, 3),
                 DecorateBiomeEvent.Decorate.EventType.FLOWERS, 0.5D).add();
         new WorldGenInit.WorldGenEntry(BlockInit.GLOW_FERN.getDefaultState(), DecorateBiomeEvent.Decorate.EventType.FLOWERS, 0.7D) {
