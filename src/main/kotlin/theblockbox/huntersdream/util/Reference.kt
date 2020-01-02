@@ -1,4 +1,4 @@
-package theblockbox.huntersdream.utils
+package theblockbox.huntersdream.util
 
 class Reference {
     companion object {
