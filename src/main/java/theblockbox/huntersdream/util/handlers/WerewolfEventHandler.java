@@ -177,6 +177,7 @@ public class WerewolfEventHandler {
     @SubscribeEvent
     public static void onEntityItemPickup(EntityItemPickupEvent event) {
         if (WerewolfHelper.isTransformed(event.getEntityPlayer()) && !event.getEntityPlayer().isCreative()) {
+            // WerewolfHelper.extendItemDespawn(event.getItem());
             event.setCanceled(true);
         }
     }

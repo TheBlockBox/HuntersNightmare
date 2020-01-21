@@ -123,7 +123,6 @@ command.huntersdream.skill.clear=%ss Fähigkeiten wurden entfernt
 command.huntersdream.skill.list=%ss Fähigkeiten sind\: %s
 
 # Chat messages
-transformations.huntersdream.infected.werewolf=Du fühlst, dass dich ein Fluch umgibt...
 huntersdream.versionNotSupported=Hunter's Dream unterstützt die Minecraftversion %s, die du gerade benutzt, nicht mehr. Bitte beschwere dich nicht über Fehler oder Abstürze und versuche bald eine neuere unterstützte Version zu benutzen.
 huntersdream.werewolfNotAllowedToSleep=Du kannst nicht schlafen, wenn du verwandelt bist
 huntersdream.transformation.wip=Die Verwandlung %s, in die du dich gerade transformiert hast, ist momentan noch in Arbeit. Einige Funktionen könnten noch fehlen oder unvollständig sein. Benutzung auf eigene Gefahr.
@@ -195,11 +194,11 @@ huntersdream.jump_2.name=Sprungkraft III
 huntersdream.jump_2.description=Erhöht die Sprungkraft (3 zu 4).
 
 huntersdream.unarmed.name=Unbewaffnet I
-huntersdream.unarmed.description=Erhöht den Schaden von 6 auf 7.
+huntersdream.unarmed.description=Erhöht den Schaden.
 huntersdream.unarmed_1.name=Unbewaffnet II
-huntersdream.unarmed_1.description=Erhöht den Schaden von 7 auf 8.
+huntersdream.unarmed_1.description=Erhöht den Schaden.
 huntersdream.unarmed_2.name=Unbewaffnet III
-huntersdream.unarmed_2.description=Erhöht den Schaden von 8 auf 9.
+huntersdream.unarmed_2.description=Erhöht den Schaden.
 
 huntersdream.natural_armor.name=Natürliche Rüstung I
 huntersdream.natural_armor.description=Macht die natürliche Rüstung so stark wie eine Kettenrüstung.

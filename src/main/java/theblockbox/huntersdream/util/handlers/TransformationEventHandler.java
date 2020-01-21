@@ -73,7 +73,7 @@ public class TransformationEventHandler {
             if (isTransformed) {
                 if (!player.isCreative() && !player.isSpectator()) {
                     if (!player.inventory.isEmpty()) {
-                        player.inventory.dropAllItems();
+                        WerewolfHelper.dropAllItems(player);
                     }
                 }
             }

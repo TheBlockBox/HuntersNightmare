@@ -21,6 +21,9 @@ public class ConfigHandler {
     @Config.LangKey(Reference.CFG_LANG + "common")
     public static ConfigHandler.Common common = new ConfigHandler.Common();
 
+    @Config.LangKey(Reference.CFG_LANG + "balance")
+    public static ConfigHandler.Balance balance = new ConfigHandler.Balance();
+
     public static class Client {
         @Config.LangKey(Reference.CFG_LANG + "customPlayerRender")
         public boolean customPlayerRender = true;
@@ -38,6 +41,23 @@ public class ConfigHandler {
 
         @Config.LangKey(Reference.CFG_LANG + "showPacketMessages")
         public boolean showPacketMessages = false;
+    }
+
+    public static class Balance {
+        @Config.LangKey(Reference.CFG_LANG + "npcWerewolfBiteDamage")
+        public float npcWerewolfBiteDamage = 5.0F;
+
+        @Config.LangKey(Reference.CFG_LANG + "npcWerewolfClawDamage")
+        public float npcWerewolfClawDamage = 4.0F;
+
+        @Config.LangKey(Reference.CFG_LANG + "playerWerewolfBiteDamage")
+        public float playerWerewolfBiteDamage = 13.0F;
+
+        @Config.LangKey(Reference.CFG_LANG + "playerWerewolfClawDamageBase")
+        public float playerWerewolfClawDamage = 6.0F;
+
+        @Config.LangKey(Reference.CFG_LANG + "playerWerewolfBonusDamagePerLevel")
+        public float playerWerewolfBonusDamagePerLevel = 1.0F;
     }
 
     public static class Server {

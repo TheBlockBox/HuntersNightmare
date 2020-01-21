@@ -5,6 +5,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,6 +41,7 @@ import theblockbox.huntersdream.util.exceptions.WrongSideException;
 import theblockbox.huntersdream.util.exceptions.WrongTransformationException;
 import theblockbox.huntersdream.util.handlers.PacketHandler;
 import theblockbox.huntersdream.util.handlers.TransformationEventHandler;
+import theblockbox.huntersdream.util.handlers.ConfigHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,6 +53,8 @@ import static net.minecraft.init.SoundEvents.ENTITY_WOLF_GROWL;
 public class WerewolfHelper {
     public static final Capability<IInfectOnNextMoon> CAPABILITY_INFECT_ON_NEXT_MOON = CapabilitiesInit.CAPABILITY_INFECT_ON_NEXT_MOON;
     public static final DamageSource WEREWOLF_TRANSFORMATION_DAMAGE = new DamageSource("huntersdream:werewolfTransformationDamage");
+
+    public static final int LONG_DESPAWN = 18000; // 15 minutes
 
     /**
      * Returns true when a werewolf can transform in this world
@@ -79,26 +84,26 @@ public class WerewolfHelper {
         // if the werewolf is either not transformed or has something in its hands
         // (shouldn't happen for players)
         boolean transformed = WerewolfHelper.isTransformed(entity);
+
         if (entity instanceof EntityPlayer) {
+            // No werewolf bonus with items/weapons
+            if (!entity.getHeldItemMainhand().isEmpty()) { return initialDamage; }
+
+            // Player werewolves get unarmed bonus whenever their hand is empty
+            ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
+            float dmg = initialDamage + (transformation.getSkillLevel(SkillInit.UNARMED_0)+1) * ConfigHandler.balance.playerWerewolfBonusDamagePerLevel;
+
             if (transformed) {
-                // default: 6 lvl 0: 7 lvl 1: 8 lvl 2: 9
-                if (entity.getHeldItemMainhand().isEmpty()) {
-                    ITransformationPlayer transformation = TransformationHelper.getITransformationPlayer((EntityPlayer) entity);
-                    return transformation.getSkillLevel(SkillInit.UNARMED_0) + ((WerewolfHelper.wasLastAttackBite(entity)
-                            && transformation.getSkillLevel(SkillInit.BITE_0) > 0) ? 13.0F : 7.0F);
-                } else {
-                    return initialDamage;
-                }
+                return dmg + ((WerewolfHelper.wasLastAttackBite(entity) && transformation.getSkillLevel(SkillInit.BITE_0) > 0) ?
+                    ConfigHandler.balance.playerWerewolfBiteDamage : ConfigHandler.balance.playerWerewolfClawDamage);
             } else {
-                // "Their [untransformed] melee damage is normal damage +2"
-                return initialDamage + 2;
+                return dmg;
             }
         } else {
+            // npc werewolf
             if (transformed) {
-                // "Their attack is 4 hearts per slash and 5 hearts per bite"
-                return WerewolfHelper.wasLastAttackBite(entity) ? 5.0F : 4.0F;
+                return WerewolfHelper.wasLastAttackBite(entity) ? ConfigHandler.balance.npcWerewolfBiteDamage : ConfigHandler.balance.npcWerewolfClawDamage;
             } else {
-                // no damage change for untransformed werewolves
                 return initialDamage;
             }
         }
@@ -152,10 +157,6 @@ public class WerewolfHelper {
     public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
         if (TransformationHelper.canChangeTransformation(entityToBeInfected)
                 && TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, entityToBeInfected)) {
-            if (entityToBeInfected instanceof EntityPlayer) {
-                entityToBeInfected.sendMessage(
-                        new TextComponentTranslation("transformations." + Reference.MODID + ".infected.werewolf"));
-            }
             entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 100, 0, false, true));
             entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 1, false, true));
             entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0, false, false));
@@ -613,5 +614,49 @@ public class WerewolfHelper {
     public static void playHowlSound(EntityLivingBase entity) {
         entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_WOLF_HOWL,
                 entity.getSoundCategory(), 100.0F, (entity.getRNG().nextFloat() - entity.getRNG().nextFloat()) * 0.2F);
+    }
+
+    // Drop all items from player, with extended despawn timer
+    public static void dropAllItems(EntityPlayer player) {
+
+        net.minecraft.entity.player.InventoryPlayer inv = player.inventory;
+
+        //main
+        for (int i = 0; i < inv.mainInventory.size(); ++i)  {
+            ItemStack itemstack = inv.mainInventory.get(i);
+
+            if (!itemstack.isEmpty()) {
+                EntityItem ei = player.dropItem(itemstack, true, false);
+                inv.mainInventory.set(i, ItemStack.EMPTY);
+                ei.lifespan = LONG_DESPAWN;
+            }
+        }
+        // armor
+        for (int i = 0; i < inv.armorInventory.size(); ++i) {
+            ItemStack itemstack = inv.armorInventory.get(i);
+
+            if (!itemstack.isEmpty()) {
+                EntityItem ei = player.dropItem(itemstack, true, false);
+                inv.armorInventory.set(i, ItemStack.EMPTY);
+                ei.lifespan = LONG_DESPAWN;
+            }
+        }
+        // offhand
+        for (int i = 0; i < inv.offHandInventory.size(); ++i) {
+            ItemStack itemstack = inv.offHandInventory.get(i);
+            if (!itemstack.isEmpty()) {
+                EntityItem ei = player.dropItem(itemstack, true, false);
+                inv.offHandInventory.set(i, ItemStack.EMPTY);
+                ei.lifespan = LONG_DESPAWN;
+            }
+        }
+    }
+
+    private void extendItemDespawn(EntityItem item) {
+        net.minecraft.nbt.NBTTagCompound nbt = new net.minecraft.nbt.NBTTagCompound();
+        item.writeEntityToNBT(nbt);
+        int age = nbt.getShort("Age");
+
+        item.lifespan = age + LONG_DESPAWN;
     }
 }
