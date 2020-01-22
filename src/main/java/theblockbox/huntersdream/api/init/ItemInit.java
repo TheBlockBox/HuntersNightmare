@@ -147,6 +147,7 @@ public class ItemInit {
                 return new EntitySilverArrow(worldIn, shooter);
             }
         }, "silver_arrow", CreativeTabInit.HUNTERSDREAM_TOOLS_AND_WEAPONS, event);
+        GameRegistry.addSmelting(BlockInit.SILVER_ORE, new ItemStack(silverIngot), 0.9F);
     }
 
     private static Item registerItem(Item item, String name, RegistryEvent.Register<Item> event) {

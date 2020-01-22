@@ -65,7 +65,6 @@ public class RegistryHandler {
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         ItemInit.onItemRegister(event);
-        GameRegistry.addSmelting(BlockInit.SILVER_ORE, new ItemStack(ItemInit.SILVER_INGOT), 0.9F);
         LootTableInit.register();
         OreDictionaryInit.registerOres();
     }
