@@ -157,9 +157,6 @@ public class WerewolfHelper {
     public static void infectEntityAsWerewolf(EntityLivingBase entityToBeInfected) {
         if (TransformationHelper.canChangeTransformation(entityToBeInfected)
                 && TransformationHelper.canBeInfectedWith(Transformation.WEREWOLF, entityToBeInfected)) {
-            entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.POISON, 100, 0, false, true));
-            entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 100, 1, false, true));
-            entityToBeInfected.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0, false, false));
             IInfectOnNextMoon ionm = WerewolfHelper.getIInfectOnNextMoon(entityToBeInfected).get();
             ionm.setInfectionStatus(IInfectOnNextMoon.InfectionStatus.MOON_ON_INFECTION);
             ionm.setInfectionTick(entityToBeInfected.ticksExisted);
