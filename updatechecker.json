@@ -8,12 +8,13 @@
         "1.0.0-beta1": "Added new structures, animations, sounds, models, commands and translations.\nCreated a base for vampires and hunters and added campfires and tents, new skills, aconite, monkshood, cotton and a hunter armor!\nFor the full changelog, see: https://github.com/TheGamingLord/HuntersDream/blob/master/changelogs/1.x.x/Hunter's%20Dream%201.0.0-beta1%20Changelog.md",
         "1.0.0": "Added new structures, animations, sounds, models, commands and translations.\nCreated a base for vampires and hunters and added campfires and tents, new skills, aconite, monkshood, cotton and a hunter armor!\nFor the full changelog, see: https://github.com/TheGamingLord/HuntersDream/blob/master/changelogs/1.x.x/Hunter's%20Dream%201.0.0%20Changelog.md",
         "1.1.0": "Added new guns (revolver, hunting rifle and pump shotgun), translations, textures and sounds!\nAlso implemented hunters, lowered skill costs, completely recoded the tent and added healing herbs, glow fern, magma flowers, poison ivies and wither moss!\nFor the full changelog, see: https://github.com/TheGamingLord/HuntersDream/blob/master/changelogs/1.x.x/Hunter's%20Dream%201.1.0%20Changelog.md",
-        "1.1.1": "Fixed server crashes and transformation issues. For the changelog from 1.1.0, see https://github.com/TheGamingLord/HuntersDream/blob/master/changelogs/1.x.x/Hunter's%20Dream%201.1.0%20Changelog.md"
+        "1.1.1": "Fixed server crashes and transformation issues.\nFor the changelog from 1.1.0, see https://github.com/TheGamingLord/HuntersDream/blob/master/changelogs/1.x.x/Hunter's%20Dream%201.1.0%20Changelog.md",
+        "1.1.2": "Items dropped during transformation will not despawn for 5 minutes, werewolf claw and bite damage are now configurable, no messages and potion effects when infected by a werewolf and silver ore is now smeltable.\nFor the changelog from 1.1.0, see https://github.com/TheGamingLord/HuntersDream/blob/master/changelogs/1.x.x/Hunter's%20Dream%201.1.0%20Changelog.md"
     },
 
     "promos": {
-        "1.12.2-latest": "1.1.1",
-        "1.12.2-recommended": "1.1.1"
+        "1.12.2-latest": "1.1.2",
+        "1.12.2-recommended": "1.1.2"
     },
     "supportedmcversions":["1.12.2"]
 }
