@@ -31,6 +31,10 @@ minecraft {
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "${mappings_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    // Push version number into source code
+    replaceIn "java/theblockbox/huntersdream/util/Reference.java"
+    replace "BUILD_VERSION", mod_version
 }
 
 dependencies {

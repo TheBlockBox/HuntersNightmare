@@ -123,7 +123,6 @@ command.huntersdream.skill.clear=%s's skills have been cleared
 command.huntersdream.skill.list=%s's skills are\: %s
 
 # Chat messages
-transformations.huntersdream.infected.werewolf=You feel a curse surrounding you...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 huntersdream.werewolfNotAllowedToSleep=You can't sleep when you're transformed
 huntersdream.transformation.wip=The transformation %s that you have transformed into is currently work in progress. Some things may not have been fully added or might be incomplete. Use at your own risk.
@@ -167,6 +166,13 @@ huntersdream.config.silverChance=Average silver ores per vein
 huntersdream.config.silverMaxY=Maximum height of silver
 huntersdream.config.silverMinY=Minimum height of silver
 huntersdream.config.veinSize=Veins of ore per chunk
+# Balance
+huntersdream.config.balance=Game Balance Settings
+huntersdream.config.werewolfNPCInfectChance=Probability that a werewolf NPC's bite will infect a target
+huntersdream.config.werewolfPlayerInfectChance=Probability that a werewolf player's bite will infect a target
+huntersdream.config.playerWerewolfBiteDamage=Base damage for player werewolf bite attacks
+huntersdream.config.playerWerewolfClawDamageBase=Base damage for player werewolf claw attacks
+huntersdream.config.playerWerewolfBonusDamagePerLevel=Additional unarmed damage per skill level
 
 # Skills
 huntersdream.unlockSkill=Unlock with %s experience levels
@@ -195,11 +201,11 @@ huntersdream.jump_2.name=Jump III
 huntersdream.jump_2.description=Increases jump (3 to 4).
 
 huntersdream.unarmed.name=Unarmed I
-huntersdream.unarmed.description=Increases damage from 6 to 7.
+huntersdream.unarmed.description=Increases unarmed damage.
 huntersdream.unarmed_1.name=Unarmed II
-huntersdream.unarmed_1.description=Increases damage from 7 to 8.
+huntersdream.unarmed_1.description=Increases unarmed damage.
 huntersdream.unarmed_2.name=Unarmed III
-huntersdream.unarmed_2.description=Increases damage from 8 to 9.
+huntersdream.unarmed_2.description=Increases unarmed damage.
 
 huntersdream.natural_armor.name=Natural Armour I
 huntersdream.natural_armor.description=Makes the natural armour be as strong as a full set of chainmail armour.
