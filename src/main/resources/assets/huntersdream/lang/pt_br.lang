@@ -123,7 +123,6 @@ command.huntersdream.skill.clear=%s teve suas habilidades limpas
 command.huntersdream.skill.list=As habilidades de %s são\: %s
 
 # Chat messages
-transformations.huntersdream.infected.werewolf=Você sente uma maldição ao seu redor ...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 huntersdream.werewolfNotAllowedToSleep=Você não consegue dormir quando esta transformado
 huntersdream.transformation.wip=The transformation %s that you have transformed into is currently work in progress. Some things may not have been fully added or might be incomplete. Use at your own risk.
@@ -195,11 +194,11 @@ huntersdream.jump_2.name=Pulo III
 huntersdream.jump_2.description=Aumenta o pulo (3 para 4).
 
 huntersdream.unarmed.name=Desarmado I
-huntersdream.unarmed.description=Aumenta o dano de 6 para 7.
+huntersdream.unarmed.description=Aumenta o dano.
 huntersdream.unarmed_1.name=Desarmado II
-huntersdream.unarmed_1.description=Aumenta o dano de 7 para 8.
+huntersdream.unarmed_1.description=Aumenta o dano.
 huntersdream.unarmed_2.name=Desarmado III
-huntersdream.unarmed_2.description=Aumenta o dano de 8 para 9.
+huntersdream.unarmed_2.description=Aumenta o dano.
 
 huntersdream.natural_armor.name=Armadura Natural I
 huntersdream.natural_armor.description=Faz com que a armadura natural seja tão forte quanto um conjunto completo de armaduras de cota de malha.
