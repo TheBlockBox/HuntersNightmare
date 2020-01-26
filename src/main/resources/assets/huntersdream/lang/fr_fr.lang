@@ -98,6 +98,7 @@ command.huntersdream.skill.clear=Les compétences de %s's ont bien été effacé
 command.huntersdream.skill.list=Les compétences de %s's sont\: %s
 
 # Chat messages
+transformations.huntersdream.infected.werewolf=Vous sentez un mal en vous...
 huntersdream.versionNotSupported=Hunter's Dream no longer supports minecraft %s. Please don't complain about any bugs or crashes and update to a newer supported version.
 huntersdream.werewolfNotAllowedToSleep=Vous ne pouvez pas dormir quand vous êtes transformé
 death.attack.vampireDrankBlood=%s s'est fait boire à sec par un vampire
@@ -167,11 +168,11 @@ huntersdream.jump_2.name=Saut III
 huntersdream.jump_2.description=Hauteur de saut améliorée (de 3 à 4).
 
 huntersdream.unarmed.name=Sans armes I
-huntersdream.unarmed.description=Augmentation des dégats à mains nues.
+huntersdream.unarmed.description=Les dommages infligés sans armes passent de 6 à 7.
 huntersdream.unarmed_1.name=Sans armes II
-huntersdream.unarmed_1.description=Augmentation des dégats à mains nues.
+huntersdream.unarmed_1.description=Les dommages infligés sans armes passent de 7 à 8.
 huntersdream.unarmed_2.name=Sans armes III
-huntersdream.unarmed_2.description=Augmentation des dégats à mains nues.
+huntersdream.unarmed_2.description=les dommages infligés sans armes passent de 8 à 9.
 
 huntersdream.natural_armor.name=Armure Naturelle I
 huntersdream.natural_armor.description=Votre fourrure devient aussi forte qu'une armure de mailles complète.

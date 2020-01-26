@@ -98,6 +98,7 @@ command.huntersdream.skill.clear=%s's Навыки Были Очищены
 command.huntersdream.skill.list=%s's Навыки\: %s
 
 # Chat messages
+transformations.huntersdream.infected.werewolf=Вы чувствуете проклятие, окружающее вас..
 huntersdream.versionNotSupported=Hunter's Dream больше не поддерживает minecraft %s. Пожалуйста, не жалуйтесь на какие-либо ошибки или сбои и обновления более неподдерживаемой версии.
 huntersdream.werewolfNotAllowedToSleep=Ты не можешь уснуть, пока ты трансформирован
 death.attack.vampireDrankBlood=%s Вампир выпил досуха
@@ -169,11 +170,11 @@ huntersdream.jump_2.name=Jump III
 huntersdream.jump_2.description=Увеличивает прыжок (3 к 4).
 
 huntersdream.unarmed.name=Безоружный I
-huntersdream.unarmed.description=Увеличивает урон.
+huntersdream.unarmed.description=Увеличивает урон с 6 до 7.
 huntersdream.unarmed_1.name=Безоружный II
-huntersdream.unarmed_1.description=Увеличивает урон.
+huntersdream.unarmed_1.description=Увеличивает урон с 7 до 8.
 huntersdream.unarmed_2.name=Безоружный III
-huntersdream.unarmed_2.description=Увеличивает урон.
+huntersdream.unarmed_2.description=Увеличивает урон с 8 до 9.
 
 huntersdream.natural_armor.name=Природная Броня I
 huntersdream.natural_armor.description=Делает естественную броню такой же прочной, как полный комплект кольчуги.
