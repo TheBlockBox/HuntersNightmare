@@ -1,0 +1,11 @@
+{
+    "name": "Wolfsbane Potion",
+    "icon": "huntersdream:textures/items/aconite_potion.png",
+    "category": "equipment",
+    "pages": [
+        {
+            "type": "text",
+            "text": "This is a test entry, but it should show up!"
+        }
+    ]
+}

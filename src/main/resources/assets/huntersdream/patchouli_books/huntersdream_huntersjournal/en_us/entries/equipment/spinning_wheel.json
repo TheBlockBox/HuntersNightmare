@@ -1,0 +1,11 @@
+{
+    "name": "Spinning Wheel",
+    "icon": "huntersdream:spinning_wheel",
+    "category": "equipment",
+    "pages": [
+        {
+            "type": "text",
+            "text": "This is a test entry, but it should show up!"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Wolfsbane Petals",
+    "icon": "huntersdream:wolfsbane_petals",
+    "category": "equipment",
+    "pages": [
+        {
+            "type": "text",
+            "text": "This is a test entry, but it should show up!"
+        }
+    ]
+}
