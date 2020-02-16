@@ -1,7 +1,7 @@
 #PARSE_ESCAPES
 # Language: American English
 # Region: USA
-# Translated by: 
+# Translated by:
 
 # Armor
 item.huntersdream.silver_helmet.name=Silver Helmet
@@ -19,12 +19,12 @@ item.huntersdream.silver_pickaxe.name=Silver Pickaxe
 item.huntersdream.silver_shovel.name=Silver Shovel
 item.huntersdream.silver_hoe.name=Silver Hoe
 item.huntersdream.silver_axe.name=Silver Axe
-item.huntersdream.flintlock_musket.name=Flintlock Musket
+item.huntersdream.flintlock_musket.name=Musket
 item.huntersdream.flintlock_pistol.name=Flintlock Pistol
-item.huntersdream.flintlock_blunderbuss.name=Flintlock Blunderbuss
+item.huntersdream.flintlock_blunderbuss.name=Blunderbuss
 item.huntersdream.revolver.name=Revolver
 item.huntersdream.hunting_rifle.name=Hunting Rifle
-item.huntersdream.pump_shotgun.name=Pump Shotgun
+item.huntersdream.pump_shotgun.name=Shotgun
 item.huntersdream.musket_ball.name=Musket Ball
 item.huntersdream.silver_musket_ball.name=Silver Musket Ball
 item.huntersdream.revolver_bullet.name=Revolver Bullet
@@ -37,7 +37,7 @@ item.huntersdream.silver_arrow.name=Silver Arrow
 
 # Other items
 item.huntersdream.silver_ingot.name=Silver Ingot
-item.huntersdream.bestiary.name=Bestiary
+item.huntersdream.bestiary.name=Book of Beasts
 item.huntersdream.lycanthropy_book.name=Lycanthropy Book
 item.huntersdream.tent.name=Tent
 item.huntersdream.fabric.name=Fabric

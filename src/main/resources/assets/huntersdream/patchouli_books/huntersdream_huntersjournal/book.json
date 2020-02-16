@@ -1,9 +1,0 @@
-{
-	"name": "A Hunter's Journal",
-	"landing_text": "I've witnessed the paranormal and the supernatural. Everything I know, I have written in here",
-	"version": 4,
-  "model": "huntersdream:journal",
-  "show_progress": false,
-  "creative_tab": "huntersdream.misc",
-  "show_toasts": false
-}
