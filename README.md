@@ -1,6 +1,6 @@
 # Hunter's Dream
 
-[![Curseforge](http://cf.way2muchnoise.eu/full_297754_downloads.svg)](https://minecraft.curseforge.com/projects/hunters-dream)
+[![Curseforge](http://cf.way2muchnoise.eu/full_297754_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hunters-dream)
 
 [![Discord](https://img.shields.io/discord/474276992901185536.svg)](https://discord.gg/bKYyg5P)
 

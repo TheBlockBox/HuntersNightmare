@@ -36,8 +36,9 @@ public class ItemShotgun extends ItemPercussionGun {
         for (int i = 0; i < 12; i++) {
             EntityBullet bullet = new EntityBullet(world, player, ammunition, this.damage);
             bullet.setMaxRange(10, new BlockPos(bullet.getPosition()));
-            float rotation = (Item.itemRand.nextFloat() - 0.5F) * 16;
-            bullet.shoot(player, player.rotationPitch + rotation, player.rotationYaw + rotation, 0.0F,
+            float pitch = (Item.itemRand.nextFloat() - 0.5F) * 20;
+            float yaw = (Item.itemRand.nextFloat() - 0.5F) * 16;
+            bullet.shoot(player, player.rotationPitch + pitch, player.rotationYaw + yaw, 0.0F,
                     this.getArrowVelocity(player, stack) * 3.0F, this.getInaccuracy());
             world.spawnEntity(bullet);
         }
