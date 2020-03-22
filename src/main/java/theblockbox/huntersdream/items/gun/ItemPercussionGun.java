@@ -114,7 +114,7 @@ public class ItemPercussionGun extends ItemGun {
                 hasFoundAmmunition = !foundAmmunition.isEmpty();
 
                 // if no ammunition has been found before,
-                if (ammunitionType == Items.AIR) {
+                if ((ammunitionType == Items.AIR) || (ammunitionType == null)) {
                     // make the ammunition type equal to the item of the found ammunition
                     ammunitionType = foundAmmunition.getItem();
                 }

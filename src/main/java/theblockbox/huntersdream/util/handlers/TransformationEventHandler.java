@@ -4,11 +4,13 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityGolem;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.potion.PotionEffect;
@@ -41,6 +43,7 @@ import theblockbox.huntersdream.api.helpers.GeneralHelper;
 import theblockbox.huntersdream.api.helpers.TransformationHelper;
 import theblockbox.huntersdream.api.helpers.WerewolfHelper;
 import theblockbox.huntersdream.api.init.CapabilitiesInit;
+import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.init.OreDictionaryInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 import theblockbox.huntersdream.api.interfaces.IInfectInTicks;
@@ -289,6 +292,17 @@ public class TransformationEventHandler {
                     ITransformation transformation = TransformationHelper.getITransformation(creature).get();
                     if (!transformation.textureIndexInBounds())
                         transformation.setTextureIndex(creature);
+                } else if (creature instanceof EntitySkeleton) {
+                    // undead hunter (skeleton with hunter armor and weapons)
+                    if (creature.world.rand.nextInt(70) == 0) {
+                        creature.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ItemInit.HUNTER_HAT));
+                        creature.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ItemInit.HUNTER_COAT));
+                        creature.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ItemInit.HUNTER_PANTS));
+                        creature.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ItemInit.HUNTER_BOOTS));
+                        int weapon = creature.world.rand.nextInt(3);
+                        creature.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(weapon == 0 ? ItemInit.FLINTLOCK_MUSKET :
+                                (weapon == 1 ? ItemInit.FLINTLOCK_BLUNDERBUSS : ItemInit.FLINTLOCK_PISTOL)));
+                    }
                 }
                 tc.ifPresent(t -> {
                     if (!t.textureIndexInBounds())

@@ -3,8 +3,11 @@ package theblockbox.huntersdream.items.gun;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
@@ -159,6 +162,25 @@ public abstract class ItemGun extends ItemBow implements IGun {
         tooltip.add(I18n.format("item.huntersdream.gun." + (this.isLoaded(stack) ? "loaded" : "unloaded") + ".tooltip"));
     }
 
+    @Override
+    public EntityArrow customizeArrow(EntityArrow arrow) {
+        if (arrow.shootingEntity instanceof EntityLivingBase) {
+            EntityLivingBase entity = (EntityLivingBase) arrow.shootingEntity;
+            if (!(entity instanceof EntityPlayer)) {
+                this.shoot(entity, ItemStack.EMPTY);
+                return new EntityTippedArrow(arrow.world) {
+                    @Override
+                    public void shoot(double p_shoot_1_, double p_shoot_3_, double p_shoot_3_2, float p_shoot_5_, float p_shoot_5_2) {
+                    }
+                    @Override
+                    public void shoot(Entity p_shoot_1_, float p_shoot_2_, float p_shoot_3_, float p_shoot_4_, float p_shoot_5_, float p_shoot_6_) {
+                    }
+                };
+            }
+        }
+        return arrow;
+    }
+
     /**
      * Gets called when the given entity stops reloading this weapon. (Does NOT get called when the reload is successful
      * but only when it isn't.) Can be used to e.g. cancel the sound played in {@link #playReloadSoundStart(EntityLivingBase, ItemStack)}.
@@ -217,15 +239,17 @@ public abstract class ItemGun extends ItemBow implements IGun {
     /**
      * Unloads and damages the weapon, shoots a bullet and plays the shoot sound.
      */
-    public void shoot(EntityPlayer player, ItemStack stack) {
+    public void shoot(EntityLivingBase entity, ItemStack stack) {
         this.setLoaded(stack, false);
-        stack.damageItem(1, player);
-        World world = player.world;
+        stack.damageItem(1, entity);
+        World world = entity.world;
         if (!world.isRemote) {
-            this.spawnBullet(player, stack);
+            this.spawnBullet(entity, stack);
         }
-        this.playShootSound(player, stack);
-        player.addStat(StatList.getObjectUseStats(this));
+        this.playShootSound(entity, stack);
+        if (entity instanceof EntityPlayer) {
+            ((EntityPlayer) entity).addStat(StatList.getObjectUseStats(this));
+        }
     }
 
     public float getArrowVelocity(EntityLivingBase entity, ItemStack stack) {

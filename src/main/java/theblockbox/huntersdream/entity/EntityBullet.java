@@ -17,6 +17,9 @@ import theblockbox.huntersdream.api.init.ItemInit;
 import theblockbox.huntersdream.api.init.SoundInit;
 import theblockbox.huntersdream.api.interfaces.IAmmunition;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class EntityBullet extends EntityArrow implements IAmmunition {
     private final Item item;
     private final IAmmunition ammunition;
@@ -29,19 +32,19 @@ public class EntityBullet extends EntityArrow implements IAmmunition {
         this.ammunition = (IAmmunition) ItemInit.MUSKET_BALL;
     }
 
-    public EntityBullet(World worldIn, double x, double y, double z, Item item, double damage) {
+    public EntityBullet(World worldIn, double x, double y, double z, @Nonnull Item ammunition, double damage) {
         super(worldIn, x, y, z);
-        this.item = item;
+        this.item = ammunition;
         // throw ClassCastException if the item isn't an instance of IAmmunition
-        this.ammunition = (IAmmunition) item;
+        this.ammunition = (IAmmunition) Objects.requireNonNull(ammunition);
         this.setDamage(damage);
     }
 
-    public EntityBullet(World worldIn, EntityLivingBase shooter, Item item, double damage) {
+    public EntityBullet(World worldIn, EntityLivingBase shooter, @Nonnull Item ammunition, double damage) {
         super(worldIn, shooter);
-        this.item = item;
+        this.item = ammunition;
         // throw ClassCastException if the item isn't an instance of IAmmunition
-        this.ammunition = (IAmmunition) item;
+        this.ammunition = (IAmmunition) Objects.requireNonNull(ammunition);
         this.setDamage(damage);
     }
 

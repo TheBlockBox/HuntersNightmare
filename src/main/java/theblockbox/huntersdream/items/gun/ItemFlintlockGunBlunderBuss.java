@@ -17,7 +17,7 @@ public class ItemFlintlockGunBlunderBuss extends ItemFlintlockGun {
     public void spawnBullet(EntityLivingBase player, ItemStack stack) {
         World world = player.world;
         Item ammunition = Item.getByNameOrId(GeneralHelper.getTagCompoundFromItemStack(stack).getString("huntersdream:ammunition"));
-        if (ammunition == Items.AIR) {
+        if ((ammunition == Items.AIR) || (ammunition == null)) {
             ammunition = this.getDefaultAmmunition();
         }
         // shoot as many bullets as you consume ammunition
