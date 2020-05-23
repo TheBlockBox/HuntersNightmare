@@ -21,8 +21,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = '2.0.0'
-group = 'theblockbox.huntersdream' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'huntersdream'
+group = 'theblockbox.huntersnightmare' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'huntersnightmare'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -50,7 +50,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                huntersdream {
+                huntersnightmare {
                     source sourceSets.main
                 }
             }
@@ -66,7 +66,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                huntersdream {
+                huntersnightmare {
                     source sourceSets.main
                 }
             }
@@ -81,10 +81,10 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'huntersdream', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'huntersnightmare', '--all', '--output', file('src/generated/resources/')
 
             mods {
-                huntersdream {
+                huntersnightmare {
                     source sourceSets.main
                 }
             }
@@ -129,7 +129,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "huntersdream",
+            "Specification-Title": "huntersnightmare",
             "Specification-Vendor": "TheBlockBox",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,

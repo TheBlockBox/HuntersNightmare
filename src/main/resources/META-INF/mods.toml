@@ -12,11 +12,11 @@ issueTrackerURL="https://github.com/TheGamingLord/HuntersDream/issues" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
-modId="huntersdream" #mandatory
+modId="huntersnightmare" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="Hunter's Dream" #mandatory
+displayName="Hunter's Nightmare" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 updateJSONURL="https://raw.githubusercontent.com/TheGamingLord/HuntersDream/master/updatechecker.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -24,7 +24,7 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/hunters-dream" #optiona
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="examplemod.png" #optional
 # A text field displayed in the mod UI
-credits="Director: RebelT, Code: RedstoneTim, TheGamingLord, Ms. Random, SteveBeeblebrox and CplPibald, Models: RebelT and Novacraft, Textures: RebelT and Novacraft, Help for the code: Snakefangox and Ms. Random\nOther help through voting and giving ideas: Members of the Hunter's Dream discord server" #optional
+credits="Director: RebelT, Code: RedstoneTim, TheGamingLord, Ms. Random, SteveBeeblebrox and CplPibald, Models: RebelT and Novacraft, Textures: RebelT and Novacraft, Help for the code: Snakefangox and Ms. Random\nOther help through voting and giving ideas: Members of the Hunter's Nightmare discord server" #optional
 # A text field displayed in the mod UI
 authors="RebelT, RedstoneTim, TheGamingLord, Ms. Random, Novacraft, SteveBeeblebrox, CplPibad" #optional
 # The description text for the mod (multi line!) (#mandatory)
@@ -32,7 +32,7 @@ description='''
 A mod about hunting and supernatural creatures.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.huntersdream]] #optional
+[[dependencies.huntersnightmare]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -44,7 +44,7 @@ A mod about hunting and supernatural creatures.
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.huntersdream]]
+[[dependencies.huntersnightmare]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.15.2]"

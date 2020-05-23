@@ -1,8 +1,8 @@
-package theblockbox.huntersdream
+package theblockbox.huntersnightmare
 
 import net.minecraftforge.fml.common.Mod
 import org.apache.logging.log4j.LogManager
-import theblockbox.huntersdream.util.Reference
+import theblockbox.huntersnightmare.util.Reference
 
 @Mod(Reference.MODID)
 class Main {
