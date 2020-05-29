@@ -1,6 +1,6 @@
 # Hunter's Nightmare
 
-[![Curseforge](http://cf.way2muchnoise.eu/full_297754_downloads.svg)](https://minecraft.curseforge.com/projects/https://www.curseforge.com/minecraft/mc-mods/hunters-nightmare)
+[![Curseforge](http://cf.way2muchnoise.eu/full_297754_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/hunters-nightmare)
 
 [![Discord](https://img.shields.io/discord/474276992901185536.svg)](https://discord.gg/Mpdry7t)
 
