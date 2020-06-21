@@ -2,7 +2,12 @@ package theblockbox.huntersnightmare.api.transformation
 
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.text.TranslationTextComponent
+import net.minecraftforge.eventbus.EventBus
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import theblockbox.huntersnightmare.HuntersNightmare
+import theblockbox.huntersnightmare.api.event.TransformationRegistryEvent
+
 
 /**
  * A class to represent transformations and their properties.
@@ -21,6 +26,12 @@ data class Transformation(val registryName: ResourceLocation, val transformation
     }
 
     companion object {
+        /**
+         * An immutable map of all registered transformations with their registry names as keys.
+         */
+        lateinit var transformations: Map<String, Transformation>
+            private set
+
         /**
          * Used to indicate that no transformation is present and it won't change.
          */
@@ -46,8 +57,21 @@ data class Transformation(val registryName: ResourceLocation, val transformation
          */
         val ghost: Transformation = Transformation(ResourceLocation(HuntersNightmare.MODID, "ghost"), transformationType = TransformationType.UNPHYSICAL_SUPERNATURAL, isWIP = true)
 
-        fun getFromName(name: String?): Transformation {
-            TODO("Implement event system for this")
+        /**
+         * Is called when [FMLCommonSetupEvent] is fired.
+         *
+         * This method should **not** be called outside of Hunter's Nightmare.
+         */
+        fun onCommonSetup() {
+            val event = TransformationRegistryEvent()
+            event.registerTransformations(none, human, werewolf, vampire, ghost)
+           // Mod.EventBusSubscriber.Bus.MOD.bus().get().post(event)
+            // TODO: Make this work pls
+            transformations = event.getTransformationMap()
         }
+
+        fun getFromName(registryName: String?) = transformations[registryName] ?: none
+
+        fun getFromName(registryName: ResourceLocation?) = getFromName(registryName?.toString())
     }
 }

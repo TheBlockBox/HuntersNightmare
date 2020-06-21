@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager
 import net.minecraftforge.common.capabilities.ICapabilitySerializable
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.common.util.NonNullConsumer
+import net.minecraftforge.common.util.NonNullSupplier
 import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -63,9 +64,9 @@ object CapabilitiesInit {
 
     class CapabilityProvider<T>(val capability: Capability<T>) : ICapabilitySerializable<CompoundNBT> {
         val instance: T? = capability.defaultInstance
-        private val optionalInstance: LazyOptional<T> = if (instance != null) LazyOptional.of {
-            instance // TODO: Is it possible to remove the "unnecessary" cast without compiler issues?
-        } else LazyOptional.empty()
+        private val optionalInstance: LazyOptional<T> = if (instance != null) LazyOptional.of(NonNullSupplier<T> {
+            instance // TODO: Is it possible to do this with lambda?
+        }) else LazyOptional.empty()
 
         override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> =
                 if (capability == cap) optionalInstance.cast() else LazyOptional.empty()

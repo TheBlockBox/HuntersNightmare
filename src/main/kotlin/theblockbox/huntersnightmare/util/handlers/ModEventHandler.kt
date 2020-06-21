@@ -9,9 +9,12 @@ import net.minecraftforge.fml.RegistryObject
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import theblockbox.huntersnightmare.HuntersNightmare
+import theblockbox.huntersnightmare.api.event.TransformationRegistryEvent
 import theblockbox.huntersnightmare.api.init.BlockInit
 import theblockbox.huntersnightmare.api.init.CapabilitiesInit
 import theblockbox.huntersnightmare.api.init.ItemGroupInit
+import theblockbox.huntersnightmare.api.transformation.Transformation
+import java.util.*
 
 @Mod.EventBusSubscriber(modid = HuntersNightmare.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 object ModEventHandler {
@@ -25,7 +28,13 @@ object ModEventHandler {
     }
 
     @SubscribeEvent
+    fun onStuff(event: TransformationRegistryEvent) {
+        println(event.getTransformationMap().values.toTypedArray().contentToString())
+    }
+
+    @SubscribeEvent
     fun onFMLCommonSetupEvent(event: FMLCommonSetupEvent) {
+        Transformation.onCommonSetup()
         CapabilitiesInit.registerCapabilities()
     }
 }
