@@ -20,9 +20,9 @@ displayName="Hunter's Nightmare" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 updateJSONURL="https://raw.githubusercontent.com/TheGamingLord/HuntersDream/master/updatechecker.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://www.curseforge.com/minecraft/mc-mods/hunters-dream" #optional
+displayURL="https://www.curseforge.com/minecraft/mc-mods/hunters-nightmare" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
+logoFile="icon.png" #optional TODO: Add icon
 # A text field displayed in the mod UI
 credits="Director: RebelT, Code: RedstoneTim, TheGamingLord, Ms. Random, SteveBeeblebrox and CplPibald, Models: RebelT and Novacraft, Textures: RebelT and Novacraft, Help for the code: Snakefangox and Ms. Random\nOther help through voting and giving ideas: Members of the Hunter's Nightmare discord server" #optional
 # A text field displayed in the mod UI

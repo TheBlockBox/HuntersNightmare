@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundNBT
 import net.minecraft.nbt.INBT
 import net.minecraft.util.Direction
 import net.minecraftforge.common.capabilities.Capability
+import theblockbox.huntersnightmare.api.init.TransformationInit
 
 
 interface ITransformation {
@@ -11,7 +12,7 @@ interface ITransformation {
     var transformationData: CompoundNBT
 
     class TransformationImpl : ITransformation {
-        override var transformation: Transformation = Transformation.human
+        override var transformation: Transformation = TransformationInit.human.get()
         override var transformationData: CompoundNBT = CompoundNBT()
     }
 

@@ -7,7 +7,7 @@ import java.util.function.Supplier
 
 
 object ItemGroupInit {
-    val itemGroup: ItemGroup = ModItemGroup(HuntersNightmare.MODID, Supplier<ItemStack> { ItemStack(ItemInit.journal.get()) })
+    val itemGroup: ItemGroup = ModItemGroup(HuntersNightmare.MODID, Supplier { ItemStack(ItemInit.journal.get()) })
 
     private class ModItemGroup(name: String, val iconSupplier: Supplier<ItemStack>) : ItemGroup(name) {
         override fun createIcon() = iconSupplier.get()

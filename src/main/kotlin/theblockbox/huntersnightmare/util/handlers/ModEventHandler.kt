@@ -1,5 +1,6 @@
 package theblockbox.huntersnightmare.util.handlers
 
+import net.alexwells.kottle.FMLKotlinModLoadingContext
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
@@ -8,13 +9,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.RegistryObject
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.minecraftforge.registries.RegistryBuilder
 import theblockbox.huntersnightmare.HuntersNightmare
-import theblockbox.huntersnightmare.api.event.TransformationRegistryEvent
 import theblockbox.huntersnightmare.api.init.BlockInit
-import theblockbox.huntersnightmare.api.init.CapabilitiesInit
+import theblockbox.huntersnightmare.api.init.CapabilityInit
 import theblockbox.huntersnightmare.api.init.ItemGroupInit
+import theblockbox.huntersnightmare.api.init.TransformationInit
 import theblockbox.huntersnightmare.api.transformation.Transformation
-import java.util.*
+
 
 @Mod.EventBusSubscriber(modid = HuntersNightmare.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 object ModEventHandler {
@@ -28,13 +30,14 @@ object ModEventHandler {
     }
 
     @SubscribeEvent
-    fun onStuff(event: TransformationRegistryEvent) {
-        println(event.getTransformationMap().values.toTypedArray().contentToString())
+    fun onNewRegistryEvent(event: RegistryEvent.NewRegistry) {
+        RegistryBuilder<Transformation>().setName(Transformation.resourceLocation).setType(Transformation::class.java)
+                .setDefaultKey(Transformation.defaultKey).addCallback(Transformation.Callbacks).create()
+        TransformationInit.register(FMLKotlinModLoadingContext.get().modEventBus)
     }
 
     @SubscribeEvent
     fun onFMLCommonSetupEvent(event: FMLCommonSetupEvent) {
-        Transformation.onCommonSetup()
-        CapabilitiesInit.registerCapabilities()
+        CapabilityInit.registerCapabilities()
     }
 }

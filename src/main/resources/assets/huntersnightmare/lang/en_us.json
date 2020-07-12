@@ -1,4 +1,18 @@
 {
     "item.huntersnightmare.journal": "Journal",
-    "itemGroup.huntersnightmare": "Hunter's Nightmare"
+    "itemGroup.huntersnightmare": "Hunter's Nightmare",
+    "huntersnightmare.versionNotSupported": "Hunter's Nightmare no longer supports Minecraft %s. Please do not complain about any bugs or crashes and update to a newer, supported version.",
+    "huntersnightmare.status.unknown": "Unknown",
+    "huntersnightmare.status.uptodate": "Up-to-date",
+    "huntersnightmare.status.outdated": "Outdated",
+    "command.huntersnightmare.info": "Hunter's Nightmare Information\nVersion: %s\nStatus: %s\nDownload link: %s",
+    "command.huntersnightmare.transformation.get": "%s's transformation is %s",
+    "command.huntersnightmare.transformation.set.success": "%s's transformation has been set to %s",
+    "command.huntersnightmare.transformation.set.failure": "%s's transformation couldn't be changed",
+    "huntersnightmare.transformation.wip": "The transformation %s that you have transformed into is currently work in progress. Some things may not have been fully added or might be incomplete. Use at your own risk.",
+    "transformation.huntersnightmare.none": "None",
+    "transformation.huntersnightmare.human": "Human",
+    "transformation.huntersnightmare.werewolf": "Werewolf",
+    "transformation.huntersnightmare.vampire": "Vampire",
+    "transformation.huntersnightmare.ghost": "Ghost"
 }

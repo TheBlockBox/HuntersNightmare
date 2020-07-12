@@ -1,7 +1,7 @@
 package theblockbox.huntersnightmare.api.init
 
 import net.minecraft.entity.Entity
-import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.merchant.villager.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.CompoundNBT
 import net.minecraft.util.Direction
@@ -20,11 +20,11 @@ import net.minecraftforge.fml.common.Mod
 import theblockbox.huntersnightmare.HuntersNightmare
 import theblockbox.huntersnightmare.api.transformation.ITransformation
 
-
+// TODO: Networking
 @Mod.EventBusSubscriber(modid = HuntersNightmare.MODID)
-object CapabilitiesInit {
+object CapabilityInit {
     @CapabilityInject(ITransformation::class)
-    val transformationCapability: Capability<ITransformation>? = null
+    lateinit var transformationCapability: Capability<ITransformation>
 
     val transformationCapabilityIdentifier = ResourceLocation(HuntersNightmare.MODID, "transformation")
 
@@ -34,39 +34,34 @@ object CapabilitiesInit {
         }
     }
 
-    fun <T> LivingEntity?.getCapIfPresent(capability: Capability<T>?, consumer: NonNullConsumer<T>) {
-        if (capability != null)
-            this?.getCapability(capability)?.ifPresent(consumer)
-    }
-
     @SubscribeEvent
     fun onPlayerClone(event: PlayerEvent.Clone) {
         // restore capabilities after death
         if (event.isWasDeath) {
-            // TODO: Can this be done more easily?
-            event.player.getCapIfPresent(transformationCapability,
-                    NonNullConsumer { currentInstance: ITransformation ->
-                        event.original.getCapIfPresent(transformationCapability, NonNullConsumer { oldInstance: ITransformation ->
+            event.player.getCapability(transformationCapability).ifPresent {
+                NonNullConsumer { currentInstance: ITransformation ->
+                    event.original.getCapability(transformationCapability).ifPresent {
+                        NonNullConsumer { oldInstance: ITransformation ->
                             currentInstance.transformation = oldInstance.transformation
                             currentInstance.transformationData = oldInstance.transformationData
-                        })
-                    })
+                        }
+                    }
+                }
+            }
         }
     }
 
     @SubscribeEvent
     fun onCapabilityAttach(event: AttachCapabilitiesEvent<Entity>) {
         val entity: Entity? = event.getObject()
-        if ((entity is PlayerEntity) && (transformationCapability != null)) {
+        if (entity is PlayerEntity || entity is VillagerEntity) {
             event.addCapability(transformationCapabilityIdentifier, CapabilityProvider(transformationCapability))
         }
     }
 
-    class CapabilityProvider<T>(val capability: Capability<T>) : ICapabilitySerializable<CompoundNBT> {
-        val instance: T? = capability.defaultInstance
-        private val optionalInstance: LazyOptional<T> = if (instance != null) LazyOptional.of(NonNullSupplier<T> {
-            instance // TODO: Is it possible to do this with lambda?
-        }) else LazyOptional.empty()
+    class CapabilityProvider<T>(private val capability: Capability<T>) : ICapabilitySerializable<CompoundNBT> {
+        private val instance: T? = capability.defaultInstance
+        private val optionalInstance: LazyOptional<T> = if (instance != null) LazyOptional.of(NonNullSupplier<T> { instance }) else LazyOptional.empty()
 
         override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> =
                 if (capability == cap) optionalInstance.cast() else LazyOptional.empty()

@@ -1,77 +1,93 @@
 package theblockbox.huntersnightmare.api.transformation
 
+import net.minecraft.entity.Entity
 import net.minecraft.util.ResourceLocation
+import net.minecraft.util.Util
 import net.minecraft.util.text.TranslationTextComponent
-import net.minecraftforge.eventbus.EventBus
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.minecraftforge.registries.ForgeRegistryEntry
+import net.minecraftforge.registries.IForgeRegistry
+import net.minecraftforge.registries.IForgeRegistryInternal
+import net.minecraftforge.registries.RegistryManager
 import theblockbox.huntersnightmare.HuntersNightmare
-import theblockbox.huntersnightmare.api.event.TransformationRegistryEvent
-
+import theblockbox.huntersnightmare.api.init.CapabilityInit
+import theblockbox.huntersnightmare.api.init.TransformationInit
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * A class to represent transformations and their properties.
  */
-// TODO: Add custom transformations by other mods using events
-data class Transformation(val registryName: ResourceLocation, val transformationType: TransformationType = TransformationType.PHYSICAL_SUPERNATURAL,
-                          val isUndead: Boolean = false, val isWIP: Boolean = false) {
-    val translation: TranslationTextComponent
+// TODO: Warning for WIP
+class Transformation(val transformationType: TransformationType = TransformationType.NORMAL) : ForgeRegistryEntry<Transformation>() {
+    /**
+     * The unlocalized name of this Transformation.
+     */
+    val translationKey: TranslationTextComponent by lazy { TranslationTextComponent(Util.makeTranslationKey("transformation", this.registryName)) }
 
-    init {
-        translation = TranslationTextComponent(registryName.namespace + "." + registryName.path)
-    }
+    /**
+     * This method returns true if the transformation exists (meaning
+     * it's not {@link Transformation#NONE})
+     */
+    fun exists() = (this.registryName != null) && !(TransformationInit.none.get().registryName?.equals(this.registryName)?:true)
 
-    enum class TransformationType(val isSupernatural: Boolean) {
-        NORMAL(false), PHYSICAL_SUPERNATURAL(true), UNPHYSICAL_SUPERNATURAL(true);
+    override fun toString() = (registryName ?: defaultKey).toString()
+
+    enum class TransformationType {
+        NORMAL, PHYSICAL_SUPERNATURAL, UNPHYSICAL_SUPERNATURAL;
     }
 
     companion object {
         /**
+         * The internal and mutable backing map of [transformations].
+         */
+        // TODO: Is this allowed for internal stuff?
+        private val _transformations: MutableMap<String, Transformation> = HashMap()
+
+        /**
          * An immutable map of all registered transformations with their registry names as keys.
          */
-        lateinit var transformations: Map<String, Transformation>
-            private set
+        val transformations: Map<String, Transformation> = Collections.unmodifiableMap(_transformations)
 
         /**
-         * Used to indicate that no transformation is present and it won't change.
+         * The [ResourceLocation] used to identify instances of this class (for registries).
          */
-        val none: Transformation = Transformation(ResourceLocation(HuntersNightmare.MODID, "none"))
+        val resourceLocation: ResourceLocation = ResourceLocation(HuntersNightmare.MODID, "transformation")
 
         /**
-         * Used to indicate that no transformation is currently present but this could change.
+         * The default key that is given to instances without a [ResourceLocation].
          */
-        val human: Transformation = Transformation(ResourceLocation(HuntersNightmare.MODID, "human"))
+        val defaultKey: ResourceLocation = ResourceLocation(HuntersNightmare.MODID, "none")
 
         /**
-         * The transformation for werewolves.
+         * Gets a Transformation when given its registry name as a string.
+         * @return Returns a non-null Transformation with the given registry name. If none can be found, [TransformationInit.none] is returned instead.
          */
-        val werewolf: Transformation = Transformation(ResourceLocation(HuntersNightmare.MODID, "werewolf"), isWIP = true)
+        fun getFromName(registryName: String?) = transformations[registryName] ?: TransformationInit.none.get()
 
         /**
-         * The transformation for vampires.
+         * Gets a Transformation when given its registry name as a [ResourceLocation].
+         * @return Returns a non-null Transformation with the given registry name. If none can be found, [TransformationInit.none] is returned instead.
          */
-        val vampire: Transformation = Transformation(ResourceLocation(HuntersNightmare.MODID, "vampire"), isWIP = true)
+        fun getFromName(registryName: ResourceLocation?) = getFromName(registryName?.toString())
 
         /**
-         * The transformation for ghosts.
-         */
-        val ghost: Transformation = Transformation(ResourceLocation(HuntersNightmare.MODID, "ghost"), transformationType = TransformationType.UNPHYSICAL_SUPERNATURAL, isWIP = true)
-
-        /**
-         * Is called when [FMLCommonSetupEvent] is fired.
          *
-         * This method should **not** be called outside of Hunter's Nightmare.
          */
-        fun onCommonSetup() {
-            val event = TransformationRegistryEvent()
-            event.registerTransformations(none, human, werewolf, vampire, ghost)
-           // Mod.EventBusSubscriber.Bus.MOD.bus().get().post(event)
-            // TODO: Make this work pls
-            transformations = event.getTransformationMap()
+        fun Entity?.getTransformation(): Transformation {
+            return this?.getCapability(CapabilityInit.transformationCapability)?.map { it.transformation }
+                    ?.orElse(TransformationInit.none.get())?:TransformationInit.none.get()
+        }
+    }
+
+    object Callbacks : IForgeRegistry.AddCallback<Transformation>, IForgeRegistry.ClearCallback<Transformation> {
+        override fun onAdd(owner: IForgeRegistryInternal<Transformation>?, stage: RegistryManager?, id: Int, obj: Transformation?, oldObj: Transformation?) {
+            if ((obj != null) && (obj.registryName != null)) {
+                _transformations[obj.toString()] = obj
+            }
         }
 
-        fun getFromName(registryName: String?) = transformations[registryName] ?: none
-
-        fun getFromName(registryName: ResourceLocation?) = getFromName(registryName?.toString())
+        override fun onClear(owner: IForgeRegistryInternal<Transformation>?, stage: RegistryManager?) {
+            _transformations.clear()
+        }
     }
 }
