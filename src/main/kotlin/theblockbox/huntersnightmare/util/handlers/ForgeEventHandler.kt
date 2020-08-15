@@ -19,7 +19,7 @@ object ForgeEventHandler {
 
     @SubscribeEvent
     fun onFMLServerStartingEvent(event: FMLServerStartingEvent) {
-        CommandInit.register(event.commandDispatcher)
+        CommandInit.registerCommands(event.commandDispatcher)
     }
 
     @SubscribeEvent

@@ -13,10 +13,14 @@ import net.minecraft.command.ISuggestionProvider
 import net.minecraft.command.arguments.EntityArgument.entity
 import net.minecraft.command.arguments.EntityArgument.getEntity
 import net.minecraft.entity.Entity
+import net.minecraft.entity.LivingEntity
 import net.minecraft.util.text.TranslationTextComponent
 import theblockbox.huntersnightmare.HuntersNightmare
+import theblockbox.huntersnightmare.api.event.TransformationEvent
 import theblockbox.huntersnightmare.api.transformation.Transformation
-import theblockbox.huntersnightmare.api.transformation.Transformation.Companion.getTransformation
+import theblockbox.huntersnightmare.api.transformation.TransformationHelper.getITransformation
+import theblockbox.huntersnightmare.api.transformation.TransformationHelper.setTransformation
+import theblockbox.huntersnightmare.api.transformation.TransformationHelper.getTransformation
 import theblockbox.huntersnightmare.util.handlers.ForgeEventHandler
 import java.util.concurrent.CompletableFuture
 
@@ -25,7 +29,7 @@ import java.util.concurrent.CompletableFuture
  */
 // TODO: Add help if it's possible
 object CommandInit {
-    fun register(dispatcher: CommandDispatcher<CommandSource>) {
+    fun registerCommands(dispatcher: CommandDispatcher<CommandSource>) {
         dispatcher.register(
                 literal("htnm")
                         .executes {
@@ -41,30 +45,31 @@ object CommandInit {
                                             getTransformation(it.source, getEntity(it, "entity"))
                                         }))
                                         .then(literal("set").then(argument("new_transformation", TransformationArgument()).executes {
-                                            changeTransformation(it.source, it.source.entity, it.getArgument("new_transformation", Transformation::class.java))
+                                            setTransformation(it.source, it.source.entity, it.getArgument("new_transformation", Transformation::class.java))
                                         }.then(argument("entity", entity()).executes {
-                                            changeTransformation(it.source, getEntity(it, "entity"), it.getArgument("new_transformation", Transformation::class.java))
+                                            setTransformation(it.source, getEntity(it, "entity"), it.getArgument("new_transformation", Transformation::class.java))
                                         })))
                         )
         )
     }
 
     private fun getTransformation(commandSource: CommandSource, entity: Entity?): Int {
-        commandSource.sendFeedback(TranslationTextComponent("command." + HuntersNightmare.MODID + ".transformation.get", entity?.displayName
-                ?: "Unknown",
-                entity.getTransformation().translationKey), true)
+        if (entity is LivingEntity) {
+            commandSource.sendFeedback(TranslationTextComponent("command." + HuntersNightmare.MODID + ".transformation.get", entity.displayName
+                    ?: "Unknown",
+                    entity.getTransformation().translationKey), true)
+        }
         return 1
     }
 
-    private fun changeTransformation(commandSource: CommandSource, entity: Entity?, newTransformation: Transformation?): Int {
-        if ((entity != null) && (newTransformation?.exists() == true)) {
-            val iTransformation = entity.getCapability(CapabilityInit.transformationCapability)
-            iTransformation.ifPresent {
-                it.transformation = newTransformation
-                // TODO: Set the transformation using an extra method
-                commandSource.sendFeedback(TranslationTextComponent("command." + HuntersNightmare.MODID + ".transformation.set.success", entity.displayName, newTransformation.translationKey), true)
+    private fun setTransformation(commandSource: CommandSource, entity: Entity?, newTransformation: Transformation?): Int {
+        if ((entity is LivingEntity) && (newTransformation?.exists() == true)) {
+            entity.getITransformation()?.let {
+                if (entity.setTransformation(newTransformation, TransformationEvent.Reason.command)) {
+                    commandSource.sendFeedback(TranslationTextComponent("command." + HuntersNightmare.MODID + ".transformation.set.success", entity.displayName, newTransformation.translationKey), true)
+                }
+                return@setTransformation 1
             }
-            if (iTransformation.isPresent) return 1
         }
         commandSource.sendFeedback(TranslationTextComponent("command." + HuntersNightmare.MODID + ".transformation.set.failure", entity?.displayName
                 ?: "Unknown"), true)

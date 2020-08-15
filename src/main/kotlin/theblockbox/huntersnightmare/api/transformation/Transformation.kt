@@ -1,6 +1,5 @@
 package theblockbox.huntersnightmare.api.transformation
 
-import net.minecraft.entity.Entity
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Util
 import net.minecraft.util.text.TranslationTextComponent
@@ -9,16 +8,14 @@ import net.minecraftforge.registries.IForgeRegistry
 import net.minecraftforge.registries.IForgeRegistryInternal
 import net.minecraftforge.registries.RegistryManager
 import theblockbox.huntersnightmare.HuntersNightmare
-import theblockbox.huntersnightmare.api.init.CapabilityInit
 import theblockbox.huntersnightmare.api.init.TransformationInit
 import java.util.*
 import kotlin.collections.HashMap
 
 /**
- * A class to represent transformations and their properties.
+ * Every [net.minecraft.entity.LivingEntity] can have a Transformation which is a certain state that gives them special abilities.
  */
-// TODO: Warning for WIP
-class Transformation(val transformationType: TransformationType = TransformationType.NORMAL) : ForgeRegistryEntry<Transformation>() {
+class Transformation(val transformationType: TransformationType = TransformationType.NORMAL, val wip: Boolean = false) : ForgeRegistryEntry<Transformation>() {
     /**
      * The unlocalized name of this Transformation.
      */
@@ -40,7 +37,6 @@ class Transformation(val transformationType: TransformationType = Transformation
         /**
          * The internal and mutable backing map of [transformations].
          */
-        // TODO: Is this allowed for internal stuff?
         private val _transformations: MutableMap<String, Transformation> = HashMap()
 
         /**
@@ -69,14 +65,6 @@ class Transformation(val transformationType: TransformationType = Transformation
          * @return Returns a non-null Transformation with the given registry name. If none can be found, [TransformationInit.none] is returned instead.
          */
         fun getFromName(registryName: ResourceLocation?) = getFromName(registryName?.toString())
-
-        /**
-         *
-         */
-        fun Entity?.getTransformation(): Transformation {
-            return this?.getCapability(CapabilityInit.transformationCapability)?.map { it.transformation }
-                    ?.orElse(TransformationInit.none.get())?:TransformationInit.none.get()
-        }
     }
 
     object Callbacks : IForgeRegistry.AddCallback<Transformation>, IForgeRegistry.ClearCallback<Transformation> {

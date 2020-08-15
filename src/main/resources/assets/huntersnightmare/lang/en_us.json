@@ -14,5 +14,6 @@
     "transformation.huntersnightmare.human": "Human",
     "transformation.huntersnightmare.werewolf": "Werewolf",
     "transformation.huntersnightmare.vampire": "Vampire",
-    "transformation.huntersnightmare.ghost": "Ghost"
+    "transformation.huntersnightmare.ghost": "Ghost",
+    "transformation.huntersnightmare.wip": "The transformation %s that you have transformed into currently is in a W.I.P. state. Some features may not have been fully added or might be incomplete. Use at your own risk."
 }

@@ -26,20 +26,20 @@ object TransformationInit : DeferredRegister<Transformation>(RegistryManager.ACT
      * The transformation for werewolves.
      */
     val werewolf: RegistryObject<Transformation> = this.register("werewolf") {
-        Transformation(Transformation.TransformationType.PHYSICAL_SUPERNATURAL)
+        Transformation(Transformation.TransformationType.PHYSICAL_SUPERNATURAL, wip = true)
     }
 
     /**
      * The transformation for vampires.
      */
     val vampire: RegistryObject<Transformation> = this.register("vampire") {
-        Transformation(Transformation.TransformationType.PHYSICAL_SUPERNATURAL)
+        Transformation(Transformation.TransformationType.PHYSICAL_SUPERNATURAL, wip = true)
     }
 
     /**
      * The transformation for ghosts.
      */
     val ghost: RegistryObject<Transformation> = this.register("ghost") {
-        Transformation(Transformation.TransformationType.UNPHYSICAL_SUPERNATURAL)
+        Transformation(Transformation.TransformationType.UNPHYSICAL_SUPERNATURAL, wip = true)
     }
 }

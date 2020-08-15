@@ -39,5 +39,6 @@ object ModEventHandler {
     @SubscribeEvent
     fun onFMLCommonSetupEvent(event: FMLCommonSetupEvent) {
         CapabilityInit.registerCapabilities()
+        PacketHandler.registerMessages()
     }
 }

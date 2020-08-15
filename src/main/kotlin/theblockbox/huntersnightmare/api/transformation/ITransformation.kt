@@ -11,9 +11,16 @@ interface ITransformation {
     var transformation: Transformation
     var transformationData: CompoundNBT
 
+    /**
+     * Returns true if this entity can change its [Transformation] from the current one to the one given.
+     */
+    fun canChangeTransformation(newTransformation: Transformation) : Boolean
+
     class TransformationImpl : ITransformation {
         override var transformation: Transformation = TransformationInit.human.get()
         override var transformationData: CompoundNBT = CompoundNBT()
+
+        override fun canChangeTransformation(newTransformation: Transformation) = true
     }
 
     object TransformationStorage : Capability.IStorage<ITransformation> {
@@ -30,7 +37,8 @@ interface ITransformation {
         override fun readNBT(capability: Capability<ITransformation>, instance: ITransformation, side: Direction?, nbt: INBT?) {
             if (nbt is CompoundNBT) {
                 instance.transformation = Transformation.getFromName(nbt.getString(TRANSFORMATION))
-                instance.transformationData = nbt.get(TRANSFORMATION_DATA) as CompoundNBT
+                val transformationData = nbt.get(TRANSFORMATION_DATA)
+                instance.transformationData = if(transformationData is CompoundNBT) transformationData else CompoundNBT()
             }
         }
     }

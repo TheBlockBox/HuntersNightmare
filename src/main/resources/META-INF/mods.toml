@@ -22,15 +22,14 @@ updateJSONURL="https://raw.githubusercontent.com/TheGamingLord/HuntersDream/mast
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://www.curseforge.com/minecraft/mc-mods/hunters-nightmare" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="icon.png" #optional TODO: Add icon
+logoFile="icon.png" #optional TODO: Fix icon
 # A text field displayed in the mod UI
 credits="Director: RebelT, Code: RedstoneTim, TheGamingLord, Ms. Random, SteveBeeblebrox and CplPibald, Models: RebelT and Novacraft, Textures: RebelT and Novacraft, Help for the code: Snakefangox and Ms. Random\nOther help through voting and giving ideas: Members of the Hunter's Nightmare discord server" #optional
 # A text field displayed in the mod UI
 authors="RebelT, RedstoneTim, TheGamingLord, Ms. Random, Novacraft, SteveBeeblebrox, CplPibad" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-A mod about hunting and supernatural creatures.
-'''
+A mod about hunting and supernatural creatures.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.huntersnightmare]] #optional
     # the modid of the dependency
