@@ -8,13 +8,11 @@ import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.RegistryObject
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.registries.RegistryBuilder
 import theblockbox.huntersnightmare.HuntersNightmare
-import theblockbox.huntersnightmare.api.init.BlockInit
-import theblockbox.huntersnightmare.api.init.CapabilityInit
-import theblockbox.huntersnightmare.api.init.ItemGroupInit
-import theblockbox.huntersnightmare.api.init.TransformationInit
+import theblockbox.huntersnightmare.api.init.*
 import theblockbox.huntersnightmare.api.transformation.Transformation
 
 
@@ -40,5 +38,10 @@ object ModEventHandler {
     fun onFMLCommonSetupEvent(event: FMLCommonSetupEvent) {
         CapabilityInit.registerCapabilities()
         PacketHandler.registerMessages()
+    }
+
+    @SubscribeEvent
+    fun onClientSetup(event: FMLClientSetupEvent) {
+        EntityInit.registerRenderers()
     }
 }
