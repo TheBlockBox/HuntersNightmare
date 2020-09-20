@@ -5,7 +5,6 @@ import net.minecraftforge.fml.common.Mod
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import theblockbox.huntersnightmare.api.init.BlockInit
-import theblockbox.huntersnightmare.api.init.EntityInit
 import theblockbox.huntersnightmare.api.init.ItemInit
 
 @Mod(HuntersNightmare.MODID)
@@ -23,6 +22,5 @@ object HuntersNightmare {
         val eventBus = FMLKotlinModLoadingContext.get().modEventBus
         BlockInit.register(eventBus)
         ItemInit.register(eventBus)
-        EntityInit.register(eventBus)
     }
 }

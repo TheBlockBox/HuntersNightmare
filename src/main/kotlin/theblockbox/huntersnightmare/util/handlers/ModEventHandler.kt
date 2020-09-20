@@ -2,6 +2,7 @@ package theblockbox.huntersnightmare.util.handlers
 
 import net.alexwells.kottle.FMLKotlinModLoadingContext
 import net.minecraft.block.Block
+import net.minecraft.entity.EntityType
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraftforge.event.RegistryEvent
@@ -14,6 +15,7 @@ import net.minecraftforge.registries.RegistryBuilder
 import theblockbox.huntersnightmare.HuntersNightmare
 import theblockbox.huntersnightmare.api.init.*
 import theblockbox.huntersnightmare.api.transformation.Transformation
+import theblockbox.huntersnightmare.item.ModdedSpawnEggItem
 
 
 @Mod.EventBusSubscriber(modid = HuntersNightmare.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -43,5 +45,10 @@ object ModEventHandler {
     @SubscribeEvent
     fun onClientSetup(event: FMLClientSetupEvent) {
         EntityInit.registerRenderers()
+    }
+
+    @SubscribeEvent
+    fun onRegisterEntityType(event: RegistryEvent.Register<EntityType<*>>) {
+        EntityInit.register(event)
     }
 }

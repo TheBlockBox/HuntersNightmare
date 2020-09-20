@@ -1,5 +1,6 @@
 {
     "item.huntersnightmare.journal": "Journal",
+    "item.huntersnightmare.werewolf_spawn_egg": "Werewolf Spawn Egg",
     "itemGroup.huntersnightmare": "Hunter's Nightmare",
     "huntersnightmare.versionNotSupported": "Hunter's Nightmare no longer supports Minecraft %s. Please do not complain about any bugs or crashes and update to a newer, supported version.",
     "huntersnightmare.status.unknown": "Unknown",
