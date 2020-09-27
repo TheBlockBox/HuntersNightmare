@@ -70,4 +70,27 @@ class WerewolfModel : EntityModel<WerewolfEntity>() {
         setRotationAngle(tail, 0.6981f, 0.0f, 0.0f)
         tail.setTextureOffset(0, 20).addBox(-2.0f, -1.0f, -3.0f, 4.0f, 16.0f, 4.0f, 0.0f, false)
     }
+
+    override fun setLivingAnimations(entityIn: WerewolfEntity, limbSwing: Float, limbSwingAmount: Float, partialTick: Float) {
+        // Add actual animations at some point
+//        // TODO: Tail swinging?
+////        if (entityIn.isAngry()) {
+////            tail.rotateAngleY = 0.0f
+////        } else {
+////            tail.rotateAngleY = MathHelper.cos(limbSwing * 0.6662f) * 1.4f * limbSwingAmount
+////        }
+//        body.setRotationPoint(0.0f, 14.0f, 2.0f)
+//        body.rotateAngleX = Math.PI.toFloat() / 2f
+////        this.mane.setRotationPoint(-1.0f, 14.0f, -3.0f)
+////        this.mane.rotateAngleX = body.rotateAngleX
+//        tail.setRotationPoint(-1.0f, 12.0f, 8.0f)
+//        this.legRight.setRotationPoint(-2.5f, 16.0f, 7.0f)
+//        this.legLeft.setRotationPoint(0.5f, 16.0f, 7.0f)
+//        this.armRight.setRotationPoint(-2.5f, 16.0f, -4.0f)
+//        this.armLeft.setRotationPoint(0.5f, 16.0f, -4.0f)
+//        this.legRight.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f) * 1.4f * limbSwingAmount
+//        this.legLeft.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f + Math.PI.toFloat()) * 1.4f * limbSwingAmount
+//        this.armRight.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f + Math.PI.toFloat()) * 1.4f * limbSwingAmount
+//        this.armLeft.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f) * 1.4f * limbSwingAmount
+    }
 }

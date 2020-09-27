@@ -15,8 +15,6 @@ import net.minecraftforge.registries.RegistryBuilder
 import theblockbox.huntersnightmare.HuntersNightmare
 import theblockbox.huntersnightmare.api.init.*
 import theblockbox.huntersnightmare.api.transformation.Transformation
-import theblockbox.huntersnightmare.item.ModdedSpawnEggItem
-
 
 @Mod.EventBusSubscriber(modid = HuntersNightmare.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 object ModEventHandler {

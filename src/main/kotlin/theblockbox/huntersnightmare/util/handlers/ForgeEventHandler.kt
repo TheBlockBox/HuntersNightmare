@@ -1,14 +1,22 @@
 package theblockbox.huntersnightmare.util.handlers
 
 import com.google.gson.JsonParser
+import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.merchant.villager.VillagerEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.text.TextFormatting
 import net.minecraft.util.text.TranslationTextComponent
+import net.minecraftforge.event.entity.EntityJoinWorldEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent
 import theblockbox.huntersnightmare.HuntersNightmare
+import theblockbox.huntersnightmare.api.event.TransformationEvent
 import theblockbox.huntersnightmare.api.init.CommandInit
+import theblockbox.huntersnightmare.api.init.TransformationInit
+import theblockbox.huntersnightmare.api.transformation.TransformationHelper.setTransformation
+import theblockbox.huntersnightmare.entity.WerewolfEntity
 import java.io.InputStreamReader
 import java.net.URL
 
@@ -48,5 +56,18 @@ object ForgeEventHandler {
                 }
             }
         }.start()
+    }
+
+    @SubscribeEvent
+    fun onEntityJoinWorld(event: EntityJoinWorldEvent) {
+        // TODO: Wait does this also affect existing entities?
+        val entity = event.entity
+        if (entity is LivingEntity) {
+            entity.setTransformation(when (entity) {
+                is PlayerEntity, is VillagerEntity -> TransformationInit.human.get()
+                is WerewolfEntity -> TransformationInit.werewolf.get()
+                else -> return
+            }, TransformationEvent.Reason.spawn)
+        }
     }
 }

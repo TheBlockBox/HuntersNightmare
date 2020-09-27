@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Mod
 import theblockbox.huntersnightmare.HuntersNightmare
 import theblockbox.huntersnightmare.api.transformation.ITransformation
 import theblockbox.huntersnightmare.api.transformation.TransformationHelper.getITransformation
+import theblockbox.huntersnightmare.entity.WerewolfEntity
 
 @Mod.EventBusSubscriber(modid = HuntersNightmare.MODID)
 object CapabilityInit {
@@ -49,14 +50,12 @@ object CapabilityInit {
 
     @SubscribeEvent
     fun onCapabilityAttach(event: AttachCapabilitiesEvent<Entity>) {
-        val toAttach: Pair<Capability<*>, ResourceLocation>? = when(event.getObject()) {
-            is PlayerEntity -> transformationCapPair
-            is VillagerEntity -> transformationCapPair
+        when (event.getObject()) {
+            is PlayerEntity, is VillagerEntity, is WerewolfEntity -> transformationCapPair
             else -> null
-        }
-        if(toAttach != null) {
-            val provider = CapabilityProvider(toAttach.first)
-            event.addCapability(toAttach.second, provider)
+        }?.let {
+            val provider = CapabilityProvider(it.first)
+            event.addCapability(it.second, provider)
             event.addListener(provider::invalidate)
         }
     }

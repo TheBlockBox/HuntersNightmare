@@ -6,7 +6,6 @@ import net.minecraft.util.Direction
 import net.minecraftforge.common.capabilities.Capability
 import theblockbox.huntersnightmare.api.init.TransformationInit
 
-
 interface ITransformation {
     var transformation: Transformation
     var transformationData: CompoundNBT
